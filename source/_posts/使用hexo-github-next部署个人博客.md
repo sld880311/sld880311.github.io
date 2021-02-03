@@ -64,7 +64,7 @@ ssh-keygen -t rsa -C 'sld880311@hotmail.com'
 
 ### 部署到github
 
-1. 修改根目录下的 _config.yml，编辑信息如下
+#### 修改根目录下的_config.yml
 
 ```yml
 # Deployment
@@ -76,17 +76,38 @@ deploy:
   branch: master
 ```
 
-2. 安装部署插件hexo-deployer-git
+#### 安装部署插件hexo-deployer-git
 
 ```bash
 npm install hexo-deployer-git --save
 ```
 
-3. 部署命令
+#### 部署命令
 
 ```bash
 hexo g -d
 ```
+
+### 添加字数统计和阅读时长
+
+#### 添加插件
+
+```bash
+npm install hexo-symbols-count-time --save
+```
+
+#### 修改根目录的_config.yml
+
+```yml
+# 文章字数统计
+symbols_count_time:
+  symbols: true
+  time: true
+  total_symbols: true
+  total_time: true
+```
+
+#### 修改主题_config.yml
 
 ## 开始写作
 
