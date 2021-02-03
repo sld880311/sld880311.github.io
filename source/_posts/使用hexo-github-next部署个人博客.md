@@ -118,5 +118,10 @@ hexo new page tags        # 定义标签
 hexo new page about       # 定义关于
 ```
 
+## 参考文档
+
+1. [theme-next.iissnan](http://theme-next.iissnan.com/)
+2. [theme-next.js](https://theme-next.js.org/docs/)
+
 
 
