@@ -2,6 +2,9 @@
 title: 使用hexo+github+next部署个人博客
 date: 2021-02-03 15:40:46
 tags:
+  - 常用工具
+categories:
+  - 其他
 ---
 
 ## 环境准备
@@ -12,6 +15,10 @@ tags:
 git version
 node -v
 npm -v
+# 修改原
+npm config set registry http://registry.npm.taobao.org/
+# 改回去
+npm config set registry https://registry.npmjs.org/
 ```
 
 ### 初始化博客
@@ -24,7 +31,7 @@ cd sld880311.github.io
 hexo init 
 npm install
 ```
-初始化完成之后目录结构如下：
+初始化完成之后目录结构如下：<!--more-->
 
 ```bash
 .
@@ -109,6 +116,17 @@ symbols_count_time:
 
 #### 修改主题_config.yml
 
+```bash
+# Post wordcount display settings
+# Dependencies: https://github.com/theme-next/hexo-symbols-count-time
+symbols_count_time:
+  separated_meta: true
+  item_text_post: true
+  item_text_total: true
+  awl: 4
+  wpm: 275
+```
+
 ## 开始写作
 
 ```bash
@@ -122,6 +140,12 @@ hexo new page about       # 定义关于
 
 1. [theme-next.iissnan](http://theme-next.iissnan.com/)
 2. [theme-next.js](https://theme-next.js.org/docs/)
+3. [Hexo+Next搭建个人博客](https://www.jianshu.com/p/446ec02bb0a8)
+4. [hexo之主题优化篇](https://zhuanlan.zhihu.com/p/185015237)
+5. [超详细Hexo+Github Page搭建技术博客教程【持续更新】](https://segmentfault.com/a/1190000017986794)
+6. [Hexo+NexT搭建个人博客](https://blog.csdn.net/u014786530/article/details/103548737)
+7. [从头开始搭建hexo+github+hexo-theme-next主题博客（高级设置）](https://blog.csdn.net/qq_40930491/article/details/87902310)
+8. 
 
 
 
