@@ -27,7 +27,7 @@ git push -u origin master
 
 <div align=center>
 
-![git详解](git详解/1589535948892.png)
+![git代码提交示意图](git详解/1589535948892.png)
 
 </div>
 
@@ -35,7 +35,7 @@ git push -u origin master
 
 <div align=center>
 
-![git详解](git详解/1589535987537.png)
+![git官网提交提示图](git详解/1589535987537.png)
 
 </div>
 
@@ -43,7 +43,7 @@ git push -u origin master
 
 <div align=center>
 
-![git详解](git详解/1589536030194.png)
+![git命令使用详解](git详解/1589536030194.png)
 
 </div>
 
