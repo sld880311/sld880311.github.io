@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="N+1问题所谓N+1问题，使用hibernate查询数据，首先返回数据的id信息，并没有返回所有的对象信息，只有在真正使用的时候，在使用这个id对数据库中查询数据，一次查询多次调用数据库（缓存）的情况，就是所谓的N+1问题。以下方法或者策略会出现N+1问题： 使用iterate（）方法存在iterator的原因是，有可能会在一个session中查询两次数据，如果使用list每一次都会把所有的对象查">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hibernate系统化学习之缓存">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="N+1问题所谓N+1问题，使用hibernate查询数据，首先返回数据的id信息，并没有返回所有的对象信息，只有在真正使用的时候，在使用这个id对数据库中查询数据，一次查询多次调用数据库（缓存）的情况，就是所谓的N+1问题。以下方法或者策略会出现N+1问题： 使用iterate（）方法存在iterator的原因是，有可能会在一个session中查询两次数据，如果使用list每一次都会把所有的对象查">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-04T10:40:16.000Z">
+<meta property="article:modified_time" content="2021-02-04T10:43:11.756Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Hibernate">
+<meta property="article:tag" content="缓存">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Hibernate系统化学习之缓存 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">26</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hibernate系统化学习之缓存
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 18:40:16 / 修改时间：18:43:11" itemprop="dateCreated datePublished" datetime="2021-02-04T18:40:16+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hibernate/" itemprop="url" rel="index"><span itemprop="name">Hibernate</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">开源框架</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="N-1问题"><a href="#N-1问题" class="headerlink" title="N+1问题"></a>N+1问题</h2><p>所谓N+1问题，使用hibernate查询数据，首先返回数据的id信息，并没有返回所有的对象信息，只有在真正使用的时候，在使用这个id对数据库中查询数据，一次查询多次调用数据库（缓存）的情况，就是所谓的N+1问题。以下方法或者策略会出现N+1问题：</p>
+<h3 id="使用iterate（）方法"><a href="#使用iterate（）方法" class="headerlink" title="使用iterate（）方法"></a>使用iterate（）方法</h3><p>存在iterator的原因是，有可能会在一个session中查询两次数据，如果使用list每一次都会把所有的对象查询上来，如果使用iterator仅仅只会查询id，此时所有的对象已经存储在一级缓存(session的缓存)中，可以直接获取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Return the query results as an &lt;tt&gt;Iterator&lt;/tt&gt;. If the query</span></span><br><span class="line"><span class="comment">* contains multiple results per row, the results are returned in</span></span><br><span class="line"><span class="comment">* an instance of &lt;tt&gt;Object[]&lt;/tt&gt;.&lt;br&gt;</span></span><br><span class="line"><span class="comment">* &lt;br&gt;</span></span><br><span class="line"><span class="comment">* Entities returned as results are initialized on demand. The first</span></span><br><span class="line"><span class="comment">* SQL query returns identifiers only.&lt;br&gt;</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the result iterator</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function">Iterator&lt;R&gt; <span class="title">iterate</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="使用查询缓存策略"><a href="#使用查询缓存策略" class="headerlink" title="使用查询缓存策略"></a>使用查询缓存策略</h3><h2 id="一级缓存，session级别缓存"><a href="#一级缓存，session级别缓存" class="headerlink" title="一级缓存，session级别缓存"></a>一级缓存，session级别缓存</h2><p>首次查询数据，会查询数据库返回数据，并且保存到缓存中；再次查询该数据时，直接从缓存中获取（同一个session）。<br>由于一级缓存是session级别的缓存，只有在同一个session中才能起到再次查询从缓存中获取数据。<br>比如：list()放入缓存，load查询从缓存中获取数据。<br>由于Session对象的生命周期通常对应一个数据库事务或者一个应用事务，因此它的缓存是事务范围的缓存。<br>Session级缓存是必需的，不允许而且事实上也无法卸除。在Session级缓存中，持久化类的每个实例都具有唯一的ID<br><strong>调用session的方法会加入一级缓存：save()、update()、savaeOrUpdate()、get()或load()；调用查询接口的list()、iterate()或filter()方法</strong></p>
+<h2 id="二级缓存（sessionFactory级别）"><a href="#二级缓存（sessionFactory级别）" class="headerlink" title="二级缓存（sessionFactory级别）"></a>二级缓存（sessionFactory级别）</h2><h3 id="下载ehcache相关包"><a href="#下载ehcache相关包" class="headerlink" title="下载ehcache相关包"></a>下载ehcache相关包</h3><h3 id="在hibernate-cfg-xml配置文件中配置我们二级缓存的一些属性"><a href="#在hibernate-cfg-xml配置文件中配置我们二级缓存的一些属性" class="headerlink" title="在hibernate.cfg.xml配置文件中配置我们二级缓存的一些属性"></a>在hibernate.cfg.xml配置文件中配置我们二级缓存的一些属性</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 开启二级缓存 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;hibernate.cache.use_second_level_cache&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 二级缓存的提供类 在hibernate4.0版本以后我们都是配置这个属性来指定二级缓存的提供类--&gt;</span></span><br><span class="line">&lt;property name=&quot;hibernate.cache.region.factory_class&quot;org.hibernate.cache.ehcache.EhCacheRegionFactory&lt;/property&gt;</span><br><span class="line"><span class="comment">&lt;!-- 4.0之前版本的配置  &lt;property name=&quot;hibernate.cache.provider_class&quot;&gt;net.sf.ehcache.hibernate.EhCacheProvider&lt;/property&gt; --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 二级缓存配置文件的位置 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;hibernate.cache.provider_configuration_file_resource_path&quot;</span>&gt;</span>ehcache.xml<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置ehcache-xml"><a href="#配置ehcache-xml" class="headerlink" title="配置ehcache.xml"></a>配置ehcache.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ehcache</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- Sets the path to the directory where cache .data files are created.</span></span><br><span class="line"><span class="comment">If the path is a Java System Property it is replaced by</span></span><br><span class="line"><span class="comment">         its value in the running VM.</span></span><br><span class="line"><span class="comment">The following properties are translated:</span></span><br><span class="line"><span class="comment">         user.home - User&#x27;s home directory</span></span><br><span class="line"><span class="comment">         user.dir - User&#x27;s current working directory</span></span><br><span class="line"><span class="comment">         java.io.tmpdir - Default temp file path --&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">&lt;!--指定二级缓存存放在磁盘上的位置--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">&quot;user.dir&quot;</span>/&gt;</span></span><br><span class="line"><span class="comment">&lt;!--我们可以给每个实体类指定一个对应的缓存，如果没有匹配到该类，则使用这个默认的缓存配置--&gt;</span></span><br><span class="line">    &lt;defaultCache</span><br><span class="line">        maxElementsInMemory=&quot;10000&quot;　　//在内存中存放的最大对象数</span><br><span class="line">        eternal=&quot;false&quot;　　　　　　　　　//是否永久保存缓存，设置成false</span><br><span class="line">        timeToIdleSeconds=&quot;120&quot;</span><br><span class="line">        timeToLiveSeconds=&quot;120&quot;</span><br><span class="line">        overflowToDisk=&quot;true&quot;　　　　　//如果对象数量超过内存中最大的数，是否将其保存到磁盘中，设置成true</span><br><span class="line">        /&gt;</span><br><span class="line"> </span><br><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">1、timeToLiveSeconds的定义是：以创建时间为基准开始计算的超时时长；</span></span><br><span class="line"><span class="comment">2、timeToIdleSeconds的定义是：在创建时间和最近访问时间中取出离现在最近的时间作为基准计算的超时时长；</span></span><br><span class="line"><span class="comment">3、如果仅设置了timeToLiveSeconds，则该对象的超时时间=创建时间+timeToLiveSeconds，假设为A；</span></span><br><span class="line"><span class="comment">4、如果没设置timeToLiveSeconds，则该对象的超时时间=max(创建时间，最近访问时间)+timeToIdleSeconds，假设为B；</span></span><br><span class="line"><span class="comment">5、如果两者都设置了，则取出A、B最少的值，即min(A,B)，表示只要有一个超时成立即算超时。</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--可以给每个实体类指定一个配置文件，通过name属性指定，要使用类的全名--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">&quot;com.sunld.bean.User&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">maxElementsInMemory</span>=<span class="string">&quot;10000&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">eternal</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;300&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;600&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">overflowToDisk</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">&quot;sampleCache2&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">maxElementsInMemory</span>=<span class="string">&quot;1000&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">eternal</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">overflowToDisk</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">        /&gt;</span> --&gt;</span><br><span class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="开启缓存"><a href="#开启缓存" class="headerlink" title="开启缓存"></a>开启缓存</h3><ul>
+<li>①如果使用xml配置，我们需要在 *.hbm.xml 中加上一下配置<br><code>&lt;cache usage=&quot;read-only&quot;/&gt; </code><br>②如果使用annotation配置，我们需要在类上加上这样一个注解<br><code>@Cache(usage=CacheConcurrencyStrategy.READ_ONLY)</code></li>
+</ul>
+<h3 id="缓存策略"><a href="#缓存策略" class="headerlink" title="缓存策略"></a>缓存策略</h3><p>read-only、nonstrict-read-write、read-write、transactional</p>
+<h3 id="二级缓存触发的方法"><a href="#二级缓存触发的方法" class="headerlink" title="二级缓存触发的方法"></a>二级缓存触发的方法</h3><p>save、update、saveOrupdate、load、get、list、query、Criteria方法都会填充二级缓存<br>get、load、iterate会从二级缓存中取数据<br>session.save(user)<br>如果user主键使用“native”生成，则不放入二级缓存</p>
+<h3 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h3><ol>
+<li>条件查询的时候，总是发出一条<code>select * from table_name where</code> …. （选择所有字段）这样的SQL语句查询数据库，一次获得所有的数据对象。</li>
+<li>把获得的所有数据对象根据ID放入到第二级缓存中。</li>
+<li>当Hibernate根据ID访问数据对象的时候，首先从Session一级缓存中查；查不到，如果配置了二级缓存，那么从二级缓存中查；查不到，再查询数据库，把结果按照ID放入到缓存。</li>
+<li>删除、更新、增加数据的时候，同时更新缓存。</li>
+</ol>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>二级缓存缓存的仅仅是对象，如果查询出来的是对象的一些属性，则不会被加到缓存中去<br>Hibernate的二级缓存策略，是针对于ID查询的缓存策略，对于条件查询则毫无作用。为此，Hibernate提供了针对条件查询的查询缓存（Query Cache）。</p>
+<h3 id="解决N-1问题"><a href="#解决N-1问题" class="headerlink" title="解决N+1问题"></a>解决N+1问题</h3><p>当我们如果需要查询出两次对象的时候，可以使用二级缓存来解决N+1的问题<br>先list在iterator</p>
+<h2 id="查询缓存（sessionFactory级别）"><a href="#查询缓存（sessionFactory级别）" class="headerlink" title="查询缓存（sessionFactory级别）"></a>查询缓存（sessionFactory级别）</h2><h3 id="开启缓存-1"><a href="#开启缓存-1" class="headerlink" title="开启缓存"></a>开启缓存</h3><p>hibernate.cfg.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 开启查询缓存 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;hibernate.cache.use_query_cache&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="查询中需要调用方法"><a href="#查询中需要调用方法" class="headerlink" title="查询中需要调用方法"></a>查询中需要调用方法</h3><p>.setCacheable(true) //开启查询缓存，查询缓存也是SessionFactory级别的缓存<br>如果使用注解方式，需要在类上加入在类上加注解：@Cacheable</p>
+<h3 id="其他-1"><a href="#其他-1" class="headerlink" title="其他"></a>其他</h3><ol>
+<li>只有当 HQL 查询语句完全相同时，连参数设置都要相同，此时查询缓存才有效</li>
+<li>查询缓存也能引起 N+1 的问题，需要开启二级缓存。</li>
+<li>查询普通属性，会先到查询缓存中取，如果没有，则查询数据库；</li>
+<li>查询实体，会先到查询缓存中取id，如果有，则根据id到缓存(一级/二级)中取实体，如果缓存中取不到实体，再查询数据库。</li>
+</ol>
+<h2 id="FlushMode与session-flush"><a href="#FlushMode与session-flush" class="headerlink" title="FlushMode与session.flush()"></a>FlushMode与session.flush()</h2><p>在Hibernate中，使用session来操作数据库，session中的存在缓存（一级缓存），当调用session.save或者session.update()等方法的时候，hibernate并不一定会将修改同步到数据库（要看具体的FlushMode），而是先将这些数据存储在session的缓存中，由hibernate自己决定何时同步刷新到数据中。正是由于hibernate的这种缓存机制，<strong>在同一个session中多次修改一个记录</strong>，最终只会向数据库发出一条update语句。由于session缓存以及脏数据检查机制，能够帮助我们尽可能少地发出SQL语句。</p>
+<p>hibernate提供了FlushMode接口，能够让我们干预hibernate将脏数据同步到数据库的时机。Session.flush()会触发hibernate将数据同步到数据库。可以通过session.setFlushMode()来修改刷新模式。FlushMode提供了4种缓存模式：MANUAL、COMMIT、AUTO和ALWAYS。源码如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Enumeration extending javax.persistence flush modes.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Carlos Gonz lez-Cadenas</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">FlushModeType</span> </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Corresponds to &#123;<span class="doctag">@link</span> org.hibernate.FlushMode#ALWAYS&#125;.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	ALWAYS,</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Corresponds to  &#123;<span class="doctag">@link</span> org.hibernate.FlushMode#AUTO&#125;.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	AUTO,</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Corresponds to  &#123;<span class="doctag">@link</span> org.hibernate.FlushMode#COMMIT&#125;.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	COMMIT,</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Corresponds to  &#123;<span class="doctag">@link</span> org.hibernate.FlushMode#NEVER&#125;.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@deprecated</span> use MANUAL, will be removed in a subsequent release</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Deprecated</span></span><br><span class="line">	NEVER,</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Corresponds to  &#123;<span class="doctag">@link</span> org.hibernate.FlushMode#MANUAL&#125;.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	MANUAL,</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Current flush mode of the persistence context at the time the query is executed.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	PERSISTENCE_CONTEXT</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="MANUAL"><a href="#MANUAL" class="headerlink" title="MANUAL"></a>MANUAL</h3><p>我们必须在代码中**手动调用session.flush()**，hibernate才会将脏数据同步到数据库。如果我们忘记了手动刷新，那么就算是通过session.getTransaction().commit()提交了事务，也不能将修改同步到数据库。</p>
+<h3 id="COMMIT"><a href="#COMMIT" class="headerlink" title="COMMIT"></a>COMMIT</h3><p>当数据库事务提交的时候会刷新缓存，当然手动调用flush()肯定也是可以的，不过没有必要罢了。</p>
+<h3 id="AUTO（默认）"><a href="#AUTO（默认）" class="headerlink" title="AUTO（默认）"></a>AUTO（默认）</h3><p>事务提交或者手动刷新，都能将脏数据同步到数据库。除此之外，某些查询出现的时候也会导致缓存刷新。</p>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ol>
+<li>you don’t control when Hibernate will decide to execute UPDATE/INSERT/DELETE.</li>
+<li>potential performance issues because every object modification may lead to dirty checking + DML statement execution.</li>
+<li>you are not taking advantage of batching and other optimizations that Hibernate can perform when it is not trying to avoid ‘stale’ state</li>
+</ol>
+<h3 id="ALWAYS"><a href="#ALWAYS" class="headerlink" title="ALWAYS"></a>ALWAYS</h3><p>只要有查询出现，或者事务提交，或者手动刷新，都会导致缓存刷新。这个策略性能比较差，实际中不会使用。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>默认hibernate不会开启查询缓存，这是因为查询缓存只有在hql/hql语句语义完全一致的时候，才能命中。而实际查询场景下，查询条件、分页、排序等构成的复杂查询sql语句很难完全一致。可能是hibernate觉得命中率低，所以默认关闭了查询缓存。我们可以根据实际使用情况，决定是否开启查询缓存，唯一的原则就是命中率要尽可能的高。如果针对A表的查询，查询sql语句基本都是完全一致的情况，就可以针对A使用查询缓存；如果B表的查询条件经常变化，很难命中，那么就不要对B表使用查询缓存。这可能就是hibernate使用查询缓存的时候，既要在hibernate.cfg.xml中进行配置，也需要query.setCacheable(true)的原因。查询缓存只对list有用，对iterate方式无用。iterate不会读也不会写查询缓存，list会读也会写查询缓存。查询缓存中的key是sql语句（这些sql语句会被hibernate解析，保证语义相同的sql，能够命中查询缓存），缓存的value是记录的主键值。</p>
+<p>通过开启查询缓存和二级缓存，相同的sql查询可以直接使用查询缓存中的id和二级缓存中的实体对象，可以有效的降低反复的数据库查询，可以提高查询效率。也就是说：同一时候开启查询缓存和二级缓存是有意义的。也是实际使用hibernate的最佳配置。进一步的。我们也能够看出list和iterate方法的差别。list()会将实体对象的id放入查询缓存，将实体对象本身放入二级缓存。iterate不会将实体对象的id放入查询缓存。可是会将实体对象本身存入二级缓存。假设第二次查询可以命中的情况下：list全然不须要查询数据库，可以先从查询缓存中获取到id。再从二级缓存中获取实体对象。iterate一定会发出一条查id的sql，然后去二级缓存中获取实体对象。</p>
+<h2 id="缓存策略提供商"><a href="#缓存策略提供商" class="headerlink" title="缓存策略提供商"></a>缓存策略提供商</h2><p>org.hibernate.cache.HashtableCacheProvider(内存)<br>org.hibernate.cache.EhCacheProvider(内存，硬盘)<br>org.hibernate.cache.OSCacheProvider(内存，硬盘)<br>org.hibernate.cache.SwarmCacheProvider(能用于集群环境)<br>org.hibernate.cache.TreeCacheProvider(能用于集群环境)<br>org.hibernate.cache.jbc.JBossCacheRegionFactory(能用于集群环境)</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/Hibernate/" rel="tag"><i class="fa fa-tag"></i> Hibernate</a>
+              <a href="/tags/%E7%BC%93%E5%AD%98/" rel="tag"><i class="fa fa-tag"></i> 缓存</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/" rel="prev" title="Hibernate系统化学习之对象状态">
+      <i class="fa fa-chevron-left"></i> Hibernate系统化学习之对象状态
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/" rel="next" title="Hibernate系统化学习之常用方法">
+      Hibernate系统化学习之常用方法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#N-1%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">N+1问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8iterate%EF%BC%88%EF%BC%89%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">使用iterate（）方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%9F%A5%E8%AF%A2%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5"><span class="nav-number">1.2.</span> <span class="nav-text">使用查询缓存策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%8Csession%E7%BA%A7%E5%88%AB%E7%BC%93%E5%AD%98"><span class="nav-number">2.</span> <span class="nav-text">一级缓存，session级别缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%88sessionFactory%E7%BA%A7%E5%88%AB%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">二级缓存（sessionFactory级别）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BDehcache%E7%9B%B8%E5%85%B3%E5%8C%85"><span class="nav-number">3.1.</span> <span class="nav-text">下载ehcache相关包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8hibernate-cfg-xml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%AD%E9%85%8D%E7%BD%AE%E6%88%91%E4%BB%AC%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B1%9E%E6%80%A7"><span class="nav-number">3.2.</span> <span class="nav-text">在hibernate.cfg.xml配置文件中配置我们二级缓存的一些属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEehcache-xml"><span class="nav-number">3.3.</span> <span class="nav-text">配置ehcache.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E7%BC%93%E5%AD%98"><span class="nav-number">3.4.</span> <span class="nav-text">开启缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5"><span class="nav-number">3.5.</span> <span class="nav-text">缓存策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98%E8%A7%A6%E5%8F%91%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">3.6.</span> <span class="nav-text">二级缓存触发的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">3.7.</span> <span class="nav-text">执行顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">3.8.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3N-1%E9%97%AE%E9%A2%98"><span class="nav-number">3.9.</span> <span class="nav-text">解决N+1问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%BC%93%E5%AD%98%EF%BC%88sessionFactory%E7%BA%A7%E5%88%AB%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">查询缓存（sessionFactory级别）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E7%BC%93%E5%AD%98-1"><span class="nav-number">4.1.</span> <span class="nav-text">开启缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E4%B8%AD%E9%9C%80%E8%A6%81%E8%B0%83%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">查询中需要调用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96-1"><span class="nav-number">4.3.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FlushMode%E4%B8%8Esession-flush"><span class="nav-number">5.</span> <span class="nav-text">FlushMode与session.flush()</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MANUAL"><span class="nav-number">5.1.</span> <span class="nav-text">MANUAL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#COMMIT"><span class="nav-number">5.2.</span> <span class="nav-text">COMMIT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AUTO%EF%BC%88%E9%BB%98%E8%AE%A4%EF%BC%89"><span class="nav-number">5.3.</span> <span class="nav-text">AUTO（默认）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">5.3.1.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ALWAYS"><span class="nav-number">5.4.</span> <span class="nav-text">ALWAYS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%E6%8F%90%E4%BE%9B%E5%95%86"><span class="nav-number">7.</span> <span class="nav-text">缓存策略提供商</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">131k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:59</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : 'ab838a65cd276d3dfad88146f71bf865',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

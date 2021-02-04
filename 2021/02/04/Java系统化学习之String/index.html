@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="String介绍API描述 在java.lang.String的源码中明确说明，String类表示字符串，Java中所有的字符串传字面值（如：”abc”）都是该类的实例；并且字符串是常量，一旦创建之后则不可以改变，String buffers支持可变的字符串。因为String对象是不可变的，但是可以共享。  123456789101112 * The &amp;#123;@code String&amp;#125">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java系统化学习之String">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="String介绍API描述 在java.lang.String的源码中明确说明，String类表示字符串，Java中所有的字符串传字面值（如：”abc”）都是该类的实例；并且字符串是常量，一旦创建之后则不可以改变，String buffers支持可变的字符串。因为String对象是不可变的，但是可以共享。  123456789101112 * The &amp;#123;@code String&amp;#125">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/1587630935534.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/1587636643511.png">
+<meta property="article:published_time" content="2021-02-04T11:00:22.000Z">
+<meta property="article:modified_time" content="2021-02-04T11:05:47.575Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="String">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/1587630935534.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java系统化学习之String | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">26</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java系统化学习之String
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 19:00:22 / 修改时间：19:05:47" itemprop="dateCreated datePublished" datetime="2021-02-04T19:00:22+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>23k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>21 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="String介绍"><a href="#String介绍" class="headerlink" title="String介绍"></a>String介绍</h2><h3 id="API描述"><a href="#API描述" class="headerlink" title="API描述"></a>API描述</h3><blockquote>
+<p>在<code>java.lang.String</code>的源码中明确说明，<code>String</code>类表示字符串，Java中所有的字符串传字面值（如：”abc”）都是该类的实例；并且字符串是常量，一旦创建之后则不可以改变，String buffers支持可变的字符串。因为<code>String</code>对象是不可变的，但是可以共享。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> * The &#123;<span class="meta">@code</span> String&#125; <span class="class"><span class="keyword">class</span> <span class="title">represents</span> <span class="title">character</span> <span class="title">strings</span>. <span class="title">All</span></span></span><br><span class="line"><span class="class"> * <span class="title">string</span> <span class="title">literals</span> <span class="title">in</span> <span class="title">Java</span> <span class="title">programs</span>, <span class="title">such</span> <span class="title">as</span> </span>&#123;<span class="meta">@code</span> <span class="string">&quot;abc&quot;</span>&#125;, are</span><br><span class="line"> * implemented as instances of <span class="keyword">this</span> class.</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * Strings are constant; their values cannot be changed after they</span><br><span class="line"> * are created. String buffers support mutable strings.</span><br><span class="line"> * Because String objects are immutable they can be shared.</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>,</span></span><br><span class="line"><span class="class">    <span class="title">Comparable</span>&lt;<span class="title">String</span>&gt;, <span class="title">CharSequence</span> </span>&#123;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>通过API定义总结以下信息：</p>
+<ol>
+<li>使用final修饰，则不能被继承（该类中的成员方法默认都是final）</li>
+<li>实现接口<code>Serializable</code>，说明可以进行序列化</li>
+<li>实现接口<code>Comparable</code>,说明可以大小比较</li>
+<li>实现接口<code>CharSequence</code>,说明String本身就是char类型的数组，而且通过成员变量定义可以进行佐证</li>
+<li>通过char字符数组实现<a id="more"></a>
+
+</li>
+</ol>
+<h2 id="如何创建字符串"><a href="#如何创建字符串" class="headerlink" title="如何创建字符串"></a>如何创建字符串</h2><h3 id="直接赋值"><a href="#直接赋值" class="headerlink" title="直接赋值"></a>直接赋值</h3><p>直接赋值方式创建对象是在<font color="red">方法区的常量池。</font><br><code>String str = &quot;abc&quot;;</code></p>
+<h3 id="使用new"><a href="#使用new" class="headerlink" title="使用new"></a>使用new</h3><p>通过构造方法创建字符串对象是在<font color="red">堆内存.  </font><br><code>String str = new String(&quot;abc&quot;);</code>  </p>
+<h3 id="字符串拼接"><a href="#字符串拼接" class="headerlink" title="字符串拼接"></a>字符串拼接</h3><p><code>String str = &quot;abc&quot; + &quot;bdc&quot;;</code></p>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><h4 id="参考代码"><a href="#参考代码" class="headerlink" title="参考代码"></a>参考代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.string;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		String str1 = <span class="string">&quot;sunld&quot;</span>;</span><br><span class="line">        String str2 = <span class="keyword">new</span> String(<span class="string">&quot;sunld&quot;</span>);</span><br><span class="line">        <span class="comment">//引用传递，str3直接指向st2的堆内存地址</span></span><br><span class="line">        String str3 = str2; </span><br><span class="line">        String str4 = <span class="string">&quot;sunld&quot;</span>;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         *  ==:</span></span><br><span class="line"><span class="comment">         * 1. 基本数据类型：比较的是基本数据类型的值是否相同</span></span><br><span class="line"><span class="comment">         * 2. 引用数据类型：比较的是引用数据类型的地址值是否相同</span></span><br><span class="line"><span class="comment">         * 3. 所以在这里的话：String类对象==比较，比较的是地址，而不是内容</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">         System.out.println(str1==str2);<span class="comment">//false</span></span><br><span class="line">         System.out.println(str1==str3);<span class="comment">//false</span></span><br><span class="line">         System.out.println(str3==str2);<span class="comment">//true</span></span><br><span class="line">         System.out.println(str1==str4);<span class="comment">//true</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h4><div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/1587630935534.png" class title="内存分配">
+
+</div>
+
+<blockquote>
+<p>特殊说明</p>
+<blockquote>
+<ol>
+<li>在使用new创建对象时，首先会在堆中的对象区域创建一个区域分配空间和完成初始化  </li>
+<li>在使用字符串时，首先会判断字符串常量池中是否存在，否则则创建，然后堆对象会指向该字符串  </li>
+<li>直接赋值：只开辟一块堆内存空间，并且会自动入池，不会产生垃圾。  </li>
+<li>构造方法:会开辟两块堆内存空间，其中一块堆内存会变成垃圾被系统回收，而且不能够自动入池，需要通过public  String intern();方法进行手工入池。  </li>
+<li>String类对象一旦声明则不可以改变；而改变的只是地址，原来的字符串还是存在的，并且产生垃圾  </li>
+<li>当使用字符串拼接生成字符串时，如果在编译器就可以确定字符串，则使用==判断时则返回true  </li>
+</ol>
+</blockquote>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestString</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">    <span class="comment">//对匿名对象&quot;hello&quot;进行手工入池操作</span></span><br><span class="line">     String str =<span class="keyword">new</span> String(<span class="string">&quot;sunld&quot;</span>).intern();</span><br><span class="line">     String str1=<span class="string">&quot;sunld&quot;</span>;</span><br><span class="line">     System.out.println(str==str1);<span class="comment">//true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* String 使用final 修饰的字符数组进行存储，</span></span><br><span class="line"><span class="comment">* 并且字符串的长度和是否为空都是通过该数组的长度判断</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Cache the hash code for the string */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> hash; <span class="comment">// Default to 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/** use serialVersionUID from JDK 1.0.2 for interoperability */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = -<span class="number">6849794470754667710L</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Class String is special cased within the Serialization Stream Protocol.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* A String instance is written into an ObjectOutputStream according to</span></span><br><span class="line"><span class="comment">* &lt;a href=&quot;&#123;<span class="doctag">@docRoot</span>&#125;/../platform/serialization/spec/output.html&quot;&gt;</span></span><br><span class="line"><span class="comment">* Object Serialization Specification, Section 6.2, &quot;Stream Elements&quot;&lt;/a&gt;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ObjectStreamField[] serialPersistentFields = <span class="keyword">new</span> ObjectStreamField[<span class="number">0</span>];</span><br></pre></td></tr></table></figure>
+<h4 id="字符串长度"><a href="#字符串长度" class="headerlink" title="字符串长度"></a>字符串长度</h4><p>String内部是以char数组的形式存储，数组的长度是int类型，那么String允许的最大长度就是Integer.MAX_VALUE了。又由于java中的字符是以16位存储的，因此大概需要4GB的内存才能存储最大长度的字符串。不过这仅仅是对字符串变量而言，如果是字符串字面量(string literals)，如“abc”、”1a2b”之类写在代码中的字符串literals，那么允许的最大长度取决于字符串在常量池中的存储大小，也就是字符串在class格式文件中的存储格式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_Utf8_info &#123;</span><br><span class="line">        u1 tag;</span><br><span class="line">        u2 length;</span><br><span class="line">        u1 bytes[length];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>u2是无符号的16位整数，因此理论上允许的string literal的最大长度是2^16-1=65535。然而实际测试表明，允许的最大长度仅为65534，超过就编译错误了，有兴趣可以写段代码试试，估计是length还不能为0。</p>
+<h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#bbb;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#594F4F;background-color:#E0FFEB;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#493F3F;background-color:#9DE0AD;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-0lax">Constructor</th>
+    <th class="tg-0lax"><span style="font-weight:400;font-style:normal">Description</span><br></th>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String()</td>
+    <td class="tg-0lax">初始化新创建的 String对象，使其表示空字符序列。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(byte[] bytes)</td>
+    <td class="tg-0lax">通过使用平台的默认字符集解码指定的字节数组来构造新的 String 。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(byte[] bytes, Charset charset)</td>
+    <td class="tg-0lax">构造一个新的String由指定用指定的字节的数组解码charset 。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(byte[] bytes, int offset, int length)</td>
+    <td class="tg-0lax">通过使用平台的默认字符集解码指定的字节子阵列来构造新的 String 。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(byte[] bytes, int offset, int length, Charset charset)</td>
+    <td class="tg-0lax">构造一个新的String通过使用指定的指定字节子阵列解码charset 。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(byte[] bytes, int offset, int length, String charsetName)</td>
+    <td class="tg-0lax">构造一个新的 String通过使用指定的字符集解码指定的字节子阵列。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(byte[] bytes, String charsetName)</td>
+    <td class="tg-0lax">构造一个新的String由指定用指定的字节的数组解码charset 。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(char[] value)</td>
+    <td class="tg-0lax">分配一个新的 String ，以便它表示当前包含在字符数组参数中的字符序列。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(char[] value, int offset, int count)</td>
+    <td class="tg-0lax">分配一个新的 String ，其中包含字符数组参数的子阵列中的字符。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(int[] codePoints, int offset, int count)</td>
+    <td class="tg-0lax">分配一个新的 String ，其中包含 Unicode code point数组参数的子阵列中的 字符 。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(String original)</td>
+    <td class="tg-0lax">初始化新创建的String对象，使其表示与参数相同的字符序列<br>
+    换句话说，新创建的字符串是参数字符串的副本。
+    </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(StringBuffer buffer)</td>
+    <td class="tg-0lax">分配一个新的字符串，其中包含当前包含在字符串缓冲区参数中的字符序列。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">String(StringBuilder builder)</td>
+    <td class="tg-0lax">分配一个新的字符串，其中包含当前包含在字符串构建器参数中的字符序列。</td>
+  </tr>
+</table>
+
+<h3 id="判断功能"><a href="#判断功能" class="headerlink" title="判断功能"></a>判断功能</h3><h4 id="equals"><a href="#equals" class="headerlink" title="equals"></a>equals</h4><p>比较字符串内容是否相同。重写Object类中的<code>equals</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Compares this string to the specified object.  The result is &#123;<span class="doctag">@code</span></span></span><br><span class="line"><span class="comment">    * true&#125; if and only if the argument is not &#123;<span class="doctag">@code</span> null&#125; and is a &#123;<span class="doctag">@code</span></span></span><br><span class="line"><span class="comment">    * String&#125; object that represents the same sequence of characters as this</span></span><br><span class="line"><span class="comment">    * object.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>  anObject</span></span><br><span class="line"><span class="comment">    *         The object to compare this &#123;<span class="doctag">@code</span> String&#125; against</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  &#123;<span class="doctag">@code</span> true&#125; if the given object represents a &#123;<span class="doctag">@code</span> String&#125;</span></span><br><span class="line"><span class="comment">    *          equivalent to this string, &#123;<span class="doctag">@code</span> false&#125; otherwise</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@see</span>  #compareTo(String)</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@see</span>  #equalsIgnoreCase(String)</span></span><br><span class="line"><span class="comment">    * 判断对象存储内容是否相同</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object anObject)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> == anObject) &#123;<span class="comment">// 首先判断是否属于同一对象</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (anObject <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">        <span class="comment">// 类型String----长度---数组中的字符</span></span><br><span class="line">        String anotherString = (String)anObject;</span><br><span class="line">        <span class="keyword">int</span> n = value.length;</span><br><span class="line">        <span class="keyword">if</span> (n == anotherString.value.length) &#123;</span><br><span class="line">            <span class="keyword">char</span> v1[] = value;</span><br><span class="line">            <span class="keyword">char</span> v2[] = anotherString.value;</span><br><span class="line">            <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (n-- != <span class="number">0</span>) &#123;<span class="comment">// 循环判断不等</span></span><br><span class="line">                <span class="keyword">if</span> (v1[i] != v2[i])</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                i++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="equalsIgnoreCase"><a href="#equalsIgnoreCase" class="headerlink" title="equalsIgnoreCase"></a>equalsIgnoreCase</h4><p>比较字符串的内容是否相同,忽略大小写。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Compares this &#123;<span class="doctag">@code</span> String&#125; to another &#123;<span class="doctag">@code</span> String&#125;, ignoring case</span></span><br><span class="line"><span class="comment">    * considerations.  Two strings are considered equal ignoring case if they</span></span><br><span class="line"><span class="comment">    * are of the same length and corresponding characters in the two strings</span></span><br><span class="line"><span class="comment">    * are equal ignoring case.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * &lt;p&gt; Two characters &#123;<span class="doctag">@code</span> c1&#125; and &#123;<span class="doctag">@code</span> c2&#125; are considered the same</span></span><br><span class="line"><span class="comment">    * ignoring case if at least one of the following is true:</span></span><br><span class="line"><span class="comment">    * &lt;ul&gt;</span></span><br><span class="line"><span class="comment">    *   &lt;li&gt; The two characters are the same (as compared by the</span></span><br><span class="line"><span class="comment">    *        &#123;<span class="doctag">@code</span> ==&#125; operator)</span></span><br><span class="line"><span class="comment">    *   &lt;li&gt; Applying the method &#123;<span class="doctag">@link</span></span></span><br><span class="line"><span class="comment">    *        java.lang.Character#toUpperCase(char)&#125; to each character</span></span><br><span class="line"><span class="comment">    *        produces the same result</span></span><br><span class="line"><span class="comment">    *   &lt;li&gt; Applying the method &#123;<span class="doctag">@link</span></span></span><br><span class="line"><span class="comment">    *        java.lang.Character#toLowerCase(char)&#125; to each character</span></span><br><span class="line"><span class="comment">    *        produces the same result</span></span><br><span class="line"><span class="comment">    * &lt;/ul&gt;</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>  anotherString</span></span><br><span class="line"><span class="comment">    *         The &#123;<span class="doctag">@code</span> String&#125; to compare this &#123;<span class="doctag">@code</span> String&#125; against</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  &#123;<span class="doctag">@code</span> true&#125; if the argument is not &#123;<span class="doctag">@code</span> null&#125; and it</span></span><br><span class="line"><span class="comment">    *          represents an equivalent &#123;<span class="doctag">@code</span> String&#125; ignoring case; &#123;<span class="doctag">@code</span></span></span><br><span class="line"><span class="comment">    *          false&#125; otherwise</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@see</span>  #equals(Object)</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equalsIgnoreCase</span><span class="params">(String anotherString)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">this</span> == anotherString) ? <span class="keyword">true</span></span><br><span class="line">            : (anotherString != <span class="keyword">null</span>)</span><br><span class="line">            &amp;&amp; (anotherString.value.length == value.length)</span><br><span class="line">            &amp;&amp; regionMatches(<span class="keyword">true</span>, <span class="number">0</span>, anotherString, <span class="number">0</span>, value.length);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Tests if two string regions are equal.</span></span><br><span class="line"><span class="comment">    * &lt;p&gt;</span></span><br><span class="line"><span class="comment">    * A substring of this &#123;<span class="doctag">@code</span> String&#125; object is compared to a substring</span></span><br><span class="line"><span class="comment">    * of the argument &#123;<span class="doctag">@code</span> other&#125;. The result is &#123;<span class="doctag">@code</span> true&#125; if these</span></span><br><span class="line"><span class="comment">    * substrings represent character sequences that are the same, ignoring</span></span><br><span class="line"><span class="comment">    * case if and only if &#123;<span class="doctag">@code</span> ignoreCase&#125; is true. The substring of</span></span><br><span class="line"><span class="comment">    * this &#123;<span class="doctag">@code</span> String&#125; object to be compared begins at index</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> toffset&#125; and has length &#123;<span class="doctag">@code</span> len&#125;. The substring of</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> other&#125; to be compared begins at index &#123;<span class="doctag">@code</span> ooffset&#125; and</span></span><br><span class="line"><span class="comment">    * has length &#123;<span class="doctag">@code</span> len&#125;. The result is &#123;<span class="doctag">@code</span> false&#125; if and only if</span></span><br><span class="line"><span class="comment">    * at least one of the following is true:</span></span><br><span class="line"><span class="comment">    * &lt;ul&gt;&lt;li&gt;&#123;<span class="doctag">@code</span> toffset&#125; is negative.</span></span><br><span class="line"><span class="comment">    * &lt;li&gt;&#123;<span class="doctag">@code</span> ooffset&#125; is negative.</span></span><br><span class="line"><span class="comment">    * &lt;li&gt;&#123;<span class="doctag">@code</span> toffset+len&#125; is greater than the length of this</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> String&#125; object.</span></span><br><span class="line"><span class="comment">    * &lt;li&gt;&#123;<span class="doctag">@code</span> ooffset+len&#125; is greater than the length of the other</span></span><br><span class="line"><span class="comment">    * argument.</span></span><br><span class="line"><span class="comment">    * &lt;li&gt;&#123;<span class="doctag">@code</span> ignoreCase&#125; is &#123;<span class="doctag">@code</span> false&#125; and there is some nonnegative</span></span><br><span class="line"><span class="comment">    * integer &lt;i&gt;k&lt;/i&gt; less than &#123;<span class="doctag">@code</span> len&#125; such that:</span></span><br><span class="line"><span class="comment">    * &lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment">    * this.charAt(toffset+k) != other.charAt(ooffset+k)</span></span><br><span class="line"><span class="comment">    * &lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">    * &lt;li&gt;&#123;<span class="doctag">@code</span> ignoreCase&#125; is &#123;<span class="doctag">@code</span> true&#125; and there is some nonnegative</span></span><br><span class="line"><span class="comment">    * integer &lt;i&gt;k&lt;/i&gt; less than &#123;<span class="doctag">@code</span> len&#125; such that:</span></span><br><span class="line"><span class="comment">    * &lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment">    * Character.toLowerCase(this.charAt(toffset+k)) !=</span></span><br><span class="line"><span class="comment">    Character.toLowerCase(other.charAt(ooffset+k))</span></span><br><span class="line"><span class="comment">    * &lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">    * and:</span></span><br><span class="line"><span class="comment">    * &lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment">    * Character.toUpperCase(this.charAt(toffset+k)) !=</span></span><br><span class="line"><span class="comment">    *         Character.toUpperCase(other.charAt(ooffset+k))</span></span><br><span class="line"><span class="comment">    * &lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">    * &lt;/ul&gt;</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>   ignoreCase   if &#123;<span class="doctag">@code</span> true&#125;, ignore case when comparing</span></span><br><span class="line"><span class="comment">    *                       characters.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>   toffset      the starting offset of the subregion in this</span></span><br><span class="line"><span class="comment">    *                       string.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>   other        the string argument.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>   ooffset      the starting offset of the subregion in the string</span></span><br><span class="line"><span class="comment">    *                       argument.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>   len          the number of characters to compare.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  &#123;<span class="doctag">@code</span> true&#125; if the specified subregion of this string</span></span><br><span class="line"><span class="comment">    *          matches the specified subregion of the string argument;</span></span><br><span class="line"><span class="comment">    *          &#123;<span class="doctag">@code</span> false&#125; otherwise. Whether the matching is exact</span></span><br><span class="line"><span class="comment">    *          or case insensitive depends on the &#123;<span class="doctag">@code</span> ignoreCase&#125;</span></span><br><span class="line"><span class="comment">    *          argument.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">regionMatches</span><span class="params">(<span class="keyword">boolean</span> ignoreCase, <span class="keyword">int</span> toffset,</span></span></span><br><span class="line"><span class="function"><span class="params">        String other, <span class="keyword">int</span> ooffset, <span class="keyword">int</span> len)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> ta[] = value;</span><br><span class="line">    <span class="keyword">int</span> to = toffset;</span><br><span class="line">    <span class="keyword">char</span> pa[] = other.value;</span><br><span class="line">    <span class="keyword">int</span> po = ooffset;</span><br><span class="line">    <span class="comment">// Note: toffset, ooffset, or len might be near -1&gt;&gt;&gt;1.</span></span><br><span class="line">    <span class="keyword">if</span> ((ooffset &lt; <span class="number">0</span>) || (toffset &lt; <span class="number">0</span>)</span><br><span class="line">            || (toffset &gt; (<span class="keyword">long</span>)value.length - len)</span><br><span class="line">            || (ooffset &gt; (<span class="keyword">long</span>)other.value.length - len)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (len-- &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">char</span> c1 = ta[to++];</span><br><span class="line">        <span class="keyword">char</span> c2 = pa[po++];</span><br><span class="line">        <span class="keyword">if</span> (c1 == c2) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (ignoreCase) &#123;</span><br><span class="line">            <span class="comment">// If characters don&#x27;t match but case may be ignored,</span></span><br><span class="line">            <span class="comment">// try converting both characters to uppercase.</span></span><br><span class="line">            <span class="comment">// If the results match, then the comparison scan should</span></span><br><span class="line">            <span class="comment">// continue.</span></span><br><span class="line">            <span class="keyword">char</span> u1 = Character.toUpperCase(c1);</span><br><span class="line">            <span class="keyword">char</span> u2 = Character.toUpperCase(c2);</span><br><span class="line">            <span class="keyword">if</span> (u1 == u2) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// Unfortunately, conversion to uppercase does not work properly</span></span><br><span class="line">            <span class="comment">// for the Georgian alphabet, which has strange rules about case</span></span><br><span class="line">            <span class="comment">// conversion.  So we need to make one last check before</span></span><br><span class="line">            <span class="comment">// exiting.</span></span><br><span class="line">            <span class="keyword">if</span> (Character.toLowerCase(u1) == Character.toLowerCase(u2)) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="startsWith"><a href="#startsWith" class="headerlink" title="startsWith"></a>startsWith</h4><p>判断字符串对象是否以指定的str开头。源码中表现为按照长度截断之后进行循环比对</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Tests if the substring of this string beginning at the</span></span><br><span class="line"><span class="comment">    * specified index starts with the specified prefix.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>   prefix    the prefix.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>   toffset   where to begin looking in this string.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  &#123;<span class="doctag">@code</span> true&#125; if the character sequence represented by the</span></span><br><span class="line"><span class="comment">    *          argument is a prefix of the substring of this object starting</span></span><br><span class="line"><span class="comment">    *          at index &#123;<span class="doctag">@code</span> toffset&#125;; &#123;<span class="doctag">@code</span> false&#125; otherwise.</span></span><br><span class="line"><span class="comment">    *          The result is &#123;<span class="doctag">@code</span> false&#125; if &#123;<span class="doctag">@code</span> toffset&#125; is</span></span><br><span class="line"><span class="comment">    *          negative or greater than the length of this</span></span><br><span class="line"><span class="comment">    *          &#123;<span class="doctag">@code</span> String&#125; object; otherwise the result is the same</span></span><br><span class="line"><span class="comment">    *          as the result of the expression</span></span><br><span class="line"><span class="comment">    *          &lt;pre&gt;</span></span><br><span class="line"><span class="comment">    *          this.substring(toffset).startsWith(prefix)</span></span><br><span class="line"><span class="comment">    *          &lt;/pre&gt;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">startsWith</span><span class="params">(String prefix, <span class="keyword">int</span> toffset)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> ta[] = value;</span><br><span class="line">    <span class="keyword">int</span> to = toffset;</span><br><span class="line">    <span class="keyword">char</span> pa[] = prefix.value;</span><br><span class="line">    <span class="keyword">int</span> po = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> pc = prefix.value.length;</span><br><span class="line">    <span class="comment">// Note: toffset might be near -1&gt;&gt;&gt;1.</span></span><br><span class="line">    <span class="keyword">if</span> ((toffset &lt; <span class="number">0</span>) || (toffset &gt; value.length - pc)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (--pc &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (ta[to++] != pa[po++]) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="endsWith"><a href="#endsWith" class="headerlink" title="endsWith"></a>endsWith</h4><p>判断字符串对象是否以指定的str结尾,源码中转换成<code>startsWith</code>处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Tests if this string ends with the specified suffix.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>   suffix   the suffix.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  &#123;<span class="doctag">@code</span> true&#125; if the character sequence represented by the</span></span><br><span class="line"><span class="comment">    *          argument is a suffix of the character sequence represented by</span></span><br><span class="line"><span class="comment">    *          this object; &#123;<span class="doctag">@code</span> false&#125; otherwise. Note that the</span></span><br><span class="line"><span class="comment">    *          result will be &#123;<span class="doctag">@code</span> true&#125; if the argument is the</span></span><br><span class="line"><span class="comment">    *          empty string or is equal to this &#123;<span class="doctag">@code</span> String&#125; object</span></span><br><span class="line"><span class="comment">    *          as determined by the &#123;<span class="doctag">@link</span> #equals(Object)&#125; method.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">endsWith</span><span class="params">(String suffix)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> startsWith(suffix, value.length - suffix.value.length);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="获取功能"><a href="#获取功能" class="headerlink" title="获取功能"></a>获取功能</h3><h4 id="length"><a href="#length" class="headerlink" title="length"></a>length</h4><p>获取字符串的长度，其实也就是字符个数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Returns the length of this string.</span></span><br><span class="line"><span class="comment">    * The length is equal to the number of &lt;a href=&quot;Character.html#unicode&quot;&gt;Unicode</span></span><br><span class="line"><span class="comment">    * code units&lt;/a&gt; in the string.</span></span><br><span class="line"><span class="comment">    * 返回字符串的长度，长度等于字符串中的Unicode代码单元的数目（UTF-16的代码单元的数目）</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  the length of the sequence of characters represented by this</span></span><br><span class="line"><span class="comment">    *          object.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">length</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value.length;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="charAt"><a href="#charAt" class="headerlink" title="charAt"></a>charAt</h4><p>获取指定索引处的字符</p>
+<h4 id="indexOf"><a href="#indexOf" class="headerlink" title="indexOf"></a>indexOf</h4><p>获取str在字符串对象中第一次出现的索引</p>
+<h4 id="substring-int-start-int-end"><a href="#substring-int-start-int-end" class="headerlink" title="substring(int start,int end)"></a>substring(int start,int end)</h4><p>从start开始，到end结束截取字符串。包括start，不包括end</p>
+<h3 id="转换功能"><a href="#转换功能" class="headerlink" title="转换功能"></a>转换功能</h3><h4 id="toCharArray"><a href="#toCharArray" class="headerlink" title="toCharArray"></a>toCharArray</h4><p>把字符串转换为字符数组</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Converts this string to a new character array.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  a newly allocated character array whose length is the length</span></span><br><span class="line"><span class="comment">    *          of this string and whose contents are initialized to contain</span></span><br><span class="line"><span class="comment">    *          the character sequence represented by this string.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">char</span>[] toCharArray() &#123;</span><br><span class="line">    <span class="comment">// Cannot use Arrays.copyOf because of class initialization order issues</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">        * 1. String 和Arrays 都属于rt.jar中的类，但是BootstrapClassloader在加载这两个类的顺序是不同的。</span></span><br><span class="line"><span class="comment">        * 2. 所以当String.class被加载进内存的时候,Arrays此时没有被加载，所以直接使用肯定会抛异常。</span></span><br><span class="line"><span class="comment">        * 3. 而System.arrayCopy是使用native代码，则不会有这个问题。</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">    <span class="keyword">char</span> result[] = <span class="keyword">new</span> <span class="keyword">char</span>[value.length];</span><br><span class="line">    System.arraycopy(value, <span class="number">0</span>, result, <span class="number">0</span>, value.length);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="toLowerCase"><a href="#toLowerCase" class="headerlink" title="toLowerCase"></a>toLowerCase</h4><p>把字符串转换为小写字符串</p>
+<h4 id="toUpperCase"><a href="#toUpperCase" class="headerlink" title="toUpperCase"></a>toUpperCase</h4><p>把字符串转换为大写字符串</p>
+<h3 id="其他常用"><a href="#其他常用" class="headerlink" title="其他常用"></a>其他常用</h3><h4 id="trim"><a href="#trim" class="headerlink" title="trim"></a>trim</h4><p>去除字符串两端空格</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Returns a string whose value is this string, with any leading and trailing</span></span><br><span class="line"><span class="comment">    * whitespace removed.</span></span><br><span class="line"><span class="comment">    * &lt;p&gt;</span></span><br><span class="line"><span class="comment">    * If this &#123;<span class="doctag">@code</span> String&#125; object represents an empty character</span></span><br><span class="line"><span class="comment">    * sequence, or the first and last characters of character sequence</span></span><br><span class="line"><span class="comment">    * represented by this &#123;<span class="doctag">@code</span> String&#125; object both have codes</span></span><br><span class="line"><span class="comment">    * greater than &#123;<span class="doctag">@code</span> &#x27;\u005Cu0020&#x27;&#125; (the space character), then a</span></span><br><span class="line"><span class="comment">    * reference to this &#123;<span class="doctag">@code</span> String&#125; object is returned.</span></span><br><span class="line"><span class="comment">    * &lt;p&gt;</span></span><br><span class="line"><span class="comment">    * Otherwise, if there is no character with a code greater than</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> &#x27;\u005Cu0020&#x27;&#125; in the string, then a</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> String&#125; object representing an empty string is</span></span><br><span class="line"><span class="comment">    * returned.</span></span><br><span class="line"><span class="comment">    * &lt;p&gt;</span></span><br><span class="line"><span class="comment">    * Otherwise, let &lt;i&gt;k&lt;/i&gt; be the index of the first character in the</span></span><br><span class="line"><span class="comment">    * string whose code is greater than &#123;<span class="doctag">@code</span> &#x27;\u005Cu0020&#x27;&#125;, and let</span></span><br><span class="line"><span class="comment">    * &lt;i&gt;m&lt;/i&gt; be the index of the last character in the string whose code</span></span><br><span class="line"><span class="comment">    * is greater than &#123;<span class="doctag">@code</span> &#x27;\u005Cu0020&#x27;&#125;. A &#123;<span class="doctag">@code</span> String&#125;</span></span><br><span class="line"><span class="comment">    * object is returned, representing the substring of this string that</span></span><br><span class="line"><span class="comment">    * begins with the character at index &lt;i&gt;k&lt;/i&gt; and ends with the</span></span><br><span class="line"><span class="comment">    * character at index &lt;i&gt;m&lt;/i&gt;-that is, the result of</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> this.substring(k, m + 1)&#125;.</span></span><br><span class="line"><span class="comment">    * &lt;p&gt;</span></span><br><span class="line"><span class="comment">    * This method may be used to trim whitespace (as defined above) from</span></span><br><span class="line"><span class="comment">    * the beginning and end of a string.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  A string whose value is this string, with any leading and trailing white</span></span><br><span class="line"><span class="comment">    *          space removed, or this string if it has no leading or</span></span><br><span class="line"><span class="comment">    *          trailing white space.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">trim</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = value.length;</span><br><span class="line">    <span class="keyword">int</span> st = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">char</span>[] val = value;    <span class="comment">/* avoid getfield opcode */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ((st &lt; len) &amp;&amp; (val[st] &lt;= <span class="string">&#x27; &#x27;</span>)) &#123;</span><br><span class="line">        st++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> ((st &lt; len) &amp;&amp; (val[len - <span class="number">1</span>] &lt;= <span class="string">&#x27; &#x27;</span>)) &#123;</span><br><span class="line">        len--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ((st &gt; <span class="number">0</span>) || (len &lt; value.length)) ? substring(st, len) : <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="split"><a href="#split" class="headerlink" title="split"></a>split</h4><p>按照指定符号分割字符串</p>
+<h4 id="compareTo"><a href="#compareTo" class="headerlink" title="compareTo"></a>compareTo</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Compares two strings lexicographically.</span></span><br><span class="line"><span class="comment">    * The comparison is based on the Unicode value of each character in</span></span><br><span class="line"><span class="comment">    * the strings. The character sequence represented by this</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> String&#125; object is compared lexicographically to the</span></span><br><span class="line"><span class="comment">    * character sequence represented by the argument string. The result is</span></span><br><span class="line"><span class="comment">    * a negative integer if this &#123;<span class="doctag">@code</span> String&#125; object</span></span><br><span class="line"><span class="comment">    * lexicographically precedes the argument string. The result is a</span></span><br><span class="line"><span class="comment">    * positive integer if this &#123;<span class="doctag">@code</span> String&#125; object lexicographically</span></span><br><span class="line"><span class="comment">    * follows the argument string. The result is zero if the strings</span></span><br><span class="line"><span class="comment">    * are equal; &#123;<span class="doctag">@code</span> compareTo&#125; returns &#123;<span class="doctag">@code</span> 0&#125; exactly when</span></span><br><span class="line"><span class="comment">    * the &#123;<span class="doctag">@link</span> #equals(Object)&#125; method would return &#123;<span class="doctag">@code</span> true&#125;.</span></span><br><span class="line"><span class="comment">    * &lt;p&gt;</span></span><br><span class="line"><span class="comment">    * This is the definition of lexicographic ordering. If two strings are</span></span><br><span class="line"><span class="comment">    * different, then either they have different characters at some index</span></span><br><span class="line"><span class="comment">    * that is a valid index for both strings, or their lengths are different,</span></span><br><span class="line"><span class="comment">    * or both. If they have different characters at one or more index</span></span><br><span class="line"><span class="comment">    * positions, let &lt;i&gt;k&lt;/i&gt; be the smallest such index; then the string</span></span><br><span class="line"><span class="comment">    * whose character at position &lt;i&gt;k&lt;/i&gt; has the smaller value, as</span></span><br><span class="line"><span class="comment">    * determined by using the &amp;lt; operator, lexicographically precedes the</span></span><br><span class="line"><span class="comment">    * other string. In this case, &#123;<span class="doctag">@code</span> compareTo&#125; returns the</span></span><br><span class="line"><span class="comment">    * difference of the two character values at position &#123;<span class="doctag">@code</span> k&#125; in</span></span><br><span class="line"><span class="comment">    * the two string -- that is, the value:</span></span><br><span class="line"><span class="comment">    * &lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment">    * this.charAt(k)-anotherString.charAt(k)</span></span><br><span class="line"><span class="comment">    * &lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">    * If there is no index position at which they differ, then the shorter</span></span><br><span class="line"><span class="comment">    * string lexicographically precedes the longer string. In this case,</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> compareTo&#125; returns the difference of the lengths of the</span></span><br><span class="line"><span class="comment">    * strings -- that is, the value:</span></span><br><span class="line"><span class="comment">    * &lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment">    * this.length()-anotherString.length()</span></span><br><span class="line"><span class="comment">    * &lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>   anotherString   the &#123;<span class="doctag">@code</span> String&#125; to be compared.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  the value &#123;<span class="doctag">@code</span> 0&#125; if the argument string is equal to</span></span><br><span class="line"><span class="comment">    *          this string; a value less than &#123;<span class="doctag">@code</span> 0&#125; if this string</span></span><br><span class="line"><span class="comment">    *          is lexicographically less than the string argument; and a</span></span><br><span class="line"><span class="comment">    *          value greater than &#123;<span class="doctag">@code</span> 0&#125; if this string is</span></span><br><span class="line"><span class="comment">    *          lexicographically greater than the string argument.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 1. 比较字符串大小，因为String实现了Comparable&lt;String&gt;接口，所有重写了compareTo方法</span></span><br><span class="line"><span class="comment">    * 2. 返回int类型，正数为大，负数为小，基于字符的ASSIC码比较</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(String anotherString)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len1 = value.length;</span><br><span class="line">    <span class="keyword">int</span> len2 = anotherString.value.length;</span><br><span class="line">    <span class="keyword">int</span> lim = Math.min(len1, len2); <span class="comment">//获取长度比较小的字符串长度</span></span><br><span class="line">    <span class="keyword">char</span> v1[] = value;</span><br><span class="line">    <span class="keyword">char</span> v2[] = anotherString.value;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> k = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (k &lt; lim) &#123; <span class="comment">//当前索引小于两个字符串中长度较小的字符串长度时，循环继续</span></span><br><span class="line">        <span class="keyword">char</span> c1 = v1[k];</span><br><span class="line">        <span class="keyword">char</span> c2 = v2[k];</span><br><span class="line">        <span class="keyword">if</span> (c1 != c2) &#123;</span><br><span class="line">            <span class="keyword">return</span> c1 - c2; <span class="comment">//从前向后遍历，有一个字符不相同，返回差值</span></span><br><span class="line">        &#125;</span><br><span class="line">        k++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> len1 - len2; <span class="comment">//如果遍历结束，都相同，比较两个字符串长度</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="String的不可变性"><a href="#String的不可变性" class="headerlink" title="String的不可变性"></a>String的不可变性</h2><p>在定义String时增加了<code>final</code>标记，并且存储数据的数组也被定义为<code>final</code>，则表示String一但创建就注定不可变。<strong>对String对象的任何改变都不影响到原对象，相关的任何change操作都会生成新的对象</strong></p>
+<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>因为String太过常用，JAVA类库的设计者在实现时做了个小小的变化，即采用了享元模式,每当生成一个新内容的字符串时，他们都被添加到一个共享池中，当第二次再次生成同样内容的字符串实例时，就共享此对象，而不是创建一个新对象，但是这样的做法仅仅适合于通过=符号进行的初始化。需要说明一点的是，在object中，equals()是用来比较内存地址的，但是String重写了equals()方法，用来比较内容的，即使是不同地址，只要内容一致，也会返回true，这也就是为什么a.equals(c)返回true的原因了。</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>可以实现多个变量引用堆内存中的同一个字符串实例，避免创建的开销。</li>
+<li>安全性更高</li>
+<li>传参与基础类型一样，更加直观</li>
+</ol>
+<h2 id="字符串常量池"><a href="#字符串常量池" class="headerlink" title="字符串常量池"></a>字符串常量池</h2><p>后续会在JVM中进行详细的讲解。</p>
+<h3 id="字符串常量池概述"><a href="#字符串常量池概述" class="headerlink" title="字符串常量池概述"></a>字符串常量池概述</h3><h4 id="常量池表（Constant-Pool-table）"><a href="#常量池表（Constant-Pool-table）" class="headerlink" title="常量池表（Constant_Pool table）"></a>常量池表（Constant_Pool table）</h4><ol>
+<li>Class文件中存储所有常量（包括字符串）的table。</li>
+<li>Class文件中的内容，不是运行内容，表示Class文件中的字节码指令</li>
+</ol>
+<h4 id="运行时常量池（Runtime-Constant-Pool）"><a href="#运行时常量池（Runtime-Constant-Pool）" class="headerlink" title="运行时常量池（Runtime Constant Pool）"></a>运行时常量池（Runtime Constant Pool）</h4><ol>
+<li>JVM内存中方法区的一部分，这是运行时的内容</li>
+<li>这部分内容（绝大部分）是随着JVM运行时候，从常量池转化而来，每个Class对应一个运行时常量池</li>
+<li>除了 Class中常量池内容，还可能包括动态生成并加入这里的内容</li>
+</ol>
+<h4 id="字符串常量池（String-Pool）"><a href="#字符串常量池（String-Pool）" class="headerlink" title="字符串常量池（String Pool）"></a>字符串常量池（String Pool）</h4><ol>
+<li>这部分也在方法区中，但与Runtime Constant Pool不是一个概念，String Pool是JVM实例全局共享的，全局只有一个</li>
+<li>JVM规范要求进入这里的String实例叫“被驻留的interned string”，各个JVM可以有不同的实现，HotSpot是设置了一个哈希表StringTable来引用堆中的字符串实例，被引用就是被驻留。</li>
+</ol>
+<h3 id="亨元模式"><a href="#亨元模式" class="headerlink" title="亨元模式"></a>亨元模式</h3><p>字符串在使用过程中使用到了享元模式（一个系统中如果有多处用到了相同的一个元素，那么我们应该只存储一份此元素，而让所有地方都引用这一个元素），而那个存储元素的地方就叫做“字符串常量池 - String Pool”</p>
+<h3 id="详细分析"><a href="#详细分析" class="headerlink" title="详细分析"></a>详细分析</h3><p><code>String str = &quot;hello&quot;;</code>的执行过程：</p>
+<div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/1587636643511.png" class title="String Pool的详细过程">
+
+</div>
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="String与StringBuffer、StringBuilder"><a href="#String与StringBuffer、StringBuilder" class="headerlink" title="String与StringBuffer、StringBuilder"></a>String与StringBuffer、StringBuilder</h3><ol>
+<li>String是不可变的字符序列</li>
+<li>StringBuffer和StringBuilder是可变的字符序列</li>
+<li>StringBuffer是线程安全的，效率低</li>
+<li>StringBuilder和String是线程不安全的，效率高一些，</li>
+<li>效率从高到低：StringBuilder&gt;String&gt;StringBuffer</li>
+</ol>
+<h4 id="String循环拼接对象"><a href="#String循环拼接对象" class="headerlink" title="String循环拼接对象"></a>String循环拼接对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.string;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		String string = <span class="string">&quot;&quot;</span>;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10000</span>;i++) &#123;</span><br><span class="line">			string += <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(string);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">Compiled from <span class="string">&quot;Test1.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">sunld</span>.<span class="title">string</span>.<span class="title">Test1</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> com.sunld.string.Test1();</span><br><span class="line">    Code:</span><br><span class="line">       <span class="number">0</span>: aload_0</span><br><span class="line">       1: invokespecial #8                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">       <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    Code:</span><br><span class="line">       0: ldc           #16                 // String</span><br><span class="line">       <span class="number">2</span>: astore_1</span><br><span class="line">       <span class="number">3</span>: iconst_0</span><br><span class="line">       <span class="number">4</span>: istore_2</span><br><span class="line">       <span class="number">5</span>: goto          <span class="number">31</span></span><br><span class="line">       8: new           #18                 // class java/lang/StringBuilder</span><br><span class="line">      <span class="number">11</span>: dup</span><br><span class="line">      <span class="number">12</span>: aload_1</span><br><span class="line">      13: invokestatic  #20                 // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;</span><br><span class="line">      16: invokespecial #26                 // Method java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V</span><br><span class="line">      19: ldc           #29                 // String hello</span><br><span class="line">      21: invokevirtual #31                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span><br><span class="line">      24: invokevirtual #35                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span><br><span class="line">      <span class="number">27</span>: astore_1</span><br><span class="line">      <span class="number">28</span>: iinc          <span class="number">2</span>, <span class="number">1</span></span><br><span class="line">      <span class="number">31</span>: iload_2</span><br><span class="line">      <span class="number">32</span>: sipush        <span class="number">10000</span></span><br><span class="line">      <span class="number">35</span>: if_icmplt     <span class="number">8</span></span><br><span class="line">      38: getstatic     #39                 // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">      <span class="number">41</span>: aload_1</span><br><span class="line">      42: invokevirtual #45                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">      <span class="number">45</span>: <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>8~35行是整个循环过程，并且每次都会new一个StringBuilder（String拼接被jvm优化为使用StringBuilder处理）</p>
+<h4 id="使用StringBuilder"><a href="#使用StringBuilder" class="headerlink" title="使用StringBuilder"></a>使用StringBuilder</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.string;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		StringBuilder string = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10000</span>;i++) &#123;</span><br><span class="line">			string.append(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(string.toString());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">Compiled from <span class="string">&quot;Test2.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">sunld</span>.<span class="title">string</span>.<span class="title">Test2</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> com.sunld.string.Test2();</span><br><span class="line">    Code:</span><br><span class="line">       <span class="number">0</span>: aload_0</span><br><span class="line">       1: invokespecial #8                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">       <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    Code:</span><br><span class="line">       0: new           #16                 // class java/lang/StringBuilder</span><br><span class="line">       <span class="number">3</span>: dup</span><br><span class="line">       4: invokespecial #18                 // Method java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">       <span class="number">7</span>: astore_1</span><br><span class="line">       <span class="number">8</span>: iconst_0</span><br><span class="line">       <span class="number">9</span>: istore_2</span><br><span class="line">      <span class="number">10</span>: goto          <span class="number">23</span></span><br><span class="line">      <span class="number">13</span>: aload_1</span><br><span class="line">      14: ldc           #19                 // String hello</span><br><span class="line">      16: invokevirtual #21                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span><br><span class="line">      <span class="number">19</span>: pop</span><br><span class="line">      <span class="number">20</span>: iinc          <span class="number">2</span>, <span class="number">1</span></span><br><span class="line">      <span class="number">23</span>: iload_2</span><br><span class="line">      <span class="number">24</span>: sipush        <span class="number">10000</span></span><br><span class="line">      <span class="number">27</span>: if_icmplt     <span class="number">13</span></span><br><span class="line">      30: getstatic     #25                 // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">      <span class="number">33</span>: aload_1</span><br><span class="line">      34: invokevirtual #31                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span><br><span class="line">      37: invokevirtual #35                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">      <span class="number">40</span>: <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>13~27整个循环处理过程，只创建了一次对象。</p>
+<h3 id="与equals"><a href="#与equals" class="headerlink" title="==与equals"></a>==与equals</h3><p>==在对字符串比较的时候，对比的是内存地址，而equals比较的是字符串内容，在开发的过程中，equals()通过接受参数，可以避免空指向<code>&quot;hello&quot;.equals(str)</code>。</p>
+<h3 id="编码问题"><a href="#编码问题" class="headerlink" title="编码问题"></a>编码问题</h3><p>java中的String类是按照Unicode的方式进行编码，并且默认编码方式为UTF-16。使用字节的方式可以指定编码方式，以及编码方式的转换（<strong>转换不对会出现乱码问题</strong>）。并且不能的编码方式对应的数组长度不同。</p>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.string;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestString2</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		String b = <span class="string">&quot;𝄞&quot;</span>;</span><br><span class="line">		System.out.println(b.length()); 	<span class="comment">//输出为2</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过length的描述:知道返回的字符串长度时Unicode代码单元的数目</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Returns the length of this string.</span></span><br><span class="line"><span class="comment">    * The length is equal to the number of &lt;a href=&quot;Character.html#unicode&quot;&gt;Unicode</span></span><br><span class="line"><span class="comment">    * code units&lt;/a&gt; in the string.</span></span><br><span class="line"><span class="comment">    * 返回字符串的长度，长度等于字符串中的Unicode代码单元的数目（UTF-16的代码单元的数目）</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span>  the length of the sequence of characters represented by this</span></span><br><span class="line"><span class="comment">    *          object.</span></span><br><span class="line"><span class="comment">    */</span></span><br></pre></td></tr></table></figure>
+<h4 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h4><p>在java中的编码方式分为内码和外码：</p>
+<ol>
+<li>内码：char或string在内存中使用的编码方式，java中的使用utf16作为内码</li>
+<li>外码：除内码都可以认为是外码，包括class文件的编码</li>
+</ol>
+<blockquote>
+<p>代码单元：一种转换格式（UTF）中最小的一个分隔，称为一个代码单元（code unit），一个转换公式只会包含整数个单元。UTF-X中的X表示各自码单元的位数。<br>UTF-16，可以包含一个单元和两个单元，也就是两个字节和四个字节</p>
+</blockquote>
+<h4 id="替代方案：codePointCount"><a href="#替代方案：codePointCount" class="headerlink" title="替代方案：codePointCount"></a>替代方案：codePointCount</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Returns the number of Unicode code points in the specified text</span></span><br><span class="line"><span class="comment">    * range of this &#123;<span class="doctag">@code</span> String&#125;. The text range begins at the</span></span><br><span class="line"><span class="comment">    * specified &#123;<span class="doctag">@code</span> beginIndex&#125; and extends to the</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> char&#125; at index &#123;<span class="doctag">@code</span> endIndex - 1&#125;. Thus the</span></span><br><span class="line"><span class="comment">    * length (in &#123;<span class="doctag">@code</span> char&#125;s) of the text range is</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> endIndex-beginIndex&#125;. Unpaired surrogates within</span></span><br><span class="line"><span class="comment">    * the text range count as one code point each.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> beginIndex the index to the first &#123;<span class="doctag">@code</span> char&#125; of</span></span><br><span class="line"><span class="comment">    * the text range.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> endIndex the index after the last &#123;<span class="doctag">@code</span> char&#125; of</span></span><br><span class="line"><span class="comment">    * the text range.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> the number of Unicode code points in the specified text</span></span><br><span class="line"><span class="comment">    * range</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@exception</span> IndexOutOfBoundsException if the</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> beginIndex&#125; is negative, or &#123;<span class="doctag">@code</span> endIndex&#125;</span></span><br><span class="line"><span class="comment">    * is larger than the length of this &#123;<span class="doctag">@code</span> String&#125;, or</span></span><br><span class="line"><span class="comment">    * &#123;<span class="doctag">@code</span> beginIndex&#125; is larger than &#123;<span class="doctag">@code</span> endIndex&#125;.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@since</span>  1.5</span></span><br><span class="line"><span class="comment">    * 可以使用该方法返回字符串的准确长度（相对于length方法）</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">codePointCount</span><span class="params">(<span class="keyword">int</span> beginIndex, <span class="keyword">int</span> endIndex)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (beginIndex &lt; <span class="number">0</span> || endIndex &gt; value.length || beginIndex &gt; endIndex) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Character.codePointCountImpl(value, beginIndex, endIndex - beginIndex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhangyinhua/p/7689974.html#_lab2_0_1">Java常用类（二）String类详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_34691713/article/details/92572843">String源码分析（基于JDK1.8)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/benbenalin/p/7152570.html">刨根究底字符编码之十四——UTF-16究竟是怎么编码的</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/String/" rel="tag"><i class="fa fa-tag"></i> String</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E4%BC%A0%E9%80%92%E6%96%B9%E5%BC%8F/" rel="prev" title="Java系统化学习之传递方式">
+      <i class="fa fa-chevron-left"></i> Java系统化学习之传递方式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/" rel="next" title="Java系统化学习之Type">
+      Java系统化学习之Type <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#String%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">String介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">API描述</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">2.</span> <span class="nav-text">如何创建字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC"><span class="nav-number">2.1.</span> <span class="nav-text">直接赋值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8new"><span class="nav-number">2.2.</span> <span class="nav-text">使用new</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8B%BC%E6%8E%A5"><span class="nav-number">2.3.</span> <span class="nav-text">字符串拼接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">2.4.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E4%BB%A3%E7%A0%81"><span class="nav-number">2.4.1.</span> <span class="nav-text">参考代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">2.4.2.</span> <span class="nav-text">内存分配</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.</span> <span class="nav-text">成员变量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%95%BF%E5%BA%A6"><span class="nav-number">3.1.1.</span> <span class="nav-text">字符串长度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">3.2.</span> <span class="nav-text">构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E5%8A%9F%E8%83%BD"><span class="nav-number">3.3.</span> <span class="nav-text">判断功能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#equals"><span class="nav-number">3.3.1.</span> <span class="nav-text">equals</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#equalsIgnoreCase"><span class="nav-number">3.3.2.</span> <span class="nav-text">equalsIgnoreCase</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#startsWith"><span class="nav-number">3.3.3.</span> <span class="nav-text">startsWith</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#endsWith"><span class="nav-number">3.3.4.</span> <span class="nav-text">endsWith</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8A%9F%E8%83%BD"><span class="nav-number">3.4.</span> <span class="nav-text">获取功能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#length"><span class="nav-number">3.4.1.</span> <span class="nav-text">length</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#charAt"><span class="nav-number">3.4.2.</span> <span class="nav-text">charAt</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#indexOf"><span class="nav-number">3.4.3.</span> <span class="nav-text">indexOf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#substring-int-start-int-end"><span class="nav-number">3.4.4.</span> <span class="nav-text">substring(int start,int end)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E5%8A%9F%E8%83%BD"><span class="nav-number">3.5.</span> <span class="nav-text">转换功能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#toCharArray"><span class="nav-number">3.5.1.</span> <span class="nav-text">toCharArray</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#toLowerCase"><span class="nav-number">3.5.2.</span> <span class="nav-text">toLowerCase</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#toUpperCase"><span class="nav-number">3.5.3.</span> <span class="nav-text">toUpperCase</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%B8%B8%E7%94%A8"><span class="nav-number">3.6.</span> <span class="nav-text">其他常用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#trim"><span class="nav-number">3.6.1.</span> <span class="nav-text">trim</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#split"><span class="nav-number">3.6.2.</span> <span class="nav-text">split</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#compareTo"><span class="nav-number">3.6.3.</span> <span class="nav-text">compareTo</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String%E7%9A%84%E4%B8%8D%E5%8F%AF%E5%8F%98%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">String的不可变性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0"><span class="nav-number">4.1.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">4.2.</span> <span class="nav-text">优点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0"><span class="nav-number">5.</span> <span class="nav-text">字符串常量池</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%E6%A6%82%E8%BF%B0"><span class="nav-number">5.1.</span> <span class="nav-text">字符串常量池概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E6%B1%A0%E8%A1%A8%EF%BC%88Constant-Pool-table%EF%BC%89"><span class="nav-number">5.1.1.</span> <span class="nav-text">常量池表（Constant_Pool table）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%88Runtime-Constant-Pool%EF%BC%89"><span class="nav-number">5.1.2.</span> <span class="nav-text">运行时常量池（Runtime Constant Pool）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%88String-Pool%EF%BC%89"><span class="nav-number">5.1.3.</span> <span class="nav-text">字符串常量池（String Pool）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A8%E5%85%83%E6%A8%A1%E5%BC%8F"><span class="nav-number">5.2.</span> <span class="nav-text">亨元模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90"><span class="nav-number">5.3.</span> <span class="nav-text">详细分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">6.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E4%B8%8EStringBuffer%E3%80%81StringBuilder"><span class="nav-number">6.1.</span> <span class="nav-text">String与StringBuffer、StringBuilder</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#String%E5%BE%AA%E7%8E%AF%E6%8B%BC%E6%8E%A5%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.1.1.</span> <span class="nav-text">String循环拼接对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8StringBuilder"><span class="nav-number">6.1.2.</span> <span class="nav-text">使用StringBuilder</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8Eequals"><span class="nav-number">6.2.</span> <span class="nav-text">&#x3D;&#x3D;与equals</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E9%97%AE%E9%A2%98"><span class="nav-number">6.3.</span> <span class="nav-text">编码问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">6.3.1.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">6.3.2.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88%EF%BC%9AcodePointCount"><span class="nav-number">6.3.3.</span> <span class="nav-text">替代方案：codePointCount</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">131k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:59</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '136896c851fccf7e7d557969bedb30d8',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
