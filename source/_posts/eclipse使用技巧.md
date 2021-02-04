@@ -18,7 +18,7 @@ categories:
 
 <div align=center>
 
-![eclipse配置](eclipse使用技巧/1588039059895.png)
+![执行javap](eclipse使用技巧/1588039059895.png)
 
 </div>
 
@@ -28,6 +28,8 @@ location: jdk实际路径
 Working Directory:${workspace_loc}\${project_name} （不要改）
 Arguments:-c -verbose  -classpath  ${workspace_loc}/ ${project_name}/bin/${java_type_name}
 ```
+
+<!--more-->
 
 ### 使用
 
@@ -39,7 +41,7 @@ Arguments:-c -verbose  -classpath  ${workspace_loc}/ ${project_name}/bin/${java_
 
 ### javap的命令说明
 
-参考《[javap详解](Javap详解.md)》
+参考《[javap详解]([Javap详解.md](https://www.sunliaodong.cn/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/))》
 
 ## debug使用技巧
 
