@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-04T07:58:18.325Z</updated>
+  <updated>2021-02-04T08:30:34.594Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -17,29 +17,127 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Java高效编程技巧</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/</id>
+    <published>2021-02-04T08:27:17.000Z</published>
+    <updated>2021-02-04T08:30:34.594Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Java代码规范&quot;&gt;&lt;a href=&quot;#Java代码规范&quot; class=&quot;headerlink&quot; title=&quot;Java代码规范&quot;&gt;&lt;/a&gt;Java代码规范&lt;/h2&gt;&lt;h3 id=&quot;命名规范（阿里规范）&quot;&gt;&lt;a href=&quot;#命名规范（阿里规范）&quot; class=&quot;headerlink&quot; title=&quot;命名规范（阿里规范）&quot;&gt;&lt;/a&gt;命名规范（阿里规范）&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;名称只能是有含义的英文，不能出现下划线或美元符号&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;方法名、参数名、成员变量、局部变量统一使用驼峰方式命名，形如lowerCamelCase&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;类名使用UpperCamelCase命名，DO/BO/DTO/VO/AO/PO/UID除外&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;常量或类变量都需要使用大写，并且中间使用下划线分割&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;抽象类必须以Abstract或Base开头，异常类，必须以Exception结果，测试类必须以待测试代码_Test&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;类型与中括号紧挨相连来表示数组,形如&lt;code&gt;int[] arrayDemo&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;成员变量不能以is开头&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;包使用小写定义，并且使用单数，中间使用英文句号分割，并且定义必须有意义和唯一性&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;子类与父类之间不要使用相同的成员变量命名&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;完全杜绝不规范的缩写，尽量使用完整的单词&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;在常量与变量命名时，表示类型的名称放在词尾&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;如果模块、接口、类、方法使用了设计模式，在命名时需体现出具体模式&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;接口中不要定义变量，方式不需要增加任何修饰符，都必须有注释信息&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;接口与实现类的命名规范是&lt;strong&gt;Service/**ServiceImpl、&lt;/strong&gt;DAO/**DAOImpl&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;枚举类名带上 Enum 后缀，枚举成员名称需要全大写，单词间用下划线隔开&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;各层命名规范：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Service/DAO 层方法命名规约&lt;ul&gt;
+&lt;li&gt;获取单个对象的方法用 get 做前缀。&lt;/li&gt;
+&lt;li&gt;获取多个对象的方法用 list 做前缀，复数形式结尾如：listObjects。&lt;/li&gt;
+&lt;li&gt;获取统计值的方法用 count 做前缀。&lt;/li&gt;
+&lt;li&gt;插入的方法用 save/insert 做前缀。&lt;/li&gt;
+&lt;li&gt;删除的方法用 remove/delete 做前缀。&lt;/li&gt;
+&lt;li&gt;修改的方法用 update 做前缀。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;领域模型命名规约&lt;ul&gt;
+&lt;li&gt;数据对象：xxxDO，xxx 即为数据表名。&lt;/li&gt;
+&lt;li&gt;数据传输对象：xxxDTO，xxx 为业务领域相关的名称。&lt;/li&gt;
+&lt;li&gt;展示对象：xxxVO，xxx 一般为网页名称。&lt;/li&gt;
+&lt;li&gt;POJO 是 DO/DTO/BO/VO 的统称，禁止命名成 xxxPOJO。&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="软件架构" scheme="https://www.sunliaodong.cn/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="编程技巧" scheme="https://www.sunliaodong.cn/tags/%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java系统化学习之注解</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/</id>
+    <published>2021-02-04T08:15:21.000Z</published>
+    <updated>2021-02-04T08:19:21.266Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;在jdk1.5中引入了注解的概念，注解是Java提供的一种对类信息（包括：类、属性与方法）进行扩展的一种行为。Annatation(注解)是一个接口，程序可以通过反射来获取指定程序中元素的 Annotation 对象，然后通过该 Annotation 对象来获取注解中的元数据信息。通过使用注解，可以将元数据保存在 Java 源代码中。并拥有如下优势：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;简单易读的代码，&lt;/li&gt;
+&lt;li&gt;编译器类型检查，&lt;/li&gt;
+&lt;li&gt;使用 annotation API 为自己的注解构造处理工具。&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    
+    <category term="注解" scheme="https://www.sunliaodong.cn/tags/%E6%B3%A8%E8%A7%A3/"/>
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
     <title>eclipse使用技巧</title>
     <link href="https://www.sunliaodong.cn/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/"/>
     <id>https://www.sunliaodong.cn/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</id>
     <published>2021-02-04T07:51:43.000Z</published>
-    <updated>2021-02-04T07:58:18.325Z</updated>
+    <updated>2021-02-04T08:14:00.670Z</updated>
     
     
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;集成javap命令&quot;&gt;&lt;a href=&quot;#集成javap命令&quot; class=&quot;headerlink&quot; title=&quot;集成javap命令&quot;&gt;&lt;/a&gt;集成javap命令&lt;/h2&gt;&lt;h3 id=&quot;配置&quot;&gt;&lt;a href=&quot;#配置&quot; class=&quot;headerlink&quot;</summary>
-        
-      
+    <summary type="html">&lt;h2 id=&quot;集成javap命令&quot;&gt;&lt;a href=&quot;#集成javap命令&quot; class=&quot;headerlink&quot; title=&quot;集成javap命令&quot;&gt;&lt;/a&gt;集成javap命令&lt;/h2&gt;&lt;h3 id=&quot;配置&quot;&gt;&lt;a href=&quot;#配置&quot; class=&quot;headerlink&quot; title=&quot;配置&quot;&gt;&lt;/a&gt;配置&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;eclipse中点击工具栏: Run &amp;gt; External Tools &amp;gt; External Tools Configuration&lt;/li&gt;
+&lt;li&gt;双击”程序”&lt;/li&gt;
+&lt;li&gt;修改配置&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039059895.png&quot; class title=&quot;执行javap&quot;&gt;
+
+&lt;/div&gt;
+
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Name: javap(随意)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;location: jdk实际路径&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Working Directory:$&amp;#123;workspace_loc&amp;#125;\$&amp;#123;project_name&amp;#125; （不要改）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Arguments:-c -verbose  -classpath  $&amp;#123;workspace_loc&amp;#125;/ $&amp;#123;project_name&amp;#125;/bin/$&amp;#123;java_type_name&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
     
     
     
     <category term="常用工具" scheme="https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/"/>
     
     
-    <category term="eclipse" scheme="https://www.sunliaodong.cn/tags/eclipse/"/>
-    
     <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="eclipse" scheme="https://www.sunliaodong.cn/tags/eclipse/"/>
     
   </entry>
   

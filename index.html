@@ -125,7 +125,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">11</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -135,7 +135,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">5</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">7</span></a>
 
   </li>
         <li class="menu-item menu-item-schedule">
@@ -207,6 +207,235 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">Java高效编程技巧</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 16:27:17 / 修改时间：16:30:34" itemprop="dateCreated datePublished" datetime="2021-02-04T16:27:17+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">软件架构</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Java代码规范"><a href="#Java代码规范" class="headerlink" title="Java代码规范"></a>Java代码规范</h2><h3 id="命名规范（阿里规范）"><a href="#命名规范（阿里规范）" class="headerlink" title="命名规范（阿里规范）"></a>命名规范（阿里规范）</h3><ol>
+<li><p>名称只能是有含义的英文，不能出现下划线或美元符号</p>
+</li>
+<li><p>方法名、参数名、成员变量、局部变量统一使用驼峰方式命名，形如lowerCamelCase</p>
+</li>
+<li><p>类名使用UpperCamelCase命名，DO/BO/DTO/VO/AO/PO/UID除外</p>
+</li>
+<li><p>常量或类变量都需要使用大写，并且中间使用下划线分割</p>
+</li>
+<li><p>抽象类必须以Abstract或Base开头，异常类，必须以Exception结果，测试类必须以待测试代码_Test</p>
+</li>
+<li><p>类型与中括号紧挨相连来表示数组,形如<code>int[] arrayDemo</code></p>
+</li>
+<li><p>成员变量不能以is开头</p>
+</li>
+<li><p>包使用小写定义，并且使用单数，中间使用英文句号分割，并且定义必须有意义和唯一性</p>
+</li>
+<li><p>子类与父类之间不要使用相同的成员变量命名</p>
+</li>
+<li><p>完全杜绝不规范的缩写，尽量使用完整的单词</p>
+</li>
+<li><p>在常量与变量命名时，表示类型的名称放在词尾</p>
+</li>
+<li><p>如果模块、接口、类、方法使用了设计模式，在命名时需体现出具体模式</p>
+</li>
+<li><p>接口中不要定义变量，方式不需要增加任何修饰符，都必须有注释信息</p>
+</li>
+<li><p>接口与实现类的命名规范是<strong>Service/**ServiceImpl、</strong>DAO/**DAOImpl</p>
+</li>
+<li><p>枚举类名带上 Enum 后缀，枚举成员名称需要全大写，单词间用下划线隔开</p>
+</li>
+<li><p>各层命名规范：</p>
+<ul>
+<li>Service/DAO 层方法命名规约<ul>
+<li>获取单个对象的方法用 get 做前缀。</li>
+<li>获取多个对象的方法用 list 做前缀，复数形式结尾如：listObjects。</li>
+<li>获取统计值的方法用 count 做前缀。</li>
+<li>插入的方法用 save/insert 做前缀。</li>
+<li>删除的方法用 remove/delete 做前缀。</li>
+<li>修改的方法用 update 做前缀。</li>
+</ul>
+</li>
+<li>领域模型命名规约<ul>
+<li>数据对象：xxxDO，xxx 即为数据表名。</li>
+<li>数据传输对象：xxxDTO，xxx 为业务领域相关的名称。</li>
+<li>展示对象：xxxVO，xxx 一般为网页名称。</li>
+<li>POJO 是 DO/DTO/BO/VO 的统称，禁止命名成 xxxPOJO。</li></ul></li></ul></li></ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/" class="post-title-link" itemprop="url">Java系统化学习之注解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 16:15:21 / 修改时间：16:19:21" itemprop="dateCreated datePublished" datetime="2021-02-04T16:15:21+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在jdk1.5中引入了注解的概念，注解是Java提供的一种对类信息（包括：类、属性与方法）进行扩展的一种行为。Annatation(注解)是一个接口，程序可以通过反射来获取指定程序中元素的 Annotation 对象，然后通过该 Annotation 对象来获取注解中的元数据信息。通过使用注解，可以将元数据保存在 Java 源代码中。并拥有如下优势：</p>
+<ol>
+<li>简单易读的代码，</li>
+<li>编译器类型检查，</li>
+<li>使用 annotation API 为自己的注解构造处理工具。</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
     <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -232,7 +461,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-02-04 15:51:43 / 修改时间：15:58:18" itemprop="dateCreated datePublished" datetime="2021-02-04T15:51:43+08:00">2021-02-04</time>
+              <time title="创建时间：2021-02-04 15:51:43 / 修改时间：16:14:00" itemprop="dateCreated datePublished" datetime="2021-02-04T15:51:43+08:00">2021-02-04</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -276,50 +505,19 @@
 </ol>
 <div align="center">
 
-<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039059895.png" class title="eclipse配置">
+<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039059895.png" class title="执行javap">
 
 </div>
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Name: javap(随意)</span><br><span class="line">location: jdk实际路径</span><br><span class="line">Working Directory:$&#123;workspace_loc&#125;\$&#123;project_name&#125; （不要改）</span><br><span class="line">Arguments:-c -verbose  -classpath  $&#123;workspace_loc&#125;/ $&#123;project_name&#125;/bin/$&#123;java_type_name&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><div align="center">
-
-<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039225454.png" class title="eclipse配置">
-
-</div>
-
-<h3 id="javap的命令说明"><a href="#javap的命令说明" class="headerlink" title="javap的命令说明"></a>javap的命令说明</h3><p>参考《<a href="Javap%E8%AF%A6%E8%A7%A3.md">javap详解</a>》</p>
-<h2 id="debug使用技巧"><a href="#debug使用技巧" class="headerlink" title="debug使用技巧"></a>debug使用技巧</h2><h3 id="常用快捷键说明"><a href="#常用快捷键说明" class="headerlink" title="常用快捷键说明"></a>常用快捷键说明</h3><ol>
-<li>Step Into (also F5) 跳入</li>
-<li>Step Over (also F6) 跳过</li>
-<li>Step Return (also F7) 执行完当前method，然后return跳出此method</li>
-<li>step Filter 逐步过滤 一直执行直到遇到未经过滤的位置或断点(设置Filter:window-preferences-java-Debug-step Filtering)</li>
-<li>resume 重新开始执行debug,一直运行直到遇到breakpoint</li>
-<li>hit count 设置执行次数 适合程序中的for循环(设置 breakpoint view-右键hit count)</li>
-<li>inspect 检查 运算。执行一个表达式显示执行值</li>
-<li>watch 实时地监视变量的变化</li>
-<li>我们常说的断点(breakpoints)是指line breakpoints,除了line breakpoints,还有其他的断点类型：field(watchpoint)breakpoint,method breakpoint,exception breakpoint.</li>
-<li>field breakpoint 也叫watchpoint(监视点) 当成员变量被读取或修改时暂挂</li>
-<li>添加method breakpoint 进入/离开此方法时暂挂(Run-method breakpoint)</li>
-<li>添加Exception breakpoint 捕抓到Execption时暂挂(待续…)</li>
-</ol>
-<h3 id="断点属性"><a href="#断点属性" class="headerlink" title="断点属性"></a>断点属性</h3><ol>
-<li>hit count 执行多少次数后暂挂 用于循环</li>
-<li>enable condition 遇到符合你输入条件(为ture\改变时)就暂挂</li>
-<li>suspend thread 多线程时暂挂此线程</li>
-<li>suspend VM 暂挂虚拟机</li>
-<li>variables 视图里的变量可以改变变量值，在variables 视图选择变量点击右键–change value.一次来进行快速调试。</li>
-<li>debug 过程中修改了某些code后–〉save&amp;build–&gt;resume–&gt;重新暂挂于断点</li>
-</ol>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">  MyDate aa = <span class="keyword">new</span> MyDate();</span><br><span class="line">  aa.addDays(day);                      =============》(<span class="number">1</span>)</span><br><span class="line">  System.out.println(<span class="string">&quot;eeeeeeeeeeeeeee&quot;</span>);=============》(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">addDays</span><span class="params">(<span class="keyword">int</span> more_days)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;1&quot;</span>);               =============》(<span class="number">3</span>)</span><br><span class="line">    String result = <span class="string">&quot;&quot;</span>;         =============》(<span class="number">4</span>)</span><br><span class="line">    System.out.println(<span class="string">&quot;2&quot;</span>);               =============》(<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>你在(1)处加断点，运行到此处时如果Step Into (also F5)为跳入，则接着执行到(3)。再执行Step Over (also F6)执行本行，则执行到(4)。最后执行Step Return (also F7)，则跳出addDays方法，跳到(2)</p>
-<h2 id="配置-author"><a href="#配置-author" class="headerlink" title="配置@author"></a>配置@author</h2><ol>
-<li>eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;Code-&gt;New Java files </li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">点击 Edit </span><br><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> 孙辽东</span></span><br><span class="line"><span class="comment">* <span class="doctag">@E</span>-mail:sld880311@126.com</span></span><br><span class="line"><span class="comment">* <span class="doctag">@qq</span>:767768553</span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span> 创建时间：$&#123;date&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment">* 简单说明</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>在建立类文件的时候输入“/**”的时候自动出来的：eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;comments-&gt;typles,点击 Edit ，就可以根据自己需要编写了</li>
-</ol>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -792,7 +990,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -805,7 +1003,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -878,13 +1076,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">21k</span>
+    <span title="站点总字数">34k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">19 分钟</span>
+    <span title="站点阅读时长">31 分钟</span>
 </div>
 
         
