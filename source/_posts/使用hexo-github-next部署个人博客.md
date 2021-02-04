@@ -2,7 +2,9 @@
 title: 使用hexo+github+next部署个人博客
 date: 2021-02-03 15:40:46
 tags:
-  - 常用工具
+  - Hexo
+  - github
+  - Next
 categories:
   - 其他
 ---
