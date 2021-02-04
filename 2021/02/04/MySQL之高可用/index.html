@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="互为主从复制背景在一些高可用的环境中，mysql的主从不能满足现实中的一些实际需求。比如，一些流量大的网站数据库访问有了瓶颈，需要负载均衡的时候就用两个或者多个的mysql服务器，而这些mysql服务器的数据库数据必须要保持一致，那么就会用到主主复制。   mysql主从架构中其实就一个主在工作，而从就相当于一个备份机器，从通过日志监测的方式来备份主库上的数据而保证主库的数据安全。在这种架构中如果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL之高可用">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="互为主从复制背景在一些高可用的环境中，mysql的主从不能满足现实中的一些实际需求。比如，一些流量大的网站数据库访问有了瓶颈，需要负载均衡的时候就用两个或者多个的mysql服务器，而这些mysql服务器的数据库数据必须要保持一致，那么就会用到主主复制。   mysql主从架构中其实就一个主在工作，而从就相当于一个备份机器，从通过日志监测的方式来备份主库上的数据而保证主库的数据安全。在这种架构中如果">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/1590058835864.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/1590058843893.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/1590058864954.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/1590058870961.png">
+<meta property="article:published_time" content="2021-02-04T12:45:21.000Z">
+<meta property="article:modified_time" content="2021-02-04T12:47:59.487Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="高可用">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/1590058835864.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL之高可用 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">36</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">12</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">26</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL之高可用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 20:45:21 / 修改时间：20:47:59" itemprop="dateCreated datePublished" datetime="2021-02-04T20:45:21+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">高可用</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="互为主从复制"><a href="#互为主从复制" class="headerlink" title="互为主从复制"></a>互为主从复制</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在一些高可用的环境中，mysql的主从不能满足现实中的一些实际需求。比如，一些流量大的网站数据库访问有了瓶颈，需要负载均衡的时候就用两个或者多个的mysql服务器，而这些mysql服务器的数据库数据必须要保持一致，那么就会用到主主复制。  </p>
+<p>mysql主从架构中其实就一个主在工作，而从就相当于一个备份机器，从通过日志监测的方式来备份主库上的数据而保证主库的数据安全。在这种架构中如果从上的数据做了改变，主数据是不会用任何变化的。因为mysql主从架构主要是mysql从监控mysql主的日志变化来实现同步，相反的在这个架构中主并没有监控从的日志变化。所以，mysql从数据反生变化，主也就没有什么变化了。  </p>
+<p>通过上述描述，可以看到如果想实现主主复制，无非就是在mysql主从架构上让mysql主实现监测从的日志变化，从而实现两台机器相互同步。  </p>
+<a id="more"></a>
+
+<h3 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h3><ol>
+<li>H1：192.168.209.132 root/123456a?</li>
+<li>H2：192.168.209.137 root/123456a?</li>
+</ol>
+<h3 id="关键步骤"><a href="#关键步骤" class="headerlink" title="关键步骤"></a>关键步骤</h3><ol>
+<li>第一、server-id，主server-id小于从server-id（必须不一样）</li>
+<li>第二、主数据库，建立一个能复制的帐号并授权。</li>
+<li>第三、从服务器开启复制功能就OK了。</li>
+</ol>
+<h3 id="修改配置文件my-cnf"><a href="#修改配置文件my-cnf" class="headerlink" title="修改配置文件my.cnf"></a>修改配置文件my.cnf</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">log-bin&#x3D;mysql-bin：这个选项基本默认都是开着的，如果没有打开，可以手动打开。</span><br><span class="line">log-slave-updates&#x3D;1：这个选项特别的重要它是为了让slave也能充当master，同时也为了更好的服务于 m-m + s 的环境，保证slave挂在任何一台master上都会接收到另一个master的写入信息。当然不局限于这个架构，级联复制的架构同样也需要log-slave-updates的支持。</span><br><span class="line">server-id &#x3D; 1：这个ID为服务器ID如果配置一样会出现冲突，而不能复制</span><br><span class="line">binlog-ignore-db &#x3D; mysql,information_schema       #忽略写入binlog日志的库</span><br><span class="line">auto-increment-increment &#x3D; 2             #字段变化增量值</span><br><span class="line">auto-increment-offset &#x3D; 1              #初始字段ID为1</span><br><span class="line">slave-skip-errors &#x3D; all                       #忽略所有复制产生的错误</span><br></pre></td></tr></table></figure>
+<p>配置完成之后，使用命令<code>service mysqld restart</code>，完成重启，重启效果如下：  </p>
+<h4 id="H1"><a href="#H1" class="headerlink" title="H1"></a>H1</h4><div align="center">
+
+<img src="/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/1590058835864.png" class>
+
+<img src="/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/1590058843893.png" class>
+
+</div>
+
+<h4 id="H2"><a href="#H2" class="headerlink" title="H2"></a>H2</h4><div align="center">
+
+<img src="/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/1590058864954.png" class>
+
+<img src="/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/1590058870961.png" class>
+
+</div>
+
+<h3 id="设置主从bin-log和读写位置"><a href="#设置主从bin-log和读写位置" class="headerlink" title="设置主从bin-log和读写位置"></a>设置主从bin-log和读写位置</h3><h4 id="查看master信息"><a href="#查看master信息" class="headerlink" title="查看master信息"></a>查看master信息</h4><h5 id="H1-1"><a href="#H1-1" class="headerlink" title="H1"></a>H1</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> master status;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+----------+--------------+--------------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> File             <span class="operator">|</span> Position <span class="operator">|</span> Binlog_Do_DB <span class="operator">|</span> Binlog_Ignore_DB         <span class="operator">|</span> Executed_Gtid_Set <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+----------+--------------+--------------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> mysql<span class="operator">-</span>bin<span class="number">.000001</span> <span class="operator">|</span>      <span class="number">154</span> <span class="operator">|</span>              <span class="operator">|</span> mysql,information_schema <span class="operator">|</span>                   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+----------+--------------+--------------------------+-------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+<h5 id="H2-1"><a href="#H2-1" class="headerlink" title="H2"></a>H2</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> master status;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+----------+--------------+--------------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> File             <span class="operator">|</span> Position <span class="operator">|</span> Binlog_Do_DB <span class="operator">|</span> Binlog_Ignore_DB         <span class="operator">|</span> Executed_Gtid_Set <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+----------+--------------+--------------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> mysql<span class="operator">-</span>bin<span class="number">.000001</span> <span class="operator">|</span>      <span class="number">154</span> <span class="operator">|</span>              <span class="operator">|</span> mysql,information_schema <span class="operator">|</span>                   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+----------+--------------+--------------------------+-------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h4 id="设置读写位置"><a href="#设置读写位置" class="headerlink" title="设置读写位置"></a>设置读写位置</h4><h5 id="H1：设置H2的信息"><a href="#H1：设置H2的信息" class="headerlink" title="H1：设置H2的信息"></a>H1：设置H2的信息</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">GRANT</span> REPLICATION SLAVE <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;sunld_backup&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED  <span class="keyword">BY</span> <span class="string">&#x27;123456a?&#x27;</span>;</span><br><span class="line">mysql<span class="operator">&gt;</span> flush  privileges;</span><br><span class="line">mysql<span class="operator">&gt;</span> change  master <span class="keyword">to</span></span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_host<span class="operator">=</span><span class="string">&#x27;192.168.209.137&#x27;</span>,</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_user<span class="operator">=</span><span class="string">&#x27;sunld_backup&#x27;</span>,</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_password<span class="operator">=</span><span class="string">&#x27;123456a?&#x27;</span>,</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_log_file<span class="operator">=</span><span class="string">&#x27;mysql-bin.000001&#x27;</span>,</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_log_pos<span class="operator">=</span><span class="number">154</span>;  #对端状态显示的值</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">start</span>  slave;         #启动同步</span><br></pre></td></tr></table></figure>
+<h5 id="置H1的信息"><a href="#置H1的信息" class="headerlink" title="置H1的信息"></a>置H1的信息</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">GRANT</span>  REPLICATION SLAVE <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;sunld_backup&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED  <span class="keyword">BY</span> <span class="string">&#x27;123456a?&#x27;</span>;</span><br><span class="line">mysql<span class="operator">&gt;</span> flush  privileges;</span><br><span class="line">mysql<span class="operator">&gt;</span> change  master <span class="keyword">to</span></span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_host<span class="operator">=</span><span class="string">&#x27;192.168.209.132&#x27;</span>,</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_user<span class="operator">=</span><span class="string">&#x27;sunld_backup&#x27;</span>,</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_password<span class="operator">=</span><span class="string">&#x27;123456a?&#x27;</span>,</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_log_file<span class="operator">=</span><span class="string">&#x27;mysql-bin.000001&#x27;</span>,</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span>  master_log_pos<span class="operator">=</span><span class="number">154</span>;  #对端状态显示的值</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">start</span>  slave;         #启动同步</span><br></pre></td></tr></table></figure>
+<h4 id="查看状态"><a href="#查看状态" class="headerlink" title="查看状态"></a>查看状态</h4><p>可以看到</p>
+<ol>
+<li>Slave_IO_Running: Yes</li>
+<li>Slave_SQL_Running: Yes</li>
+</ol>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><h4 id="初始状态"><a href="#初始状态" class="headerlink" title="初始状态"></a>初始状态</h4><h5 id="H1数据库信息"><a href="#H1数据库信息" class="headerlink" title="H1数据库信息"></a>H1数据库信息</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># mysql -uroot -p123456a? -h192.168.209.132 -e &#x27;show databases;&#x27;</span></span><br><span class="line">mysql: [Warning] Using a password on the <span class="built_in">command</span> line interface can be insecure.</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| mysql              |</span><br><span class="line">| performance_schema |</span><br><span class="line">| sys                |</span><br><span class="line">+--------------------+</span><br></pre></td></tr></table></figure>
+<h5 id="H2数据库信息"><a href="#H2数据库信息" class="headerlink" title="H2数据库信息"></a>H2数据库信息</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># mysql -uroot -p123456a? -h192.168.209.137 -e &#x27;show databases;&#x27;</span></span><br><span class="line">mysql: [Warning] Using a password on the <span class="built_in">command</span> line interface can be insecure.</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| mysql              |</span><br><span class="line">| performance_schema |</span><br><span class="line">| sys                |</span><br><span class="line">+--------------------+</span><br></pre></td></tr></table></figure>
+<h4 id="H1创建数据库，在H2中是否显示"><a href="#H1创建数据库，在H2中是否显示" class="headerlink" title="H1创建数据库，在H2中是否显示"></a>H1创建数据库，在H2中是否显示</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># mysql -uroot -p123456a? -h192.168.209.132 -e &#x27;create database h1;&#x27;</span></span><br><span class="line">mysql: [Warning] Using a password on the <span class="built_in">command</span> line interface can be insecure.</span><br><span class="line">[root@localhost ~]<span class="comment"># mysql -uroot -p123456a? -h192.168.209.137 -e &#x27;show databases;&#x27;</span></span><br><span class="line">mysql: [Warning] Using a password on the <span class="built_in">command</span> line interface can be insecure.</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| h1                 |</span><br><span class="line">| mysql              |</span><br><span class="line">| performance_schema |</span><br><span class="line">| sys                |</span><br><span class="line">+--------------------+</span><br></pre></td></tr></table></figure>
+<h4 id="H2创建数据库，在H1中是否显示"><a href="#H2创建数据库，在H1中是否显示" class="headerlink" title="H2创建数据库，在H1中是否显示"></a>H2创建数据库，在H1中是否显示</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># mysql -uroot -p123456a? -h192.168.209.137 -e &#x27;create database h2;&#x27;</span></span><br><span class="line">mysql: [Warning] Using a password on the <span class="built_in">command</span> line interface can be insecure.</span><br><span class="line">[root@localhost ~]<span class="comment"># mysql -uroot -p123456a? -h192.168.209.132 -e &#x27;show databases;&#x27;</span></span><br><span class="line">mysql: [Warning] Using a password on the <span class="built_in">command</span> line interface can be insecure.</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| h1                 |</span><br><span class="line">| h2                 |</span><br><span class="line">| mysql              |</span><br><span class="line">| performance_schema |</span><br><span class="line">| sys                |</span><br><span class="line">+--------------------+</span><br></pre></td></tr></table></figure>
+<h2 id="Keepalived-Mysql主主"><a href="#Keepalived-Mysql主主" class="headerlink" title="Keepalived+Mysql主主"></a>Keepalived+Mysql主主</h2><p><strong>mysql主主参考上一章节。</strong>  </p>
+<p>使用keepalived可以实现热备，mysql之间的自动切换。  </p>
+<h3 id="安装keepalived注意：-关闭selinux策略-setenforce-0"><a href="#安装keepalived注意：-关闭selinux策略-setenforce-0" class="headerlink" title="安装keepalived注意：(关闭selinux策略 setenforce 0)"></a>安装keepalived注意：(关闭selinux策略 setenforce 0)</h3><h4 id="离线或在线现在安装包"><a href="#离线或在线现在安装包" class="headerlink" title="离线或在线现在安装包"></a>离线或在线现在安装包</h4><ol>
+<li>下载最新版本：1.4.0</li>
+<li>离线下载（使用该方式完成）：官方现在地址：<a target="_blank" rel="noopener" href="http://www.keepalived.org/download.html">http://www.keepalived.org/download.html</a></li>
+<li>在线下载安装包：wget <a target="_blank" rel="noopener" href="http://www.keepalived.org/software/keepalived-1.4.0.tar.gz">http://www.keepalived.org/software/keepalived-1.4.0.tar.gz</a></li>
+<li>在线安装：yum install keepalived -y</li>
+</ol>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#解压</span></span><br><span class="line">tar -zxvf keepalived-1.4.0.tar.gz</span><br><span class="line"><span class="comment">#删除安装包</span></span><br><span class="line">rm -rf keepalived-1.4.0.tar.gz</span><br><span class="line"><span class="comment">#编译</span></span><br><span class="line"><span class="built_in">cd</span> /app/keepalived-1.4.0/</span><br><span class="line">./configure --prefix=/usr/<span class="built_in">local</span>/keepalived</span><br><span class="line"><span class="comment">#出现如下错误：</span></span><br><span class="line">checking <span class="keyword">for</span> a BSD-compatible install... /usr/bin/install -c</span><br><span class="line">checking whether build environment is sane... yes</span><br><span class="line">checking <span class="keyword">for</span> a thread-safe mkdir -p... /usr/bin/mkdir -p</span><br><span class="line">checking <span class="keyword">for</span> gawk... gawk</span><br><span class="line">checking whether make sets $(MAKE)... yes</span><br><span class="line">checking whether make supports nested variables... yes</span><br><span class="line">checking whether make supports nested variables... (cached) yes</span><br><span class="line">checking <span class="keyword">for</span> pkg-config... /usr/bin/pkg-config</span><br><span class="line">checking pkg-config is at least version 0.9.0... yes</span><br><span class="line">checking <span class="keyword">for</span> gcc... no</span><br><span class="line">checking <span class="keyword">for</span> cc... no</span><br><span class="line">checking <span class="keyword">for</span> cl.exe... no</span><br><span class="line">configure: error: <span class="keyword">in</span> `/app/keepalived-1.4.0<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">configure: error: no acceptable C compiler found in $PATH</span></span><br><span class="line"><span class="string">#安装编译依赖包</span></span><br><span class="line"><span class="string">yum -y install gcc</span></span><br><span class="line"><span class="string">#Openssl错误</span></span><br><span class="line"><span class="string">configure: error: </span></span><br><span class="line"><span class="string">  !!! OpenSSL is not properly installed on your system. !!!</span></span><br><span class="line"><span class="string">  !!! Can not include OpenSSL headers files.            !!!</span></span><br><span class="line"><span class="string">#安装openssl</span></span><br><span class="line"><span class="string">yum -y install openssl-devel </span></span><br><span class="line"><span class="string">#最终编译</span></span><br><span class="line"><span class="string">make &amp;&amp; make install</span></span><br></pre></td></tr></table></figure>
+<h4 id="将keepalived配置成系统服务"><a href="#将keepalived配置成系统服务" class="headerlink" title="将keepalived配置成系统服务"></a>将keepalived配置成系统服务</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp -r /usr/<span class="built_in">local</span>/keepalived/etc/keepalived /etc/init.d/</span><br><span class="line">cp -r  /usr/<span class="built_in">local</span>/keepalived/etc/sysconfig/keepalived /etc/sysconfig/</span><br><span class="line">mkdir /etc/keepalived/</span><br><span class="line">cp /usr/<span class="built_in">local</span>/keepalived/etc/keepalived/keepalived.conf /etc/keepalived/</span><br><span class="line">cp /usr/<span class="built_in">local</span>/keepalived/sbin/keepalived /usr/sbin/</span><br></pre></td></tr></table></figure>
+<h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><h4 id="keepalived-conf"><a href="#keepalived-conf" class="headerlink" title="keepalived.conf"></a>keepalived.conf</h4><p>vi /etc/keepalived/keepalived.conf  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">   #设置报警通知邮件地址，可以设置多个</span><br><span class="line">   notification_email &#123;</span><br><span class="line">     acassen@firewall.loc</span><br><span class="line">     failover@firewall.loc</span><br><span class="line">     sysadmin@firewall.loc</span><br><span class="line">   &#125;</span><br><span class="line">   #设置邮件的发送地址</span><br><span class="line">   notification_email_from Alexandre.Cassen@firewall.loc</span><br><span class="line">   #设置smtp server的地址,该地址必须是存在的</span><br><span class="line">   smtp_server 127.0.0.1</span><br><span class="line">   #设置连接smtp server的超时时间</span><br><span class="line">   smtp_connect_timeout 30</span><br><span class="line">   #运行Keepalived服务器的标识，发邮件时显示在邮件标题中的信息，可以设置为主机名 </span><br><span class="line">   router_id MYSQL_HA      #标识，双主相同</span><br><span class="line">&#125;</span><br><span class="line">#检测脚本</span><br><span class="line">vrrp_script check_run &#123;</span><br><span class="line">	script &quot;&#x2F;etc&#x2F;keepalived&#x2F;bin&#x2F;mysql_check.sh&quot;</span><br><span class="line">	interval 10</span><br><span class="line">&#125;</span><br><span class="line">#定义VRRP实例,实例名自定义</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    #指定Keepalived的角色，MASTER主机 BACKUP备份</span><br><span class="line">    state BACKUP           #两台都设置BACKUP</span><br><span class="line">    #指定HA监测的接口</span><br><span class="line">    interface ens33       #实际网卡</span><br><span class="line">        #虚拟路由标识，这个标识是一个数字(1-255)，在一个VRRP实例中主备服务器ID必须一样</span><br><span class="line">    virtual_router_id 51   #主备相同</span><br><span class="line">        #优先级，数字越大优先级越高，在一个实例中主服务器优先级要高于备服务器</span><br><span class="line">    priority 100           #优先级，backup设置90</span><br><span class="line">    #设置主备之间同步检查的时间间隔单位秒</span><br><span class="line">    advert_int 1</span><br><span class="line">    #设置不抢占模式</span><br><span class="line">    nopreempt              #不主动抢占资源，只在master这台优先级高的设置，backup不设置（防止频繁切换）</span><br><span class="line">        #设置验证类型和密码</span><br><span class="line">    authentication &#123;</span><br><span class="line">        #验证类型有两种&#123;PASS|HA&#125;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        #设置验证密码，在一个实例中主备密码保持一样</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">	    check_run          #执行上述检查mysql状态脚本</span><br><span class="line">    &#125;</span><br><span class="line">    #定义虚拟IP地址,可以有多个，每行一个</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.209.138</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">virtual_server 192.168.209.138 3306 &#123;</span><br><span class="line">    delay_loop 2</span><br><span class="line">    #lb_algo rr            #LVS算法，用不到，我们就关闭了</span><br><span class="line">    #lb_kind NAT           #LVS模式，如果不关闭，备用服务器不能通过VIP连接主MySQL</span><br><span class="line">    #nat_mask 255.255.255.0</span><br><span class="line">    persistence_timeout 50 #同一IP的连接50秒内被分配到同一台真实服务器</span><br><span class="line">    protocol TCP</span><br><span class="line"></span><br><span class="line">    real_server 192.168.209.132 3306 &#123; #检测本地mysql，backup也要写检测本地mysql</span><br><span class="line">        weight 3</span><br><span class="line">	    notify_down &#x2F;etc&#x2F;keepalived&#x2F;bin&#x2F;mysql_down.sh #当mysql服down时，执行此脚本，杀死keepalived，启动其他服务</span><br><span class="line">	    TCP_CHECK &#123;</span><br><span class="line">            connect_timeout 3      #连接超时</span><br><span class="line">            nb_get_retry 3         #重试次数</span><br><span class="line">            delay_before_retry 3   #重试间隔时间</span><br><span class="line">            connect_port 3306</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="mysql-check-sh"><a href="#mysql-check-sh" class="headerlink" title="mysql_check.sh"></a>mysql_check.sh</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">mkdir /etc/keepalived/bin</span><br><span class="line">vim /etc/keepalived/bin/mysql_check.sh</span><br><span class="line">chmod a+x /etc/keepalived/bin/mysql_check.sh</span><br><span class="line"></span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment">#This scripts is check for Mysql Slave status</span></span><br><span class="line">Mysqlbin=/usr/bin/mysql</span><br><span class="line">user=root</span><br><span class="line">pw=<span class="string">&#x27;123456a?&#x27;</span></span><br><span class="line">port=3306</span><br><span class="line">host=127.0.0.1</span><br><span class="line"><span class="comment">#最大延时</span></span><br><span class="line">sbm=120</span><br><span class="line"></span><br><span class="line"><span class="comment">#Check for $Mysqlbin</span></span><br><span class="line"><span class="keyword">if</span> [ ! -f <span class="variable">$Mysqlbin</span> ];<span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&#x27;Mysqlbin not found,check the variable Mysqlbin&#x27;</span></span><br><span class="line">        pkill keepalived</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#Get Mysql Slave Status</span></span><br><span class="line">IOThread=`<span class="variable">$Mysqlbin</span> -h <span class="variable">$host</span> -P <span class="variable">$port</span> -u<span class="variable">$user</span> -p<span class="variable">$pw</span> -e <span class="string">&#x27;show slave status\G&#x27;</span>  2&gt;/dev/null|grep <span class="string">&#x27;Slave_IO_Running:&#x27;</span>|awk <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span>`</span><br><span class="line">SQLThread=`<span class="variable">$Mysqlbin</span> -h <span class="variable">$host</span> -P <span class="variable">$port</span> -u<span class="variable">$user</span> -p<span class="variable">$pw</span> -e <span class="string">&#x27;show slave status\G&#x27;</span> 2&gt;/dev/null|grep <span class="string">&#x27;Slave_SQL_Running:&#x27;</span>|awk <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span>`</span><br><span class="line">SBM=`<span class="variable">$Mysqlbin</span> -h <span class="variable">$host</span> -P <span class="variable">$port</span> -u<span class="variable">$user</span> -p<span class="variable">$pw</span> -e <span class="string">&#x27;show slave status\G&#x27;</span> 2&gt;/dev/null|grep <span class="string">&#x27;Seconds_Behind_Master:&#x27;</span>|awk <span class="string">&#x27;&#123;print $NF&#125;&#x27;</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment">#Check if the mysql run</span></span><br><span class="line"><span class="keyword">if</span> [[ -z <span class="string">&quot;<span class="variable">$IOThread</span>&quot;</span> ]];<span class="keyword">then</span></span><br><span class="line">        pkill keepalived</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#Check if the thread run </span></span><br><span class="line"><span class="keyword">if</span> [[ <span class="string">&quot;<span class="variable">$IOThread</span>&quot;</span> == <span class="string">&quot;No&quot;</span> || <span class="string">&quot;<span class="variable">$SQLThread</span>&quot;</span> == <span class="string">&quot;No&quot;</span> ]];<span class="keyword">then</span></span><br><span class="line">        pkill keepalived</span><br><span class="line">        <span class="keyword">elif</span> [[ <span class="variable">$SBM</span> -ge <span class="variable">$sbm</span> ]];<span class="keyword">then</span></span><br><span class="line">                pkill keepalived</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">                <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<h4 id="mysql-down-sh"><a href="#mysql-down-sh" class="headerlink" title="mysql_down.sh"></a>mysql_down.sh</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/keepalived/bin/mysql_down.sh</span><br><span class="line">chmod a+x /etc/keepalived/bin/mysql_down.sh</span><br><span class="line"></span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">pkill keepalived</span><br><span class="line">/sbin/ifdown ens33 &amp;&amp; /sbin/ifup ens33 <span class="comment">#ens33按照实际网卡名填写</span></span><br></pre></td></tr></table></figure>
+<h4 id="启动keepalived"><a href="#启动keepalived" class="headerlink" title="启动keepalived"></a>启动keepalived</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service keepalived start</span><br></pre></td></tr></table></figure>
+<h3 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h3><h4 id="在H1和H2中配置远程连接"><a href="#在H1和H2中配置远程连接" class="headerlink" title="在H1和H2中配置远程连接"></a>在H1和H2中配置远程连接</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span><span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123456a?&#x27;</span>;</span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br></pre></td></tr></table></figure>
+<h4 id="通过vip链接-可以通过客户端连接"><a href="#通过vip链接-可以通过客户端连接" class="headerlink" title="通过vip链接(可以通过客户端连接)"></a>通过vip链接(可以通过客户端连接)</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop keepalived]<span class="comment"># mysql -uroot -p123456a? -h 192.168.209.138 </span></span><br><span class="line">mysql: [Warning] Using a password on the <span class="built_in">command</span> line interface can be insecure.</span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 55</span><br><span class="line">Server version: 5.7.20-log MySQL Community Server (GPL)</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type <span class="string">&#x27;help;&#x27;</span> or <span class="string">&#x27;\h&#x27;</span> <span class="keyword">for</span> <span class="built_in">help</span>. Type <span class="string">&#x27;\c&#x27;</span> to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="测试切换"><a href="#测试切换" class="headerlink" title="测试切换"></a>测试切换</h4><ol>
+<li>通过Mysql客户端通过VIP连接，看是否连接成功。</li>
+<li>停止master这台mysql服务，是否能正常切换过去，可通过ip addr命令来查看VIP在哪台服务器上。</li>
+<li>可通过查看/var/log/messges日志，看出主备切换过程</li>
+<li>master服务器故障恢复后，是否主动抢占资源，成为活动服务器。</li>
+</ol>
+<h5 id="H1132、H2137正常启动"><a href="#H1132、H2137正常启动" class="headerlink" title="H1132、H2137正常启动"></a>H1132、H2137正常启动</h5><h6 id="H1-IP"><a href="#H1-IP" class="headerlink" title="H1 IP"></a>H1 IP</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop etc]<span class="comment"># ip a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link/ether 00:0c:29:c2:a2:df brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.209.132/24 brd 192.168.209.255 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet 192.168.209.138/32 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::ffc6:3a33:ea90:cc5f/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<h6 id="H2-IP"><a href="#H2-IP" class="headerlink" title="H2 IP"></a>H2 IP</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost etc]<span class="comment"># ip a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link/ether 00:0c:29:4c:51:01 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.209.137/24 brd 192.168.209.255 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::cfc:5056:d04a:340d/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<h5 id="关闭H1：service-mysqld-stop，ip自动切换"><a href="#关闭H1：service-mysqld-stop，ip自动切换" class="headerlink" title="关闭H1：service mysqld stop，ip自动切换"></a>关闭H1：service mysqld stop，ip自动切换</h5><h6 id="H1-IP-1"><a href="#H1-IP-1" class="headerlink" title="H1 IP"></a>H1 IP</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop etc]<span class="comment"># ip a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link/ether 00:0c:29:c2:a2:df brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.209.132/24 brd 192.168.209.255 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::ffc6:3a33:ea90:cc5f/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<h6 id="H2-IP-1"><a href="#H2-IP-1" class="headerlink" title="H2 IP"></a>H2 IP</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost etc]<span class="comment"># ip a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link/ether 00:0c:29:4c:51:01 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.209.137/24 brd 192.168.209.255 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet 192.168.209.138/32 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::cfc:5056:d04a:340d/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<h5 id="重启H1：service-mysqld-start，IP不切换（减少资源浪费）"><a href="#重启H1：service-mysqld-start，IP不切换（减少资源浪费）" class="headerlink" title="重启H1：service mysqld start，IP不切换（减少资源浪费）"></a>重启H1：service mysqld start，IP不切换（减少资源浪费）</h5><h6 id="H1-IP-2"><a href="#H1-IP-2" class="headerlink" title="H1 IP"></a>H1 IP</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop etc]<span class="comment"># ip a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link/ether 00:0c:29:c2:a2:df brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.209.132/24 brd 192.168.209.255 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::ffc6:3a33:ea90:cc5f/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<h6 id="H2-IP-2"><a href="#H2-IP-2" class="headerlink" title="H2 IP"></a>H2 IP</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost etc]<span class="comment"># ip a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link/ether 00:0c:29:4c:51:01 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.209.137/24 brd 192.168.209.255 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet 192.168.209.138/32 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::cfc:5056:d04a:340d/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<h5 id="关闭H2：service-mysqld-stop，IP切换"><a href="#关闭H2：service-mysqld-stop，IP切换" class="headerlink" title="关闭H2：service mysqld stop，IP切换"></a>关闭H2：service mysqld stop，IP切换</h5><h6 id="H1-IP-3"><a href="#H1-IP-3" class="headerlink" title="H1 IP"></a>H1 IP</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop keepalived]<span class="comment"># ip a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link/ether 00:0c:29:c2:a2:df brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.209.132/24 brd 192.168.209.255 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet 192.168.209.138/32 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::ffc6:3a33:ea90:cc5f/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<h6 id="H2-IP-3"><a href="#H2-IP-3" class="headerlink" title="H2 IP"></a>H2 IP</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost etc]<span class="comment"># ip a</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link/ether 00:0c:29:4c:51:01 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.209.137/24 brd 192.168.209.255 scope global ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::cfc:5056:d04a:340d/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="log-slave-updates说明"><a href="#log-slave-updates说明" class="headerlink" title="log-slave-updates说明"></a>log-slave-updates说明</h3><p>当从库log_slave_updates参数没有开启时，从库的binlog不会记录来源于主库的操作记录。只有开启log_slave_updates，从库binlog才会记录主库同步的操作日志。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%log_slave%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">-------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name     <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> log_slave_updates <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>M01和M02为主主复制，M01和R01为主从复制；在测试的过程中发现了以下问题：</p>
+<ol>
+<li>M01和M02的主主复制是没有问题的（从M01写入数据能同步到M02，从M02写入数据能够同步到M01);</li>
+<li>主从同步的时候，当从M01写入的时候，数据可以写入到R01；</li>
+<li>当从M02写入的时候，数据就不能写入到R01；</li>
+</ol>
+<p>问题的原因：log_slave_updates参数的状态为NO  </p>
+<h4 id="官方说明"><a href="#官方说明" class="headerlink" title="官方说明"></a>官方说明</h4><p>Normally, a slave does not log to its own binary log any updates that are received from a master server. This option tells the slave to log the updates performed by its SQL thread to its own binary log. For this option to have any effect, the slave must also be started with the –log-bin option to enable binary logging. Prior to MySQL 5.5, the server would not start when using the –log-slave-updates option without also starting the server with the –log-bin option, and would fail with an error; in MySQL 5.5, only a warning is generated. (Bug #44663) –log-slave-updates is used when you want to chain replication servers. For example, you might want to set up replication servers using this arrangement:<br>A -&gt; B -&gt; C<br>Here, A serves as the master for the slave B, and B serves as the master for the slave C. For this to work, B must be both a master and a slave. You must start both A and B with –log-bin to enable binary logging, and B with the –log-slave-updates option so that updates received from A are logged by B to its binary log.  </p>
+<p>a) M01同步从M02同步数据过来的时候，log_slave_updates参数用来控制M01是否把所有的操作写入到binary log，默认的情况下mysql是关闭的;<br>b) R01数据的更新需要通过读取到M01的binary log才能进行更新，这个时候M01是没有写binary log的，所以当数据从M02写入的时候，R01也就没有更新了。。  </p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.51cto.com/duyunlong/1306841">Linux下的MYSQL主主复制</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.51cto.com/lizhenliang/1362313">MySQL高可用性之Keepalived+Mysql（双主热备）</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/HzSunshine/article/details/67059532">Mysql+Keepalived双主互备高可用详细配置</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.51cto.com/duyunlong/1310405">Linux下keepalived+mysql实现高可用</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Aiapple/p/5794901.html">mysql高可用架构</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag"></i> MySQL</a>
+              <a href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" rel="tag"><i class="fa fa-tag"></i> 高可用</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/04/MySQL%E4%B9%8B%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/" rel="prev" title="MySQL之备份与恢复">
+      <i class="fa fa-chevron-left"></i> MySQL之备份与恢复
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/04/MySQL%E4%B9%8Bshow-status%E8%AF%A6%E8%A7%A3/" rel="next" title="MySQL之show status详解">
+      MySQL之show status详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%92%E4%B8%BA%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">互为主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.3.</span> <span class="nav-text">关键步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6my-cnf"><span class="nav-number">1.4.</span> <span class="nav-text">修改配置文件my.cnf</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#H1"><span class="nav-number">1.4.1.</span> <span class="nav-text">H1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#H2"><span class="nav-number">1.4.2.</span> <span class="nav-text">H2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E4%B8%BB%E4%BB%8Ebin-log%E5%92%8C%E8%AF%BB%E5%86%99%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.5.</span> <span class="nav-text">设置主从bin-log和读写位置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bmaster%E4%BF%A1%E6%81%AF"><span class="nav-number">1.5.1.</span> <span class="nav-text">查看master信息</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#H1-1"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">H1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#H2-1"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">H2</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E8%AF%BB%E5%86%99%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.5.2.</span> <span class="nav-text">设置读写位置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#H1%EF%BC%9A%E8%AE%BE%E7%BD%AEH2%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">H1：设置H2的信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BD%AEH1%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">置H1的信息</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%8A%B6%E6%80%81"><span class="nav-number">1.5.3.</span> <span class="nav-text">查看状态</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">1.6.</span> <span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81"><span class="nav-number">1.6.1.</span> <span class="nav-text">初始状态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#H1%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BF%A1%E6%81%AF"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">H1数据库信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#H2%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BF%A1%E6%81%AF"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">H2数据库信息</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#H1%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%8C%E5%9C%A8H2%E4%B8%AD%E6%98%AF%E5%90%A6%E6%98%BE%E7%A4%BA"><span class="nav-number">1.6.2.</span> <span class="nav-text">H1创建数据库，在H2中是否显示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#H2%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%8C%E5%9C%A8H1%E4%B8%AD%E6%98%AF%E5%90%A6%E6%98%BE%E7%A4%BA"><span class="nav-number">1.6.3.</span> <span class="nav-text">H2创建数据库，在H1中是否显示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Keepalived-Mysql%E4%B8%BB%E4%B8%BB"><span class="nav-number">2.</span> <span class="nav-text">Keepalived+Mysql主主</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85keepalived%E6%B3%A8%E6%84%8F%EF%BC%9A-%E5%85%B3%E9%97%ADselinux%E7%AD%96%E7%95%A5-setenforce-0"><span class="nav-number">2.1.</span> <span class="nav-text">安装keepalived注意：(关闭selinux策略 setenforce 0)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%BB%E7%BA%BF%E6%88%96%E5%9C%A8%E7%BA%BF%E7%8E%B0%E5%9C%A8%E5%AE%89%E8%A3%85%E5%8C%85"><span class="nav-number">2.1.1.</span> <span class="nav-text">离线或在线现在安装包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.1.2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86keepalived%E9%85%8D%E7%BD%AE%E6%88%90%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.1.3.</span> <span class="nav-text">将keepalived配置成系统服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">修改配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#keepalived-conf"><span class="nav-number">2.2.1.</span> <span class="nav-text">keepalived.conf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mysql-check-sh"><span class="nav-number">2.2.2.</span> <span class="nav-text">mysql_check.sh</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mysql-down-sh"><span class="nav-number">2.2.3.</span> <span class="nav-text">mysql_down.sh</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8keepalived"><span class="nav-number">2.2.4.</span> <span class="nav-text">启动keepalived</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-1"><span class="nav-number">2.3.</span> <span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8H1%E5%92%8CH2%E4%B8%AD%E9%85%8D%E7%BD%AE%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.3.1.</span> <span class="nav-text">在H1和H2中配置远程连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87vip%E9%93%BE%E6%8E%A5-%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.3.2.</span> <span class="nav-text">通过vip链接(可以通过客户端连接)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%88%87%E6%8D%A2"><span class="nav-number">2.3.3.</span> <span class="nav-text">测试切换</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#H1132%E3%80%81H2137%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8"><span class="nav-number">2.3.3.1.</span> <span class="nav-text">H1132、H2137正常启动</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#H1-IP"><span class="nav-number">2.3.3.1.1.</span> <span class="nav-text">H1 IP</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#H2-IP"><span class="nav-number">2.3.3.1.2.</span> <span class="nav-text">H2 IP</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E9%97%ADH1%EF%BC%9Aservice-mysqld-stop%EF%BC%8Cip%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2"><span class="nav-number">2.3.3.2.</span> <span class="nav-text">关闭H1：service mysqld stop，ip自动切换</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#H1-IP-1"><span class="nav-number">2.3.3.2.1.</span> <span class="nav-text">H1 IP</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#H2-IP-1"><span class="nav-number">2.3.3.2.2.</span> <span class="nav-text">H2 IP</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%87%8D%E5%90%AFH1%EF%BC%9Aservice-mysqld-start%EF%BC%8CIP%E4%B8%8D%E5%88%87%E6%8D%A2%EF%BC%88%E5%87%8F%E5%B0%91%E8%B5%84%E6%BA%90%E6%B5%AA%E8%B4%B9%EF%BC%89"><span class="nav-number">2.3.3.3.</span> <span class="nav-text">重启H1：service mysqld start，IP不切换（减少资源浪费）</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#H1-IP-2"><span class="nav-number">2.3.3.3.1.</span> <span class="nav-text">H1 IP</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#H2-IP-2"><span class="nav-number">2.3.3.3.2.</span> <span class="nav-text">H2 IP</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E9%97%ADH2%EF%BC%9Aservice-mysqld-stop%EF%BC%8CIP%E5%88%87%E6%8D%A2"><span class="nav-number">2.3.3.4.</span> <span class="nav-text">关闭H2：service mysqld stop，IP切换</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#H1-IP-3"><span class="nav-number">2.3.3.4.1.</span> <span class="nav-text">H1 IP</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#H2-IP-3"><span class="nav-number">2.3.3.4.2.</span> <span class="nav-text">H2 IP</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#log-slave-updates%E8%AF%B4%E6%98%8E"><span class="nav-number">3.1.</span> <span class="nav-text">log-slave-updates说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF"><span class="nav-number">3.2.</span> <span class="nav-text">场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E8%AF%B4%E6%98%8E"><span class="nav-number">3.2.1.</span> <span class="nav-text">官方说明</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">297k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">4:30</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '4473a187eb91bf375df496f2c5312e7c',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

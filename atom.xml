@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-04T12:27:47.502Z</updated>
+  <updated>2021-02-04T12:50:08.531Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -17,11 +17,184 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>MySQL之show status详解</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8Bshow-status%E8%AF%A6%E8%A7%A3/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8Bshow-status%E8%AF%A6%E8%A7%A3/</id>
+    <published>2021-02-04T12:49:05.000Z</published>
+    <updated>2021-02-04T12:50:08.531Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;style type=&quot;text/css&quot;&gt;
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg</summary>
+        
+      
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="show status" scheme="https://www.sunliaodong.cn/tags/show-status/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之高可用</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/</id>
+    <published>2021-02-04T12:45:21.000Z</published>
+    <updated>2021-02-04T12:47:59.487Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;互为主从复制&quot;&gt;&lt;a href=&quot;#互为主从复制&quot; class=&quot;headerlink&quot; title=&quot;互为主从复制&quot;&gt;&lt;/a&gt;互为主从复制&lt;/h2&gt;&lt;h3 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h3&gt;&lt;p&gt;在一些高可用的环境中，mysql的主从不能满足现实中的一些实际需求。比如，一些流量大的网站数据库访问有了瓶颈，需要负载均衡的时候就用两个或者多个的mysql服务器，而这些mysql服务器的数据库数据必须要保持一致，那么就会用到主主复制。  &lt;/p&gt;
+&lt;p&gt;mysql主从架构中其实就一个主在工作，而从就相当于一个备份机器，从通过日志监测的方式来备份主库上的数据而保证主库的数据安全。在这种架构中如果从上的数据做了改变，主数据是不会用任何变化的。因为mysql主从架构主要是mysql从监控mysql主的日志变化来实现同步，相反的在这个架构中主并没有监控从的日志变化。所以，mysql从数据反生变化，主也就没有什么变化了。  &lt;/p&gt;
+&lt;p&gt;通过上述描述，可以看到如果想实现主主复制，无非就是在mysql主从架构上让mysql主实现监测从的日志变化，从而实现两台机器相互同步。  &lt;/p&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    <category term="高可用" scheme="https://www.sunliaodong.cn/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="高可用" scheme="https://www.sunliaodong.cn/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之备份与恢复</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/</id>
+    <published>2021-02-04T12:43:21.000Z</published>
+    <updated>2021-02-04T12:44:26.403Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;h3 id=&quot;备份的目的&quot;&gt;&lt;a href=&quot;#备份的目的&quot; class=&quot;headerlink&quot; title=&quot;备份的目的&quot;&gt;&lt;/a&gt;备份的目的&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;做灾难恢复：对损坏的数据进行恢复和还原&lt;/li&gt;
+&lt;li&gt;需求改变：因需求改变而需要把数据还原到改变以前&lt;/li&gt;
+&lt;li&gt;测试：测试新功能是否可用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;备份需要考虑的问题&quot;&gt;&lt;a href=&quot;#备份需要考虑的问题&quot; class=&quot;headerlink&quot; title=&quot;备份需要考虑的问题&quot;&gt;&lt;/a&gt;备份需要考虑的问题&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;可以容忍丢失多长时间的数据；&lt;/li&gt;
+&lt;li&gt;恢复数据要在多长时间内完；&lt;/li&gt;
+&lt;li&gt;恢复的时候是否需要持续提供服务；&lt;/li&gt;
+&lt;li&gt;恢复的对象，是整个库，多个表，还是单个库，单个表。&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="备份" scheme="https://www.sunliaodong.cn/tags/%E5%A4%87%E4%BB%BD/"/>
+    
+    <category term="恢复" scheme="https://www.sunliaodong.cn/tags/%E6%81%A2%E5%A4%8D/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之优化技巧</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7/</id>
+    <published>2021-02-04T12:41:07.000Z</published>
+    <updated>2021-02-04T12:42:42.648Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;优化技巧&quot;&gt;&lt;a href=&quot;#优化技巧&quot; class=&quot;headerlink&quot; title=&quot;优化技巧&quot;&gt;&lt;/a&gt;优化技巧&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;配置文件的快速查找&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;/usr/libexec/mysqld --verbose --&lt;span class=&quot;built_in&quot;&gt;help&lt;/span&gt;|grep -A 1 &lt;span class=&quot;string&quot;&gt;&amp;#x27;Default options&amp;#x27;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;200815 16:01:04 [Note] Plugin &lt;span class=&quot;string&quot;&gt;&amp;#x27;FEEDBACK&amp;#x27;&lt;/span&gt; is disabled.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Default options are &lt;span class=&quot;built_in&quot;&gt;read&lt;/span&gt; from the following files &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; the given order:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;/etc/mysql/my.cnf /etc/my.cnf ~/.my.cnf&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;配置项使用小写，单词之间使用横线或下划线分隔，并且使用统一的规范&lt;/li&gt;
+&lt;li&gt;作用域：全局、会话、对象&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    <category term="调优" scheme="https://www.sunliaodong.cn/categories/%E8%B0%83%E4%BC%98/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="调优" scheme="https://www.sunliaodong.cn/tags/%E8%B0%83%E4%BC%98/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之配置文件</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/</id>
+    <published>2021-02-04T12:39:18.000Z</published>
+    <updated>2021-02-04T12:40:27.873Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;下面是72GB内存生产环境中my.cnf配置文件，读者可以作为一个优化参考：&lt;/p&gt;
+&lt;figure class=&quot;highlight sql&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span</summary>
+        
+      
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="配置文件" scheme="https://www.sunliaodong.cn/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之账户管理</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/</id>
+    <published>2021-02-04T12:35:57.000Z</published>
+    <updated>2021-02-04T12:37:52.344Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Mysql账户体系&quot;&gt;&lt;a href=&quot;#Mysql账户体系&quot; class=&quot;headerlink&quot; title=&quot;Mysql账户体系&quot;&gt;&lt;/a&gt;Mysql账户体系&lt;/h2&gt;&lt;figure class=&quot;highlight sql&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;mysql&lt;span class=&quot;operator&quot;&gt;&amp;gt;&lt;/span&gt; use mysql;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;mysql&lt;span class=&quot;operator&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;show&lt;/span&gt; tables;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;---------------------------+&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; Tables_in_mysql           &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;---------------------------+&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; columns_priv              &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; db                        &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; procs_priv                &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; proxies_priv              &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; tables_priv               &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;user&lt;/span&gt;                      &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;---------------------------+&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;31&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;rows&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;set&lt;/span&gt; (&lt;span class=&quot;number&quot;&gt;0.00&lt;/span&gt; sec)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="账户管理" scheme="https://www.sunliaodong.cn/tags/%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Java系统化学习之集合概述</title>
     <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/"/>
     <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/</id>
     <published>2021-02-04T12:19:31.000Z</published>
-    <updated>2021-02-04T12:27:47.502Z</updated>
+    <updated>2021-02-04T12:31:34.035Z</updated>
     
     
     <summary type="html">&lt;p&gt;使用集合需要考虑几个关注点：&lt;/p&gt;
@@ -220,9 +393,9 @@
     
     <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
     
-    <category term="Hibernate" scheme="https://www.sunliaodong.cn/tags/Hibernate/"/>
-    
     <category term="常用方法" scheme="https://www.sunliaodong.cn/tags/%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/"/>
+    
+    <category term="Hibernate" scheme="https://www.sunliaodong.cn/tags/Hibernate/"/>
     
   </entry>
   
@@ -305,9 +478,9 @@
     
     <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
     
-    <category term="对象状态" scheme="https://www.sunliaodong.cn/tags/%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/"/>
-    
     <category term="Hibernate" scheme="https://www.sunliaodong.cn/tags/Hibernate/"/>
+    
+    <category term="对象状态" scheme="https://www.sunliaodong.cn/tags/%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/"/>
     
   </entry>
   
@@ -476,176 +649,6 @@
     <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
     
     <category term="编程技巧" scheme="https://www.sunliaodong.cn/tags/%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之注解</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/</id>
-    <published>2021-02-04T08:15:21.000Z</published>
-    <updated>2021-02-04T08:19:21.266Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;在jdk1.5中引入了注解的概念，注解是Java提供的一种对类信息（包括：类、属性与方法）进行扩展的一种行为。Annatation(注解)是一个接口，程序可以通过反射来获取指定程序中元素的 Annotation 对象，然后通过该 Annotation 对象来获取注解中的元数据信息。通过使用注解，可以将元数据保存在 Java 源代码中。并拥有如下优势：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;简单易读的代码，&lt;/li&gt;
-&lt;li&gt;编译器类型检查，&lt;/li&gt;
-&lt;li&gt;使用 annotation API 为自己的注解构造处理工具。&lt;/li&gt;
-&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="注解" scheme="https://www.sunliaodong.cn/tags/%E6%B3%A8%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>eclipse使用技巧</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</id>
-    <published>2021-02-04T07:51:43.000Z</published>
-    <updated>2021-02-04T09:28:51.018Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;集成javap命令&quot;&gt;&lt;a href=&quot;#集成javap命令&quot; class=&quot;headerlink&quot; title=&quot;集成javap命令&quot;&gt;&lt;/a&gt;集成javap命令&lt;/h2&gt;&lt;h3 id=&quot;配置&quot;&gt;&lt;a href=&quot;#配置&quot; class=&quot;headerlink&quot; title=&quot;配置&quot;&gt;&lt;/a&gt;配置&lt;/h3&gt;&lt;ol&gt;
-&lt;li&gt;eclipse中点击工具栏: Run &amp;gt; External Tools &amp;gt; External Tools Configuration&lt;/li&gt;
-&lt;li&gt;双击”程序”&lt;/li&gt;
-&lt;li&gt;修改配置&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039059895.png&quot; class title=&quot;执行javap&quot;&gt;
-
-&lt;/div&gt;
-
-&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Name: javap(随意)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;location: jdk实际路径&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Working Directory:$&amp;#123;workspace_loc&amp;#125;\$&amp;#123;project_name&amp;#125; （不要改）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Arguments:-c -verbose  -classpath  $&amp;#123;workspace_loc&amp;#125;/ $&amp;#123;project_name&amp;#125;/bin/$&amp;#123;java_type_name&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
-    
-    
-    
-    <category term="常用工具" scheme="https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="eclipse" scheme="https://www.sunliaodong.cn/tags/eclipse/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>设计模式之单例模式</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</id>
-    <published>2021-02-04T07:39:11.000Z</published>
-    <updated>2021-02-04T07:48:28.890Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;（Singleton Pattern、单态模式、单件模式、对象创建型模式），单例模式的特点：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;构造方法私有化；(不能被实例化和继承)&lt;/li&gt;
-&lt;li&gt;实例化的变量引用私有化；&lt;/li&gt;
-&lt;li&gt;获取实例的方法共有。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;意图&quot;&gt;&lt;a href=&quot;#意图&quot; class=&quot;headerlink&quot; title=&quot;意图&quot;&gt;&lt;/a&gt;意图&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;唯一的对象实例&lt;/li&gt;
-&lt;li&gt;保证一个类仅有一个实例，并提供一个访问他的全局访问点&lt;/li&gt;
-&lt;li&gt;有状态（可变的单例对象，可以组成状态仓库）、无状态（工具类）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;适用性&quot;&gt;&lt;a href=&quot;#适用性&quot; class=&quot;headerlink&quot; title=&quot;适用性&quot;&gt;&lt;/a&gt;适用性&lt;/h2&gt;&lt;p&gt;在下面的情况下可以使用Singleton模式：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;当类只能有一个实例而且客户可以从一个总所周知的访问点访问它时。&lt;/li&gt;
-&lt;li&gt;当这个唯一实例应该是通过子类可扩展的，并且客户应该无需更改代码就能使用一个扩展的实例时。&lt;/li&gt;
-&lt;li&gt;系统只需要一个实例的对象，而这个对象又会被经常创建。&lt;/li&gt;
-&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="软件架构" scheme="https://www.sunliaodong.cn/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="设计模式" scheme="https://www.sunliaodong.cn/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-    <category term="单例模式" scheme="https://www.sunliaodong.cn/tags/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>git详解</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/git%E8%AF%A6%E8%A7%A3/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/git%E8%AF%A6%E8%A7%A3/</id>
-    <published>2021-02-04T00:17:37.000Z</published>
-    <updated>2021-02-04T06:19:24.459Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;提交本地工程到github&quot;&gt;&lt;a href=&quot;#提交本地工程到github&quot; class=&quot;headerlink&quot; title=&quot;提交本地工程到github&quot;&gt;&lt;/a&gt;提交本地工程到github&lt;/h2&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;git init&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git add .&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git commit -m &lt;span class=&quot;string&quot;&gt;&amp;quot;注释&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git remote add origin https://github.com/sld880311/parkspaceagent&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git pull origin master&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#如果出现fatal: refusing to merge unrelated histories&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;使用如下命令 git pull origin master --allow-unrelated-histories&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git push -u origin master&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
-    
-    
-    
-    <category term="常用工具" scheme="https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/"/>
-    
-    <category term="代码管理" scheme="https://www.sunliaodong.cn/categories/%E4%BB%A3%E7%A0%81%E7%AE%A1%E7%90%86/"/>
-    
-    
-    <category term="git" scheme="https://www.sunliaodong.cn/tags/git/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Javap详解</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/</id>
-    <published>2021-02-03T23:58:16.000Z</published>
-    <updated>2021-02-04T01:18:35.201Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;命令&quot;&gt;&lt;a href=&quot;#命令&quot; class=&quot;headerlink&quot; title=&quot;命令&quot;&gt;&lt;/a&gt;命令&lt;/h2&gt;&lt;p&gt;javap 命令用于解析类文件。其输出取决于所用的选项。若没有使用选项，javap 将输出传递给它的类的 public 域及方法。javap 将其输出到标准输出设备上。&lt;/p&gt;
-&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;用法: javap &amp;lt;options&amp;gt; &amp;lt;classes&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;其中, 可能的选项包括:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -help  --help  -?        输出此用法消息&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -version                 版本信息&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -v  -verbose             输出附加信息,输出堆栈大小、各方法的 locals 及 args 数。&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -l                       输出行号和本地变量表&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt;                  仅显示公共类和成员&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -&lt;span class=&quot;keyword&quot;&gt;protected&lt;/span&gt;               显示受保护的/公共类和成员&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -&lt;span class=&quot;keyword&quot;&gt;package&lt;/span&gt;                 显示程序包/受保护的/公共类和成员 (默认)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -p  -&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt;             显示所有类和成员&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -c                       输出类中各方法的未解析的代码，即构成 Java 字节码的指令。&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -s                       输出内部类型签名&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -sysinfo                 显示正在处理的类的&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                           系统信息 (路径, 大小, 日期, MD5 散列)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -constants               显示最终常量&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -classpath &amp;lt;path&amp;gt;        指定查找用户类文件的位置,如果设置了该选项，则它将覆盖缺省值或 CLASSPATH 环境变量。目录用冒号分隔。&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -cp &amp;lt;path&amp;gt;               指定查找用户类文件的位置&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  -bootclasspath &amp;lt;path&amp;gt;    覆盖引导类文件的位置,缺省情况下，自举类是实现核心 Java 平台的类，位于 jrelibt.jar 和 jrelibi18n.jar 中。&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="常用工具" scheme="https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/"/>
-    
-    
-    <category term="Javap" scheme="https://www.sunliaodong.cn/tags/Javap/"/>
-    
-    <category term="Class分析" scheme="https://www.sunliaodong.cn/tags/Class%E5%88%86%E6%9E%90/"/>
-    
-    <category term="JVM" scheme="https://www.sunliaodong.cn/tags/JVM/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>使用hexo+github+next部署个人博客</title>
-    <link href="https://www.sunliaodong.cn/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"/>
-    <id>https://www.sunliaodong.cn/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</id>
-    <published>2021-02-03T07:40:46.000Z</published>
-    <updated>2021-02-04T06:10:18.965Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;环境准备&quot;&gt;&lt;a href=&quot;#环境准备&quot; class=&quot;headerlink&quot; title=&quot;环境准备&quot;&gt;&lt;/a&gt;环境准备&lt;/h2&gt;&lt;h3 id=&quot;依赖环境&quot;&gt;&lt;a href=&quot;#依赖环境&quot; class=&quot;headerlink&quot; title=&quot;依赖环境&quot;&gt;&lt;/a&gt;依赖环境&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;git version&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;node -v&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;npm -v&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# 修改原&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;npm config &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; registry http://registry.npm.taobao.org/&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# 改回去&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;npm config &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; registry https://registry.npmjs.org/&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h3 id=&quot;初始化博客&quot;&gt;&lt;a href=&quot;#初始化博客&quot; class=&quot;headerlink&quot; title=&quot;初始化博客&quot;&gt;&lt;/a&gt;初始化博客&lt;/h3&gt;&lt;p&gt;使用npm安装hexo(&lt;a href=&quot;https://hexo.io/zh-cn/&quot;&gt;详细文档&lt;/a&gt;)，命令是&lt;code&gt;npm install -g hexo-cli&lt;/code&gt;,安装完成之后初始化博客,命令如下：&lt;/p&gt;
-&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;mkdir sld880311.github.io&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt; sld880311.github.io&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;hexo init &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;npm install&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;初始化完成之后目录结构如下：&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
-    
-    
-    <category term="Hexo" scheme="https://www.sunliaodong.cn/tags/Hexo/"/>
-    
-    <category term="github" scheme="https://www.sunliaodong.cn/tags/github/"/>
-    
-    <category term="Next" scheme="https://www.sunliaodong.cn/tags/Next/"/>
     
   </entry>
   

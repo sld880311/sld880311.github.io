@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Mysql账户体系12345678910111213mysql&gt; use mysql;mysql&gt; show tables;+---------------------------+| Tables_in_mysql           |+---------------------------+| columns_priv              || db">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL之账户管理">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="Mysql账户体系12345678910111213mysql&gt; use mysql;mysql&gt; show tables;+---------------------------+| Tables_in_mysql           |+---------------------------+| columns_priv              || db">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-04T12:35:57.000Z">
+<meta property="article:modified_time" content="2021-02-04T12:37:52.344Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="账户管理">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL之账户管理 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">36</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">12</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">26</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL之账户管理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 20:35:57 / 修改时间：20:37:52" itemprop="dateCreated datePublished" datetime="2021-02-04T20:35:57+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>18k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Mysql账户体系"><a href="#Mysql账户体系" class="headerlink" title="Mysql账户体系"></a>Mysql账户体系</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> use mysql;</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> tables;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="operator">|</span> Tables_in_mysql           <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="operator">|</span> columns_priv              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> db                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> procs_priv                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> proxies_priv              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> tables_priv               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">user</span>                      <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="number">31</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>根据账户所具有的权限的不同，MySQL的账户可以分为以下几种：</p>
+<h3 id="服务实例级账号"><a href="#服务实例级账号" class="headerlink" title="服务实例级账号"></a>服务实例级账号</h3><p>如果某用户如root,拥有服务实例级分配的权限，那么该账号就可以删除所有的数据库、连同这些库中的表。</p>
+<h3 id="数据库级别账号-db"><a href="#数据库级别账号-db" class="headerlink" title="数据库级别账号-db"></a>数据库级别账号-db</h3><ol>
+<li>该账号可以在具有权限的数据库中执行增删改查的所有操作（如果分配了这些权限）。</li>
+<li>db表列出数据库，而用户有权限访问它们。在这里指定的权限适用于一个数据库中的<strong>所有表</strong>。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">desc</span> db;</span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------+---------------+------+-----+---------+-------+</span></span><br><span class="line"><span class="operator">|</span> Field                 <span class="operator">|</span> Type          <span class="operator">|</span> <span class="keyword">Null</span> <span class="operator">|</span> Key <span class="operator">|</span> <span class="keyword">Default</span> <span class="operator">|</span> Extra <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------+---------------+------+-----+---------+-------+</span></span><br><span class="line"><span class="operator">|</span> Host                  <span class="operator">|</span> <span class="type">char</span>(<span class="number">60</span>)      <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>         <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Db                    <span class="operator">|</span> <span class="type">char</span>(<span class="number">64</span>)      <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>         <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">User</span>                  <span class="operator">|</span> <span class="type">char</span>(<span class="number">32</span>)      <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>         <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Select_priv           <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Insert_priv           <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Update_priv           <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Delete_priv           <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_priv           <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Drop_priv             <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Grant_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> References_priv       <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Index_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Alter_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_tmp_table_priv <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Lock_tables_priv      <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_view_priv      <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Show_view_priv        <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_routine_priv   <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Alter_routine_priv    <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Execute_priv          <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Event_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Trigger_priv          <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------+---------------+------+-----+---------+-------+</span></span><br><span class="line"><span class="number">22</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="number">7.</span> <span class="type">row</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">                 Host: <span class="operator">%</span></span><br><span class="line">                   Db: sunld_db</span><br><span class="line">                 <span class="keyword">User</span>: account_sunld_db</span><br><span class="line">          Select_priv: Y</span><br><span class="line">          Insert_priv: Y</span><br><span class="line">          Update_priv: Y</span><br><span class="line">          Delete_priv: Y</span><br><span class="line">          Create_priv: Y</span><br><span class="line">            Drop_priv: Y</span><br><span class="line">           Grant_priv: Y</span><br><span class="line">      References_priv: Y</span><br><span class="line">           Index_priv: Y</span><br><span class="line">           Alter_priv: Y</span><br><span class="line">Create_tmp_table_priv: Y</span><br><span class="line">     Lock_tables_priv: Y</span><br><span class="line">     Create_view_priv: Y</span><br><span class="line">       Show_view_priv: Y</span><br><span class="line">  Create_routine_priv: Y</span><br><span class="line">   Alter_routine_priv: Y</span><br><span class="line">         Execute_priv: Y</span><br><span class="line">           Event_priv: Y</span><br><span class="line">         Trigger_priv: Y</span><br><span class="line"><span class="number">7</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h3 id="数据表级别账号-tables-priv"><a href="#数据表级别账号-tables-priv" class="headerlink" title="数据表级别账号-tables_priv"></a>数据表级别账号-tables_priv</h3><ol>
+<li>该账号可以在具有权限的表上执行增删改查等所有操作（如果分配了这些权限）。</li>
+<li>tables_priv表指定表级权限，在这里指定的一个权限适用于一个表的<strong>所有列</strong>。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">desc</span> tables_priv;</span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+-----------------------------------------------------------------------------------------------------------------------------------+------+-----+-------------------+-----------------------------+</span></span><br><span class="line"><span class="operator">|</span> Field       <span class="operator">|</span> Type                                                                                                                              <span class="operator">|</span> <span class="keyword">Null</span> <span class="operator">|</span> Key <span class="operator">|</span> <span class="keyword">Default</span>           <span class="operator">|</span> Extra                       <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+-----------------------------------------------------------------------------------------------------------------------------------+------+-----+-------------------+-----------------------------+</span></span><br><span class="line"><span class="operator">|</span> Host        <span class="operator">|</span> <span class="type">char</span>(<span class="number">60</span>)                                                                                                                          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Db          <span class="operator">|</span> <span class="type">char</span>(<span class="number">64</span>)                                                                                                                          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">User</span>        <span class="operator">|</span> <span class="type">char</span>(<span class="number">32</span>)                                                                                                                          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Table_name  <span class="operator">|</span> <span class="type">char</span>(<span class="number">64</span>)                                                                                                                          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Grantor     <span class="operator">|</span> <span class="type">char</span>(<span class="number">93</span>)                                                                                                                          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> MUL <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="type">Timestamp</span>   <span class="operator">|</span> <span class="type">timestamp</span>                                                                                                                         <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="operator">|</span> <span class="keyword">on</span> <span class="keyword">update</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Table_priv  <span class="operator">|</span> <span class="keyword">set</span>(<span class="string">&#x27;Select&#x27;</span>,<span class="string">&#x27;Insert&#x27;</span>,<span class="string">&#x27;Update&#x27;</span>,<span class="string">&#x27;Delete&#x27;</span>,<span class="string">&#x27;Create&#x27;</span>,<span class="string">&#x27;Drop&#x27;</span>,<span class="string">&#x27;Grant&#x27;</span>,<span class="string">&#x27;References&#x27;</span>,<span class="string">&#x27;Index&#x27;</span>,<span class="string">&#x27;Alter&#x27;</span>,<span class="string">&#x27;Create View&#x27;</span>,<span class="string">&#x27;Show view&#x27;</span>,<span class="string">&#x27;Trigger&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Column_priv <span class="operator">|</span> <span class="keyword">set</span>(<span class="string">&#x27;Select&#x27;</span>,<span class="string">&#x27;Insert&#x27;</span>,<span class="string">&#x27;Update&#x27;</span>,<span class="string">&#x27;References&#x27;</span>)                                                                                      <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+-----------------------------------------------------------------------------------------------------------------------------------+------+-----+-------------------+-----------------------------+</span></span><br><span class="line"><span class="number">8</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="number">4.</span> <span class="type">row</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">       Host: <span class="operator">%</span></span><br><span class="line">         Db: sunld_db</span><br><span class="line">       <span class="keyword">User</span>: account_sunld_table</span><br><span class="line"> Table_name: tb_a</span><br><span class="line">    Grantor: root<span class="variable">@localhost</span></span><br><span class="line">  <span class="type">Timestamp</span>: <span class="number">0000</span><span class="number">-00</span><span class="number">-00</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span></span><br><span class="line"> Table_priv: <span class="keyword">Select</span>,<span class="keyword">Insert</span>,<span class="keyword">Update</span>,<span class="keyword">Delete</span>,<span class="keyword">Create</span>,<span class="keyword">Drop</span>,<span class="keyword">References</span>,Index,<span class="keyword">Alter</span>,<span class="keyword">Create</span> <span class="keyword">View</span>,<span class="keyword">Show</span> <span class="keyword">view</span>,<span class="keyword">Trigger</span></span><br><span class="line">Column_priv:</span><br></pre></td></tr></table></figure>
+<h3 id="字段级别的权限-columns-priv"><a href="#字段级别的权限-columns-priv" class="headerlink" title="字段级别的权限-columns_priv"></a>字段级别的权限-columns_priv</h3><ol>
+<li>该账号可以对某些表中具有权限的字段进行操作（取决于所分配的权限）。</li>
+<li>columns_priv表指定列级权限。这里指定的权限适用于一个表的特定列。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">desc</span> columns_priv;</span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+----------------------------------------------+------+-----+-------------------+-----------------------------+</span></span><br><span class="line"><span class="operator">|</span> Field       <span class="operator">|</span> Type                                         <span class="operator">|</span> <span class="keyword">Null</span> <span class="operator">|</span> Key <span class="operator">|</span> <span class="keyword">Default</span>           <span class="operator">|</span> Extra                       <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+----------------------------------------------+------+-----+-------------------+-----------------------------+</span></span><br><span class="line"><span class="operator">|</span> Host        <span class="operator">|</span> <span class="type">char</span>(<span class="number">60</span>)                                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Db          <span class="operator">|</span> <span class="type">char</span>(<span class="number">64</span>)                                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">User</span>        <span class="operator">|</span> <span class="type">char</span>(<span class="number">32</span>)                                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Table_name  <span class="operator">|</span> <span class="type">char</span>(<span class="number">64</span>)                                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Column_name <span class="operator">|</span> <span class="type">char</span>(<span class="number">64</span>)                                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="type">Timestamp</span>   <span class="operator">|</span> <span class="type">timestamp</span>                                    <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="operator">|</span> <span class="keyword">on</span> <span class="keyword">update</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Column_priv <span class="operator">|</span> <span class="keyword">set</span>(<span class="string">&#x27;Select&#x27;</span>,<span class="string">&#x27;Insert&#x27;</span>,<span class="string">&#x27;Update&#x27;</span>,<span class="string">&#x27;References&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span>                   <span class="operator">|</span>                             <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+----------------------------------------------+------+-----+-------------------+-----------------------------+</span></span><br><span class="line"><span class="number">7</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h3 id="存储程序级别的账号"><a href="#存储程序级别的账号" class="headerlink" title="存储程序级别的账号"></a>存储程序级别的账号</h3><p>该账号可以对存储程序进行增删改查的操作（取决于所分配的权限）</p>
+<h3 id="user表"><a href="#user表" class="headerlink" title="user表"></a>user表</h3><p>user表列出可以连接服务器的用户及其口令，并且它指定他们有哪种全局（超级用户）权限。在user表启用的任何权限均是全局权限，并适用于所有数据库。例如，如果你启用了DELETE权限，在这里列出的用户可以从任何表中删除记录，所以在你这样做之前要认真考虑。 </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">desc</span> <span class="keyword">user</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+-----------------------------------+------+-----+-----------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Field                  <span class="operator">|</span> Type                              <span class="operator">|</span> <span class="keyword">Null</span> <span class="operator">|</span> Key <span class="operator">|</span> <span class="keyword">Default</span>               <span class="operator">|</span> Extra <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+-----------------------------------+------+-----+-----------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Host                   <span class="operator">|</span> <span class="type">char</span>(<span class="number">60</span>)                          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">User</span>                   <span class="operator">|</span> <span class="type">char</span>(<span class="number">32</span>)                          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span> PRI <span class="operator">|</span>                       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Select_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Insert_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Update_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Delete_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Drop_priv              <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Reload_priv            <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Shutdown_priv          <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Process_priv           <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> File_priv              <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Grant_priv             <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> References_priv        <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Index_priv             <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Alter_priv             <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Show_db_priv           <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Super_priv             <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_tmp_table_priv  <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Lock_tables_priv       <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Execute_priv           <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Repl_slave_priv        <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Repl_client_priv       <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_view_priv       <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Show_view_priv         <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_routine_priv    <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Alter_routine_priv     <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_user_priv       <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Event_priv             <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Trigger_priv           <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Create_tablespace_priv <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> ssl_type               <span class="operator">|</span> enum(<span class="string">&#x27;&#x27;</span>,<span class="string">&#x27;ANY&#x27;</span>,<span class="string">&#x27;X509&#x27;</span>,<span class="string">&#x27;SPECIFIED&#x27;</span>) <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span>                       <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> ssl_cipher             <span class="operator">|</span> <span class="type">blob</span>                              <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                  <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> x509_issuer            <span class="operator">|</span> <span class="type">blob</span>                              <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                  <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> x509_subject           <span class="operator">|</span> <span class="type">blob</span>                              <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                  <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> max_questions          <span class="operator">|</span> <span class="type">int</span>(<span class="number">11</span>) unsigned                  <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="number">0</span>                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> max_updates            <span class="operator">|</span> <span class="type">int</span>(<span class="number">11</span>) unsigned                  <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="number">0</span>                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> max_connections        <span class="operator">|</span> <span class="type">int</span>(<span class="number">11</span>) unsigned                  <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="number">0</span>                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> max_user_connections   <span class="operator">|</span> <span class="type">int</span>(<span class="number">11</span>) unsigned                  <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="number">0</span>                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> plugin                 <span class="operator">|</span> <span class="type">char</span>(<span class="number">64</span>)                          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> mysql_native_password <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> authentication_string  <span class="operator">|</span> text                              <span class="operator">|</span> YES  <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                  <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> password_expired       <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> password_last_changed  <span class="operator">|</span> <span class="type">timestamp</span>                         <span class="operator">|</span> YES  <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                  <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> password_lifetime      <span class="operator">|</span> <span class="type">smallint</span>(<span class="number">5</span>) unsigned              <span class="operator">|</span> YES  <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                  <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> account_locked         <span class="operator">|</span> enum(<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>)                     <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> N                     <span class="operator">|</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+-----------------------------------+------+-----+-----------------------+-------+</span></span><br><span class="line"><span class="number">45</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="number">12.</span> <span class="type">row</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">                  Host: <span class="operator">%</span></span><br><span class="line">                  <span class="keyword">User</span>: account_sunld_db_2</span><br><span class="line">           Select_priv: N</span><br><span class="line">           Insert_priv: N</span><br><span class="line">           Update_priv: N</span><br><span class="line">           Delete_priv: N</span><br><span class="line">           Create_priv: N</span><br><span class="line">             Drop_priv: N</span><br><span class="line">           Reload_priv: N</span><br><span class="line">         Shutdown_priv: N</span><br><span class="line">          Process_priv: N</span><br><span class="line">             File_priv: N</span><br><span class="line">            Grant_priv: N</span><br><span class="line">       References_priv: N</span><br><span class="line">            Index_priv: N</span><br><span class="line">            Alter_priv: N</span><br><span class="line">          Show_db_priv: N</span><br><span class="line">            Super_priv: N</span><br><span class="line"> Create_tmp_table_priv: N</span><br><span class="line">      Lock_tables_priv: N</span><br><span class="line">          Execute_priv: N</span><br><span class="line">       Repl_slave_priv: N</span><br><span class="line">      Repl_client_priv: N</span><br><span class="line">      Create_view_priv: N</span><br><span class="line">        Show_view_priv: N</span><br><span class="line">   Create_routine_priv: N</span><br><span class="line">    Alter_routine_priv: N</span><br><span class="line">      Create_user_priv: N</span><br><span class="line">            Event_priv: N</span><br><span class="line">          Trigger_priv: N</span><br><span class="line">Create_tablespace_priv: N</span><br><span class="line">              ssl_type: </span><br><span class="line">            ssl_cipher: </span><br><span class="line">           x509_issuer: </span><br><span class="line">          x509_subject: </span><br><span class="line">         max_questions: <span class="number">0</span></span><br><span class="line">           max_updates: <span class="number">0</span></span><br><span class="line">       max_connections: <span class="number">0</span></span><br><span class="line">  max_user_connections: <span class="number">0</span></span><br><span class="line">                plugin: mysql_native_password</span><br><span class="line"> authentication_string: <span class="operator">*</span><span class="number">6</span>BB4837EB74329105EE4568DDA7DC67ED2CA2AD9</span><br><span class="line">      password_expired: N</span><br><span class="line"> password_last_changed: <span class="number">2017</span><span class="number">-12</span><span class="number">-30</span> <span class="number">12</span>:<span class="number">33</span>:<span class="number">32</span></span><br><span class="line">     password_lifetime: <span class="keyword">NULL</span></span><br><span class="line">        account_locked: N</span><br></pre></td></tr></table></figure>
+<h2 id="配置权限"><a href="#配置权限" class="headerlink" title="配置权限"></a>配置权限</h2><h3 id="grant-命令语法格式"><a href="#grant-命令语法格式" class="headerlink" title="grant 命令语法格式"></a>grant 命令语法格式</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">grant</span> 权限名称[字段列表] <span class="keyword">on</span> [数据库资源类型]数据库资源 <span class="keyword">to</span> MySQL账户<span class="number">1</span>,[MySQL账户<span class="number">2</span>] [<span class="keyword">with</span> <span class="keyword">grant</span> option]</span><br><span class="line"></span><br><span class="line">#增删改数据库数据权限</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span>, <span class="keyword">insert</span>, <span class="keyword">update</span>, <span class="keyword">delete</span> <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">#创建、修改、删除 MySQL 数据表结构权限</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">create</span> ,<span class="keyword">alter</span>  ,<span class="keyword">drop</span>   <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">#操作 MySQL 外键权限。</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">references</span> <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">#操作 MySQL 临时表权限</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">create</span> temporary tables <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">#操作 MySQL 索引权限</span><br><span class="line"><span class="keyword">grant</span> index <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">#操作 MySQL 视图、查看视图源代码 权限</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">create</span> <span class="keyword">view</span> <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">show</span>   <span class="keyword">view</span> <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">#操作 MySQL 存储过程、函数 权限</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">create</span> routine <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span>; <span class="comment">-- now, can show procedure status</span></span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">alter</span>  routine <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span>; <span class="comment">-- now, you can drop a procedure</span></span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">execute</span>        <span class="keyword">on</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span>;</span><br><span class="line">#普通 DBA 管理某个 MySQL 数据库的权限</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> db<span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="keyword">to</span></span><br><span class="line">其中，关键字 “privileges” 可以省略。</span><br><span class="line">#高级 DBA 管理 MySQL 中所有数据库的权限</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span></span><br></pre></td></tr></table></figure>
+<h3 id="创建服务实例级账号"><a href="#创建服务实例级账号" class="headerlink" title="创建服务实例级账号"></a>创建服务实例级账号</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># 创建账号sunld_all，拥有所有数据库权限，并且具有<span class="keyword">grant</span>权限，</span><br><span class="line"># 可以创建其他拥有服务实例权限的其他用户。</span><br><span class="line"># 查询</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_all;</span><br><span class="line">ERROR <span class="number">1141</span> (<span class="number">42000</span>): There <span class="keyword">is</span> <span class="keyword">no</span> such <span class="keyword">grant</span> defined <span class="keyword">for</span> <span class="keyword">user</span> <span class="string">&#x27;account_sunld_all&#x27;</span> <span class="keyword">on</span> host <span class="string">&#x27;%&#x27;</span></span><br><span class="line"># 创建</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;account_sunld_all&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span> <span class="keyword">with</span> <span class="keyword">grant</span> option;</span><br><span class="line"></span><br><span class="line">flush privileges;</span><br><span class="line"># 查询</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_all;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Grants <span class="keyword">for</span> account_sunld_all@<span class="operator">%</span>                                           <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_all&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h3 id="创建数据库实例账号"><a href="#创建数据库实例账号" class="headerlink" title="创建数据库实例账号"></a>创建数据库实例账号</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#创建账号sunld_db,拥有sunlddb数据库的所有权限，可以对该库中的表进行所有操作。</span><br><span class="line">#查询</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_db;</span><br><span class="line">ERROR <span class="number">1141</span> (<span class="number">42000</span>): There <span class="keyword">is</span> <span class="keyword">no</span> such <span class="keyword">grant</span> defined <span class="keyword">for</span> <span class="keyword">user</span> <span class="string">&#x27;account_sunld_db&#x27;</span> <span class="keyword">on</span> host <span class="string">&#x27;%&#x27;</span></span><br><span class="line">#创建</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> sunld_db.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;account_sunld_db&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span> <span class="keyword">with</span> <span class="keyword">grant</span> option;</span><br><span class="line">#查询</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_db;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Grants <span class="keyword">for</span> account_sunld_db@<span class="operator">%</span>                                                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> USAGE <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_db&#x27;</span>@<span class="string">&#x27;%&#x27;</span>                                     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> `sunld_db`.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_db&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h3 id="创建数据表级别的账号"><a href="#创建数据表级别的账号" class="headerlink" title="创建数据表级别的账号"></a>创建数据表级别的账号</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#创建账号sunld_table，对sunlddb数据中的tb_a表拥有所有权限</span><br><span class="line">#查询</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_table;</span><br><span class="line">ERROR <span class="number">1141</span> (<span class="number">42000</span>): There <span class="keyword">is</span> <span class="keyword">no</span> such <span class="keyword">grant</span> defined <span class="keyword">for</span> <span class="keyword">user</span> <span class="string">&#x27;account_sunld_table&#x27;</span> <span class="keyword">on</span> host <span class="string">&#x27;%&#x27;</span></span><br><span class="line">#创建</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="keyword">table</span> sunld_db.tb_a <span class="keyword">to</span> <span class="string">&#x27;account_sunld_table&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span>;</span><br><span class="line">#查询</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_table;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Grants <span class="keyword">for</span> account_sunld_table@<span class="operator">%</span>                                       <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> USAGE <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_table&#x27;</span>@<span class="string">&#x27;%&#x27;</span>                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> <span class="keyword">ALL</span> PRIVILEGES <span class="keyword">ON</span> `sunld_db`.`tb_a` <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_table&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">#这里在给一个用户授权多张表时，可以多次执行以上语句。例如：</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span>(user_id,username) <span class="keyword">on</span> smp.users <span class="keyword">to</span> mo_user@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123345&#x27;</span>;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span> <span class="keyword">on</span> smp.mo_sms <span class="keyword">to</span> mo_user@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123345&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="作用在表中的列上"><a href="#作用在表中的列上" class="headerlink" title="作用在表中的列上"></a>作用在表中的列上</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span>(id, se, rank) <span class="keyword">on</span> testdb.apache_log <span class="keyword">to</span> dba<span class="variable">@localhost</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="作用在存储过程、函数上"><a href="#作用在存储过程、函数上" class="headerlink" title="作用在存储过程、函数上"></a>作用在存储过程、函数上</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">grant</span> <span class="keyword">execute</span> <span class="keyword">on</span> <span class="keyword">procedure</span> testdb.pr_add <span class="keyword">to</span> <span class="string">&#x27;dba&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span></span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">execute</span> <span class="keyword">on</span> <span class="keyword">function</span> testdb.fn_add <span class="keyword">to</span> <span class="string">&#x27;dba&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>字段设置冗余复杂，则每次MySQL在进行SQL执行的时候回进行同样复杂的权限判断，造成效率降低性能下降，同时也会存在安全隐患。因此简单、易管理的、高可用的权限才是可取的。</p>
+<h3 id="权限的增删改查"><a href="#权限的增删改查" class="headerlink" title="权限的增删改查"></a>权限的增删改查</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">#查询</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_db_1;</span><br><span class="line">ERROR <span class="number">1141</span> (<span class="number">42000</span>): There <span class="keyword">is</span> <span class="keyword">no</span> such <span class="keyword">grant</span> defined <span class="keyword">for</span> <span class="keyword">user</span> <span class="string">&#x27;account_sunld_db_1&#x27;</span> <span class="keyword">on</span> host <span class="string">&#x27;%&#x27;</span></span><br><span class="line">#比如原本的权限为：</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span>,<span class="keyword">insert</span> <span class="keyword">on</span> sunld_db.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;account_sunld_db_1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span> <span class="keyword">with</span> <span class="keyword">grant</span> option;</span><br><span class="line">#查询</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_db_1;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Grants <span class="keyword">for</span> account_sunld_db_1@<span class="operator">%</span>                                                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> USAGE <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_db_1&#x27;</span>@<span class="string">&#x27;%&#x27;</span>                                     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> <span class="keyword">SELECT</span>, <span class="keyword">INSERT</span> <span class="keyword">ON</span> `sunld_db`.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_db_1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line">#想要增加<span class="keyword">update</span>, <span class="keyword">delete</span>,<span class="keyword">alter</span> 权限可以如下操作：</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">update</span>,<span class="keyword">delete</span>,<span class="keyword">alter</span> <span class="keyword">on</span> sunld_db.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;account_sunld_db_1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span> <span class="keyword">with</span> <span class="keyword">grant</span> option;</span><br><span class="line">#然后使用</span><br><span class="line"><span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_db_1;</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_db_1;</span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Grants <span class="keyword">for</span> account_sunld_db_1@<span class="operator">%</span>                                                                           <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> USAGE <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_db_1&#x27;</span>@<span class="string">&#x27;%&#x27;</span>                                                            <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> <span class="keyword">SELECT</span>, <span class="keyword">INSERT</span>, <span class="keyword">UPDATE</span>, <span class="keyword">DELETE</span>, <span class="keyword">ALTER</span> <span class="keyword">ON</span> `sunld_db`.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_db_1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line">#删除权限<span class="keyword">insert</span></span><br><span class="line"><span class="keyword">revoke</span> <span class="keyword">insert</span> <span class="keyword">on</span> sunld_db.<span class="operator">*</span> <span class="keyword">from</span>  <span class="string">&#x27;account_sunld_db_1&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br><span class="line">查看</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> grants <span class="keyword">for</span> account_sunld_db_1;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Grants <span class="keyword">for</span> account_sunld_db_1@<span class="operator">%</span>                                                                   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> USAGE <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_db_1&#x27;</span>@<span class="string">&#x27;%&#x27;</span>                                                    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">GRANT</span> <span class="keyword">SELECT</span>, <span class="keyword">UPDATE</span>, <span class="keyword">DELETE</span>, <span class="keyword">ALTER</span> <span class="keyword">ON</span> `sunld_db`.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;account_sunld_db_1&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> OPTION <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><p>用户管理也无非是增加用户、删除用户、密码修改和授权之类的。</p>
+<h3 id="查询用户"><a href="#查询用户" class="headerlink" title="查询用户"></a>查询用户</h3><p>查询数据库mysql下的表user;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="keyword">user</span>,host <span class="keyword">from</span> <span class="keyword">user</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-----------+</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">user</span>                       <span class="operator">|</span> host      <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-----------+</span></span><br><span class="line"><span class="operator">|</span> account_sunld_all          <span class="operator">|</span> <span class="operator">%</span>         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> account_sunld_db           <span class="operator">|</span> <span class="operator">%</span>         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> account_sunld_db_1         <span class="operator">|</span> <span class="operator">%</span>         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> account_sunld_table        <span class="operator">|</span> <span class="operator">%</span>         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> inspurCloudDB              <span class="operator">|</span> <span class="operator">%</span>         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> inspurCloudCheckDBDiskSize <span class="operator">|</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> inspurCloudDB              <span class="operator">|</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> root                       <span class="operator">|</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> inspurCloudDB              <span class="operator">|</span> localhost <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> mysql.sys                  <span class="operator">|</span> localhost <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> root                       <span class="operator">|</span> localhost <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-----------+</span></span><br><span class="line"><span class="number">11</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h3 id="增加用户"><a href="#增加用户" class="headerlink" title="增加用户"></a>增加用户</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> <span class="string">&#x27;USER_NAME&#x27;</span>@<span class="string">&#x27;HOST&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;PASSOWRD&#x27;</span>;</span><br><span class="line">#例子</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> <span class="string">&#x27;account_sunld_db_2&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="设置用户密码"><a href="#设置用户密码" class="headerlink" title="设置用户密码"></a>设置用户密码</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>其实这个命令不仅能够设置当前用户的密码，也可以设置其他用户的密码，这个命令的完整格式是：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> password [<span class="keyword">for</span> <span class="keyword">USER</span>] <span class="operator">=</span> passowrd(<span class="string">&#x27;新密码&#x27;</span>);</span><br><span class="line">#例子</span><br><span class="line"><span class="keyword">set</span> password <span class="keyword">for</span> account_sunld_db_2<span class="operator">=</span>password(<span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="在安装validate-password插件之后会出现如下信息"><a href="#在安装validate-password插件之后会出现如下信息" class="headerlink" title="在安装validate_password插件之后会出现如下信息"></a>在安装validate_password插件之后会出现如下信息</h4><p>ERROR 1819 (HY000): Your password does not satisfy the current policy requirements  </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SHOW</span> VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;validate_password%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------+--------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                        <span class="operator">|</span> <span class="keyword">Value</span>  <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------+--------+</span></span><br><span class="line"><span class="operator">|</span> validate_password_check_user_name    <span class="operator">|</span> OFF    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> validate_password_dictionary_file    <span class="operator">|</span>        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> validate_password_length             <span class="operator">|</span> <span class="number">8</span>      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> validate_password_mixed_case_count   <span class="operator">|</span> <span class="number">1</span>      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> validate_password_number_count       <span class="operator">|</span> <span class="number">1</span>      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> validate_password_policy             <span class="operator">|</span> MEDIUM <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> validate_password_special_char_count <span class="operator">|</span> <span class="number">1</span>      <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------+--------+</span></span><br><span class="line"><span class="number">7</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<p>validate_password_policy有以下取值：  </p>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;Policy&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;Tests Performed&nbsp;&nbsp;&nbsp;</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;0 or LOW&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;Length&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;1 or MEDIUM&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;Length;&nbsp;&nbsp;&nbsp;numeric, lowercase/uppercase, and special characters&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;2 or STRONG&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;Length;&nbsp;&nbsp;&nbsp;numeric, lowercase/uppercase, and special characters; dictionary file&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+</tbody>
+</table>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> validate_password_policy<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> validate_password_length<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;123456a?&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="删除用户"><a href="#删除用户" class="headerlink" title="删除用户"></a>删除用户</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">user</span> USER_NAME；</span><br><span class="line">#例子</span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">user</span> account_sunld_db_2;</span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><h4 id="MySQL-grant、revoke-用户权限注意事项"><a href="#MySQL-grant、revoke-用户权限注意事项" class="headerlink" title="MySQL grant、revoke 用户权限注意事项"></a>MySQL grant、revoke 用户权限注意事项</h4><ol>
+<li>grant, revoke 用户权限后，该用户只有重新连接 MySQL 数据库，权限才能生效。</li>
+<li>如果想让授权的用户，也可以将这些权限 grant 给其他用户，需要选项 “grant option“,grant select on testdb.* to ‘dba’@’localhost’ with grant option;这个特性一般用不到。实际中，数据库权限最好由 DBA 来统一管理。</li>
+</ol>
+<h4 id="符号"><a href="#符号" class="headerlink" title="@符号"></a>@符号</h4><p>当不加@选项时，效果与加@’%’是一样的，’%’从名义上包括任何主机，（%必须加上引号，不然与@放在一起可能不会被辨认出。）不过有些时候（有些版本）’%’不包括localhost，要单独对@’localhost’进行赋值。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/fslnet/p/3143344.html">mysql 用户管理和权限设置</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hcbin/archive/2010/04/23/1718379.html">MySQL- MySQL的Grant命令</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jifeng/archive/2011/03/06/1972183.html">mysql 数据库授权(给某个用户授权某个数据库)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ivictor/p/5142809.html">ERROR 1819 (HY000): Your password does not satisfy the current policy requirements</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/roverliang/p/6444512.html">MySQL账户管理</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag"></i> MySQL</a>
+              <a href="/tags/%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> 账户管理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/" rel="prev" title="Java系统化学习之集合概述">
+      <i class="fa fa-chevron-left"></i> Java系统化学习之集合概述
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/04/MySQL%E4%B9%8B%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" rel="next" title="MySQL之配置文件">
+      MySQL之配置文件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mysql%E8%B4%A6%E6%88%B7%E4%BD%93%E7%B3%BB"><span class="nav-number">1.</span> <span class="nav-text">Mysql账户体系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%AE%9E%E4%BE%8B%E7%BA%A7%E8%B4%A6%E5%8F%B7"><span class="nav-number">1.1.</span> <span class="nav-text">服务实例级账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BA%A7%E5%88%AB%E8%B4%A6%E5%8F%B7-db"><span class="nav-number">1.2.</span> <span class="nav-text">数据库级别账号-db</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%BA%A7%E5%88%AB%E8%B4%A6%E5%8F%B7-tables-priv"><span class="nav-number">1.3.</span> <span class="nav-text">数据表级别账号-tables_priv</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E7%BA%A7%E5%88%AB%E7%9A%84%E6%9D%83%E9%99%90-columns-priv"><span class="nav-number">1.4.</span> <span class="nav-text">字段级别的权限-columns_priv</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E7%A8%8B%E5%BA%8F%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A6%E5%8F%B7"><span class="nav-number">1.5.</span> <span class="nav-text">存储程序级别的账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#user%E8%A1%A8"><span class="nav-number">1.6.</span> <span class="nav-text">user表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%9D%83%E9%99%90"><span class="nav-number">2.</span> <span class="nav-text">配置权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#grant-%E5%91%BD%E4%BB%A4%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">grant 命令语法格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1%E5%AE%9E%E4%BE%8B%E7%BA%A7%E8%B4%A6%E5%8F%B7"><span class="nav-number">2.2.</span> <span class="nav-text">创建服务实例级账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E4%BE%8B%E8%B4%A6%E5%8F%B7"><span class="nav-number">2.3.</span> <span class="nav-text">创建数据库实例账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%BA%A7%E5%88%AB%E7%9A%84%E8%B4%A6%E5%8F%B7"><span class="nav-number">2.4.</span> <span class="nav-text">创建数据表级别的账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%9C%E7%94%A8%E5%9C%A8%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%88%97%E4%B8%8A"><span class="nav-number">2.5.</span> <span class="nav-text">作用在表中的列上</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%9C%E7%94%A8%E5%9C%A8%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E3%80%81%E5%87%BD%E6%95%B0%E4%B8%8A"><span class="nav-number">2.6.</span> <span class="nav-text">作用在存储过程、函数上</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5"><span class="nav-number">2.7.</span> <span class="nav-text">权限的增删改查</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">用户管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%94%A8%E6%88%B7"><span class="nav-number">3.1.</span> <span class="nav-text">查询用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E7%94%A8%E6%88%B7"><span class="nav-number">3.2.</span> <span class="nav-text">增加用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81"><span class="nav-number">3.3.</span> <span class="nav-text">设置用户密码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E5%AE%89%E8%A3%85validate-password%E6%8F%92%E4%BB%B6%E4%B9%8B%E5%90%8E%E4%BC%9A%E5%87%BA%E7%8E%B0%E5%A6%82%E4%B8%8B%E4%BF%A1%E6%81%AF"><span class="nav-number">3.3.1.</span> <span class="nav-text">在安装validate_password插件之后会出现如下信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7"><span class="nav-number">3.4.</span> <span class="nav-text">删除用户</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">4.1.</span> <span class="nav-text">注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MySQL-grant%E3%80%81revoke-%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">4.1.1.</span> <span class="nav-text">MySQL grant、revoke 用户权限注意事项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7"><span class="nav-number">4.1.2.</span> <span class="nav-text">@符号</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/04/MySQL%E4%B9%8B%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/04/MySQL%E4%B9%8B%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">297k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">4:30</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : 'acc9b6b8b5dfde391309f1e526ecb0db',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
