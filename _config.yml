@@ -15,7 +15,7 @@ timezone: ''
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://example.com/child' and root as '/child/'
-url: https://sld880311.github.io
+url: https://www.sunliaodong.cn
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -134,5 +134,9 @@ feed:
   content_limit: 140
   content_limit_delim: ' '
 
-
+# sitemap
+sitemap:
+  path: sitemap.xml
+baidusitemap:
+  path: baidusitemap.xml
 

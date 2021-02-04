@@ -5,7 +5,7 @@ tags:
   - git
 categories:
   - [常用工具]
-  - [项目管理]
+  - [代码管理]
 ---
 
 ## 提交本地工程到github
