@@ -231,7 +231,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-02-04 08:17:37 / 修改时间：08:23:23" itemprop="dateCreated datePublished" datetime="2021-02-04T08:17:37+08:00">2021-02-04</time>
+              <time title="创建时间：2021-02-04 08:17:37 / 修改时间：09:03:14" itemprop="dateCreated datePublished" datetime="2021-02-04T08:17:37+08:00">2021-02-04</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -273,19 +273,22 @@
 
       
           <h2 id="提交本地工程到github"><a href="#提交本地工程到github" class="headerlink" title="提交本地工程到github"></a>提交本地工程到github</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;注释&quot;</span></span><br><span class="line">git remote add origin https://github.com/sld880311/parkspaceagent</span><br><span class="line"></span><br><span class="line">git pull origin master</span><br><span class="line"><span class="comment">#如果出现fatal: refusing to merge unrelated histories</span></span><br><span class="line">使用如下命令 git pull origin master --allow-unrelated-histories</span><br><span class="line"></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
-<h3 id="代码提交示意图"><a href="#代码提交示意图" class="headerlink" title="代码提交示意图"></a>代码提交示意图</h3><div align=center>
+<h3 id="代码提交示意图"><a href="#代码提交示意图" class="headerlink" title="代码提交示意图"></a>代码提交示意图</h3><div align="center">
 
-<p><img src="git%E8%AF%A6%E8%A7%A3/1589535948892.png" alt="git详解"></p>
+<img src="/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589535948892.png" class title="git代码提交示意图">
+
 </div>
 
-<h3 id="官方参考图"><a href="#官方参考图" class="headerlink" title="官方参考图"></a>官方参考图</h3><div align=center>
+<h3 id="官方参考图"><a href="#官方参考图" class="headerlink" title="官方参考图"></a>官方参考图</h3><div align="center">
 
-<p><img src="git%E8%AF%A6%E8%A7%A3/1589535987537.png" alt="git详解"></p>
+<img src="/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589535987537.png" class title="git官网提交提示图">
+
 </div>
 
-<h2 id="使用图解"><a href="#使用图解" class="headerlink" title="使用图解"></a>使用图解</h2><div align=center>
+<h2 id="使用图解"><a href="#使用图解" class="headerlink" title="使用图解"></a>使用图解</h2><div align="center">
 
-<p><img src="git%E8%AF%A6%E8%A7%A3/1589536030194.png" alt="git详解"></p>
+<img src="/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589536030194.png" class title="git命令使用详解">
+
 </div>
 
 <h2 id="命令详解"><a href="#命令详解" class="headerlink" title="命令详解"></a>命令详解</h2><h3 id="Checkout"><a href="#Checkout" class="headerlink" title="Checkout"></a>Checkout</h3><h4 id="–-filename"><a href="#–-filename" class="headerlink" title="– filename"></a>– filename</h4><p>把filename文件在工作区的修改撤销到最近一次git add 或 git commit时的内容。</p>
@@ -486,7 +489,7 @@
           <h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="依赖环境"><a href="#依赖环境" class="headerlink" title="依赖环境"></a>依赖环境</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line"><span class="comment"># 修改原</span></span><br><span class="line">npm config <span class="built_in">set</span> registry http://registry.npm.taobao.org/</span><br><span class="line"><span class="comment"># 改回去</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmjs.org/</span><br></pre></td></tr></table></figure>
 <h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><p>使用npm安装hexo(<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/">详细文档</a>)，命令是<code>npm install -g hexo-cli</code>,安装完成之后初始化博客,命令如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir sld880311.github.io</span><br><span class="line"><span class="built_in">cd</span> sld880311.github.io</span><br><span class="line">hexo init </span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
-<p>初始化完成之后目录结构如下：
+<p>初始化完成之后目录结构如下：</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/#more" rel="contents">
