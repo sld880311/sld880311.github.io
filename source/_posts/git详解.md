@@ -23,6 +23,8 @@ git pull origin master
 git push -u origin master
 ```
 
+<!--more-->
+
 ### 代码提交示意图
 
 <div align=center>
@@ -46,8 +48,6 @@ git push -u origin master
 ![git命令使用详解](git详解/1589536030194.png)
 
 </div>
-
-<!--more-->
 
 ## 命令详解
 
