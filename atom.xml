@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-04T06:19:24.459Z</updated>
+  <updated>2021-02-04T07:58:18.325Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,72 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>eclipse使用技巧</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</id>
+    <published>2021-02-04T07:51:43.000Z</published>
+    <updated>2021-02-04T07:58:18.325Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;集成javap命令&quot;&gt;&lt;a href=&quot;#集成javap命令&quot; class=&quot;headerlink&quot; title=&quot;集成javap命令&quot;&gt;&lt;/a&gt;集成javap命令&lt;/h2&gt;&lt;h3 id=&quot;配置&quot;&gt;&lt;a href=&quot;#配置&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="常用工具" scheme="https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/"/>
+    
+    
+    <category term="eclipse" scheme="https://www.sunliaodong.cn/tags/eclipse/"/>
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>设计模式之单例模式</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</id>
+    <published>2021-02-04T07:39:11.000Z</published>
+    <updated>2021-02-04T07:48:28.890Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;（Singleton Pattern、单态模式、单件模式、对象创建型模式），单例模式的特点：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;构造方法私有化；(不能被实例化和继承)&lt;/li&gt;
+&lt;li&gt;实例化的变量引用私有化；&lt;/li&gt;
+&lt;li&gt;获取实例的方法共有。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;意图&quot;&gt;&lt;a href=&quot;#意图&quot; class=&quot;headerlink&quot; title=&quot;意图&quot;&gt;&lt;/a&gt;意图&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;唯一的对象实例&lt;/li&gt;
+&lt;li&gt;保证一个类仅有一个实例，并提供一个访问他的全局访问点&lt;/li&gt;
+&lt;li&gt;有状态（可变的单例对象，可以组成状态仓库）、无状态（工具类）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;适用性&quot;&gt;&lt;a href=&quot;#适用性&quot; class=&quot;headerlink&quot; title=&quot;适用性&quot;&gt;&lt;/a&gt;适用性&lt;/h2&gt;&lt;p&gt;在下面的情况下可以使用Singleton模式：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;当类只能有一个实例而且客户可以从一个总所周知的访问点访问它时。&lt;/li&gt;
+&lt;li&gt;当这个唯一实例应该是通过子类可扩展的，并且客户应该无需更改代码就能使用一个扩展的实例时。&lt;/li&gt;
+&lt;li&gt;系统只需要一个实例的对象，而这个对象又会被经常创建。&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="软件架构" scheme="https://www.sunliaodong.cn/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="设计模式" scheme="https://www.sunliaodong.cn/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    
+    <category term="单例模式" scheme="https://www.sunliaodong.cn/tags/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/"/>
+    
+  </entry>
   
   <entry>
     <title>git详解</title>
