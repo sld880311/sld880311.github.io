@@ -47,6 +47,8 @@ git push -u origin master
 
 </div>
 
+<!--more-->
+
 ## 命令详解
 
 ### Checkout

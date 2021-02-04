@@ -35,6 +35,8 @@ javap 命令用于解析类文件。其输出取决于所用的选项。若没�
   -bootclasspath <path>    覆盖引导类文件的位置,缺省情况下，自举类是实现核心 Java 平台的类，位于 jrelibt.jar 和 jrelibi18n.jar 中。
 ```
 
+<!--more-->
+
 ## 分析代码
 
 ```java
