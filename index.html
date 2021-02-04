@@ -232,7 +232,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-02-04 08:17:37 / 修改时间：11:06:10" itemprop="dateCreated datePublished" datetime="2021-02-04T08:17:37+08:00">2021-02-04</time>
+              <time title="创建时间：2021-02-04 08:17:37 / 修改时间：14:19:24" itemprop="dateCreated datePublished" datetime="2021-02-04T08:17:37+08:00">2021-02-04</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -274,23 +274,6 @@
 
       
           <h2 id="提交本地工程到github"><a href="#提交本地工程到github" class="headerlink" title="提交本地工程到github"></a>提交本地工程到github</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;注释&quot;</span></span><br><span class="line">git remote add origin https://github.com/sld880311/parkspaceagent</span><br><span class="line"></span><br><span class="line">git pull origin master</span><br><span class="line"><span class="comment">#如果出现fatal: refusing to merge unrelated histories</span></span><br><span class="line">使用如下命令 git pull origin master --allow-unrelated-histories</span><br><span class="line"></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
-<h3 id="代码提交示意图"><a href="#代码提交示意图" class="headerlink" title="代码提交示意图"></a>代码提交示意图</h3><div align="center">
-
-<img src="/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589535948892.png" class title="git代码提交示意图">
-
-</div>
-
-<h3 id="官方参考图"><a href="#官方参考图" class="headerlink" title="官方参考图"></a>官方参考图</h3><div align="center">
-
-<img src="/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589535987537.png" class title="git官网提交提示图">
-
-</div>
-
-<h2 id="使用图解"><a href="#使用图解" class="headerlink" title="使用图解"></a>使用图解</h2><div align="center">
-
-<img src="/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589536030194.png" class title="git命令使用详解">
-
-</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/02/04/git%E8%AF%A6%E8%A7%A3/#more" rel="contents">
@@ -442,7 +425,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-04 07:54:55" itemprop="dateModified" datetime="2021-02-04T07:54:55+08:00">2021-02-04</time>
+                <time title="修改时间：2021-02-04 14:10:18" itemprop="dateModified" datetime="2021-02-04T14:10:18+08:00">2021-02-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -737,6 +720,26 @@
 
 
 
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
 
 
 

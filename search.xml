@@ -27,6 +27,8 @@
     <title>git详解</title>
     <url>/2021/02/04/git%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h2 id="提交本地工程到github"><a href="#提交本地工程到github" class="headerlink" title="提交本地工程到github"></a>提交本地工程到github</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;注释&quot;</span></span><br><span class="line">git remote add origin https://github.com/sld880311/parkspaceagent</span><br><span class="line"></span><br><span class="line">git pull origin master</span><br><span class="line"><span class="comment">#如果出现fatal: refusing to merge unrelated histories</span></span><br><span class="line">使用如下命令 git pull origin master --allow-unrelated-histories</span><br><span class="line"></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
 <h3 id="代码提交示意图"><a href="#代码提交示意图" class="headerlink" title="代码提交示意图"></a>代码提交示意图</h3><div align="center">
 
 <img src="/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589535948892.png" class title="git代码提交示意图">
@@ -44,8 +46,6 @@
 <img src="/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589536030194.png" class title="git命令使用详解">
 
 </div>
-
-<a id="more"></a>
 
 <h2 id="命令详解"><a href="#命令详解" class="headerlink" title="命令详解"></a>命令详解</h2><h3 id="Checkout"><a href="#Checkout" class="headerlink" title="Checkout"></a>Checkout</h3><h4 id="–-filename"><a href="#–-filename" class="headerlink" title="– filename"></a>– filename</h4><p>把filename文件在工作区的修改撤销到最近一次git add 或 git commit时的内容。</p>
 <h3 id="stash"><a href="#stash" class="headerlink" title="stash"></a>stash</h3><p>通过git stash将工作区恢复到上次提交的内容，同时备份本地所做的修改，之后就可以正常git pull了，git pull完成后，执行git stash pop将之前本地做的修改应用到当前工作区。</p>

@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-04T03:06:10.972Z</updated>
+  <updated>2021-02-04T06:19:24.459Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -21,27 +21,10 @@
     <link href="https://www.sunliaodong.cn/2021/02/04/git%E8%AF%A6%E8%A7%A3/"/>
     <id>https://www.sunliaodong.cn/2021/02/04/git%E8%AF%A6%E8%A7%A3/</id>
     <published>2021-02-04T00:17:37.000Z</published>
-    <updated>2021-02-04T03:06:10.972Z</updated>
+    <updated>2021-02-04T06:19:24.459Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;提交本地工程到github&quot;&gt;&lt;a href=&quot;#提交本地工程到github&quot; class=&quot;headerlink&quot; title=&quot;提交本地工程到github&quot;&gt;&lt;/a&gt;提交本地工程到github&lt;/h2&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;git init&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git add .&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git commit -m &lt;span class=&quot;string&quot;&gt;&amp;quot;注释&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git remote add origin https://github.com/sld880311/parkspaceagent&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git pull origin master&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#如果出现fatal: refusing to merge unrelated histories&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;使用如下命令 git pull origin master --allow-unrelated-histories&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git push -u origin master&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h3 id=&quot;代码提交示意图&quot;&gt;&lt;a href=&quot;#代码提交示意图&quot; class=&quot;headerlink&quot; title=&quot;代码提交示意图&quot;&gt;&lt;/a&gt;代码提交示意图&lt;/h3&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589535948892.png&quot; class title=&quot;git代码提交示意图&quot;&gt;
-
-&lt;/div&gt;
-
-&lt;h3 id=&quot;官方参考图&quot;&gt;&lt;a href=&quot;#官方参考图&quot; class=&quot;headerlink&quot; title=&quot;官方参考图&quot;&gt;&lt;/a&gt;官方参考图&lt;/h3&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589535987537.png&quot; class title=&quot;git官网提交提示图&quot;&gt;
-
-&lt;/div&gt;
-
-&lt;h2 id=&quot;使用图解&quot;&gt;&lt;a href=&quot;#使用图解&quot; class=&quot;headerlink&quot; title=&quot;使用图解&quot;&gt;&lt;/a&gt;使用图解&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/04/git%E8%AF%A6%E8%A7%A3/1589536030194.png&quot; class title=&quot;git命令使用详解&quot;&gt;
-
-&lt;/div&gt;</summary>
+    <summary type="html">&lt;h2 id=&quot;提交本地工程到github&quot;&gt;&lt;a href=&quot;#提交本地工程到github&quot; class=&quot;headerlink&quot; title=&quot;提交本地工程到github&quot;&gt;&lt;/a&gt;提交本地工程到github&lt;/h2&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;git init&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git add .&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git commit -m &lt;span class=&quot;string&quot;&gt;&amp;quot;注释&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git remote add origin https://github.com/sld880311/parkspaceagent&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git pull origin master&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#如果出现fatal: refusing to merge unrelated histories&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;使用如下命令 git pull origin master --allow-unrelated-histories&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git push -u origin master&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
     
     
     
@@ -85,7 +68,7 @@
     <link href="https://www.sunliaodong.cn/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"/>
     <id>https://www.sunliaodong.cn/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</id>
     <published>2021-02-03T07:40:46.000Z</published>
-    <updated>2021-02-03T23:54:55.959Z</updated>
+    <updated>2021-02-04T06:10:18.965Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;环境准备&quot;&gt;&lt;a href=&quot;#环境准备&quot; class=&quot;headerlink&quot; title=&quot;环境准备&quot;&gt;&lt;/a&gt;环境准备&lt;/h2&gt;&lt;h3 id=&quot;依赖环境&quot;&gt;&lt;a href=&quot;#依赖环境&quot; class=&quot;headerlink&quot; title=&quot;依赖环境&quot;&gt;&lt;/a&gt;依赖环境&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;git version&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;node -v&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;npm -v&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# 修改原&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;npm config &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; registry http://registry.npm.taobao.org/&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# 改回去&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;npm config &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; registry https://registry.npmjs.org/&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
