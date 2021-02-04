@@ -41,7 +41,7 @@ Arguments:-c -verbose  -classpath  ${workspace_loc}/ ${project_name}/bin/${java_
 
 ### javap的命令说明
 
-参考《[javap详解]([Javap详解.md](https://www.sunliaodong.cn/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/))》
+参考《[javap详解](https://www.sunliaodong.cn/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/)》
 
 ## debug使用技巧
 

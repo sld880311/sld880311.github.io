@@ -148,7 +148,7 @@ Java.lang.reflec 包中的类，表示类的构造方法。
 
 #### Annotation
 
-参考《[JAVA注解]([book/java-annotation.md](https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/))》
+参考《[JAVA注解](https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/)》
 
 #### Array
 
