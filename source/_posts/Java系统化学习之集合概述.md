@@ -306,7 +306,7 @@ Map集合包括Map接口以及Map接口的所有实现类。Map集合具有以�
 9. HashMap 在 JDK 1.8 之后不再有死循环的问题，JDK 1.8 之前存在死循环的根本原因是在扩容后同一索引位置的节点顺序会反掉。
 10. HashMap 是非线程安全的，在并发场景下使用 ConcurrentHashMap 来代替。
 
-详细参考：[JAVA HashMap详解](book/java-collection-map-hashmap.md)
+详细参考：[JAVA HashMap详解](https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BHashMap/)
 
 ### ConcurrentHashMap
 
