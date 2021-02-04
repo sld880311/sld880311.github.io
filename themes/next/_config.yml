@@ -1008,3 +1008,9 @@ css: css
 js: js
 images: images
 
+# Set rss to false to disable feed link.
+# Leave rss as empty to use site's feed link.
+# Set rss to specific value if you have burned your feed already.
+rss: /atom.xml
+
+background_music: //music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66
