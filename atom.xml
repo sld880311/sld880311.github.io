@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-04T08:30:34.594Z</updated>
+  <updated>2021-02-04T09:43:09.960Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,107 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java系统化学习之异常</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%BC%82%E5%B8%B8/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%BC%82%E5%B8%B8/</id>
+    <published>2021-02-04T09:36:56.000Z</published>
+    <updated>2021-02-04T09:43:09.960Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;p&gt;在Java中任务或方法的运行，要不就是正常执行完成(包括虚拟机退出，比如&lt;code&gt;System.exit()&lt;/code&gt;)，要不就是出现异常终止(&lt;code&gt;Throwable&lt;/code&gt;)。本章节重点讲解在Java中对异常的处理。当程序出现异常之后，Java会抛出一个封装好的异常堆栈信息，并且终止当前的方法，异常处理机制会将代码执行交给异常处理器。整体结构如下图所示：&lt;/p&gt;
+&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%BC%82%E5%B8%B8/1587714125412.png&quot; class title=&quot;Java异常架构图&quot;&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="异常" scheme="https://www.sunliaodong.cn/tags/%E5%BC%82%E5%B8%B8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java系统化学习之泛型</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%9B%E5%9E%8B/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%9B%E5%9E%8B/</id>
+    <published>2021-02-04T09:33:34.000Z</published>
+    <updated>2021-02-04T09:34:16.124Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;泛型在JDK1.5引入，其本质是一种&lt;strong&gt;参数化类型（Parameterized Type），在使用时传入实际类型即可&lt;/strong&gt;，即可以将操作的数据类型指定为方法签名中的一种特殊参数,可以作用在类、接口、方法中。泛型是编译期的一种概念，主要是用于编译期类型安全检查（编译之后泛型会被擦除）。&lt;/p&gt;
+&lt;h3 id=&quot;常用泛型类型常量&quot;&gt;&lt;a href=&quot;#常用泛型类型常量&quot; class=&quot;headerlink&quot; title=&quot;常用泛型类型常量&quot;&gt;&lt;/a&gt;常用泛型类型常量&lt;/h3&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;E：元素（Element），多用于java集合框架&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;K：关键字（Key）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;N：数字（Number）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;T：类型（Type）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;V：值（Value）&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="泛型" scheme="https://www.sunliaodong.cn/tags/%E6%B3%9B%E5%9E%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java系统化学习之反射</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/</id>
+    <published>2021-02-04T09:18:34.000Z</published>
+    <updated>2021-02-04T09:35:26.046Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;h3 id=&quot;知识点&quot;&gt;&lt;a href=&quot;#知识点&quot; class=&quot;headerlink&quot; title=&quot;知识点&quot;&gt;&lt;/a&gt;知识点&lt;/h3&gt;&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/1587523711269.png&quot; class title=&quot;反射知识点&quot;&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="反射" scheme="https://www.sunliaodong.cn/tags/%E5%8F%8D%E5%B0%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java系统化学习之内部类</title>
+    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%86%85%E9%83%A8%E7%B1%BB/"/>
+    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%86%85%E9%83%A8%E7%B1%BB/</id>
+    <published>2021-02-04T09:16:48.000Z</published>
+    <updated>2021-02-04T09:32:21.781Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;定义：外部类内部定义的类，类名不需要与文件名不同&lt;/li&gt;
+&lt;li&gt;static修饰（静态内部类）&lt;/li&gt;
+&lt;li&gt;作用域（public、default、protected、private）&lt;/li&gt;
+&lt;li&gt;作用范围：编译期概念，一但编译成功就是有不同的class文件（outer.class和outer$inner.class），所以内部类的成员变量/方法名可以和外部类的相同。&lt;/li&gt;
+&lt;li&gt;分类：静态内部类，成员内部类，局部内部类，匿名内部类四种。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;场景&quot;&gt;&lt;a href=&quot;#场景&quot; class=&quot;headerlink&quot; title=&quot;场景&quot;&gt;&lt;/a&gt;场景&lt;/h2&gt;&lt;p&gt;Ø 在一个方法内部使用&lt;br&gt;Ø 在方法的一个作用域中使用&lt;br&gt;Ø 一个匿名类，用于实现一个接口&lt;br&gt;Ø 一个匿名类，用于扩展拥有非默认构造器的类&lt;br&gt;Ø 一个匿名类，用于执行字段初始化&lt;br&gt;Ø 一个匿名类，通过实例初始化进行构建（匿名内部类不能拥有构造器)  &lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="内部类" scheme="https://www.sunliaodong.cn/tags/%E5%86%85%E9%83%A8%E7%B1%BB/"/>
+    
+  </entry>
   
   <entry>
     <title>Java高效编程技巧</title>
@@ -103,9 +204,9 @@
     <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
     
     
-    <category term="注解" scheme="https://www.sunliaodong.cn/tags/%E6%B3%A8%E8%A7%A3/"/>
-    
     <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="注解" scheme="https://www.sunliaodong.cn/tags/%E6%B3%A8%E8%A7%A3/"/>
     
   </entry>
   
@@ -114,7 +215,7 @@
     <link href="https://www.sunliaodong.cn/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/"/>
     <id>https://www.sunliaodong.cn/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</id>
     <published>2021-02-04T07:51:43.000Z</published>
-    <updated>2021-02-04T08:14:00.670Z</updated>
+    <updated>2021-02-04T09:28:51.018Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;集成javap命令&quot;&gt;&lt;a href=&quot;#集成javap命令&quot; class=&quot;headerlink&quot; title=&quot;集成javap命令&quot;&gt;&lt;/a&gt;集成javap命令&lt;/h2&gt;&lt;h3 id=&quot;配置&quot;&gt;&lt;a href=&quot;#配置&quot; class=&quot;headerlink&quot; title=&quot;配置&quot;&gt;&lt;/a&gt;配置&lt;/h3&gt;&lt;ol&gt;
