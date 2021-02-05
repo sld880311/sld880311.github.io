@@ -1878,6 +1878,207 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux命令之iostat</title>
+    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
+<li>-c： 显示CPU使用情况</li>
+<li>-d： 显示磁盘使用情况</li>
+<li>-N： 显示磁盘阵列(LVM) 信息</li>
+<li>-n： 显示NFS 使用情况</li>
+<li>-k： 以 KB 为单位显示</li>
+<li>-m： 以 M 为单位显示</li>
+<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
+<li>-V： 显示版本信息</li>
+<li>-x： 显示详细信息</li>
+<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
+
+</li>
+</ul>
+<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第一行</td>
+<td>最上面指示系统版本、主机名和当前日期</td>
+</tr>
+<tr>
+<td>avg-cpu</td>
+<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
+</tr>
+<tr>
+<td>Device</td>
+<td>各磁盘设备的IO统计信息</td>
+</tr>
+</tbody></table>
+<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%user</td>
+<td>CPU在用户态执行进程的时间百分比。</td>
+</tr>
+<tr>
+<td>%nice</td>
+<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%system</td>
+<td>CPU处在内核态执行进程的时间百分比</td>
+</tr>
+<tr>
+<td>%iowait</td>
+<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%steal</td>
+<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
+</tr>
+<tr>
+<td>%idle</td>
+<td>CPU空闲时间百分比</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
+<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Device</td>
+<td>设备名称</td>
+</tr>
+<tr>
+<td>tps</td>
+<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
+</tr>
+<tr>
+<td>Blk_read/s</td>
+<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
+</tr>
+<tr>
+<td>Blk_wrtn/s</td>
+<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
+</tr>
+<tr>
+<td>Blk_read</td>
+<td>取样时间间隔内读扇区总数量</td>
+</tr>
+<tr>
+<td>Blk_wrtn</td>
+<td>取样时间间隔内写扇区总数量</td>
+</tr>
+</tbody></table>
+<ul>
+<li>iostat 1 5：间隔1秒，总共显示5次</li>
+<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
+<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
+<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
+<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
+<li>iostat -m：以M为单位显示所有信息</li>
+<li>iostat -d sda：显示指定硬盘信息</li>
+<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
+<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
+<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
+<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
+</ul>
+<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rrqm/s</td>
+<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
+</tr>
+<tr>
+<td>wrqm/s</td>
+<td>每秒对该设备的写请求被合并次数</td>
+</tr>
+<tr>
+<td>r/s</td>
+<td>每秒完成的读 I/O 设备次数</td>
+</tr>
+<tr>
+<td>w/s</td>
+<td>每秒完成的写 I/O 设备次数</td>
+</tr>
+<tr>
+<td>rkB/s</td>
+<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
+</tr>
+<tr>
+<td>wkB/s</td>
+<td>每秒写K字节数。是 wsect/s 的一半</td>
+</tr>
+<tr>
+<td>avgrq-sz</td>
+<td>平均每次IO操作的数据量(扇区数为单位)</td>
+</tr>
+<tr>
+<td>avgqu-sz</td>
+<td>平均等待处理的IO请求队列长度</td>
+</tr>
+<tr>
+<td>rsec/s</td>
+<td>每秒读扇区数。即 rsect/s</td>
+</tr>
+<tr>
+<td>wsec/s</td>
+<td>每秒写扇区数。即 wsect/s</td>
+</tr>
+<tr>
+<td>r_await</td>
+<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>w_await</td>
+<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>await</td>
+<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
+</tr>
+<tr>
+<td>svctm</td>
+<td>平均每次IO请求的处理时间(毫秒为单位)</td>
+</tr>
+<tr>
+<td>%util</td>
+<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
+</blockquote>
+<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>iostat</tag>
+        <tag>磁盘分析</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux命令之TOP</title>
     <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/</url>
     <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@incloudos logs]<span class="comment"># top -h</span></span><br><span class="line">  procps-ng version 3.3.10</span><br><span class="line">Usage:</span><br><span class="line">  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]</span><br><span class="line">s – 改变画面更新频率</span><br><span class="line">l – 关闭或开启第一部分第一行 top 信息的表示</span><br><span class="line">t – 关闭或开启第一部分第二行 Tasks 和第三行 Cpus 信息的表示</span><br><span class="line">m – 关闭或开启第一部分第四行 Mem 和 第五行 Swap 信息的表示</span><br><span class="line">N – 以 PID 的大小的顺序排列表示进程列表</span><br><span class="line">P – 以 CPU 占用率大小的顺序排列进程列表</span><br><span class="line">M – 以内存占用率大小的顺序排列进程列表</span><br><span class="line">h – 显示帮助</span><br><span class="line">n – 设置在进程列表所显示进程的数量</span><br><span class="line">q – 退出 top</span><br><span class="line">s – 改变画面更新周期</span><br><span class="line">请在top里面按下E，注意是大写。你会发现内存那一行的最左侧，</span><br><span class="line">也就是Mem前面，会有Kib、MiB、GiB等单位变化，</span><br><span class="line">但是数字后面不会直接写明单位。</span><br></pre></td></tr></table></figure>
@@ -2084,207 +2285,6 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>Linux</tag>
         <tag>TOP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux命令之iostat</title>
-    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
-<li>-c： 显示CPU使用情况</li>
-<li>-d： 显示磁盘使用情况</li>
-<li>-N： 显示磁盘阵列(LVM) 信息</li>
-<li>-n： 显示NFS 使用情况</li>
-<li>-k： 以 KB 为单位显示</li>
-<li>-m： 以 M 为单位显示</li>
-<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
-<li>-V： 显示版本信息</li>
-<li>-x： 显示详细信息</li>
-<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
-
-</li>
-</ul>
-<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>第一行</td>
-<td>最上面指示系统版本、主机名和当前日期</td>
-</tr>
-<tr>
-<td>avg-cpu</td>
-<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
-</tr>
-<tr>
-<td>Device</td>
-<td>各磁盘设备的IO统计信息</td>
-</tr>
-</tbody></table>
-<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>%user</td>
-<td>CPU在用户态执行进程的时间百分比。</td>
-</tr>
-<tr>
-<td>%nice</td>
-<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%system</td>
-<td>CPU处在内核态执行进程的时间百分比</td>
-</tr>
-<tr>
-<td>%iowait</td>
-<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%steal</td>
-<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
-</tr>
-<tr>
-<td>%idle</td>
-<td>CPU空闲时间百分比</td>
-</tr>
-</tbody></table>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
-<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Device</td>
-<td>设备名称</td>
-</tr>
-<tr>
-<td>tps</td>
-<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
-</tr>
-<tr>
-<td>Blk_read/s</td>
-<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
-</tr>
-<tr>
-<td>Blk_wrtn/s</td>
-<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
-</tr>
-<tr>
-<td>Blk_read</td>
-<td>取样时间间隔内读扇区总数量</td>
-</tr>
-<tr>
-<td>Blk_wrtn</td>
-<td>取样时间间隔内写扇区总数量</td>
-</tr>
-</tbody></table>
-<ul>
-<li>iostat 1 5：间隔1秒，总共显示5次</li>
-<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
-<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
-<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
-<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
-<li>iostat -m：以M为单位显示所有信息</li>
-<li>iostat -d sda：显示指定硬盘信息</li>
-<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
-<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
-<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
-<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
-</ul>
-<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>rrqm/s</td>
-<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
-</tr>
-<tr>
-<td>wrqm/s</td>
-<td>每秒对该设备的写请求被合并次数</td>
-</tr>
-<tr>
-<td>r/s</td>
-<td>每秒完成的读 I/O 设备次数</td>
-</tr>
-<tr>
-<td>w/s</td>
-<td>每秒完成的写 I/O 设备次数</td>
-</tr>
-<tr>
-<td>rkB/s</td>
-<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
-</tr>
-<tr>
-<td>wkB/s</td>
-<td>每秒写K字节数。是 wsect/s 的一半</td>
-</tr>
-<tr>
-<td>avgrq-sz</td>
-<td>平均每次IO操作的数据量(扇区数为单位)</td>
-</tr>
-<tr>
-<td>avgqu-sz</td>
-<td>平均等待处理的IO请求队列长度</td>
-</tr>
-<tr>
-<td>rsec/s</td>
-<td>每秒读扇区数。即 rsect/s</td>
-</tr>
-<tr>
-<td>wsec/s</td>
-<td>每秒写扇区数。即 wsect/s</td>
-</tr>
-<tr>
-<td>r_await</td>
-<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>w_await</td>
-<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>await</td>
-<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
-</tr>
-<tr>
-<td>svctm</td>
-<td>平均每次IO请求的处理时间(毫秒为单位)</td>
-</tr>
-<tr>
-<td>%util</td>
-<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
-</blockquote>
-<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>iostat</tag>
-        <tag>磁盘分析</tag>
       </tags>
   </entry>
   <entry>
@@ -2689,6 +2689,117 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>MySQL之索引</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E7%B4%A2%E5%BC%95/</url>
+    <content><![CDATA[<ol>
+<li>索引是存储引擎用于快速找到记录的一种数据结构；对于性能的好坏起到决定性的作用</li>
+<li>通过索引号找到对应的数据编号，然后根据编号或对应数据的详细信息</li>
+<li>MySQL中的索引在存储引擎中实现<a id="more"></a>
+
+</li>
+</ol>
+<h2 id="索引类型"><a href="#索引类型" class="headerlink" title="索引类型"></a>索引类型</h2><h3 id="B-Tree（一般常用B-Tree）"><a href="#B-Tree（一般常用B-Tree）" class="headerlink" title="B-Tree（一般常用B+Tree）"></a>B-Tree（一般常用B+Tree）</h3><ol>
+<li>MyISAM使用前缀压缩技术使得索引更小，InnoDB则按照原数据格式进行存储</li>
+<li>MyISAM索引通过数据的物理位置引用被索引的行，InnoDB则根据主键引用被索引的行</li>
+<li>BTree中所有的值都是按顺序存储，并且每个叶子到根节点的距离相同</li>
+<li>从索引的根节点开始进行检索，根节点的槽中存放了子节点的指针，存储引擎根据这些指针向下查找</li>
+<li>叶子节点的指针指向被索引的数据</li>
+<li>索引对多个值进行排序的依据是create table 语句中定义索引时列的顺序</li>
+<li>可以使用BTree索引的查询类型：适用于全键值、键值范围或键值前缀；同时适用于order by<ul>
+<li>全值匹配：索引中所有的列进行完全匹配</li>
+<li>最左前缀：最左索引列</li>
+<li>列前缀：匹配某列值的开头部分</li>
+<li>范围值：匹配索引的第一列</li>
+<li>精确匹配某一列并范围匹配另外一列</li>
+<li>只访问索引的查询：覆盖索引</li>
+</ul>
+</li>
+<li>限制<ul>
+<li>如果不是按照索引的最左列开始查找，则不能使用索引</li>
+<li>不能跳过索引中的列进行索引查询</li>
+<li>如果查询中有某个列是范围查询，则其右侧的所有列无法使用索引进行优化查询 </li>
+</ul>
+</li>
+</ol>
+<h3 id="哈希索引"><a href="#哈希索引" class="headerlink" title="哈希索引"></a>哈希索引</h3><ol>
+<li>基于哈希表实现，只有精确匹配索引所有列的查询才有效</li>
+<li>只有memory引擎显示支持哈希索引（默认索引类型）</li>
+<li>原理：对于每一行，存储引擎会对所有索引列计算一个哈希码，哈希码是一个较小的值，并且不同键值的行计算出来的哈希码不同。哈希索引将所有的哈希码存储在索引中，同时在哈希表中保存指向每个数据行的指针。</li>
+</ol>
+<h4 id="使用限制"><a href="#使用限制" class="headerlink" title="使用限制"></a>使用限制</h4><ol>
+<li>哈希索引只包含哈希值和行指针，不存储字段值，所以无法实现覆盖索引</li>
+<li>哈希索引数据并不是按照索引值顺序存储（使用slot排序，slot维护指向行的指针），所以无法排序</li>
+<li>哈希索引使用所有列进行生成哈希码，所以不支持部分索引列匹配查询，并且只能等值查询</li>
+<li>在没有hash冲突的情况下，访问哈希索引的数据快，冲突较多时增加维护成本和查询效率</li>
+<li>InnoDB中使用自适应哈希索引来生成哈希索引</li>
+</ol>
+<h3 id="空间数据索引（R-Tree）"><a href="#空间数据索引（R-Tree）" class="headerlink" title="空间数据索引（R-Tree）"></a>空间数据索引（R-Tree）</h3><ol>
+<li>MyISAM支持空间索引，可以用于存储地理数据</li>
+</ol>
+<h3 id="全文索引"><a href="#全文索引" class="headerlink" title="全文索引"></a>全文索引</h3><ol>
+<li>全文索引适用于match against操作而不是where操作</li>
+</ol>
+<h2 id="索引的优点"><a href="#索引的优点" class="headerlink" title="索引的优点"></a>索引的优点</h2><ol>
+<li>索引大大减少了服务器需要扫描的数据量</li>
+<li>索引可以帮助服务器避免排序和临时表</li>
+<li>所以可以将随机IO转换成顺序IO</li>
+</ol>
+<p>注意：对于TB级别的数据，定位单条记录的意义不大，所以经常使用块级别原数据技术来替代索引。</p>
+<h2 id="高性能的索引策略"><a href="#高性能的索引策略" class="headerlink" title="高性能的索引策略"></a>高性能的索引策略</h2><h3 id="独立的列"><a href="#独立的列" class="headerlink" title="独立的列"></a>独立的列</h3><p>如果查询中的列不是独立的，比如有计算，有函数调用则无法正常使用索引。独立列表示索引不能是表达式的一部分，也不能是函数的参数。以下是反例：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> user_name <span class="keyword">from</span> t_ba_user <span class="keyword">where</span> age <span class="operator">+</span> <span class="number">1</span> <span class="operator">=</span> <span class="number">6</span>;</span><br><span class="line"><span class="keyword">select</span> user_name <span class="keyword">from</span> t_ba_user <span class="keyword">where</span> length(user_name) <span class="operator">=</span> <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="前缀索引和索引选择性"><a href="#前缀索引和索引选择性" class="headerlink" title="前缀索引和索引选择性"></a>前缀索引和索引选择性</h3><ol>
+<li>如果索引很长的字符列，会使索引变得大且慢，处理方式一种是使用哈希索引，一种是限制索引的长度。</li>
+<li>索引选择性计算：不重复索引值数量/数据表的记录总数，越接近于1选择性越高，索引唯一索引定位数据的速度快</li>
+<li>计算完整列的选择性，并是前缀的选择性接近于完整列的选择性</li>
+<li>前缀索引是一种能够是索引更小，更快的有效办法，但是无法用于排序和分组，也无法使用前缀索引进行覆盖查询</li>
+</ol>
+<h3 id="多列索引"><a href="#多列索引" class="headerlink" title="多列索引"></a>多列索引</h3><p><strong>错误的认知：</strong></p>
+<ol>
+<li>为每个列创建独立的索引</li>
+<li>按照错误的顺序创建多列索引</li>
+</ol>
+<p>在MySQL5.0+的版本中提供了“索引合并”的概念，一定层度上能够处理单列索引的局限；OR条件进行联合（union）、AND条件的相交（intersection）、以及OR与AND的组合；如果出现相关的“索引合并”则需要进行索引单列到多列的优化。可以使用optimizer_switch关闭合并功能。也可以使用explain分析sql的执行计划进行优化。</p>
+<h3 id="选择合适的索引列顺序"><a href="#选择合适的索引列顺序" class="headerlink" title="选择合适的索引列顺序"></a>选择合适的索引列顺序</h3><ol>
+<li>索引可以按照升序或降序进行扫描，以满足精确符合列顺序的排序、分组、去重等子句的查询需求</li>
+<li>将选择性最高的列放在索引的最前列，并且需要重复考虑整体基数，但最好优先考虑随机IO和排序产生的性能影响</li>
+<li>可能需要根据那些运行频率较高的查询来调整列的顺序，让这种情况下索引的选择性最高</li>
+</ol>
+<h3 id="聚簇索引"><a href="#聚簇索引" class="headerlink" title="聚簇索引"></a>聚簇索引</h3><ol>
+<li>一种数据存储方式，InnoDB中聚簇索引实际上是在同一个数据结构中保存了B-Tree索引和数据行。</li>
+<li>数据行实际存储在叶子页中。</li>
+<li>通过主键进行聚簇索引的管理，如果没有主键则选择一个唯一非空索引替代，如果还是没有数据库则使用默认的rowid管理</li>
+</ol>
+<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ol>
+<li>可以把</li>
+</ol>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><h3 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h3><h3 id="索引使用原则"><a href="#索引使用原则" class="headerlink" title="索引使用原则"></a>索引使用原则</h3><ol>
+<li>选择唯一性索引：唯一性索引的值是唯一的，可以更快速的通过该索引来确定某条记录。 </li>
+<li>为经常需要排序、分组和联合操作的字段建立索引： </li>
+<li>为常作为查询条件的字段建立索引。 </li>
+<li>限制索引的数目： <ul>
+<li>越多的索引，会使更新表变得很浪费时间。 </li>
+<li>尽量使用数据量少的索引 </li>
+</ul>
+</li>
+<li>如果索引的值很长，那么查询的速度会受到影响：尽量使用前缀来索引 </li>
+<li>如果索引字段的值很长，最好使用值的前缀来索引。  </li>
+<li>删除不再使用或者很少使用的索引 </li>
+<li>最左前缀匹配原则，非常重要的原则。 </li>
+<li>尽量选择区分度高的列作为索引：区分度的公式是表示字段不重复的比例 </li>
+<li>索引列不能参与计算，保持列“干净”：带函数的查询不参与索引。 </li>
+<li>尽量的扩展索引，不要新建索引。  </li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>索引</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL之日志-错误日志</title>
     <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/</url>
     <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在mysql数据库中，错误日志功能是默认开启的。并且，错误日志无法被禁止。默认情况下，错误日志存储在mysql数据库的数据文件中。错误日志文件通常的名称为hostname.err。其中，hostname表示服务器主机名。<br>错误日志信息可以自己进行配置的，错误日志所记录的信息是可以通过log-error和log-warnings来定义的，其中log-err是定义是否启用错误日志的功能和错误日志的存储位置，log-warnings是定义是否将警告信息也定义至错误日志中。默认情况下错误日志大概记录以下几个方面的信息：服务器启动和关闭过程中的信息（未必是错误信息，如mysql如何启动InnoDB的表空间文件的、如何初始化自己的存储引擎的等等）、服务器运行过程中的错误信息、事件调度器运行一个事件时产生的信息、在从服务器上启动服务器进程时产生的信息。</p>
@@ -3015,6 +3126,200 @@ SHR：shared memory 共享内存<br>
         <tag>Java</tag>
         <tag>设计模式</tag>
         <tag>单例模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>软件测试</title>
+    <url>/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<h2 id="测试分类"><a href="#测试分类" class="headerlink" title="测试分类"></a>测试分类</h2><h3 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h3><ol>
+<li>软件测试的最基本单元，针对软件中的基本组成部分进行测试，比如一个模块、一个方法；</li>
+<li>目的是验证最小单位的正确性，其正确性依赖详细设计</li>
+<li>主要方法有控制流测试、数据流测试、排错测试、分域测试等等。</li>
+<li>过程：研发整个过程中需要实施，尤其是针对关键核心代码的准确性测试</li>
+<li>优点： <ul>
+<li>一个好的单元测试将会在产品开发的阶段发现大部分的缺陷，并且修改他们的成本也很低；</li>
+<li>在软件开发的后期阶段，缺陷的修改将会变得更加困难，要消耗大量的时间和费用。</li>
+<li>经过单元测试的系统，系统集成过程将会达达的简化。<a id="more"></a>
+
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="集成测试"><a href="#集成测试" class="headerlink" title="集成测试"></a>集成测试</h3><ol>
+<li>集成测试发生在模块交互和UI集成阶段</li>
+<li>目的是检查软件单位之间的接口是否正确。</li>
+<li>策略主要有自顶向下和自底向上两种。</li>
+<li>集成测试也叫做组装测试，通常在单元测试的基础上，将所有的程序模块进行有序的、递增的测试。</li>
+<li>集成测试是检验程序单元或部件的接口关系，逐步集成为符合设计要求的程序部件或整个系统。</li>
+<li>软件集成的过程是一个持续的过程，会形成很多个临时版本，在每个版本提交时，都需要进行冒烟测试，即对程序主要功能进行验证。</li>
+</ol>
+<h3 id="系统测试"><a href="#系统测试" class="headerlink" title="系统测试"></a>系统测试</h3><p>系统测试是对已经集成好的软件系统进行彻底的测试，以验证软件系统的正确性和性能等满足其规约所指定的要求，检查软件的行为和输出是否正确并非一项简单的任务，它被称为测试的“先知者问题”。因此，系统测试应该按照测试计划进行，其输入、输出和其他动态运行行为应该与软件规约进行对比。软件系统测试方法很多，主要有功能测试、性能测试、随机测试等等。</p>
+<h3 id="验收测试"><a href="#验收测试" class="headerlink" title="验收测试"></a>验收测试</h3><p>验收测试旨在向软件的购买者展示该软件系统满足其用户的需求。它的测试数据通常是系统测试的测试数据的子集。所不同的是，验收测试常常有软件系统的购买者代表在现场，甚至是在软件安装使用的现场。这是软件在投入使用之前的最后测试。</p>
+<p>验收测试（用户接受度测试、用户体验测试，UAT：user acceptance test）</p>
+<p>(1).alpha测试：由最终的用户在开发的环境中，对软件进行测试（在实际中已经常由开发方自主完成）；</p>
+<p>(2).beta测试：由最终的用户在实际的环境中进行测试使用。对于一些没有固定用户群体的公共类软件（办公软件，游戏，输入法），一般会发行公测版（beta版），让用用户免费使用，发现bug后进行信息反馈。</p>
+<h2 id="测试的价值"><a href="#测试的价值" class="headerlink" title="测试的价值"></a>测试的价值</h2><ol>
+<li>测试越多，额外测试的价值越少。第一个测试最有可能是针对代码<strong>最重要的区域</strong>，因此带来高价值与高风险。当我们为几乎所有事情编写测试后，那些仍然没有测试覆盖的地方很有可能是最不重要和最不可能破坏的。<div align="center">
+
+</div></li>
+</ol>
+<img src="/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597710996282.png" class>
+
+
+
+<ol start="2">
+<li>第一个稳态表明编写更多更好的测试不再带来额外的价值。第二个稳态进一步爬升，从我们想法的改变中发现更多的回报（将测试认为是丰富的资源，而不仅仅是验证工具，可以出尽高质量代码的编写和个人思考问题的提升）–<strong>影响生产力</strong><div align="center">
+
+</div></li>
+</ol>
+<img src="/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597711435963.png" class>
+
+<img src="/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597717234915.png" class>
+<p>单元测试对生产力的影响</p>
+
+
+<h2 id="单元测试-1"><a href="#单元测试-1" class="headerlink" title="单元测试"></a>单元测试</h2><h3 id="规范"><a href="#规范" class="headerlink" title="规范"></a>规范</h3><h4 id="测试准则"><a href="#测试准则" class="headerlink" title="测试准则"></a>测试准则</h4><ol>
+<li>满足AIR原则<ul>
+<li>A：Automatic（自动化）</li>
+<li>I：Independent（独立性）</li>
+<li>R：Repeatable（可重复）</li>
+</ul>
+</li>
+<li><a href="https://blog.csdn.net/neo_ustc/article/details/22612759">符合27条准则</a></li>
+</ol>
+<h4 id="结构规范"><a href="#结构规范" class="headerlink" title="结构规范"></a>结构规范</h4><ol>
+<li>目录结构：不要与源码混合在一起，与源码的路径保持一致</li>
+<li>命名规范：与源码具有一致性要求，并且体现其测试功能，比如源码UserService，测试代码应该是UserServiceTest</li>
+</ol>
+<h4 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h4><ol>
+<li>Arrange：准备当前测试场景的前置条件</li>
+<li>Action：执行被测试方法</li>
+<li>Assert：对被测试方法的执行结果进行断言判断（几乎每种测试框架都提供了Assert库，当然，也可以根据情况丰富我们自己的Assert库）</li>
+</ol>
+<h3 id="编码原则"><a href="#编码原则" class="headerlink" title="编码原则"></a>编码原则</h3><h4 id="必须符合-BCDE-原则"><a href="#必须符合-BCDE-原则" class="headerlink" title="必须符合 BCDE 原则"></a>必须符合 BCDE 原则</h4><ol>
+<li>B：Border，边界值测试，包括循环边界、特殊取值、特殊时间点、数据顺序等。</li>
+<li>C：Correct，正确的输入，并得到预期的结果。</li>
+<li>D：Design，与设计文档相结合，来编写单元测试。</li>
+<li>E：Error，强制错误信息输入（如：非法数据、异常流程、非业务允许输入等），并得到预期的结果。</li>
+</ol>
+<h4 id="避免以下情况"><a href="#避免以下情况" class="headerlink" title="避免以下情况"></a>避免以下情况</h4><ol>
+<li>构造方法中做的事情过多。</li>
+<li>存在过多的全局变量和静态方法。</li>
+<li>存在过多的外部依赖。</li>
+<li>存在过多的条件语句。</li>
+</ol>
+<h4 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h4><ol>
+<li>涉及到的某些扩展模块可以使用mock模拟</li>
+<li>测试用例不要使用@ignored或者被注释掉，切记切记。</li>
+</ol>
+<h3 id="测试用例的设计"><a href="#测试用例的设计" class="headerlink" title="测试用例的设计"></a>测试用例的设计</h3><ol>
+<li>使用一种或多种白盒测试方法分析模块的逻辑关系</li>
+<li>使用黑盒测试方法依照需求说明补充测试用例</li>
+</ol>
+<h4 id="接口功能性测试"><a href="#接口功能性测试" class="headerlink" title="接口功能性测试"></a>接口功能性测试</h4><p>接口功能的正确性,即保证接口能够被正常调用，并输出有效数据!</p>
+<ol>
+<li>是否被顺利调用</li>
+<li>参数是否符合预期</li>
+</ol>
+<h4 id="局部数据结构测试"><a href="#局部数据结构测试" class="headerlink" title="局部数据结构测试"></a>局部数据结构测试</h4><p>保证数据结构的正确性</p>
+<ol>
+<li>变量是否有初始值或在某场景下是否有默认值</li>
+<li>变量是否溢出</li>
+</ol>
+<h4 id="边界条件测试"><a href="#边界条件测试" class="headerlink" title="边界条件测试"></a>边界条件测试</h4><ol>
+<li>变量无赋值(null)</li>
+<li>变量是数值或字符</li>
+<li>主要边界：最大值，最小值，无穷大</li>
+<li>溢出边界：在边界外面取值+/-1</li>
+<li>临近边界：在边界值之内取值+/-1</li>
+<li>字符串的边界，引用 “变量字符”的边界</li>
+<li>字符串的设置，空字符串</li>
+<li>字符串的应用长度测试</li>
+<li>空白集合</li>
+<li>目标集合的类型和应用边界</li>
+<li>集合的次序</li>
+<li>变量是规律的，测试无穷大的极限，无穷小的极限</li>
+</ol>
+<h5 id="逻辑性测试"><a href="#逻辑性测试" class="headerlink" title="逻辑性测试"></a>逻辑性测试</h5><ol>
+<li>精度问题</li>
+<li>死代码</li>
+<li>表达式判断</li>
+<li>具体的业务逻辑（需要参与详细设计进行评估测试，并且加强代码走查），<strong>比如数据的使用范围，数据的最终一致性，数据的依赖性</strong></li>
+</ol>
+<h4 id="所有独立代码测试"><a href="#所有独立代码测试" class="headerlink" title="所有独立代码测试"></a>所有独立代码测试</h4><p>保证每一句代码，所有分支都测试完成，主要包括代码覆盖率，异常处理通路测试</p>
+<ol>
+<li>语句覆盖率：每个语句都执行到了</li>
+<li>判定覆盖率：每个分支都执行到了</li>
+<li>条件覆盖率：每个条件都返回布尔</li>
+<li>路径覆盖率：每个路径都覆盖到了</li>
+</ol>
+<h4 id="异常模块测试"><a href="#异常模块测试" class="headerlink" title="异常模块测试"></a>异常模块测试</h4><p>后续处理模块测试:是否包闭当前异常或者对异常形成消化,是否影响结果!</p>
+<h3 id="测试目标"><a href="#测试目标" class="headerlink" title="测试目标"></a>测试目标</h3><p><strong>语句覆盖率：&gt;=70% 分支覆盖率：100% 函数覆盖率：100% 行覆盖率： &gt;=80%</strong></p>
+<p>最主要的目的是发现bug，解决bug，提高研发生产力。</p>
+<h3 id="编写单元测试的技巧"><a href="#编写单元测试的技巧" class="headerlink" title="编写单元测试的技巧"></a>编写单元测试的技巧</h3><ol>
+<li><strong>不应该编写成功通过的单元测试</strong>：以发现问题的角度去编写测试用例，让测试用例逐步变成通过</li>
+<li><strong>测试类应该只测试一个功能</strong></li>
+<li><strong>测试类具备可读性</strong>，规范的注释，以及相关的测试用例</li>
+<li><strong>良好的命名规范</strong></li>
+<li><strong>把断言从行为中分离出来</strong>：你的断言应该用来检验结果，而不是执行逻辑操作的。</li>
+<li><strong>使用具体的输入</strong>-不要使用任何的自动化测试数据来输入，像date()这些产生的数据会引入差异。</li>
+<li><strong>把测试类分类</strong>，放在不同的地方-从逻辑的角度看，当没有错误指向特定的问题时这更容易去查找。</li>
+<li><strong>好的测试都是</strong>：一些独立的测试类-你应该让测试类与其他的测试、环境设置等没有任何依赖。这利于创建多个测试点。</li>
+<li><strong>不要包含私有的方法</strong>：他们都是一些具体的实现，不应该包含在单元测试里。</li>
+<li><strong>不要连接数据库或者数据源</strong>-这是不靠谱的。因为你不能确保数据服务总是一样的并且能够创建测试点，创建用于测试的数据库，并且快速完成数据的回收</li>
+<li><strong>一个测试不要超过一个模拟(mock对象)</strong>-我们努力去消除错误和不一致性。</li>
+<li><strong>单元测试不是集成测试</strong>-如果你想测试结果，不要使用单元测试。</li>
+<li><strong>测试必须具有确定性</strong>-你需要一个确定的预测结果，所以，如果有时候测试通过了，但是不意味着完成测试了。</li>
+<li><strong>保持你的测试是幂等的</strong>-你应该能够运行你的测试多次而不改变它的输出结果，并且测试也不应该改变任何的数据或者添加任何东西。无论是运行一次还是一百万次，它的效果都应该是一样的。</li>
+<li><strong>测试类一次仅测试一个类，测试方法一次仅测试一个方法</strong>-组织方法能够在问题出现时检测出来，并帮你确定测试依赖。</li>
+<li><strong>在你的测试里使用异常</strong>-你在测试里会遇到异常，所以，请不要忽略它，要使用它。</li>
+<li><strong>不要使用你自己的测试类去测试第三方库的功能</strong>-大多数好的库都应该有它们自己的测试，如果没考虑用mocks去产生一致性的结果的话。</li>
+<li><strong>限制规则</strong>-当在一些规则下写测试时，记住你的限制和它们（最小和最大）设置成最大的一致性。</li>
+<li><strong>测试类不应该需要配置或者自定义安装</strong>-你的测试类应该能够给任何人使用并且使它运行。“在我的机器上运行”不应该出现在这。</li>
+</ol>
+<h2 id="基于Python-unittest的示例"><a href="#基于Python-unittest的示例" class="headerlink" title="基于Python unittest的示例"></a>基于Python unittest的示例</h2><h3 id="准备测试对象"><a href="#准备测试对象" class="headerlink" title="准备测试对象"></a>准备测试对象</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># UnitTest/unit_test/course.py</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CourseManage</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, course</span>):</span></span><br><span class="line">        self.course = course</span><br><span class="line">        self.students = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_course</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;课程:&quot;</span>, self.course)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add_student</span>(<span class="params">self, name</span>):</span></span><br><span class="line">        self.students.append(name)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_students</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;所有学员:&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> student <span class="keyword">in</span> self.students:</span><br><span class="line">            print(<span class="string">&#x27;-&#x27;</span>, student)</span><br></pre></td></tr></table></figure>
+<h3 id="正常使用该对象"><a href="#正常使用该对象" class="headerlink" title="正常使用该对象"></a>正常使用该对象</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> unit_test.course <span class="keyword">import</span> CourseManage</span><br><span class="line"></span><br><span class="line">course = CourseManage(<span class="string">&quot;Python&quot;</span>)</span><br><span class="line">course.show_course()</span><br><span class="line">print(<span class="string">&quot;准备录入学员...&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Enter &#x27;q&#x27; at any time to quit.\n&quot;</span>)</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    resp = <span class="built_in">input</span>(<span class="string">&quot;Student&#x27;s Name: &quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> resp == <span class="string">&#x27;q&#x27;</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">if</span> resp:</span><br><span class="line">        course.add_student(resp.title())</span><br><span class="line">print(<span class="string">&quot;\n录入完毕...&quot;</span>)</span><br><span class="line">course.show_students()</span><br></pre></td></tr></table></figure>
+<p>数据正常输出：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">课程: Python</span><br><span class="line">准备录入学员...</span><br><span class="line">Enter <span class="string">&#x27;q&#x27;</span> at <span class="built_in">any</span> time to quit.</span><br><span class="line"></span><br><span class="line">Student<span class="string">&#x27;s Name: oliver queen</span></span><br><span class="line"><span class="string">Student&#x27;</span>s Name: barry allen</span><br><span class="line">Student<span class="string">&#x27;s Name: kara</span></span><br><span class="line"><span class="string">Student&#x27;</span>s Name: sara lance</span><br><span class="line">Student<span class="string">&#x27;s Name: q</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">录入完毕...</span></span><br><span class="line"><span class="string">所有学员:</span></span><br><span class="line"><span class="string">- Oliver Queen</span></span><br><span class="line"><span class="string">- Barry Allen</span></span><br><span class="line"><span class="string">- Kara</span></span><br><span class="line"><span class="string">- Sara Lance</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Process finished with exit code 0</span></span><br></pre></td></tr></table></figure>
+<h3 id="编写测试用例"><a href="#编写测试用例" class="headerlink" title="编写测试用例"></a>编写测试用例</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># UnitTest/unit_test/test/test_course.py</span></span><br><span class="line"><span class="comment"># 添加用户，使用断言assertIn验证</span></span><br><span class="line"><span class="keyword">import</span> unittest</span><br><span class="line"><span class="keyword">from</span> unit_test.course <span class="keyword">import</span> CourseManage</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestCourseManage</span>(<span class="params">unittest.TestCase</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_add_student</span>(<span class="params">self</span>):</span></span><br><span class="line">        course = CourseManage(<span class="string">&quot;Python&quot;</span>)</span><br><span class="line">        name = <span class="string">&#x27;snart&#x27;</span></span><br><span class="line">        course.add_student(name.title())</span><br><span class="line">        self.assertIn(<span class="string">&#x27;Snart&#x27;</span>, course.students)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    unittest.main()</span><br></pre></td></tr></table></figure>
+<h3 id="常用断言方法"><a href="#常用断言方法" class="headerlink" title="常用断言方法"></a>常用断言方法</h3><p>模块在unittest.TestCase类中提供了很多断言方法，之前已经用一个了。下面是6个常用的断言方法：</p>
+<ol>
+<li>assertEqual(a, b) ： 核实a == b</li>
+<li>assertNotEqual(a, b) ： 核实a != b</li>
+<li>assertTrue(x) ： 核实x为True</li>
+<li>assertFalse(x) ： 核实x为False</li>
+<li>assertIn(item, list) ： 核实item在list中</li>
+<li>assertNotIn(item, list) ： 核实item不在list中</li>
+</ol>
+<h3 id="特殊方法说明"><a href="#特殊方法说明" class="headerlink" title="特殊方法说明"></a>特殊方法说明</h3><ol>
+<li>setUp()&amp;tearDown()：在每个测试方法（用例）运行时被调用一次</li>
+<li>setUp()主要实现测试前的初始化工作，而tearDown()则主要实现测试完成后的垃圾回收等工作 </li>
+<li>setUpClass()&amp;tearDownClass(): 全程只调用一次，必须使用@classmethod 装饰器</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="如何快速推荐单元测试"><a href="#如何快速推荐单元测试" class="headerlink" title="如何快速推荐单元测试"></a>如何快速推荐单元测试</h3><p>需要有研发流程和研发文化的支持。</p>
+<div align="center">
+
+<img src="/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597716819955.png" class title="研发代码提交流程">
+
+</div>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://petroware.no/html/unittesting.html">Unit Testing Guidelines</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1570016">单元测试的用例清单</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1005432">实践单元测试的姿势</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1399249">Golang UnitTest单元测试</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1382018">Python的单元测试</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1564228">Python 单元测试（unittest)</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1509641">Java单元测试之JUnit 5快速上手</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>测试</category>
+        <category>研发效能</category>
+      </categories>
+      <tags>
+        <tag>测试</tag>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>

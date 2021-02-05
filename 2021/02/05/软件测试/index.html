@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="测试分类单元测试 软件测试的最基本单元，针对软件中的基本组成部分进行测试，比如一个模块、一个方法； 目的是验证最小单位的正确性，其正确性依赖详细设计 主要方法有控制流测试、数据流测试、排错测试、分域测试等等。 过程：研发整个过程中需要实施，尤其是针对关键核心代码的准确性测试 优点：  一个好的单元测试将会在产品开发的阶段发现大部分的缺陷，并且修改他们的成本也很低； 在软件开发的后期阶段，缺陷的修改">
+<meta property="og:type" content="article">
+<meta property="og:title" content="软件测试">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="测试分类单元测试 软件测试的最基本单元，针对软件中的基本组成部分进行测试，比如一个模块、一个方法； 目的是验证最小单位的正确性，其正确性依赖详细设计 主要方法有控制流测试、数据流测试、排错测试、分域测试等等。 过程：研发整个过程中需要实施，尤其是针对关键核心代码的准确性测试 优点：  一个好的单元测试将会在产品开发的阶段发现大部分的缺陷，并且修改他们的成本也很低； 在软件开发的后期阶段，缺陷的修改">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597710996282.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597711435963.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597717234915.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597716819955.png">
+<meta property="article:published_time" content="2021-02-05T12:28:00.000Z">
+<meta property="article:modified_time" content="2021-02-05T12:31:30.219Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="测试">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597710996282.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>软件测试 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">20</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">60</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          软件测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-05 20:28:00 / 修改时间：20:31:30" itemprop="dateCreated datePublished" datetime="2021-02-05T20:28:00+08:00">2021-02-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">测试</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A0%94%E5%8F%91%E6%95%88%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">研发效能</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="测试分类"><a href="#测试分类" class="headerlink" title="测试分类"></a>测试分类</h2><h3 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h3><ol>
+<li>软件测试的最基本单元，针对软件中的基本组成部分进行测试，比如一个模块、一个方法；</li>
+<li>目的是验证最小单位的正确性，其正确性依赖详细设计</li>
+<li>主要方法有控制流测试、数据流测试、排错测试、分域测试等等。</li>
+<li>过程：研发整个过程中需要实施，尤其是针对关键核心代码的准确性测试</li>
+<li>优点： <ul>
+<li>一个好的单元测试将会在产品开发的阶段发现大部分的缺陷，并且修改他们的成本也很低；</li>
+<li>在软件开发的后期阶段，缺陷的修改将会变得更加困难，要消耗大量的时间和费用。</li>
+<li>经过单元测试的系统，系统集成过程将会达达的简化。<a id="more"></a>
+
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="集成测试"><a href="#集成测试" class="headerlink" title="集成测试"></a>集成测试</h3><ol>
+<li>集成测试发生在模块交互和UI集成阶段</li>
+<li>目的是检查软件单位之间的接口是否正确。</li>
+<li>策略主要有自顶向下和自底向上两种。</li>
+<li>集成测试也叫做组装测试，通常在单元测试的基础上，将所有的程序模块进行有序的、递增的测试。</li>
+<li>集成测试是检验程序单元或部件的接口关系，逐步集成为符合设计要求的程序部件或整个系统。</li>
+<li>软件集成的过程是一个持续的过程，会形成很多个临时版本，在每个版本提交时，都需要进行冒烟测试，即对程序主要功能进行验证。</li>
+</ol>
+<h3 id="系统测试"><a href="#系统测试" class="headerlink" title="系统测试"></a>系统测试</h3><p>系统测试是对已经集成好的软件系统进行彻底的测试，以验证软件系统的正确性和性能等满足其规约所指定的要求，检查软件的行为和输出是否正确并非一项简单的任务，它被称为测试的“先知者问题”。因此，系统测试应该按照测试计划进行，其输入、输出和其他动态运行行为应该与软件规约进行对比。软件系统测试方法很多，主要有功能测试、性能测试、随机测试等等。</p>
+<h3 id="验收测试"><a href="#验收测试" class="headerlink" title="验收测试"></a>验收测试</h3><p>验收测试旨在向软件的购买者展示该软件系统满足其用户的需求。它的测试数据通常是系统测试的测试数据的子集。所不同的是，验收测试常常有软件系统的购买者代表在现场，甚至是在软件安装使用的现场。这是软件在投入使用之前的最后测试。</p>
+<p>验收测试（用户接受度测试、用户体验测试，UAT：user acceptance test）</p>
+<p>(1).alpha测试：由最终的用户在开发的环境中，对软件进行测试（在实际中已经常由开发方自主完成）；</p>
+<p>(2).beta测试：由最终的用户在实际的环境中进行测试使用。对于一些没有固定用户群体的公共类软件（办公软件，游戏，输入法），一般会发行公测版（beta版），让用用户免费使用，发现bug后进行信息反馈。</p>
+<h2 id="测试的价值"><a href="#测试的价值" class="headerlink" title="测试的价值"></a>测试的价值</h2><ol>
+<li>测试越多，额外测试的价值越少。第一个测试最有可能是针对代码<strong>最重要的区域</strong>，因此带来高价值与高风险。当我们为几乎所有事情编写测试后，那些仍然没有测试覆盖的地方很有可能是最不重要和最不可能破坏的。<div align="center">
+
+</div></li>
+</ol>
+<img src="/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597710996282.png" class>
+
+
+
+<ol start="2">
+<li>第一个稳态表明编写更多更好的测试不再带来额外的价值。第二个稳态进一步爬升，从我们想法的改变中发现更多的回报（将测试认为是丰富的资源，而不仅仅是验证工具，可以出尽高质量代码的编写和个人思考问题的提升）–<strong>影响生产力</strong><div align="center">
+
+</div></li>
+</ol>
+<img src="/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597711435963.png" class>
+
+<img src="/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597717234915.png" class>
+<p>单元测试对生产力的影响</p>
+
+
+<h2 id="单元测试-1"><a href="#单元测试-1" class="headerlink" title="单元测试"></a>单元测试</h2><h3 id="规范"><a href="#规范" class="headerlink" title="规范"></a>规范</h3><h4 id="测试准则"><a href="#测试准则" class="headerlink" title="测试准则"></a>测试准则</h4><ol>
+<li>满足AIR原则<ul>
+<li>A：Automatic（自动化）</li>
+<li>I：Independent（独立性）</li>
+<li>R：Repeatable（可重复）</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/neo_ustc/article/details/22612759">符合27条准则</a></li>
+</ol>
+<h4 id="结构规范"><a href="#结构规范" class="headerlink" title="结构规范"></a>结构规范</h4><ol>
+<li>目录结构：不要与源码混合在一起，与源码的路径保持一致</li>
+<li>命名规范：与源码具有一致性要求，并且体现其测试功能，比如源码UserService，测试代码应该是UserServiceTest</li>
+</ol>
+<h4 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h4><ol>
+<li>Arrange：准备当前测试场景的前置条件</li>
+<li>Action：执行被测试方法</li>
+<li>Assert：对被测试方法的执行结果进行断言判断（几乎每种测试框架都提供了Assert库，当然，也可以根据情况丰富我们自己的Assert库）</li>
+</ol>
+<h3 id="编码原则"><a href="#编码原则" class="headerlink" title="编码原则"></a>编码原则</h3><h4 id="必须符合-BCDE-原则"><a href="#必须符合-BCDE-原则" class="headerlink" title="必须符合 BCDE 原则"></a>必须符合 BCDE 原则</h4><ol>
+<li>B：Border，边界值测试，包括循环边界、特殊取值、特殊时间点、数据顺序等。</li>
+<li>C：Correct，正确的输入，并得到预期的结果。</li>
+<li>D：Design，与设计文档相结合，来编写单元测试。</li>
+<li>E：Error，强制错误信息输入（如：非法数据、异常流程、非业务允许输入等），并得到预期的结果。</li>
+</ol>
+<h4 id="避免以下情况"><a href="#避免以下情况" class="headerlink" title="避免以下情况"></a>避免以下情况</h4><ol>
+<li>构造方法中做的事情过多。</li>
+<li>存在过多的全局变量和静态方法。</li>
+<li>存在过多的外部依赖。</li>
+<li>存在过多的条件语句。</li>
+</ol>
+<h4 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h4><ol>
+<li>涉及到的某些扩展模块可以使用mock模拟</li>
+<li>测试用例不要使用@ignored或者被注释掉，切记切记。</li>
+</ol>
+<h3 id="测试用例的设计"><a href="#测试用例的设计" class="headerlink" title="测试用例的设计"></a>测试用例的设计</h3><ol>
+<li>使用一种或多种白盒测试方法分析模块的逻辑关系</li>
+<li>使用黑盒测试方法依照需求说明补充测试用例</li>
+</ol>
+<h4 id="接口功能性测试"><a href="#接口功能性测试" class="headerlink" title="接口功能性测试"></a>接口功能性测试</h4><p>接口功能的正确性,即保证接口能够被正常调用，并输出有效数据!</p>
+<ol>
+<li>是否被顺利调用</li>
+<li>参数是否符合预期</li>
+</ol>
+<h4 id="局部数据结构测试"><a href="#局部数据结构测试" class="headerlink" title="局部数据结构测试"></a>局部数据结构测试</h4><p>保证数据结构的正确性</p>
+<ol>
+<li>变量是否有初始值或在某场景下是否有默认值</li>
+<li>变量是否溢出</li>
+</ol>
+<h4 id="边界条件测试"><a href="#边界条件测试" class="headerlink" title="边界条件测试"></a>边界条件测试</h4><ol>
+<li>变量无赋值(null)</li>
+<li>变量是数值或字符</li>
+<li>主要边界：最大值，最小值，无穷大</li>
+<li>溢出边界：在边界外面取值+/-1</li>
+<li>临近边界：在边界值之内取值+/-1</li>
+<li>字符串的边界，引用 “变量字符”的边界</li>
+<li>字符串的设置，空字符串</li>
+<li>字符串的应用长度测试</li>
+<li>空白集合</li>
+<li>目标集合的类型和应用边界</li>
+<li>集合的次序</li>
+<li>变量是规律的，测试无穷大的极限，无穷小的极限</li>
+</ol>
+<h5 id="逻辑性测试"><a href="#逻辑性测试" class="headerlink" title="逻辑性测试"></a>逻辑性测试</h5><ol>
+<li>精度问题</li>
+<li>死代码</li>
+<li>表达式判断</li>
+<li>具体的业务逻辑（需要参与详细设计进行评估测试，并且加强代码走查），<strong>比如数据的使用范围，数据的最终一致性，数据的依赖性</strong></li>
+</ol>
+<h4 id="所有独立代码测试"><a href="#所有独立代码测试" class="headerlink" title="所有独立代码测试"></a>所有独立代码测试</h4><p>保证每一句代码，所有分支都测试完成，主要包括代码覆盖率，异常处理通路测试</p>
+<ol>
+<li>语句覆盖率：每个语句都执行到了</li>
+<li>判定覆盖率：每个分支都执行到了</li>
+<li>条件覆盖率：每个条件都返回布尔</li>
+<li>路径覆盖率：每个路径都覆盖到了</li>
+</ol>
+<h4 id="异常模块测试"><a href="#异常模块测试" class="headerlink" title="异常模块测试"></a>异常模块测试</h4><p>后续处理模块测试:是否包闭当前异常或者对异常形成消化,是否影响结果!</p>
+<h3 id="测试目标"><a href="#测试目标" class="headerlink" title="测试目标"></a>测试目标</h3><p><strong>语句覆盖率：&gt;=70% 分支覆盖率：100% 函数覆盖率：100% 行覆盖率： &gt;=80%</strong></p>
+<p>最主要的目的是发现bug，解决bug，提高研发生产力。</p>
+<h3 id="编写单元测试的技巧"><a href="#编写单元测试的技巧" class="headerlink" title="编写单元测试的技巧"></a>编写单元测试的技巧</h3><ol>
+<li><strong>不应该编写成功通过的单元测试</strong>：以发现问题的角度去编写测试用例，让测试用例逐步变成通过</li>
+<li><strong>测试类应该只测试一个功能</strong></li>
+<li><strong>测试类具备可读性</strong>，规范的注释，以及相关的测试用例</li>
+<li><strong>良好的命名规范</strong></li>
+<li><strong>把断言从行为中分离出来</strong>：你的断言应该用来检验结果，而不是执行逻辑操作的。</li>
+<li><strong>使用具体的输入</strong>-不要使用任何的自动化测试数据来输入，像date()这些产生的数据会引入差异。</li>
+<li><strong>把测试类分类</strong>，放在不同的地方-从逻辑的角度看，当没有错误指向特定的问题时这更容易去查找。</li>
+<li><strong>好的测试都是</strong>：一些独立的测试类-你应该让测试类与其他的测试、环境设置等没有任何依赖。这利于创建多个测试点。</li>
+<li><strong>不要包含私有的方法</strong>：他们都是一些具体的实现，不应该包含在单元测试里。</li>
+<li><strong>不要连接数据库或者数据源</strong>-这是不靠谱的。因为你不能确保数据服务总是一样的并且能够创建测试点，创建用于测试的数据库，并且快速完成数据的回收</li>
+<li><strong>一个测试不要超过一个模拟(mock对象)</strong>-我们努力去消除错误和不一致性。</li>
+<li><strong>单元测试不是集成测试</strong>-如果你想测试结果，不要使用单元测试。</li>
+<li><strong>测试必须具有确定性</strong>-你需要一个确定的预测结果，所以，如果有时候测试通过了，但是不意味着完成测试了。</li>
+<li><strong>保持你的测试是幂等的</strong>-你应该能够运行你的测试多次而不改变它的输出结果，并且测试也不应该改变任何的数据或者添加任何东西。无论是运行一次还是一百万次，它的效果都应该是一样的。</li>
+<li><strong>测试类一次仅测试一个类，测试方法一次仅测试一个方法</strong>-组织方法能够在问题出现时检测出来，并帮你确定测试依赖。</li>
+<li><strong>在你的测试里使用异常</strong>-你在测试里会遇到异常，所以，请不要忽略它，要使用它。</li>
+<li><strong>不要使用你自己的测试类去测试第三方库的功能</strong>-大多数好的库都应该有它们自己的测试，如果没考虑用mocks去产生一致性的结果的话。</li>
+<li><strong>限制规则</strong>-当在一些规则下写测试时，记住你的限制和它们（最小和最大）设置成最大的一致性。</li>
+<li><strong>测试类不应该需要配置或者自定义安装</strong>-你的测试类应该能够给任何人使用并且使它运行。“在我的机器上运行”不应该出现在这。</li>
+</ol>
+<h2 id="基于Python-unittest的示例"><a href="#基于Python-unittest的示例" class="headerlink" title="基于Python unittest的示例"></a>基于Python unittest的示例</h2><h3 id="准备测试对象"><a href="#准备测试对象" class="headerlink" title="准备测试对象"></a>准备测试对象</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># UnitTest/unit_test/course.py</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CourseManage</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, course</span>):</span></span><br><span class="line">        self.course = course</span><br><span class="line">        self.students = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_course</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;课程:&quot;</span>, self.course)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add_student</span>(<span class="params">self, name</span>):</span></span><br><span class="line">        self.students.append(name)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_students</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;所有学员:&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> student <span class="keyword">in</span> self.students:</span><br><span class="line">            print(<span class="string">&#x27;-&#x27;</span>, student)</span><br></pre></td></tr></table></figure>
+<h3 id="正常使用该对象"><a href="#正常使用该对象" class="headerlink" title="正常使用该对象"></a>正常使用该对象</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> unit_test.course <span class="keyword">import</span> CourseManage</span><br><span class="line"></span><br><span class="line">course = CourseManage(<span class="string">&quot;Python&quot;</span>)</span><br><span class="line">course.show_course()</span><br><span class="line">print(<span class="string">&quot;准备录入学员...&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Enter &#x27;q&#x27; at any time to quit.\n&quot;</span>)</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    resp = <span class="built_in">input</span>(<span class="string">&quot;Student&#x27;s Name: &quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> resp == <span class="string">&#x27;q&#x27;</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">if</span> resp:</span><br><span class="line">        course.add_student(resp.title())</span><br><span class="line">print(<span class="string">&quot;\n录入完毕...&quot;</span>)</span><br><span class="line">course.show_students()</span><br></pre></td></tr></table></figure>
+<p>数据正常输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">课程: Python</span><br><span class="line">准备录入学员...</span><br><span class="line">Enter <span class="string">&#x27;q&#x27;</span> at <span class="built_in">any</span> time to quit.</span><br><span class="line"></span><br><span class="line">Student<span class="string">&#x27;s Name: oliver queen</span></span><br><span class="line"><span class="string">Student&#x27;</span>s Name: barry allen</span><br><span class="line">Student<span class="string">&#x27;s Name: kara</span></span><br><span class="line"><span class="string">Student&#x27;</span>s Name: sara lance</span><br><span class="line">Student<span class="string">&#x27;s Name: q</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">录入完毕...</span></span><br><span class="line"><span class="string">所有学员:</span></span><br><span class="line"><span class="string">- Oliver Queen</span></span><br><span class="line"><span class="string">- Barry Allen</span></span><br><span class="line"><span class="string">- Kara</span></span><br><span class="line"><span class="string">- Sara Lance</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Process finished with exit code 0</span></span><br></pre></td></tr></table></figure>
+<h3 id="编写测试用例"><a href="#编写测试用例" class="headerlink" title="编写测试用例"></a>编写测试用例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># UnitTest/unit_test/test/test_course.py</span></span><br><span class="line"><span class="comment"># 添加用户，使用断言assertIn验证</span></span><br><span class="line"><span class="keyword">import</span> unittest</span><br><span class="line"><span class="keyword">from</span> unit_test.course <span class="keyword">import</span> CourseManage</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestCourseManage</span>(<span class="params">unittest.TestCase</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_add_student</span>(<span class="params">self</span>):</span></span><br><span class="line">        course = CourseManage(<span class="string">&quot;Python&quot;</span>)</span><br><span class="line">        name = <span class="string">&#x27;snart&#x27;</span></span><br><span class="line">        course.add_student(name.title())</span><br><span class="line">        self.assertIn(<span class="string">&#x27;Snart&#x27;</span>, course.students)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    unittest.main()</span><br></pre></td></tr></table></figure>
+<h3 id="常用断言方法"><a href="#常用断言方法" class="headerlink" title="常用断言方法"></a>常用断言方法</h3><p>模块在unittest.TestCase类中提供了很多断言方法，之前已经用一个了。下面是6个常用的断言方法：</p>
+<ol>
+<li>assertEqual(a, b) ： 核实a == b</li>
+<li>assertNotEqual(a, b) ： 核实a != b</li>
+<li>assertTrue(x) ： 核实x为True</li>
+<li>assertFalse(x) ： 核实x为False</li>
+<li>assertIn(item, list) ： 核实item在list中</li>
+<li>assertNotIn(item, list) ： 核实item不在list中</li>
+</ol>
+<h3 id="特殊方法说明"><a href="#特殊方法说明" class="headerlink" title="特殊方法说明"></a>特殊方法说明</h3><ol>
+<li>setUp()&amp;tearDown()：在每个测试方法（用例）运行时被调用一次</li>
+<li>setUp()主要实现测试前的初始化工作，而tearDown()则主要实现测试完成后的垃圾回收等工作 </li>
+<li>setUpClass()&amp;tearDownClass(): 全程只调用一次，必须使用@classmethod 装饰器</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="如何快速推荐单元测试"><a href="#如何快速推荐单元测试" class="headerlink" title="如何快速推荐单元测试"></a>如何快速推荐单元测试</h3><p>需要有研发流程和研发文化的支持。</p>
+<div align="center">
+
+<img src="/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/1597716819955.png" class title="研发代码提交流程">
+
+</div>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://petroware.no/html/unittesting.html">Unit Testing Guidelines</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1570016">单元测试的用例清单</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1005432">实践单元测试的姿势</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1399249">Golang UnitTest单元测试</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1382018">Python的单元测试</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1564228">Python 单元测试（unittest)</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1509641">Java单元测试之JUnit 5快速上手</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%B5%8B%E8%AF%95/" rel="tag"><i class="fa fa-tag"></i> 测试</a>
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/05/MySQL%E4%B9%8B%E7%B4%A2%E5%BC%95/" rel="prev" title="MySQL之索引">
+      <i class="fa fa-chevron-left"></i> MySQL之索引
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">测试分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="nav-number">1.1.</span> <span class="nav-text">单元测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95"><span class="nav-number">1.2.</span> <span class="nav-text">集成测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%B5%8B%E8%AF%95"><span class="nav-number">1.3.</span> <span class="nav-text">系统测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E6%94%B6%E6%B5%8B%E8%AF%95"><span class="nav-number">1.4.</span> <span class="nav-text">验收测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%9A%84%E4%BB%B7%E5%80%BC"><span class="nav-number">2.</span> <span class="nav-text">测试的价值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95-1"><span class="nav-number">3.</span> <span class="nav-text">单元测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%84%E8%8C%83"><span class="nav-number">3.1.</span> <span class="nav-text">规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%87%86%E5%88%99"><span class="nav-number">3.1.1.</span> <span class="nav-text">测试准则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E8%A7%84%E8%8C%83"><span class="nav-number">3.1.2.</span> <span class="nav-text">结构规范</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.1.3.</span> <span class="nav-text">步骤</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E5%8E%9F%E5%88%99"><span class="nav-number">3.2.</span> <span class="nav-text">编码原则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%85%E9%A1%BB%E7%AC%A6%E5%90%88-BCDE-%E5%8E%9F%E5%88%99"><span class="nav-number">3.2.1.</span> <span class="nav-text">必须符合 BCDE 原则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E4%BB%A5%E4%B8%8B%E6%83%85%E5%86%B5"><span class="nav-number">3.2.2.</span> <span class="nav-text">避免以下情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE"><span class="nav-number">3.2.3.</span> <span class="nav-text">建议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.3.</span> <span class="nav-text">测试用例的设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E5%8A%9F%E8%83%BD%E6%80%A7%E6%B5%8B%E8%AF%95"><span class="nav-number">3.3.1.</span> <span class="nav-text">接口功能性测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%B5%8B%E8%AF%95"><span class="nav-number">3.3.2.</span> <span class="nav-text">局部数据结构测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%B9%E7%95%8C%E6%9D%A1%E4%BB%B6%E6%B5%8B%E8%AF%95"><span class="nav-number">3.3.3.</span> <span class="nav-text">边界条件测试</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E6%80%A7%E6%B5%8B%E8%AF%95"><span class="nav-number">3.3.3.1.</span> <span class="nav-text">逻辑性测试</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E7%8B%AC%E7%AB%8B%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95"><span class="nav-number">3.3.4.</span> <span class="nav-text">所有独立代码测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E6%A8%A1%E5%9D%97%E6%B5%8B%E8%AF%95"><span class="nav-number">3.3.5.</span> <span class="nav-text">异常模块测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%9B%AE%E6%A0%87"><span class="nav-number">3.4.</span> <span class="nav-text">测试目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E7%9A%84%E6%8A%80%E5%B7%A7"><span class="nav-number">3.5.</span> <span class="nav-text">编写单元测试的技巧</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EPython-unittest%E7%9A%84%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">基于Python unittest的示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E6%B5%8B%E8%AF%95%E5%AF%B9%E8%B1%A1"><span class="nav-number">4.1.</span> <span class="nav-text">准备测试对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%B8%B8%E4%BD%BF%E7%94%A8%E8%AF%A5%E5%AF%B9%E8%B1%A1"><span class="nav-number">4.2.</span> <span class="nav-text">正常使用该对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B"><span class="nav-number">4.3.</span> <span class="nav-text">编写测试用例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%96%AD%E8%A8%80%E6%96%B9%E6%B3%95"><span class="nav-number">4.4.</span> <span class="nav-text">常用断言方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E"><span class="nav-number">4.5.</span> <span class="nav-text">特殊方法说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">5.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E6%8E%A8%E8%8D%90%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="nav-number">5.1.</span> <span class="nav-text">如何快速推荐单元测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/05/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">477k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">7:14</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '15cfbc506dad71e94505bb15b303829e',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
