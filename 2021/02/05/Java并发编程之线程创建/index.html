@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="通过Thread构建Thread 类本质上是实现了 Runnable 接口的一个实例，代表一个线程的实例。启动线程的唯一方法就是通过 Thread 类的 start()实例方法。start()方法是一个 native 方法，它将启动一个新线程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程之线程创建">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="通过Thread构建Thread 类本质上是实现了 Runnable 接口的一个实例，代表一个线程的实例。启动线程的唯一方法就是通过 Thread 类的 start()实例方法。start()方法是一个 native 方法，它将启动一个新线程。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/1590711873784.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/1587983785160.png">
+<meta property="article:published_time" content="2021-02-05T11:31:12.000Z">
+<meta property="article:modified_time" content="2021-02-05T12:08:56.579Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="线程创建">
+<meta property="article:tag" content="Thread">
+<meta property="article:tag" content="Runnable">
+<meta property="article:tag" content="Callable">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/1590711873784.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java并发编程之线程创建 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">92</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">58</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java并发编程之线程创建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-05 19:31:12 / 修改时间：20:08:56" itemprop="dateCreated datePublished" datetime="2021-02-05T19:31:12+08:00">2021-02-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="通过Thread构建"><a href="#通过Thread构建" class="headerlink" title="通过Thread构建"></a>通过Thread构建</h2><p>Thread 类本质上是实现了 Runnable 接口的一个实例，代表一个线程的实例。启动线程的唯一方法就是通过 Thread 类的 start()实例方法。start()方法是一个 native 方法，它将启动一个新线程。</p>
+<a id="more"></a>
+
+<h3 id="Thread定义"><a href="#Thread定义" class="headerlink" title="Thread定义"></a>Thread定义</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * A &lt;i&gt;thread&lt;/i&gt; is a thread of execution in a program. The Java</span></span><br><span class="line"><span class="comment"> * Virtual Machine allows an application to have multiple threads of</span></span><br><span class="line"><span class="comment"> * execution running concurrently.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Every thread has a priority. Threads with higher priority are</span></span><br><span class="line"><span class="comment"> * executed in preference to threads with lower priority. Each thread</span></span><br><span class="line"><span class="comment"> * may or may not also be marked as a daemon. When code running in</span></span><br><span class="line"><span class="comment"> * some thread creates a new &lt;code&gt;Thread&lt;/code&gt; object, the new</span></span><br><span class="line"><span class="comment"> * thread has its priority initially set equal to the priority of the</span></span><br><span class="line"><span class="comment"> * creating thread, and is a daemon thread if and only if the</span></span><br><span class="line"><span class="comment"> * creating thread is a daemon.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * When a Java Virtual Machine starts up, there is usually a single</span></span><br><span class="line"><span class="comment"> * non-daemon thread (which typically calls the method named</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;main&lt;/code&gt; of some designated class). The Java Virtual</span></span><br><span class="line"><span class="comment"> * Machine continues to execute threads until either of the following</span></span><br><span class="line"><span class="comment"> * occurs:</span></span><br><span class="line"><span class="comment"> * &lt;ul&gt;</span></span><br><span class="line"><span class="comment"> * &lt;li&gt;The &lt;code&gt;exit&lt;/code&gt; method of class &lt;code&gt;Runtime&lt;/code&gt; has been</span></span><br><span class="line"><span class="comment"> *     called and the security manager has permitted the exit operation</span></span><br><span class="line"><span class="comment"> *     to take place.</span></span><br><span class="line"><span class="comment"> * &lt;li&gt;All threads that are not daemon threads have died, either by</span></span><br><span class="line"><span class="comment"> *     returning from the call to the &lt;code&gt;run&lt;/code&gt; method or by</span></span><br><span class="line"><span class="comment"> *     throwing an exception that propagates beyond the &lt;code&gt;run&lt;/code&gt;</span></span><br><span class="line"><span class="comment"> *     method.</span></span><br><span class="line"><span class="comment"> * &lt;/ul&gt;</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * There are two ways to create a new thread of execution. One is to</span></span><br><span class="line"><span class="comment"> * declare a class to be a subclass of &lt;code&gt;Thread&lt;/code&gt;. This</span></span><br><span class="line"><span class="comment"> * subclass should override the &lt;code&gt;run&lt;/code&gt; method of class</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;Thread&lt;/code&gt;. An instance of the subclass can then be</span></span><br><span class="line"><span class="comment"> * allocated and started. For example, a thread that computes primes</span></span><br><span class="line"><span class="comment"> * larger than a stated value could be written as follows:</span></span><br><span class="line"><span class="comment"> * &lt;hr&gt;&lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment"> *     class PrimeThread extends Thread &#123;</span></span><br><span class="line"><span class="comment"> *         long minPrime;</span></span><br><span class="line"><span class="comment"> *         PrimeThread(long minPrime) &#123;</span></span><br><span class="line"><span class="comment"> *             this.minPrime = minPrime;</span></span><br><span class="line"><span class="comment"> *         &#125;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *         public void run() &#123;</span></span><br><span class="line"><span class="comment"> *             // compute primes larger than minPrime</span></span><br><span class="line"><span class="comment"> *             &amp;nbsp;.&amp;nbsp;.&amp;nbsp;.</span></span><br><span class="line"><span class="comment"> *         &#125;</span></span><br><span class="line"><span class="comment"> *     &#125;</span></span><br><span class="line"><span class="comment"> * &lt;/pre&gt;&lt;/blockquote&gt;&lt;hr&gt;</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * The following code would then create a thread and start it running:</span></span><br><span class="line"><span class="comment"> * &lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment"> *     PrimeThread p = new PrimeThread(143);</span></span><br><span class="line"><span class="comment"> *     p.start();</span></span><br><span class="line"><span class="comment"> * &lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * The other way to create a thread is to declare a class that</span></span><br><span class="line"><span class="comment"> * implements the &lt;code&gt;Runnable&lt;/code&gt; interface. That class then</span></span><br><span class="line"><span class="comment"> * implements the &lt;code&gt;run&lt;/code&gt; method. An instance of the class can</span></span><br><span class="line"><span class="comment"> * then be allocated, passed as an argument when creating</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;Thread&lt;/code&gt;, and started. The same example in this other</span></span><br><span class="line"><span class="comment"> * style looks like the following:</span></span><br><span class="line"><span class="comment"> * &lt;hr&gt;&lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment"> *     class PrimeRun implements Runnable &#123;</span></span><br><span class="line"><span class="comment"> *         long minPrime;</span></span><br><span class="line"><span class="comment"> *         PrimeRun(long minPrime) &#123;</span></span><br><span class="line"><span class="comment"> *             this.minPrime = minPrime;</span></span><br><span class="line"><span class="comment"> *         &#125;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *         public void run() &#123;</span></span><br><span class="line"><span class="comment"> *             // compute primes larger than minPrime</span></span><br><span class="line"><span class="comment"> *             &amp;nbsp;.&amp;nbsp;.&amp;nbsp;.</span></span><br><span class="line"><span class="comment"> *         &#125;</span></span><br><span class="line"><span class="comment"> *     &#125;</span></span><br><span class="line"><span class="comment"> * &lt;/pre&gt;&lt;/blockquote&gt;&lt;hr&gt;</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * The following code would then create a thread and start it running:</span></span><br><span class="line"><span class="comment"> * &lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment"> *     PrimeRun p = new PrimeRun(143);</span></span><br><span class="line"><span class="comment"> *     new Thread(p).start();</span></span><br><span class="line"><span class="comment"> * &lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Every thread has a name for identification purposes. More than</span></span><br><span class="line"><span class="comment"> * one thread may have the same name. If a name is not specified when</span></span><br><span class="line"><span class="comment"> * a thread is created, a new name is generated for it.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Unless otherwise noted, passing a &#123;<span class="doctag">@code</span> null&#125; argument to a constructor</span></span><br><span class="line"><span class="comment"> * or method in this class will cause a &#123;<span class="doctag">@link</span> NullPointerException&#125; to be</span></span><br><span class="line"><span class="comment"> * thrown.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>  unascribed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     Runnable</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     Runtime#exit(int)</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     #run()</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     #stop()</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span>   JDK1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Thread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/1590711873784.png" class title="Thread类图">
+
+</div>
+
+<p>通过JDK官方定义可以得出以下结论：</p>
+<ol>
+<li>线程是程序中的执行线程，java虚拟机允许应用程序并发的运行多个线程。</li>
+<li>每个线程都有一个优先级，高优先级线程的执行优先于低优先级线程。每个线程都可以或不可以标记为一个守护程序。当某个线程中运行的代码创建一个新 Thread 对象时，该新线程的初始优先级被设定为创建线程的优先级，并且当且仅当创建线程是守护线程时，新线程才是守护程序。</li>
+<li>当 Java 虚拟机启动时，通常都会有单个非守护线程（它通常会调用某个指定类的 main 方法）。Java 虚拟机会继续执行线程，直到下列任一情况出现时为止：<ol>
+<li>调用了 Runtime 类的 exit 方法，并且安全管理器允许退出操作发生。</li>
+<li>非守护线程的所有线程都已停止运行，无论是通过从对 run 方法的调用中返回，还是通过抛出一个传播到 run 方法之外的异常。</li>
+</ol>
+</li>
+</ol>
+<h3 id="Thread原理（init方法）"><a href="#Thread原理（init方法）" class="headerlink" title="Thread原理（init方法）"></a>Thread原理（init方法）</h3><p>在运行线程之前首先要构造一个线程对象，线程对象在构造的时候需要提供线程所需要的属性，如<strong>线程所属的线程组、线程优先级、是否是Daemon线程等信息</strong>。在new Thread时会调用以下方法进行实例化Thread对象。<br>初始化代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Initializes a Thread.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> g the Thread group</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> target the object whose run() method gets called</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> name the name of the new Thread</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> stackSize the desired stack size for the new thread, or</span></span><br><span class="line"><span class="comment">*        zero to indicate that this parameter is to be ignored.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> acc the AccessControlContext to inherit, or</span></span><br><span class="line"><span class="comment">*            AccessController.getContext() if null</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> inheritThreadLocals if &#123;<span class="doctag">@code</span> true&#125;, inherit initial values for</span></span><br><span class="line"><span class="comment">*            inheritable thread-locals from the constructing thread</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ThreadGroup g, Runnable target, String name,</span></span></span><br><span class="line"><span class="function"><span class="params">					<span class="keyword">long</span> stackSize, AccessControlContext acc,</span></span></span><br><span class="line"><span class="function"><span class="params">					<span class="keyword">boolean</span> inheritThreadLocals)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (name == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;name cannot be null&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">this</span>.name = name;</span><br><span class="line">	<span class="comment">//当前线程作为该线程的父线程</span></span><br><span class="line">	Thread parent = currentThread();</span><br><span class="line">	SecurityManager security = System.getSecurityManager();</span><br><span class="line">	<span class="comment">//线程组的获取：如果传入的参数为空首先获取系统默认的安全组，如果为空获取父线程的安全组</span></span><br><span class="line">	<span class="keyword">if</span> (g == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="comment">/* Determine if it&#x27;s an applet or not */</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">/* If there is a security manager, ask the security manager</span></span><br><span class="line"><span class="comment">			what to do. */</span></span><br><span class="line">		<span class="keyword">if</span> (security != <span class="keyword">null</span>) &#123;</span><br><span class="line">			g = security.getThreadGroup();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* If the security doesn&#x27;t have a strong opinion of the matter</span></span><br><span class="line"><span class="comment">			use the parent thread group. */</span></span><br><span class="line">		<span class="keyword">if</span> (g == <span class="keyword">null</span>) &#123;</span><br><span class="line">			g = parent.getThreadGroup();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* checkAccess regardless of whether or not threadgroup is</span></span><br><span class="line"><span class="comment">		explicitly passed in. */</span></span><br><span class="line">	g.checkAccess();</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">		* Do we have the required permissions?</span></span><br><span class="line"><span class="comment">		*/</span></span><br><span class="line">	<span class="keyword">if</span> (security != <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (isCCLOverridden(getClass())) &#123;</span><br><span class="line">			security.checkPermission(SUBCLASS_IMPLEMENTATION_PERMISSION);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	g.addUnstarted();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">this</span>.group = g;</span><br><span class="line">	<span class="comment">//设置daemon 、priority 属性为父线程对应的值</span></span><br><span class="line">	<span class="keyword">this</span>.daemon = parent.isDaemon();</span><br><span class="line">	<span class="keyword">this</span>.priority = parent.getPriority();</span><br><span class="line">	<span class="keyword">if</span> (security == <span class="keyword">null</span> || isCCLOverridden(parent.getClass()))</span><br><span class="line">		<span class="keyword">this</span>.contextClassLoader = parent.getContextClassLoader();</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="keyword">this</span>.contextClassLoader = parent.contextClassLoader;</span><br><span class="line">	<span class="keyword">this</span>.inheritedAccessControlContext =</span><br><span class="line">			acc != <span class="keyword">null</span> ? acc : AccessController.getContext();</span><br><span class="line">	<span class="keyword">this</span>.target = target;</span><br><span class="line">	setPriority(priority);</span><br><span class="line">	<span class="comment">//将父线程的InheritableThreadLocal复制过来</span></span><br><span class="line">	<span class="keyword">if</span> (inheritThreadLocals &amp;&amp; parent.inheritableThreadLocals != <span class="keyword">null</span>)</span><br><span class="line">		<span class="keyword">this</span>.inheritableThreadLocals =</span><br><span class="line">			ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);</span><br><span class="line">	<span class="comment">/* Stash the specified stack size in case the VM cares */</span></span><br><span class="line">	<span class="keyword">this</span>.stackSize = stackSize;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Set thread ID */</span></span><br><span class="line">	<span class="comment">//生成线程id（一个long型的字段threadSeqNumber）</span></span><br><span class="line">	tid = nextThreadID();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>通过代码总结如下：<br>一个新构建的Thread对象（new Thread()）,是由其父线程（当前线程）进行空间分配，而子线程继承了父线程的Daemon、优先级和加载资源的contextClassLoader，以及可继承的ThreadLocal，同时会为子线程分配一个线程id。一个可以运行的线程对象完成初始化工作，并且在堆内存中等待运行。</p>
+</blockquote>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> : sunliaodong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> : V1.0.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span>: 基于Thread实现线程的创建</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> : 2020/5/27 18:50</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateThreadByThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 需要实现的业务</span></span><br><span class="line">        System.out.println(<span class="string">&quot;CreateThreadByThread.run() by extends Thread&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 多态创建线程</span></span><br><span class="line">        Thread o = <span class="keyword">new</span> CreateThreadByThread();</span><br><span class="line">        <span class="comment">// 启动线程</span></span><br><span class="line">        o.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// CreateThreadByThread.run() by extends Thread</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>通过Thread源码发现（Thread implements Runnable）发现thread其实也是一个实现了runnable接口的一个实例，它代表一个线程的实例，并且，启动线程的唯一方法就是通过Thread类的start()实例方法。start()方法是一个native方法，它将启动一个新线程，并执行run()方法。这种方式实现多线程很简单，通过自己的类直接extend Thread，并复写run()方法，就可以启动新线程并执行自己定义的run()方法。</li>
+<li>其中run()方法的方法体代表了线程需要完成的任务，称之为线程执行体。当创建此线程类对象时一个新的线程得以创建，并进入到线程新建状态。通过调用线程对象引用的start()方法，使得该线程进入到就绪状态，此时此线程并不一定会马上得以执行，这取决于CPU调度时机。</li>
+</ol>
+<h2 id="通过Runnable构建"><a href="#通过Runnable构建" class="headerlink" title="通过Runnable构建"></a>通过Runnable构建</h2><p>如果自己的类已经 extends 另一个类，就无法直接 extends Thread，此时，可以实现一个 Runnable 接口。</p>
+<p><strong>把【线程】和【任务】（要执行的代码）分开</strong>  </p>
+<ol>
+<li>Thread 代表线程</li>
+<li>Runnable 可运行的任务（线程要执行的代码）</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> : sunliaodong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> : V1.0.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span>: 通过Runnable创建线程，实现业务与线程的解耦</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> : 2020/5/27 18:55</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateThreadByRunnable</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 实际执行的业务</span></span><br><span class="line">        System.out.println(<span class="string">&quot;====CreateThreadByRunnable=====Runnable====&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 实例化线程</span></span><br><span class="line">        Thread t = <span class="keyword">new</span> Thread(<span class="keyword">new</span> CreateThreadByRunnable());</span><br><span class="line">        <span class="comment">// 启动线程</span></span><br><span class="line">        t.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// JDK1.8之后的实现</span></span><br><span class="line">        Runnable task2 = () -&gt; System.out.println(<span class="string">&quot;task2 jdk8&quot;</span>);</span><br><span class="line">        <span class="keyword">new</span> Thread(task2, <span class="string">&quot;task2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//====CreateThreadByRunnable=====Runnable====</span></span><br><span class="line"><span class="comment">//task2 jdk8</span></span><br></pre></td></tr></table></figure>
+<h2 id="通过ExecutorService、Callable、Future构建"><a href="#通过ExecutorService、Callable、Future构建" class="headerlink" title="通过ExecutorService、Callable、Future构建"></a>通过ExecutorService、Callable、Future构建</h2><p><strong>解决Thread和Runnable无法返回值的问题（可以通过共享变量实现）。</strong> 有返回值的任务必须实现 Callable 接口，类似的，无返回值的任务必须 Runnable 接口。执行Callable 任务后，可以获取一个 Future 的对象，在该对象上调用 get 就可以获取到 Callable 任务返回的 Object 了，再结合线程池接口 ExecutorService 就可以实现传说中有返回结果的多线程了。</p>
+<h3 id="Callable-JDK定义（泛型返回值V）"><a href="#Callable-JDK定义（泛型返回值V）" class="headerlink" title="Callable JDK定义（泛型返回值V）"></a>Callable JDK定义（泛型返回值V）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> java.util.concurrent;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * A task that returns a result and may throw an exception.</span></span><br><span class="line"><span class="comment"> * Implementors define a single method with no arguments called</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> call&#125;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;The &#123;<span class="doctag">@code</span> Callable&#125; interface is similar to &#123;<span class="doctag">@link</span></span></span><br><span class="line"><span class="comment"> * java.lang.Runnable&#125;, in that both are designed for classes whose</span></span><br><span class="line"><span class="comment"> * instances are potentially executed by another thread.  A</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> Runnable&#125;, however, does not return a result and cannot</span></span><br><span class="line"><span class="comment"> * throw a checked exception.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;The &#123;<span class="doctag">@link</span> Executors&#125; class contains utility methods to</span></span><br><span class="line"><span class="comment"> * convert from other common forms to &#123;<span class="doctag">@code</span> Callable&#125; classes.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> Executor</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Doug Lea</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &lt;V&gt; the result type of method &#123;<span class="doctag">@code</span> call&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Callable</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Computes a result, or throws an exception if unable to do so.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> computed result</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception if unable to compute a result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">V <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Callable在JDK中的定义使用-ExecutorService"><a href="#Callable在JDK中的定义使用-ExecutorService" class="headerlink" title="Callable在JDK中的定义使用(ExecutorService)"></a>Callable在JDK中的定义使用(ExecutorService)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Callable&lt;T&gt; task)</span></span>;</span><br><span class="line">&lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Runnable task, T result)</span></span>;</span><br><span class="line">Future&lt;?&gt; submit(Runnable task);</span><br></pre></td></tr></table></figure>
+<h3 id="Future说明"><a href="#Future说明" class="headerlink" title="Future说明"></a>Future说明</h3><h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Callable;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutionException;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Future;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExecutorsThread</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException, ExecutionException </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> taskSize = <span class="number">10</span>;</span><br><span class="line">		<span class="comment">// 创建线程池</span></span><br><span class="line">		ExecutorService pool = Executors.newFixedThreadPool(taskSize);</span><br><span class="line">		<span class="comment">// 创建有返回值的任务</span></span><br><span class="line">		List&lt;Future&lt;String&gt;&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; taskSize; i++) &#123;</span><br><span class="line">			list.add(pool.submit(<span class="keyword">new</span> Callable&lt;String&gt;() &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">					<span class="keyword">return</span> <span class="string">&quot;ddd:111  &quot;</span> + Thread.currentThread().getName();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//关闭线程池</span></span><br><span class="line">		pool.shutdown();</span><br><span class="line">		<span class="comment">// 获取结果</span></span><br><span class="line">		<span class="keyword">for</span>(Future&lt;String&gt; f : list) &#123;</span><br><span class="line">			System.out.println(f.get());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutionException;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.FutureTask;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> : sunliaodong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> : V1.0.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span>: TODO</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> : 2020/5/27 19:31</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateThreadByFuture</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//      创建任务对象</span></span><br><span class="line">        FutureTask&lt;Integer&gt; thread = <span class="keyword">new</span> FutureTask&lt;Integer&gt;(() -&gt; &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;FutureTask====&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">100</span>;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//      创建并且启动线程</span></span><br><span class="line">        <span class="keyword">new</span> Thread(thread).start();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 处理返回值信息</span></span><br><span class="line">            System.out.println(thread.get() + <span class="string">&quot;===============&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="基于线程池构建"><a href="#基于线程池构建" class="headerlink" title="基于线程池构建"></a>基于线程池构建</h2><p>线程和数据库连接这些资源都是非常宝贵的资源。那么每次需要的时候创建，不需要的时候销毁，是非常浪费资源的。那么我们就可以使用缓存的策略，也就是使用线程池。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExecutorsThread2</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService pool = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">			pool.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					System.out.println(Thread.currentThread().getName() + <span class="string">&quot;: is running&quot;</span>);</span><br><span class="line">					<span class="keyword">try</span> &#123;</span><br><span class="line">						Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">					&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">						e.printStackTrace();</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="启动线程"><a href="#启动线程" class="headerlink" title="启动线程"></a>启动线程</h2><h3 id="start源码"><a href="#start源码" class="headerlink" title="start源码"></a>start源码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Causes this thread to begin execution; the Java Virtual Machine</span></span><br><span class="line"><span class="comment">* calls the &lt;code&gt;run&lt;/code&gt; method of this thread.</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* The result is that two threads are running concurrently: the</span></span><br><span class="line"><span class="comment">* current thread (which returns from the call to the</span></span><br><span class="line"><span class="comment">* &lt;code&gt;start&lt;/code&gt; method) and the other thread (which executes its</span></span><br><span class="line"><span class="comment">* &lt;code&gt;run&lt;/code&gt; method).</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* It is never legal to start a thread more than once.</span></span><br><span class="line"><span class="comment">* In particular, a thread may not be restarted once it has completed</span></span><br><span class="line"><span class="comment">* execution.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@exception</span>  IllegalThreadStateException  if the thread was already</span></span><br><span class="line"><span class="comment">*               started.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@see</span>        #run()</span></span><br><span class="line"><span class="comment">* <span class="doctag">@see</span>        #stop()</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	* This method is not invoked for the main method thread or &quot;system&quot;</span></span><br><span class="line"><span class="comment">	* group threads created/set up by the VM. Any new functionality added</span></span><br><span class="line"><span class="comment">	* to this method in the future may have to also be added to the VM.</span></span><br><span class="line"><span class="comment">	*</span></span><br><span class="line"><span class="comment">	* A zero status value corresponds to state &quot;NEW&quot;.</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="keyword">if</span> (threadStatus != <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> IllegalThreadStateException();</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Notify the group that this thread is about to be started</span></span><br><span class="line"><span class="comment">		* so that it can be added to the group&#x27;s list of threads</span></span><br><span class="line"><span class="comment">		* and the group&#x27;s unstarted count can be decremented. */</span></span><br><span class="line">	group.add(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">boolean</span> started = <span class="keyword">false</span>;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		start0();</span><br><span class="line">		started = <span class="keyword">true</span>;</span><br><span class="line">	&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> (!started) &#123;</span><br><span class="line">				group.threadStartFailed(<span class="keyword">this</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Throwable ignore) &#123;</span><br><span class="line">			<span class="comment">/* do nothing. If start0 threw a Throwable then</span></span><br><span class="line"><span class="comment">				it will be passed up the call stack */</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">start0</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>通过源码得出以下结论：</p>
+<ol>
+<li>对象初始化完成之后，通过执行start方法来执行这个线程，并且java虚拟机会调用该线程的run方法执行线程的业务逻辑；</li>
+<li>调用start方法之后发现会同时有两个线程在执行：当前线程（parent线程【同步告知java虚拟机，只要线程规划器空闲，应立即启动调用start方法的线程】，从调用返回给start方法）和另一个线程（执行其run方法）。</li>
+<li>并且多次启动一个线程是非法的。特别是当线程已经结束执行后，不能再重新启动。 </li>
+</ol>
+<h3 id="线程启动的注意事项"><a href="#线程启动的注意事项" class="headerlink" title="线程启动的注意事项"></a>线程启动的注意事项</h3><p>无论何种方式，启动一个线程，就要给它一个名字！这对排错诊断 系统监控有帮助。否则诊断问题时，无法直观知道某个线程的用途。</p>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/1587983785160.png" class title="线程启动注意事项">
+
+</div>
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="Thread与Runnable"><a href="#Thread与Runnable" class="headerlink" title="Thread与Runnable"></a>Thread与Runnable</h3><h4 id="关系"><a href="#关系" class="headerlink" title="关系"></a>关系</h4><p>Thread实现接口Runnable，并且实现了run方法，代码参考如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Thread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">		<span class="comment">//如果该线程是使用独立的 Runnable 运行对象构造的，则调用该 Runnable 对象的 run 方法；</span></span><br><span class="line">		<span class="comment">//否则，该方法不执行任何操作并返回。</span></span><br><span class="line">		<span class="comment">//Thread 的子类应该重写该方法。</span></span><br><span class="line">	    <span class="comment">/**</span></span><br><span class="line"><span class="comment">	     * If this thread was constructed using a separate</span></span><br><span class="line"><span class="comment">	     * &lt;code&gt;Runnable&lt;/code&gt; run object, then that</span></span><br><span class="line"><span class="comment">	     * &lt;code&gt;Runnable&lt;/code&gt; object&#x27;s &lt;code&gt;run&lt;/code&gt; method is called;</span></span><br><span class="line"><span class="comment">	     * otherwise, this method does nothing and returns.</span></span><br><span class="line"><span class="comment">	     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">	     * Subclasses of &lt;code&gt;Thread&lt;/code&gt; should override this method.</span></span><br><span class="line"><span class="comment">	     *</span></span><br><span class="line"><span class="comment">	     * <span class="doctag">@see</span>     #start()</span></span><br><span class="line"><span class="comment">	     * <span class="doctag">@see</span>     #stop()</span></span><br><span class="line"><span class="comment">	     * <span class="doctag">@see</span>     #Thread(ThreadGroup, Runnable, String)</span></span><br><span class="line"><span class="comment">	     */</span></span><br><span class="line">	    <span class="meta">@Override</span></span><br><span class="line">	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	        <span class="keyword">if</span> (target != <span class="keyword">null</span>) &#123;</span><br><span class="line">	            target.run();</span><br><span class="line">	        &#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h4><p> 当执行到Thread类中的run()方法时，会首先判断target是否存在，存在则执行target中的run()方法，也就是实现了Runnable接口并重写了run()方法的类中的run()方法。当时如果该Runnable的子类是通过一个继承Thread的子类（该且重写了run方法），则真正执行的是Thread子类重写的run方法（由于多态的原因）。  </p>
+<p>实现Runnable接口相比继承Thread类有如下优势：</p>
+<ol>
+<li>可以避免由于Java的单继承特性而带来的局限；</li>
+<li>增强程序的健壮性，代码能够被多个线程共享，代码与数据是独立的；</li>
+<li>适合多个相同程序代码的线程区处理同一资源的情况。</li>
+<li>用 Runnable 更容易与线程池等高级 API 配合</li>
+<li>用 Runnable 让任务类脱离了 Thread 继承体系，更灵活</li>
+<li>Thread是把线程和任务合并在了一起，Runnable是把线程和任务分开了</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《Java并发编程的艺术》</li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wxd0108/p/5479442.html">Java中的多线程你只要看这一篇就够了</a></li>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BA%BF%E7%A8%8B/103101?fr=aladdin">线程</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lwbqqyumidi/p/3804883.html">Java总结篇系列：Java多线程（一）</a></li>
+<li>《java并发编程实战》</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/hanhaiyinheguxing/article/details/51366541">多线程01：《疯狂Java讲义》学习笔记——线程概述</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/hla199106/article/details/47840505">java并发编程—如何创建线程以及Thread类的使用</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dolphin0520/p/3920357.html">Java并发编程：Thread类的使用</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/loveer/p/11518402.html">Java中断机制</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hapjin/p/5450779.html">JAVA多线程之中断机制(如何处理中断？)</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/aboy123/article/details/38307539/">JAVA多线程实现的三种方式 </a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/" rel="tag"><i class="fa fa-tag"></i> 线程创建</a>
+              <a href="/tags/Thread/" rel="tag"><i class="fa fa-tag"></i> Thread</a>
+              <a href="/tags/Runnable/" rel="tag"><i class="fa fa-tag"></i> Runnable</a>
+              <a href="/tags/Callable/" rel="tag"><i class="fa fa-tag"></i> Callable</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/" rel="prev" title="Java并发编程之线程状态">
+      <i class="fa fa-chevron-left"></i> Java并发编程之线程状态
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/" rel="next" title="Java并发编程之线程中断">
+      Java并发编程之线程中断 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87Thread%E6%9E%84%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">通过Thread构建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Thread%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.</span> <span class="nav-text">Thread定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Thread%E5%8E%9F%E7%90%86%EF%BC%88init%E6%96%B9%E6%B3%95%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">Thread原理（init方法）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text">示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87Runnable%E6%9E%84%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text">通过Runnable构建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87ExecutorService%E3%80%81Callable%E3%80%81Future%E6%9E%84%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">通过ExecutorService、Callable、Future构建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Callable-JDK%E5%AE%9A%E4%B9%89%EF%BC%88%E6%B3%9B%E5%9E%8B%E8%BF%94%E5%9B%9E%E5%80%BCV%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">Callable JDK定义（泛型返回值V）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Callable%E5%9C%A8JDK%E4%B8%AD%E7%9A%84%E5%AE%9A%E4%B9%89%E4%BD%BF%E7%94%A8-ExecutorService"><span class="nav-number">3.2.</span> <span class="nav-text">Callable在JDK中的定义使用(ExecutorService)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Future%E8%AF%B4%E6%98%8E"><span class="nav-number">3.3.</span> <span class="nav-text">Future说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-1"><span class="nav-number">3.4.</span> <span class="nav-text">示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA"><span class="nav-number">4.</span> <span class="nav-text">基于线程池构建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E7%BA%BF%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">启动线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#start%E6%BA%90%E7%A0%81"><span class="nav-number">5.1.</span> <span class="nav-text">start源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%90%AF%E5%8A%A8%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">5.2.</span> <span class="nav-text">线程启动的注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">6.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Thread%E4%B8%8ERunnable"><span class="nav-number">6.1.</span> <span class="nav-text">Thread与Runnable</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB"><span class="nav-number">6.1.1.</span> <span class="nav-text">关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%BA%E5%88%AB"><span class="nav-number">6.1.2.</span> <span class="nav-text">区别</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">92</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">470k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">7:07</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '113a601b0b6eafc8662baff5dc4d4ea5',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-05T08:46:42.389Z</updated>
+  <updated>2021-02-05T12:04:17.134Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,396 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java并发编程之调度方式</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/</id>
+    <published>2021-02-05T11:32:04.000Z</published>
+    <updated>2021-02-05T12:04:17.134Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;抢占式调度&quot;&gt;&lt;a href=&quot;#抢占式调度&quot; class=&quot;headerlink&quot; title=&quot;抢占式调度&quot;&gt;&lt;/a&gt;抢占式调度&lt;/h2&gt;&lt;p&gt;抢占式调度指的是每条线程执行的时间、线程的切换都由系统控制，系统控制指的是在系统某种运行机制下，可能每条线程都分同样的执行时间片，也可能是某些线程执行的时间片较长，甚至某些线程得不到执行的时间片。在这种机制下，一个线程的堵塞不会导致整个进程堵塞。&lt;/p&gt;
+&lt;h2 id=&quot;协同式调度&quot;&gt;&lt;a href=&quot;#协同式调度&quot; class=&quot;headerlink&quot; title=&quot;协同式调度&quot;&gt;&lt;/a&gt;协同式调度&lt;/h2&gt;&lt;p&gt;协同式调度指某一线程执行完后主动通知系统切换到另一线程上执行，这种模式就像接力赛一样，一个人跑完自己的路程就把接力棒交接给下一个人，下个人继续往下跑。线程的执行时间由线程本身控制，线程切换可以预知，不存在多线程同步问题，但它有一个致命弱点：如果一个线程编写有问题，运行到一半就一直堵塞，那么可能导致整个系统崩溃。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程调度" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E8%B0%83%E5%BA%A6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之线程优先级</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7/</id>
+    <published>2021-02-05T11:31:54.000Z</published>
+    <updated>2021-02-05T12:02:08.746Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;现代操作系统基本采用时分的形式调度运行的线程，操作系统会分出一个个时间片，线程会分配到若干时间片，当线程的时间片用完了就会发生线程调度，并等待着下次分配。线程分配到的时间片多少也就决定了线程使用处理器资源的多少，而线程优先级就是决定线程需要多或者少分配一些处理器资源的线程属性。优先级高的线程分配时间片的数量要多于优先级低的线程。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程优先级" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之守护线程</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/</id>
+    <published>2021-02-05T11:31:42.000Z</published>
+    <updated>2021-02-05T12:01:07.188Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;java中线程的分类：用户线程 (User Thread)、守护线程 (Daemon Thread)。  &lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;守护线程&lt;/strong&gt;：在程序运行的时候在后台提供一种通用服务的线程，比如垃圾回收线程就是一个很称职的守护者，并且这种线程并不属于程序中不可或缺的部分。因此，当所有的非守护线程结束时，程序也就终止了，同时会杀死进程中的所有守护线程。反过来说，只要任何非守护线程还在运行，程序就不会终止。  &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;区别&lt;/strong&gt;：用户线程和守护线程两者几乎没有区别，唯一的不同之处就在于虚拟机的离开：如果用户线程已经全部退出运行了，只剩下守护线程存在了，虚拟机也就退出了。 因为没有了被守护者，守护线程也就没有工作可做了，也就没有继续运行程序的必要了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;Java中的定义&quot;&gt;&lt;a href=&quot;#Java中的定义&quot; class=&quot;headerlink&quot; title=&quot;Java中的定义&quot;&gt;&lt;/a&gt;Java中的定义&lt;/h2&gt;&lt;p&gt;通过Thread中的setDaemon方法完成设置。通过源码分析得知：&lt;strong&gt;当线程只剩下守护线程的时候，JVM就会退出.但是如果还有其他的任意一个用户线程还在，JVM就不会退出&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="守护线程" scheme="https://www.sunliaodong.cn/tags/%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之线程常用方法</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</id>
+    <published>2021-02-05T11:31:31.000Z</published>
+    <updated>2021-02-05T11:59:54.246Z</updated>
+    
+    
+    <summary type="html">&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/1590711795506.png&quot; class title=&quot;Runnable类图&quot;&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程常用方法" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/"/>
+    
+    <category term="sleep" scheme="https://www.sunliaodong.cn/tags/sleep/"/>
+    
+    <category term="wait" scheme="https://www.sunliaodong.cn/tags/wait/"/>
+    
+    <category term="join" scheme="https://www.sunliaodong.cn/tags/join/"/>
+    
+    <category term="yield" scheme="https://www.sunliaodong.cn/tags/yield/"/>
+    
+    <category term="start" scheme="https://www.sunliaodong.cn/tags/start/"/>
+    
+    <category term="run" scheme="https://www.sunliaodong.cn/tags/run/"/>
+    
+    <category term="park" scheme="https://www.sunliaodong.cn/tags/park/"/>
+    
+    <category term="unpark" scheme="https://www.sunliaodong.cn/tags/unpark/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之线程中断</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/</id>
+    <published>2021-02-05T11:31:20.000Z</published>
+    <updated>2021-02-05T11:55:59.325Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;正常结束-执行完成&quot;&gt;&lt;a href=&quot;#正常结束-执行完成&quot; class=&quot;headerlink&quot; title=&quot;正常结束(执行完成)&quot;&gt;&lt;/a&gt;正常结束(执行完成)&lt;/h2&gt;&lt;h2 id=&quot;使用退出标志退出线程&quot;&gt;&lt;a href=&quot;#使用退出标志退出线程&quot; class=&quot;headerlink&quot; title=&quot;使用退出标志退出线程&quot;&gt;&lt;/a&gt;使用退出标志退出线程&lt;/h2&gt;&lt;p&gt;一般 run()方法执行完，线程就会正常结束，然而，常常有些线程是&lt;strong&gt;伺服线程&lt;/strong&gt;。它们需要长时间的运行，只有在外部某些条件满足的情况下，才能关闭这些线程。使用一个变量来控制循环，例如：最直接的方法就是设一个boolean类型的标志，并通过设置这个标志为true或false 来控制while 循环是否退出，代码示例：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程中断" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/"/>
+    
+    <category term="Interrupt" scheme="https://www.sunliaodong.cn/tags/Interrupt/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之线程创建</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/</id>
+    <published>2021-02-05T11:31:12.000Z</published>
+    <updated>2021-02-05T12:08:56.579Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;通过Thread构建&quot;&gt;&lt;a href=&quot;#通过Thread构建&quot; class=&quot;headerlink&quot; title=&quot;通过Thread构建&quot;&gt;&lt;/a&gt;通过Thread构建&lt;/h2&gt;&lt;p&gt;Thread 类本质上是实现了 Runnable 接口的一个实例，代表一个线程的实例。启动线程的唯一方法就是通过 Thread 类的 start()实例方法。start()方法是一个 native 方法，它将启动一个新线程。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程创建" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/"/>
+    
+    <category term="Thread" scheme="https://www.sunliaodong.cn/tags/Thread/"/>
+    
+    <category term="Runnable" scheme="https://www.sunliaodong.cn/tags/Runnable/"/>
+    
+    <category term="Callable" scheme="https://www.sunliaodong.cn/tags/Callable/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之线程状态</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/</id>
+    <published>2021-02-05T11:31:03.000Z</published>
+    <updated>2021-02-05T11:50:19.130Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;操作系统中的状态&quot;&gt;&lt;a href=&quot;#操作系统中的状态&quot; class=&quot;headerlink&quot; title=&quot;操作系统中的状态&quot;&gt;&lt;/a&gt;操作系统中的状态&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/1590649906474.png&quot; class title=&quot;操作系统中的状态&quot;&gt;
+
+&lt;/div&gt;
+
+&lt;ol&gt;
+&lt;li&gt;【初始状态】仅是在语言层面创建了线程对象，还未与操作系统线程关联&lt;/li&gt;
+&lt;li&gt;【可运行状态】（就绪状态）指该线程已经被创建（与操作系统线程关联），可以由 CPU 调度执行&lt;/li&gt;
+&lt;li&gt;【运行状态】指获取了 CPU 时间片运行中的状态&lt;ul&gt;
+&lt;li&gt;当 CPU 时间片用完，会从【运行状态】转换至【可运行状态】，会导致线程的上下文切换&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;【阻塞状态】&lt;ul&gt;
+&lt;li&gt;如果调用了阻塞 API，如 BIO 读写文件，这时该线程实际不会用到 CPU，会导致线程上下文切换，进入【阻塞状态】&lt;/li&gt;
+&lt;li&gt;等 BIO 操作完毕，会由操作系统唤醒阻塞的线程，转换至【可运行状态】&lt;/li&gt;
+&lt;li&gt;与【可运行状态】的区别是，对【阻塞状态】的线程来说只要它们一直不唤醒，调度器就一直不会考虑调度它们&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;【终止状态】表示线程已经执行完毕，生命周期已经结束，不会再转换为其它状态&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程状态" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之线程的概念</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5/</id>
+    <published>2021-02-05T11:30:55.000Z</published>
+    <updated>2021-02-05T11:47:01.993Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;基本概念&quot;&gt;&lt;a href=&quot;#基本概念&quot; class=&quot;headerlink&quot; title=&quot;基本概念&quot;&gt;&lt;/a&gt;基本概念&lt;/h2&gt;&lt;h3 id=&quot;线程与进程&quot;&gt;&lt;a href=&quot;#线程与进程&quot; class=&quot;headerlink&quot; title=&quot;线程与进程&quot;&gt;&lt;/a&gt;线程与进程&lt;/h3&gt;&lt;h4 id=&quot;进程&quot;&gt;&lt;a href=&quot;#进程&quot; class=&quot;headerlink&quot; title=&quot;进程&quot;&gt;&lt;/a&gt;进程&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;用来加载指令、管理内存、管理IO、磁盘读写&lt;/li&gt;
+&lt;li&gt;当一个程序被运行，从磁盘加载这个程序的代码至内存，这时就开启了一个进程。&lt;/li&gt;
+&lt;li&gt;进程就可以视为程序的一个实例比如java.exe&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;线程&quot;&gt;&lt;a href=&quot;#线程&quot; class=&quot;headerlink&quot; title=&quot;线程&quot;&gt;&lt;/a&gt;线程&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;一个线程就是一个指令流，将指令流中的一条条指令以一定的顺序交给 CPU 执行&lt;/li&gt;
+&lt;li&gt;在一个进程里可以创建多个线程，一个标准的线程包括&lt;strong&gt;线程ID，当前指令指针(PC），寄存器集合和堆栈组成&lt;/strong&gt;，堆中的内容可共享。处理器在这些线程上高速切换（涉及到上下文切换），让使用者感觉到这些线程在同时执行。&lt;strong&gt;如果没有明确的协同机制&lt;/strong&gt;，线程将彼此独立执行。每一个程序都至少有一个线程，若程序只有一个线程，那就是程序本身。  &lt;/li&gt;
+&lt;li&gt;线程是进程的一个实体（一个进程包含多个进程），是被系统独立调度和分配的最小单元，，也叫轻量级线程（Light Weight Process），并且线程拥有独立的资源包括：栈、线程ID、寄存器和指令指针，其他堆中的资源在内存中共享。共享资源在并发编程中需要增加同步机制防止资源数据处理不对。  &lt;/li&gt;
+&lt;li&gt;一个线程可以创建和撤消另一个线程，同一进程中的多个线程之间可以并发执行。由于线程之间的相互制约，致使线程在运行中呈现出间断性。线程也有&lt;strong&gt;就绪、阻塞和运行&lt;/strong&gt;三种基本状态。就绪状态是指线程具备运行的所有条件，逻辑上可以运行，在等待处理机；运行状态是指线程占有处理机正在运行；阻塞状态是指线程在等待一个事件（如某个信号量），逻辑上不可执行。  &lt;/li&gt;
+&lt;li&gt;线程是程序中一个单一的顺序控制流程。进程内一个相对独立的、可调度的执行单元，是系统独立调度和分派CPU的基本单位指运行中的程序的调度单位。在单个程序中同时运行多个线程完成不同的工作，称为多线程。&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B/"/>
+    
+    <category term="进程" scheme="https://www.sunliaodong.cn/tags/%E8%BF%9B%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之内存模型</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</id>
+    <published>2021-02-05T11:30:40.000Z</published>
+    <updated>2021-02-05T11:45:03.042Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;基本概念&quot;&gt;&lt;a href=&quot;#基本概念&quot; class=&quot;headerlink&quot; title=&quot;基本概念&quot;&gt;&lt;/a&gt;基本概念&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;作用：屏蔽各种硬件和操作系统内存的访问差异，以实现让Java程序在各种平台下都能达到一致的内存访问效果，定义了Java虚拟机与计算机内存是如何协同工作的，是一种主存与工作内存的抽象概念，并且底层对应CPU的寄存器、缓存、硬件内存以及CPU指令优化等&lt;/li&gt;
+&lt;li&gt;简称：Java Memory Model简称JMM&lt;/li&gt;
+&lt;li&gt;目的：定义程序中各个变量的访问规则，以及在必须时如何同步地访问共享变量，即在虚拟机中将变量存储到内存和从内存中取出变量这样的底层细节&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="JVM" scheme="https://www.sunliaodong.cn/categories/JVM/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="内存模型" scheme="https://www.sunliaodong.cn/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之面临的问题</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%9D%A2%E4%B8%B4%E7%9A%84%E9%97%AE%E9%A2%98/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%9D%A2%E4%B8%B4%E7%9A%84%E9%97%AE%E9%A2%98/</id>
+    <published>2021-02-05T11:30:29.000Z</published>
+    <updated>2021-02-05T12:07:03.484Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;上线文切换&quot;&gt;&lt;a href=&quot;#上线文切换&quot; class=&quot;headerlink&quot; title=&quot;上线文切换&quot;&gt;&lt;/a&gt;上线文切换&lt;/h2&gt;&lt;p&gt;巧妙地利用了时间片轮转的方式, CPU 给每个任务都服务一定的时间，然后把当前任务的状态保存下来，在加载下一任务的状态后，继续服务下一任务，任务的状态保存及再加载, 这段过程就叫做&lt;strong&gt;上下文切换&lt;/strong&gt;。时间片轮转的方式使多个任务在同一颗 CPU 上执行变成了可能。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="上线文切换" scheme="https://www.sunliaodong.cn/tags/%E4%B8%8A%E7%BA%BF%E6%96%87%E5%88%87%E6%8D%A2/"/>
+    
+    <category term="死锁" scheme="https://www.sunliaodong.cn/tags/%E6%AD%BB%E9%94%81/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之知识图谱</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</id>
+    <published>2021-02-05T11:30:18.000Z</published>
+    <updated>2021-02-05T11:33:51.714Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;div align=&quot;center&quot;&gt;
+
+&lt;img</summary>
+        
+      
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Zookeeper系统化学习</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Zookeeper%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Zookeeper%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0/</id>
+    <published>2021-02-05T11:16:32.000Z</published>
+    <updated>2021-02-05T11:25:33.115Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;开源分布式协调框架&lt;/li&gt;
+&lt;li&gt;为分布式应用提供一致性服务，作为整个大数据体系的管理员，包括服务发现、分布式锁、分布式领导选举、配置管理等&lt;/li&gt;
+&lt;li&gt;Zookeeper = 文件系统（类似于Linux文件系统的树形结构） + 监听通知机制&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="Zookeeper" scheme="https://www.sunliaodong.cn/categories/Zookeeper/"/>
+    
+    
+    <category term="Zookeeper" scheme="https://www.sunliaodong.cn/tags/Zookeeper/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MyBatis系统化学习之缓存</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/</id>
+    <published>2021-02-05T11:11:17.000Z</published>
+    <updated>2021-02-05T11:15:13.026Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;Mybatis中有一级缓存和二级缓存，默认情况下一级缓存是开启的，而且是不能关闭的。一级缓存是指 SqlSession 级别的缓存，当在同一个 SqlSession 中进行相同的 SQL 语句查询时，第二次以后的查询不会从数据库查询，而是直接从缓存中获取，一级缓存最多缓存 1024 条 SQL。二级缓存是指可以跨 SqlSession 的缓存。是 mapper 级别的缓存，对于 mapper 级别的缓存不同的 sqlsession 是可以共享的。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="开源框架" scheme="https://www.sunliaodong.cn/categories/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/"/>
+    
+    <category term="MyBatis" scheme="https://www.sunliaodong.cn/categories/MyBatis/"/>
+    
+    
+    <category term="缓存" scheme="https://www.sunliaodong.cn/tags/%E7%BC%93%E5%AD%98/"/>
+    
+    <category term="MyBatis" scheme="https://www.sunliaodong.cn/tags/MyBatis/"/>
+    
+    <category term="ORM" scheme="https://www.sunliaodong.cn/tags/ORM/"/>
+    
+  </entry>
   
   <entry>
     <title>Linux 性能分析思路与工具</title>
@@ -206,392 +596,6 @@
     <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
     
     <category term="TOP" scheme="https://www.sunliaodong.cn/tags/TOP/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>JVM加载机制</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</id>
-    <published>2021-02-05T06:08:06.000Z</published>
-    <updated>2021-02-05T06:16:05.613Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Java虚拟机把描述类的数据从class文件加载到内存，并且对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程称为&lt;strong&gt;Java虚拟机的类加载机制&lt;/strong&gt;，Java天生可以动态扩展的语言特性就是依赖运行期动态加载和动态连接这个特点实现的，JVM 类加载机制分为五个部分：加载，验证，准备，解析，初始化，这五部分是在程序&lt;strong&gt;运行期间&lt;/strong&gt;完成；还有使用和卸载，共七个阶段，参考下图所示：&lt;/p&gt;
-&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1588727499000.png&quot; class title=&quot;JVM加载机制&quot;&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="JVM" scheme="https://www.sunliaodong.cn/categories/JVM/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="JVM加载" scheme="https://www.sunliaodong.cn/tags/JVM%E5%8A%A0%E8%BD%BD/"/>
-    
-    <category term="ClassLoader" scheme="https://www.sunliaodong.cn/tags/ClassLoader/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>JVM HotSpot虚拟机对象探秘</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/</id>
-    <published>2021-02-05T05:56:10.000Z</published>
-    <updated>2021-02-05T06:07:07.340Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;对象的创建&quot;&gt;&lt;a href=&quot;#对象的创建&quot; class=&quot;headerlink&quot; title=&quot;对象的创建&quot;&gt;&lt;/a&gt;对象的创建&lt;/h2&gt;&lt;h2 id=&quot;对象的内存布局&quot;&gt;&lt;a href=&quot;#对象的内存布局&quot; class=&quot;headerlink&quot; title=&quot;对象的内存布局&quot;&gt;&lt;/a&gt;对象的内存布局&lt;/h2&gt;&lt;p&gt;在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、实例数据（Instance Data）和对齐填充（Padding）。&lt;/p&gt;
-&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589103879536.png&quot; class title=&quot;对象的内存布局&quot;&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="JVM" scheme="https://www.sunliaodong.cn/categories/JVM/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="Java虚拟机" scheme="https://www.sunliaodong.cn/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/"/>
-    
-    <category term="Java内存对象" scheme="https://www.sunliaodong.cn/tags/Java%E5%86%85%E5%AD%98%E5%AF%B9%E8%B1%A1/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java常见问题之两套JRE</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/</id>
-    <published>2021-02-05T05:52:46.000Z</published>
-    <updated>2021-02-05T05:54:33.695Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;JDK在安装过程中如果勾选安装JRE最终会在安装目录中有两套JRE。简单来说一套用于Java本身的运行（比如java本身的javac、还有监控套件javap等），一套用于程序的运行。两套JRE的路径默认为：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;C:\Program Files\Java\jdk1.8.0_192\jre&lt;/li&gt;
-&lt;li&gt;C:\Program Files\Java\jre1.8.0_192&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="JDK" scheme="https://www.sunliaodong.cn/tags/JDK/"/>
-    
-    <category term="JRE" scheme="https://www.sunliaodong.cn/tags/JRE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>JVM内存区域</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</id>
-    <published>2021-02-05T03:22:34.000Z</published>
-    <updated>2021-02-05T03:29:58.947Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;知识图谱&quot;&gt;&lt;a href=&quot;#知识图谱&quot; class=&quot;headerlink&quot; title=&quot;知识图谱&quot;&gt;&lt;/a&gt;知识图谱&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png&quot; class title=&quot;JVM内存区域知识图谱&quot;&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="JVM" scheme="https://www.sunliaodong.cn/categories/JVM/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="JVM内存区域" scheme="https://www.sunliaodong.cn/tags/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之日志-扩展</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/</id>
-    <published>2021-02-05T00:23:29.000Z</published>
-    <updated>2021-02-05T00:56:35.974Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;数据日志文件比对&quot;&gt;&lt;a href=&quot;#数据日志文件比对&quot; class=&quot;headerlink&quot; title=&quot;数据日志文件比对&quot;&gt;&lt;/a&gt;数据日志文件比对&lt;/h2&gt;&lt;h3 id=&quot;ib-logfile与log-bin区别&quot;&gt;&lt;a href=&quot;#ib-logfile与log-bin区别&quot; class=&quot;headerlink&quot; title=&quot;ib_logfile与log-bin区别&quot;&gt;&lt;/a&gt;ib_logfile与log-bin区别&lt;/h3&gt;&lt;style type=&quot;text/css&quot;&gt;
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-&lt;/style&gt;
-&lt;table class=&quot;tg&quot;&gt;
-  &lt;tr&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;ib_logfile&lt;/td&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;
-        记录系统的回滚，重做日志（在你修改数据之前，会先把 修改的操作 作为日志先记录下来）&lt;br&gt;
-        记录文件的物理更改&lt;br&gt;
-        记录的是redo log和undo log（应该记录在ibdata1中）的信息，这里记录的基本是commit之前的数据
-    &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;mysql-bin.******&lt;/td&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;
-        记录系统的所有更新记录，数据库的更细日志，记录的是逻辑更改&lt;br&gt;
-        主从：mysql会把日志发送到slave，salve会接收日志，然后解析日志，把里面的sql语句重新应用到数据库里，于是就能同步数据了&lt;br&gt;
-        记录的是已经执行完毕的对数据库的dml和ddl信息，这里记录的基本是commit之后的数据信息。
-    &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/table&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="日志" scheme="https://www.sunliaodong.cn/tags/%E6%97%A5%E5%BF%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之日志-中继日志</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/</id>
-    <published>2021-02-05T00:23:20.000Z</published>
-    <updated>2021-02-05T00:42:46.994Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;中继日志用于主从复制架构中的从服务器上，从服务器的 slave 进程从主服务器处获取二进制日志的内容并写入中继日志，然后由 IO 进程读取并执行中继日志中的语句。在复制过程中产生的日志一个线程读取别人的二进制日志,存到本地叫做中继日志,然后本地在开启一个线程去读取中继日志在本地做回放,就完成了数据的同步&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="中继日志" scheme="https://www.sunliaodong.cn/tags/%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之日志-事务日志</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/</id>
-    <published>2021-02-05T00:23:05.000Z</published>
-    <updated>2021-02-05T00:41:33.616Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;MySQL会最大程度的利用缓存，从而提高数据的访问效率。那么换一句话来说，任何高性能的系统都必须利用到缓存，从各个层面来讲，缓存都发挥了巨大的作用。再上升到一个高度提炼一下：缓存和队列是实现高性能的必走之路。那么对于数据库来说这个却是个很棘手的问题，要保证数据更高效率的读取和存储，所以要利用到缓存。但是要保证数据的一致性，则必须保证所有的数据都必须准确无误的存储到数据库中，及时发生意外，也要保证数据可恢复。我们知道InnoDB是一个事务安全的存储引擎，而一致性是事务ACID中的一个重要特性。InnoDB存储引擎主要是通过InnoDB事务日志实现数据一致性的，InnoDB事务日志包括重做（redo、循环写入）日志，以及回滚（undo）日志。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="事务日志" scheme="https://www.sunliaodong.cn/tags/%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/"/>
-    
-    <category term="redo" scheme="https://www.sunliaodong.cn/tags/redo/"/>
-    
-    <category term="undo" scheme="https://www.sunliaodong.cn/tags/undo/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之日志-Binlog日志</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/</id>
-    <published>2021-02-05T00:22:55.000Z</published>
-    <updated>2021-02-05T00:37:44.317Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;记录信息&quot;&gt;&lt;a href=&quot;#记录信息&quot; class=&quot;headerlink&quot; title=&quot;记录信息&quot;&gt;&lt;/a&gt;记录信息&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;二进制日志记录 MySQL 数据库中所有与更新相关的操作，即二进制日志记录了所有的 DDL（数据定义语言）语句和 DML（数据操纵语言）语句，但是不包括数据查询语句。常用于恢复数据库和主从复制。&lt;/li&gt;
-&lt;li&gt;二进制日志主要记录数据库的变化情况，因此可以用作主从库的同步。内容主要包括数据库所有的更新操作，use语句、insert语句、delete语句、update语句、create语句、alter语句、drop语句。用一句更简洁易懂的话概括就是：所有涉及数据变动的操作，都要记录进二进制日志中。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;特性&quot;&gt;&lt;a href=&quot;#特性&quot; class=&quot;headerlink&quot; title=&quot;特性&quot;&gt;&lt;/a&gt;特性&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;只要重启了服务, binlog二进制日志就会自己滚动一个新的, 或者使用flush logs 手动滚动日志&lt;/li&gt;
-&lt;li&gt;记录的信息 主要是记录修改数据或有可能引起数据改变的MySql语句, 记录时间,操作时长,等等信息&lt;/li&gt;
-&lt;li&gt;日志格式: 基于(语句, row, mixed) 默认mixed&lt;/li&gt;
-&lt;li&gt;每一个二进制日志叫做一个Binary log event(二进制日志事件), 每一个二进制日志事件都有自己的元数据(meta data)信息, 时间,操作时长….&lt;/li&gt;
-&lt;li&gt;每个二进制日志的上限是1G&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="二进制日志" scheme="https://www.sunliaodong.cn/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97/"/>
-    
-    <category term="Binlog日志" scheme="https://www.sunliaodong.cn/tags/Binlog%E6%97%A5%E5%BF%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之日志-慢查询日志</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</id>
-    <published>2021-02-05T00:22:36.000Z</published>
-    <updated>2021-02-05T00:26:43.125Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;记录执行时间超过指定时间（long_query_time，默认10s）的查询语句（包括dml和ddl等）&lt;/li&gt;
-&lt;li&gt;慢查询日志默认不启动&lt;/li&gt;
-&lt;li&gt;慢查询日志支持将日志写入文件或数据库表中&lt;/li&gt;
-&lt;li&gt;优点：可以有效的跟踪 执行时间过长 或者 没有使用索引的查询语句（包括select 语句，update语句，delete语句，以及insert语句）&lt;/li&gt;
-&lt;li&gt;缺点：存在性能损耗，不建议默认开启&lt;/li&gt;
-&lt;li&gt;慢查询日志只包含成功执行过的查询语句&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="慢查询日志" scheme="https://www.sunliaodong.cn/tags/%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之日志-查询日志</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</id>
-    <published>2021-02-05T00:16:00.000Z</published>
-    <updated>2021-02-05T00:21:25.054Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;默认情况下查询日志是关闭的。由于查询日志会记录用户的所有操作，其中还包含增删查改等信息，&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;insert查询为了避免数据冲突，如果此前插入过数据，而如果跟主键或唯一键的数据重复那肯定会报错&lt;/li&gt;
-&lt;li&gt;update时也会查询因为更新的时候很可能会更新某一块数据&lt;/li&gt;
-&lt;li&gt;delete查询，只删除符合条件的数据&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;MySQL普通查询日志记录MySQL服务实例所有的操作，如select、update、insert、delete等操作，无论该操作是否成功执行。还有MySQL客户机与MySQL服务端连接及断开的相关信息，无论连接成功还是失败。&lt;br&gt;注意：由于普通查询日志几乎记录了MySQL的所有操作，对于数据访问频繁的数据库服务器而言，如果开启MySQL的普通查询日志将会大幅度的降低数据库的性能，因此建议关闭普通查询日志。只有在特殊时期，如需要追踪某些特殊的查询日志，可以临时打开普通的查询日志。在并发操作大的环境下会产生大量的信息从而导致不必要的磁盘IO，会影响mysql的性能的。如若不是为了调试数据库的目的建议不要开启查询日志。&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;log = on|off 是否开启日志功能, 这个设置包含了查询日志和慢查询日志&lt;/li&gt;
-&lt;li&gt;general_log = on|off 是否开启查询日志&lt;/li&gt;
-&lt;li&gt;general_log_file = /path/to/file 指定查询日志的位置&lt;/li&gt;
-&lt;li&gt;log_output = FILE|table 日志输出的位置, 这个指令对慢查询日志也起作用&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="查询日志" scheme="https://www.sunliaodong.cn/tags/%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之日志-错误日志</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/</id>
-    <published>2021-02-05T00:15:49.000Z</published>
-    <updated>2021-02-05T00:19:19.855Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;在mysql数据库中，错误日志功能是默认开启的。并且，错误日志无法被禁止。默认情况下，错误日志存储在mysql数据库的数据文件中。错误日志文件通常的名称为hostname.err。其中，hostname表示服务器主机名。&lt;br&gt;错误日志信息可以自己进行配置的，错误日志所记录的信息是可以通过log-error和log-warnings来定义的，其中log-err是定义是否启用错误日志的功能和错误日志的存储位置，log-warnings是定义是否将警告信息也定义至错误日志中。默认情况下错误日志大概记录以下几个方面的信息：服务器启动和关闭过程中的信息（未必是错误信息，如mysql如何启动InnoDB的表空间文件的、如何初始化自己的存储引擎的等等）、服务器运行过程中的错误信息、事件调度器运行一个事件时产生的信息、在从服务器上启动服务器进程时产生的信息。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="错误日志" scheme="https://www.sunliaodong.cn/tags/%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之日志-概述</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%A6%82%E8%BF%B0/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%A6%82%E8%BF%B0/</id>
-    <published>2021-02-05T00:00:45.000Z</published>
-    <updated>2021-02-05T00:15:05.723Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;日志是mysql数据库的重要组成部分。日志文件中记录着mysql数据库运行期间发生的变化；也就是说用来记录mysql数据库的客户端连接状况、SQL语句的执行情况和错误信息等。当数据库遭到意外的损坏时，可以通过日志查看文件出错的原因，并且可以通过日志文件进行数据恢复。  &lt;/p&gt;
-&lt;p&gt;默认情况下，所有日志创建于mysqld数据目录中。通过刷新日志，你可以强制 mysqld来关闭和重新打开日志文件（或者在某些情况下切换到一个新的日志）。当你执行一个FLUSH LOGS语句或执行mysqladmin flush-logs或mysqladmin refresh时，出现日志刷新  &lt;/p&gt;
-&lt;p&gt;mysql日志分类：错误日志、查询日志、慢查询日志、事务日志、二进制日志；  &lt;/p&gt;
-&lt;p&gt;官网：&lt;a href=&quot;https://dev.mysql.com/doc/refman/5.7/en/server-logs.html&quot;&gt;https://dev.mysql.com/doc/refman/5.7/en/server-logs.html&lt;/a&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="日志" scheme="https://www.sunliaodong.cn/tags/%E6%97%A5%E5%BF%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之show status详解</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8Bshow-status%E8%AF%A6%E8%A7%A3/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8Bshow-status%E8%AF%A6%E8%A7%A3/</id>
-    <published>2021-02-04T12:49:05.000Z</published>
-    <updated>2021-02-04T12:50:08.531Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;style type=&quot;text/css&quot;&gt;
-.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
-.tg</summary>
-        
-      
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="show status" scheme="https://www.sunliaodong.cn/tags/show-status/"/>
     
   </entry>
   

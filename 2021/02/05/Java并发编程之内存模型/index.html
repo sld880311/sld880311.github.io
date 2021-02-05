@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="基本概念 作用：屏蔽各种硬件和操作系统内存的访问差异，以实现让Java程序在各种平台下都能达到一致的内存访问效果，定义了Java虚拟机与计算机内存是如何协同工作的，是一种主存与工作内存的抽象概念，并且底层对应CPU的寄存器、缓存、硬件内存以及CPU指令优化等 简称：Java Memory Model简称JMM 目的：定义程序中各个变量的访问规则，以及在必须时如何同步地访问共享变量，即在虚拟机中将变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程之内存模型">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="基本概念 作用：屏蔽各种硬件和操作系统内存的访问差异，以实现让Java程序在各种平台下都能达到一致的内存访问效果，定义了Java虚拟机与计算机内存是如何协同工作的，是一种主存与工作内存的抽象概念，并且底层对应CPU的寄存器、缓存、硬件内存以及CPU指令优化等 简称：Java Memory Model简称JMM 目的：定义程序中各个变量的访问规则，以及在必须时如何同步地访问共享变量，即在虚拟机中将变">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163546487.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590914067946.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590914160544.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590929114372.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590929400626.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590929489469.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1591177153382.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590930859921.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590931029214.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588162960377.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163172625.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163250216.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163280193.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163379436.png">
+<meta property="article:published_time" content="2021-02-05T11:30:40.000Z">
+<meta property="article:modified_time" content="2021-02-05T11:45:03.042Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="内存模型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163546487.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java并发编程之内存模型 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">92</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">58</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java并发编程之内存模型
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-05 19:30:40 / 修改时间：19:45:03" itemprop="dateCreated datePublished" datetime="2021-02-05T19:30:40+08:00">2021-02-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ol>
+<li>作用：屏蔽各种硬件和操作系统内存的访问差异，以实现让Java程序在各种平台下都能达到一致的内存访问效果，定义了Java虚拟机与计算机内存是如何协同工作的，是一种主存与工作内存的抽象概念，并且底层对应CPU的寄存器、缓存、硬件内存以及CPU指令优化等</li>
+<li>简称：Java Memory Model简称JMM</li>
+<li>目的：定义程序中各个变量的访问规则，以及在必须时如何同步地访问共享变量，即在虚拟机中将变量存储到内存和从内存中取出变量这样的底层细节<a id="more"></a>
+
+</li>
+</ol>
+<p>JVM内存模型如下图</p>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163546487.png" class title="JVM内存模型">
+
+</div>
+
+<ol>
+<li><strong>Head（堆）</strong>：<ul>
+<li>运行时的数据区，堆是由垃圾回收机制来负责的。</li>
+<li><strong>运行时动态分配内存大小，并且由GC动态完成内存的回收</strong></li>
+<li><strong>存取速度相对要慢</strong></li>
+</ul>
+</li>
+<li><strong>Stack（栈）</strong>：<ul>
+<li>存取速度比堆要快，仅次于计算机里的寄存器</li>
+<li>数据可共享</li>
+<li>栈中的数据的大小以及生存期必须是确定的，缺乏一些灵活性</li>
+<li><strong>栈中主要用来存储一些基本数据类型和引用数据类型</strong></li>
+</ul>
+</li>
+</ol>
+<p><font color="red"><strong>Java内存模型要求调用栈和本地变量存放在线程栈（Thread Stack）上，而对象则存放在堆上</strong>。一个本地变量也可能是指向一个对象的引用，这种情况下这个保存对象引用的本地变量是存放在线程栈上的，但是对象本身则是存放在堆上的。一个对象可能包含方法，而这些方法可能包含着本地变量，这些本地变量仍然是存放在线程栈上的。即使这些方法所属的对象是存放在堆上的。一个对象的成员变量，可能会随着所属对象而存放在堆上，不管这个成员变量是原始类型还是引用类型。<strong>静态成员变量则是随着类的定义一起存放在堆上</strong>。存放在堆上的对象，可以被持有这个对象的引用的线程访问。当一个线程可以访问某个对象时，它也可以访问该对象的成员变量。如果两个线程同时调用同一个对象上的同一个方法，那么它们都将会访问这个方法中的成员变量，但是每一个线程都拥有这个成员变量的私有拷贝。</font></p>
+<p>JMM 体现在以下几个方面：</p>
+<ol>
+<li><strong>原子性</strong> - 保证指令不会受到线程上下文切换的影响</li>
+<li><strong>可见性</strong> - 保证指令不会受 cpu 缓存的影响</li>
+<li><strong>有序性</strong> - 保证指令不会受 cpu 指令并行优化的影响</li>
+</ol>
+<p>java中多线程通信基于共享内存的方式，并且JMM保证了共享内存的可见性和有序性的问题，锁解决了原子性的问题。</p>
+<h3 id="Java内存模型和硬件内存架构之间的桥接"><a href="#Java内存模型和硬件内存架构之间的桥接" class="headerlink" title="Java内存模型和硬件内存架构之间的桥接"></a>Java内存模型和硬件内存架构之间的桥接</h3><ol>
+<li>硬件内存架构中不区分线程栈和堆，所有的数据都存储在主内存中或CPU缓存中和CPU内部的寄存器中</li>
+<li>JMM中区分主内存（线程共享）和线程工作内存（线程私有，JMM中的抽象概念）</li>
+<li><strong>Java内存模型中的线程的工作内存（working memory）是cpu的寄存器和高速缓存的抽象描述。主内存则可理解为物理主存的抽象</strong></li>
+<li>JVM内存模型只是一种对物理内存的划分而已，它只局限在物理内存，而且只局限在JVM进程中的的物理内存。举个例子，A和线程B要通信，必须经历两个步骤:<ul>
+<li>首先线程A要把本地内存A中更新过的共享变量刷新到主内存里</li>
+<li>然后线程B再到主内存中去读取线程A更新的共享变量，这样就完成了两个线程之间的通信了</li>
+</ul>
+</li>
+</ol>
+<h3 id="Java内存模型定义同步的八种操作"><a href="#Java内存模型定义同步的八种操作" class="headerlink" title="Java内存模型定义同步的八种操作"></a>Java内存模型定义同步的八种操作</h3><p>JLS定义了线程对主存的操作指令：<code>lock，unlock，read，load，use，assign，store，write</code>。这些行为是不可分解的原子操作，在使用上相互依赖，</p>
+<ol>
+<li>read-load从主内存复制变量到当前工作内存，</li>
+<li>use-assign执行代码改变共享变量值，</li>
+<li>store-write用工作内存数据刷新主存相关内容。</li>
+<li>read（读取）：作用于主内存变量，把一个变量值从主内存传输到线程的工作内存中，以便随后的load动作使用</li>
+<li>load（载入）：作用于工作内存的变量，它把read操作从主内存中得到的变量值放入工作内存的变量副本中。</li>
+<li>use（使用）：作用于工作内存的变量，把工作内存中的一个变量值传递给执行引擎，每当虚拟机遇到一个需要使用变量的值的字节码指令时将会执行这个操作。</li>
+<li>assign（赋值）：作用于工作内存的变量，它把一个从执行引擎接收到的值赋值给工作内存的变量，每当虚拟机遇到一个给变量赋值的字节码指令时执行这个操作。</li>
+<li>store（存储）：作用于工作内存的变量，把工作内存中的一个变量的值传送到主内存中，以便随后的write的操作。</li>
+<li>write（写入）：作用于主内存的变量，它把store操作从工作内存中一个变量的值传送到主内存的变量中。</li>
+</ol>
+<h3 id="多线程的三个特性"><a href="#多线程的三个特性" class="headerlink" title="多线程的三个特性"></a>多线程的三个特性</h3><h4 id="原子性（Atomicity）"><a href="#原子性（Atomicity）" class="headerlink" title="原子性（Atomicity）"></a>原子性（Atomicity）</h4><ol>
+<li>一个原子操作在CPU中不可以中断或暂停后在调度，全执行或全不执行，但是x++不是原子操作<ul>
+<li>a.将变量x 值取出放在寄存器中 </li>
+<li>b.将将寄存器中的值+1 </li>
+<li>c.将寄存器中的值赋值给x。 </li>
+</ul>
+</li>
+<li>JMM中的原子性操作：<code>read、load、use、assign、store和write</code>，大致可以认为基础数据类型的访问和读写是具备原子性的</li>
+<li>更大范围的操作保证原子性：在JMM中针对synchronized关键字增加了字节码指令monitorenter和monitorexit</li>
+<li>业务代码控制：锁（lock和unlock）</li>
+</ol>
+<h4 id="可见性-Visibility"><a href="#可见性-Visibility" class="headerlink" title="可见性(Visibility)"></a>可见性(Visibility)</h4><ol>
+<li>使用主内存和工作内存保证可见性</li>
+<li>关键字：<code>volatile</code>，具体说明，参考后续章节</li>
+</ol>
+<h4 id="有序性-Ordering"><a href="#有序性-Ordering" class="headerlink" title="有序性(Ordering)"></a>有序性(Ordering)</h4><p>Java内存模型中的程序天然有序性可以总结为一句话：如果在本线程内观察，所有操作都是有序的；如果在一个线程中观察另一个线程，所有操作都是无序的。前半句是指“线程内表现为串行语义”，后半句是指“指令重排序”现象和“工作内存主主内存同步延迟”现象。</p>
+<h3 id="JMM抽象结构"><a href="#JMM抽象结构" class="headerlink" title="JMM抽象结构"></a>JMM抽象结构</h3><ol>
+<li>共享数据：实例域、静态域、数组存储在堆中，线程间共享</li>
+<li>非共享数据：局部变量、方法参数、异常处理器参数</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590914067946.png" class title="java内存模型抽象结构示意图">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590914160544.png" class title="线程之间的通信">
+
+</div>
+
+<h3 id="happens-before"><a href="#happens-before" class="headerlink" title="happens-before"></a>happens-before</h3><p><strong>happens-before仅仅要求前一个操作（执行的结果）对后一个操作可见；规定了对共享变量的写操作对其它线程的读操作可见，它是可见性与有序性的一套规则总结</strong></p>
+<ol>
+<li>❑ 程序顺序规则：一个线程中的每个操作，happens-before于该线程中的任意后续操作。</li>
+<li>❑ 监视器锁规则：线程解锁 m 之前对变量的写，对于接下来对 m 加锁的其它线程对该变量的读可见</li>
+<li>❑ volatile变量规则：线程对 volatile 变量的写，对接下来其它线程对该变量的读可见</li>
+<li>❑ 线程 start 前对变量的写，对该线程开始后对该变量的读可见</li>
+<li>❑ 线程结束前对变量的写，对其它线程得知它结束后的读可见</li>
+<li>❑ 线程 t1 打断 t2（interrupt）前对变量的写，对于其他线程得知 t2 被打断后对变量的读可见</li>
+<li>❑ 对变量默认值（0，false，null）的写，对其它线程对该变量的读可见</li>
+<li>❑ 传递性：如果A happens-before B，且B happens-before C，那么A happens-before C。</li>
+</ol>
+<h2 id="重排序"><a href="#重排序" class="headerlink" title="重排序"></a>重排序</h2><h2 id="顺序一致性"><a href="#顺序一致性" class="headerlink" title="顺序一致性"></a>顺序一致性</h2><h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><h3 id="volatile的作用"><a href="#volatile的作用" class="headerlink" title="volatile的作用"></a>volatile的作用</h3><ol>
+<li><strong>同步</strong>：一种弱的同步机制，用来确保将变量的更新操作通知到其他线程，Volatile修饰变量的单个读/写，可以看做使用同一个锁完成的同步操作。</li>
+<li><strong>可见性</strong><ul>
+<li><strong>读</strong>： 执行<strong>read-&gt;load-&gt;use</strong>，每次使用时都需要从主内存中获取最新的数据</li>
+<li><strong>写</strong>： 执行<strong>assign-&gt;store-&gt;write</strong>，每次更新完后都会回写到主内存</li>
+</ul>
+</li>
+<li><strong>禁止指令重排序</strong></li>
+<li><strong>场景</strong>：一个变量被多个线程共享，线程直接给这个变量赋值。</li>
+<li><strong>保证线程安全的前置条件</strong><ul>
+<li>单个读/写</li>
+<li>不同的volatile变量之间，不能互相依赖</li>
+</ul>
+</li>
+<li><strong>原子性</strong>：只能对原子性（单个读/写）操作具备线程安全性</li>
+<li><strong>原理</strong>：普通变量的获取首先把主内存的数据获取到CPU缓存中，然后通过缓存使用；被volatile修饰的变量JVM保证了每次读变量都从内存中读，跳过 CPU cache 这一步，直接通过主内存获取数据</li>
+</ol>
+<h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LazySingleton</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> LazySingleton instance = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LazySingleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) </span><br><span class="line">            instance = <span class="keyword">new</span> LazySingleton();</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        LazySingleton.getInstance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将代码转换为汇编指令，在汇编指令的中我们可以找到如下信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x0000000002931351</span>: lock add dword ptr [rsp],0h ;*putstatic instance--将双字节的栈指针寄存器+<span class="number">0</span></span><br><span class="line">; - org.xrq.test.design.singleton.LazySingleton::getInstance@<span class="number">12</span> (line <span class="number">13</span>) --赋值</span><br></pre></td></tr></table></figure>
+<p>在使用volatile关键字修饰之后JMM会增加一个<strong>lock前缀指令的内存屏障</strong>，完成以下功能：</p>
+<ol>
+<li>禁止指令重排序</li>
+<li>它会强制将对缓存的修改操作立即写入主存；</li>
+<li>如果是写操作，它会导致其他CPU中对应的缓存行无效。</li>
+</ol>
+<blockquote>
+<p>这里需注意虽然volatile关键字保证了变量对于线程的可见性，但并不保证线程安全。</p>
+</blockquote>
+<h3 id="volatile内存语义的实现"><a href="#volatile内存语义的实现" class="headerlink" title="volatile内存语义的实现"></a>volatile内存语义的实现</h3><div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590929114372.png" class title="volatile重排序规则表">
+
+</div>
+
+
+<h4 id="内存屏障的使用"><a href="#内存屏障的使用" class="headerlink" title="内存屏障的使用"></a>内存屏障的使用</h4><p>基于保守策略的JMM内存屏障插入策略。  </p>
+<ol>
+<li>❑ 在每个volatile写操作的前面插入一个StoreStore屏障。</li>
+<li>❑ 在每个volatile写操作的后面插入一个StoreLoad屏障。</li>
+<li>❑ 在每个volatile读操作的前面插入一个LoadLoad屏障。</li>
+<li>❑ 在每个volatile读操作的后面插入一个LoadStore屏障</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590929400626.png" class title="volatile写：指令执行顺序示意图">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590929489469.png" class title="volatile读：指令执行顺序示意图">
+
+</div>
+
+<h3 id="死循环代码"><a href="#死循环代码" class="headerlink" title="死循环代码"></a>死循环代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread.jmm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.atomic.AtomicInteger;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.Thread.sleep;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> : sunliaodong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> : V1.0.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span>: 不适用Volatile导致的死循环</span></span><br><span class="line"><span class="comment"> * 不同的CPU可能无法达到演示效果</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> : 2020/5/31 16:05</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VolatileDeadCircleTest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> run = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        VolatileDeadCircleTest t = <span class="keyword">new</span> VolatileDeadCircleTest();</span><br><span class="line">        AtomicInteger count = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span>(t.isRun())&#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(<span class="string">&quot;子线程一致执行:&quot;</span> + (count.getAndIncrement()));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">        sleep(<span class="number">10</span> * <span class="number">1000L</span>);</span><br><span class="line">        <span class="comment">// 计划停止子线程，但是和预期可能不一致，最终会停止</span></span><br><span class="line">        t.setRun(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isRun</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> run;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRun</span><span class="params">(<span class="keyword">boolean</span> run)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.run = run;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="锁的内存语义synchronized"><a href="#锁的内存语义synchronized" class="headerlink" title="锁的内存语义synchronized"></a>锁的内存语义synchronized</h2><ol>
+<li>锁可以让临界区互斥执行</li>
+<li>重要的同步手段</li>
+<li>释放锁的线程向获取同一个锁的线程发送消息（唤醒）</li>
+</ol>
+<h3 id="锁的释放、获取"><a href="#锁的释放、获取" class="headerlink" title="锁的释放、获取"></a>锁的释放、获取</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread.jmm;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> : sunliaodong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> : V1.0.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span>: TODO</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> : 2020/6/3 17:34</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MonitorExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">writer</span><span class="params">()</span></span>&#123; <span class="comment">//1</span></span><br><span class="line">        a++;                           <span class="comment">//2</span></span><br><span class="line">    &#125;</span><br><span class="line">                                       <span class="comment">//3</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">reader</span><span class="params">()</span></span>&#123; <span class="comment">//4</span></span><br><span class="line">        System.out.println(a);         <span class="comment">//5</span></span><br><span class="line">    &#125;</span><br><span class="line">                                       <span class="comment">//6</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1591177153382.png" class>
+
+</div>
+
+<ol>
+<li>线程之间使用同一个锁存在先后顺序</li>
+<li>某个方法使用完成之后释放对应的锁，其他线程可竞争获取该锁</li>
+<li>synchronized使用的是监视器锁</li>
+<li>锁释放与volatile写有相同的内存语义；锁获取与volatile读有相同的内存语义（释放锁之后会把共享数据刷入主存并且使其他线程的本地内存中的变量无效）</li>
+</ol>
+<h3 id="锁内存语义实现"><a href="#锁内存语义实现" class="headerlink" title="锁内存语义实现"></a>锁内存语义实现</h3><h2 id="final的内存语义"><a href="#final的内存语义" class="headerlink" title="final的内存语义"></a>final的内存语义</h2><p>对final域的读写更像是普通变量访问。</p>
+<h3 id="final域的重排序规则"><a href="#final域的重排序规则" class="headerlink" title="final域的重排序规则"></a>final域的重排序规则</h3><ol>
+<li>在构造函数内对一个final域的写入，与随后把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。</li>
+<li>初次读一个包含final域的对象的引用，与随后初次读这个final域，这两个操作之间不能重排序。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread.jmm;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> : sunliaodong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> : V1.0.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span>: TODO</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> : 2020/5/31 21:04</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FinalExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;                         <span class="comment">// 普通变量</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> j;                   <span class="comment">// final变量</span></span><br><span class="line">    <span class="keyword">static</span> FinalExample obj;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FinalExample</span><span class="params">()</span></span>&#123;         <span class="comment">// 构造函数</span></span><br><span class="line">        i = <span class="number">1</span>;                     <span class="comment">// 普通变量赋值</span></span><br><span class="line">        j = <span class="number">2</span>;                     <span class="comment">// final变量赋值</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writer</span><span class="params">()</span></span>&#123;   <span class="comment">// 写线程A执行</span></span><br><span class="line">        obj = <span class="keyword">new</span> FinalExample();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reader</span><span class="params">()</span></span>&#123;   <span class="comment">// 读线程B执行</span></span><br><span class="line">        FinalExample object = obj; <span class="comment">// 读对象引用</span></span><br><span class="line">        <span class="keyword">int</span> a = object.i;          <span class="comment">// 读普通变量</span></span><br><span class="line">        <span class="keyword">int</span> b = object.j;          <span class="comment">// 读final变量</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="写final域的重排序规则"><a href="#写final域的重排序规则" class="headerlink" title="写final域的重排序规则"></a>写final域的重排序规则</h3><ol>
+<li>JMM禁止编译器把final域的写重排序到构造函数之外</li>
+<li>编译器会在final域的写之后，构造函数return之前，插入一个StoreStore屏障。这个屏障禁止处理器把final域的写重排序到构造函数之外。</li>
+<li>在对象引用为任意线程可见之前，对象的final域已经被正确初始化过了，而普通域不具有这个保障</li>
+<li>写final域的重排序规则会要求编译器在final域的写之后，构造函数return之前插入一个StoreStore障屏。读final域的重排序规则要求编译器在读final域的操作前面插入一个LoadLoad屏障。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590930859921.png" class title="写final域的重排序规则">
+
+</div>
+
+<h3 id="读final域的重排序规则"><a href="#读final域的重排序规则" class="headerlink" title="读final域的重排序规则"></a>读final域的重排序规则</h3><p><strong>编译器会在读final域操作的前面插入一个LoadLoad屏障，防止初次读对象引用与初次读该对象包含的final域出现重排序。</strong>    </p>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1590931029214.png" class title="读final域的重排序规则">
+
+</div>
+
+<h3 id="final域为引用类型"><a href="#final域为引用类型" class="headerlink" title="final域为引用类型"></a>final域为引用类型</h3><p>在构造函数内对一个final引用的对象的成员域的写入，与随后在构造函数外把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。  </p>
+<h3 id="final引用不能从构造函数内“溢出”"><a href="#final引用不能从构造函数内“溢出”" class="headerlink" title="final引用不能从构造函数内“溢出”"></a>final引用不能从构造函数内“溢出”</h3><p>在构造函数内部，不能让这个被构造对象的引用为其他线程所见，也就是对象引用不能在构造函数中“逸出”。</p>
+<h2 id="CPU高速缓存详解"><a href="#CPU高速缓存详解" class="headerlink" title="CPU高速缓存详解"></a>CPU高速缓存详解</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>JVM模型中的主要概念：</p>
+<ol>
+<li><strong>线程共享（线程不安全）：堆内存、全局变量、主内存</strong></li>
+<li><strong>线程私有（线程安全）：本地内存，栈内存，局部变量</strong></li>
+</ol>
+<p>线程共享数据的使用是由<strong>硬件架构</strong>决定，JVM针对硬件做了更高层级的封装和抽象，并且提供并发场景下的安全保证和API。java语言层面使用<strong>Synchronize，Volatile</strong>等关键字实现。</p>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588162960377.png" class title="主内存和CPU高速缓存的模型图">
+
+</div>
+
+<h3 id="硬件内存模型"><a href="#硬件内存模型" class="headerlink" title="硬件内存模型"></a>硬件内存模型</h3><ol>
+<li>引入CPU缓存的目的：<strong>解决CPU运算速度与内存读写速度不匹配</strong>，加快读取速度，提高CPU的利用率</li>
+<li>位置：位于CPU与内存之间的临时存储器，对比主存内存空间小，但是交换速度快</li>
+</ol>
+<h4 id="缓存分类"><a href="#缓存分类" class="headerlink" title="缓存分类"></a>缓存分类</h4><ol>
+<li><p><strong>一级缓存（L1 Cache）：一级数据缓存（Data Cache，D-Cache，L1d）和一级指令缓存(Instruction Cache，I-Cache，L1i)，分别用于存放数据和指令。</strong></p>
+</li>
+<li><p><strong>二级缓存（L2 Cache）：分内部和外部两种芯片。内部的芯片二级缓存运行速度与主频相同，而外部的二级缓存则只有主频的一半。L2高速缓存容量也会影响CPU的性能，原则是越大越好，现在家庭用CPU容量最大的是4MB，而服务器和工作站上用CPU的L2高速缓存普遍大于4MB，有的高达8MB或者19MB</strong>。</p>
+</li>
+<li><p><strong>三级缓存（L3 Cache）：在拥有三级缓存的CPU中，只有约5%的数据需要从内存中调用，这进一步提高了CPU的效率。具有较大L3缓存的处理器提供更有效的文件系统缓存行为及较短消息和处理器队列长度。</strong></p>
+</li>
+</ol>
+<h4 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h4><ol>
+<li>读取数据的流程：<strong>CPU读取数据的顺序是先Cache后内存（结构：CPU -&gt; cache -&gt; memory）</strong></li>
+<li>Cache命中率可达<strong>90%左右</strong></li>
+<li>CPU Cache的意义：提高吞吐量和CPU利用率</li>
+<li>局部性原理<ul>
+<li>时间局部性：如果某个数据被访问，那么在不久的将来它很可能再次被访问</li>
+<li>空间局部性：如果某个数据被访问，那么与它相邻的数据很快也可能被访问</li>
+</ul>
+</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163172625.png" class title="CPU缓存演进过程">
+
+</div>
+
+<h3 id="缓存SRAM与内存DRAM的区别"><a href="#缓存SRAM与内存DRAM的区别" class="headerlink" title="缓存SRAM与内存DRAM的区别"></a>缓存SRAM与内存DRAM的区别</h3><p>内存的DRAM其实是SDRAM（同步动态随机储存器），是DRAM（Dynamic RAM，动态）的一种。DRAM只含一个晶体管和一个电容器，集成度非常高，可以轻松做出<strong>大容量（内存）</strong>，但是因为靠电容器来储存信息，所以需要不断刷新补充电容器的电荷，否则内部的数据即会消失。  </p>
+<p>充电放电之间的时间差导致了DRAM比SRAM的反应要缓慢得多。<strong>高速缓存基本上都是采用SRAM存储器</strong>，SRAM是英文Static RAM的缩写，它是一种具有静态存取功能的存储器，不需要刷新电路即能保存它内部存储的数据。  </p>
+<p>SRAM相比DRAM的复杂度就高了不止一点点，所以导致SRAM的集成度很低，也是前期CPU缓存不能集成进CPU内部也有这个原因。因此相同容量的DRAM内存可以设计为较小的体积，但是SRAM却需要很大的体积，这也是不能将缓存容量做得太大的重要原因。  </p>
+<blockquote>
+<p>它的特点归纳如下：优点是节能、速度快、不需要刷新时间所以凸显其数据传输速度很快，缺点是集成度低、相同的容量体积较大、而且价格较高，只能少量用于关键性系统以提高效率。SRAM和DRAM的电路图大致如下：</p>
+</blockquote>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163250216.png" class>
+
+</div>
+
+<p>在一套完整的计算机体系中，一般会包含如下存储介质，它们分别是<strong>寄存器，高速缓存，内存，硬盘</strong>。它们的容量由小到大，访问速度由高到底，成本由高到低，体积则是由小到大。因此，寄存器，高速缓存等容易集成在CPU或是主板上，但是由于其成本高，所以不会大规模使用，而内存，硬盘成本较低，但体积大，不方便集成，所以可以作为外设，安装在主板上。这些存储介质的大小和访问速度大致如下图：</p>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163280193.png" class>
+
+</div>
+
+<h3 id="缓存一致性（MESI）"><a href="#缓存一致性（MESI）" class="headerlink" title="缓存一致性（MESI）"></a>缓存一致性（MESI）</h3><p>在多核CPU中，内存中的数据会在多个核心中存在数据副本，某一个核心发生修改操作，就产生了数据不一致的问题。而一致性协议正是用于保证多个CPU cache之间缓存共享数据的一致。试想下面一个问题：</p>
+<ol>
+<li>Core 0读取了一个字节，根据局部性原理，它相邻的字节同样被被读入Core 0的缓存</li>
+<li>Core 1做了上面同样的工作，这样Core 0与Core 1的缓存拥有同样的数据</li>
+<li>Core 0修改了那个字节，被修改后，那个字节被写回Core 0的缓存，但是该信息并没有写回主存</li>
+<li>Core 1访问该字节，由于Core 0并未将数据写回主存，数据不同步</li>
+</ol>
+<h4 id="缓存行"><a href="#缓存行" class="headerlink" title="缓存行"></a>缓存行</h4><p>高速缓存其实就是一组称之为<strong>缓存行(cache line)的固定大小的数据块</strong>，其大小是以突发读或者突发写周期的大小为基础的。它是CPU缓存中可分配的<strong>最小存储单元</strong>，大小32字节、64字节、128字节不等，这与CPU架构有关，通常来说是64字节。当从CPU从内存中取数据到cache中时，会一次取一个cacheline大小的内存大小到cache中，然后存进相应的cacheline中。总结来说就是一句话：<font color="red">CPU不是按字节访问内存，而是以64字节为单位的块(chunk)拿取，称为一个缓存行(cache line)。</font></p>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/1588163379436.png" class>
+
+</div>
+
+<blockquote>
+<p>工作方式：当CPU从cache中读取数据的时候，会比较地址是否相同，如果相同则检查cache line的状态，再决定该数据是否有效，无效则从主存中获取数据，或者根据一致性协议发生一次cache-to—chache的数据推送；<br>工作效率：当CPU能够从cache中拿到有效数据的时候，消耗几个机器周期，如果发生cache miss（缓存未命中），则会消耗几十上百个机器周期；  </p>
+</blockquote>
+<h4 id="MESI缓存一致性"><a href="#MESI缓存一致性" class="headerlink" title="MESI缓存一致性"></a>MESI缓存一致性</h4><p>CPU制造商制定了一个规则：<strong>当一个CPU修改缓存中的字节时，服务器中其他CPU会被通知，它们的缓存将视为无效。</strong>于是，在上面的情况下，Core 1发现自己的缓存中数据已无效，Core 0将立即把自己的数据写回主存，然后Core 1重新读取该数据，这个就是多级缓存-<strong>缓存一致性（MESI）。这协议用于保证多个CPU cache之间缓存共享数据的一致性。</strong>它定义了CacheLine的四种数据状态，而CPU对cache的四种操作可能会产生不一致的状态。因此缓存控制器监听到本地操作与远程操作的时候需要对地址一致的CacheLine状态做出一定的修改，从而保证数据在多个cache之间流转的一致性。  </p>
+<p><strong>嗅探（snooping）协议</strong>，它的基本思想是：所有内存的传输都发生在一条共享的总线上，而所有的处理器都能看到这条总线：缓存本身是独立的，但是内存是共享资源，所有的内存访问都要经过仲裁（<strong>同一个指令周期中，只有一个CPU缓存可以对内存读写</strong>）。CPU缓存控制器不仅仅在内存传输的时候才与总线打交道，而是不停在嗅探总线上发生的数据交换，跟踪其他缓存在做什么。所以当一个缓存代表它所属的处理器去读写内存时，其它处理器都会得到通知，它们以此来使自己的缓存保持同步。<strong>只要某个处理器一写内存，其它处理器马上知道这块内存在它们的缓存段中已失效</strong>。ESI协议是当前最主流的缓存一致性协议，在MESI协议中，每个缓存行有4个状态，可用2个bit表示，它们分别是：</p>
+<blockquote>
+<p><strong>M（modify）</strong>：该Cache line有效，数据被修改了，和内存中的数据不一致，数据只存在于本Cache中。总线监听：缓存行必须时刻监听所有试图读该缓存行相对就主存的操作，这种操作必须在缓存将该缓存行写回主存并将状态变成S（共享）状态之前被延迟执行。<br><strong>E（exclusive）</strong>：该Cache line有效，数据和内存中的数据一致，数据只存在于本Cache中。总线监听：缓存行必须监听其它缓存读主存中该缓存行的操作，一旦有这种操作，该缓存行需要变成S（共享）状态。<br><strong>S（shared）</strong>：该Cache line有效，数据和内存中的数据一致，数据存在于很多Cache中。总线监听：缓存行也必须监听其它缓存使该缓存行无效或者独享该缓存行的请求，并将该缓存行变成无效（Invalid）。<br><strong>I（invalid）</strong>：该Cache line无效。总线监听：无  </p>
+</blockquote>
+<p>只有当缓存行处于E或者M状态时，处理器是<strong>独占</strong>这个缓存行的。当处理器想写某个缓存行时，如果它没有独占权，它必须先发送一条”我要独占权”的请求给总线，这会通知其它处理器把它们拥有的同一缓存段的拷贝失效（如果有）。只有在获得独占权后，处理器才能开始修改数据—-并且此时这个处理器知道，这个缓存行只有一份拷贝，在我自己的缓存里，所以不会有任何冲突。反之，如果有其它处理器想读取这个缓存行（马上能知道，因为一直在嗅探总线），独占或已修改的缓存行必须先回到”共享”状态。如果是已修改的缓存行，那么还要先把内容回写到内存中。<strong>引起数据状态转换的CPU cache操作也有四种</strong>，因为所有CPU核的数据都会经过总线，因此这里其实对应的就是CPU在读取或写入数据时对总线的数据请求类型，分别如下：</p>
+<ol>
+<li>本地读取（Local read），简称LR：当前CPU核读本地高速缓存中的数据</li>
+<li>本地写入（Local write），简称LW：当前CPU核将数据写到本地高速缓存中</li>
+<li>远端读取（Remote read），简称RR：其他CPU核将主内存中的数据读取到高速缓存中来</li>
+<li>远端写入（Remote write），简称RW：其他CPU核将高速缓存中的数据写回到主存里面去</li>
+</ol>
+<h3 id="状态转换和cache操作"><a href="#状态转换和cache操作" class="headerlink" title="状态转换和cache操作"></a>状态转换和cache操作</h3><h4 id="Modify"><a href="#Modify" class="headerlink" title="Modify"></a>Modify</h4><p>场景：当前CPU中数据的状态是Modifiy，表示当前CPU中拥有最新数据，虽然主存中的数据和当前CPU中的数据不一致，但是以当前CPU中的数据为准；  </p>
+<blockquote>
+<p>LR：此时如果发生local read，即当前CPU读数据，直接从cache中获取数据，拥有最新数据，因此状态不变；<br>LW：直接修改本地cache数据，修改后也是当前CPU拥有最新数据，因此状态不变；<br>RR：因为本地内存中有最新数据，当本地cache控制器监听到总线上有RR发生的时，必然是其他CPU发生了读主存的操作，此时为了保证一致性，当前CPU应该将数据写回主存，而随后的RR将会使得其他CPU和当前CPU拥有共同的数据，因此状态修改为S；<br>RW：当cache控制器监听到总线发生RW，当前CPU会将数据写回主存，因为随后的RW将会导致主存的数据修改，因此状态修改成I；  </p>
+</blockquote>
+<h4 id="Exclusive"><a href="#Exclusive" class="headerlink" title="Exclusive"></a>Exclusive</h4><p>场景：当前CPU中的数据状态是exclusive，表示当前CPU独占数据（其他CPU没有数据），并且和主存的数据一致；  </p>
+<blockquote>
+<p>LR：直接从本地cache中直接获取数据，状态不变；<br>LW：修改本地cache中的数据，状态修改成M（因为其他CPU中并没有该数据，不存在共享问题，因此不需要通知其他CPU修改cache line的状态为I）；<br>RR：本地cache中有最新数据，当cache控制器监听到总线上发生RR的时候，必然是其他CPU发生了读取主存的操作，而RR操作不会导致数据修改，因此两个CPU中的数据仍和主存中的数据一致，此时cache line状态修改为S；<br>RW：同RR，当cache控制器监听到总线发生RW，必然是其他CPU将最新数据写回到主存，此时为了保证缓存一致性，当前CPU的数据状态修改为I；  </p>
+</blockquote>
+<h4 id="Shared"><a href="#Shared" class="headerlink" title="Shared"></a>Shared</h4><p>场景：当前CPU中的数据状态是shared，表示当前CPU和其他CPU共享数据，且数据在多个CPU之间一致、多个CPU之间的数据和主存一致；  </p>
+<blockquote>
+<p>LR：直接从cache中读取数据，状态不变；<br>LW：发生本地写，并不会将数据立即写回主存，而是在稍后的一个时间再写回主存，因此为了保证缓存一致性，当前CPU的cache line状态修改为M，并通知其他拥有该数据的CPU该数据失效，其他CPU将cache line状态修改为I；<br>RR：状态不变，因为多个CPU中的数据和主存一致；<br>RW：当监听到总线发生了RW，意味着其他CPU发生了写主存操作，此时本地cache中的数据既不是最新数据，和主存也不再一致，因此当前CPU的cache line状态修改为I；  </p>
+</blockquote>
+<h4 id="Invalid"><a href="#Invalid" class="headerlink" title="Invalid"></a>Invalid</h4><p>场景：当前CPU中的数据状态是invalid，表示当前CPU中是脏数据，不可用，其他CPU可能有数据、也可能没有数据；  </p>
+<blockquote>
+<p>LR：因为当前CPU的cache line数据不可用，因此会发生读内存，此时的情形如下。如果其他CPU中无数据则状态修改为E；如果其他CPU中有数据且状态为S或E则状态修改为S；如果其他CPU中有数据且状态为M，那么其他CPU首先发生RW将M状态的数据写回主存并修改状态为S，随后当前CPU读取主存数据，也将状态修改为S；<br>LW：因为当前CPU的cache line数据无效，因此发生LW会直接操作本地cache，此时的情形如下。如果其他CPU中无数据，则将本地cache line的状态修改为M；如果其他CPU中有数据且状态为S或E，则修改本地cache，通知其他CPU将数据修改为I，当前CPU中的cache line状态修改为M；如果其他CPU中有数据且状态为M，则其他CPU首先将数据写回主存，并将状态修改为I，当前CPU中的cache line转台修改为M；<br>RR：监听到总线发生RR操作，表示有其他CPU读取内存，和本地cache无关，状态不变；<br>RW：监听到总线发生RW操作，表示有其他CPU写主存，和本地cache无关，状态不变；  </p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Java中线程的本地内存，栈内存，局部变量这部分内存对应的硬件区域是在CPU的高速缓存或者寄存器中，而主存，堆内存，全局变量对应的是计算机的内存条中的内存或是虚拟内存。在并发情况下线程会优先逐级的从CPU的三级高速缓存中读取数据，如果高速缓存中没有数据就会从主存中读取数据。在多个线程同时需要从主存中读取统一数据的情况下，CPU总线提供了总线锁机制来保证正确的同步，当然这部分对于Java开发者来说不可能直接使用总线锁，这里JVM提供的内存模型就是对硬件机制的封装，因此只要正确使用JVM提供同步机制就可以了。语言层面就是synchronize，volatile，Lock类。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《Java并发编程的艺术》</li>
+<li><a target="_blank" rel="noopener" href="https://www.toutiao.com/i6906078545806819848/">无锁队列Disruptor原理解析</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="tag"><i class="fa fa-tag"></i> 内存模型</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%9D%A2%E4%B8%B4%E7%9A%84%E9%97%AE%E9%A2%98/" rel="prev" title="Java并发编程之面临的问题">
+      <i class="fa fa-chevron-left"></i> Java并发编程之面临的问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5/" rel="next" title="Java并发编程之线程的概念">
+      Java并发编程之线程的概念 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E7%A1%AC%E4%BB%B6%E5%86%85%E5%AD%98%E6%9E%B6%E6%9E%84%E4%B9%8B%E9%97%B4%E7%9A%84%E6%A1%A5%E6%8E%A5"><span class="nav-number">1.1.</span> <span class="nav-text">Java内存模型和硬件内存架构之间的桥接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%AE%9A%E4%B9%89%E5%90%8C%E6%AD%A5%E7%9A%84%E5%85%AB%E7%A7%8D%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">Java内存模型定义同步的八种操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%B8%89%E4%B8%AA%E7%89%B9%E6%80%A7"><span class="nav-number">1.3.</span> <span class="nav-text">多线程的三个特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%80%A7%EF%BC%88Atomicity%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">原子性（Atomicity）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%A7%81%E6%80%A7-Visibility"><span class="nav-number">1.3.2.</span> <span class="nav-text">可见性(Visibility)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%89%E5%BA%8F%E6%80%A7-Ordering"><span class="nav-number">1.3.3.</span> <span class="nav-text">有序性(Ordering)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM%E6%8A%BD%E8%B1%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.4.</span> <span class="nav-text">JMM抽象结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#happens-before"><span class="nav-number">1.5.</span> <span class="nav-text">happens-before</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%8E%92%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">重排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">3.</span> <span class="nav-text">顺序一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile"><span class="nav-number">4.</span> <span class="nav-text">volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">4.1.</span> <span class="nav-text">volatile的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">4.2.</span> <span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.3.</span> <span class="nav-text">volatile内存语义的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">4.3.1.</span> <span class="nav-text">内存屏障的使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E5%BE%AA%E7%8E%AF%E4%BB%A3%E7%A0%81"><span class="nav-number">4.4.</span> <span class="nav-text">死循环代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89synchronized"><span class="nav-number">5.</span> <span class="nav-text">锁的内存语义synchronized</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E9%87%8A%E6%94%BE%E3%80%81%E8%8E%B7%E5%8F%96"><span class="nav-number">5.1.</span> <span class="nav-text">锁的释放、获取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.2.</span> <span class="nav-text">锁内存语义实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final%E7%9A%84%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89"><span class="nav-number">6.</span> <span class="nav-text">final的内存语义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#final%E5%9F%9F%E7%9A%84%E9%87%8D%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99"><span class="nav-number">6.1.</span> <span class="nav-text">final域的重排序规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99final%E5%9F%9F%E7%9A%84%E9%87%8D%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99"><span class="nav-number">6.2.</span> <span class="nav-text">写final域的重排序规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BBfinal%E5%9F%9F%E7%9A%84%E9%87%8D%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99"><span class="nav-number">6.3.</span> <span class="nav-text">读final域的重排序规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#final%E5%9F%9F%E4%B8%BA%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">6.4.</span> <span class="nav-text">final域为引用类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#final%E5%BC%95%E7%94%A8%E4%B8%8D%E8%83%BD%E4%BB%8E%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%86%85%E2%80%9C%E6%BA%A2%E5%87%BA%E2%80%9D"><span class="nav-number">6.5.</span> <span class="nav-text">final引用不能从构造函数内“溢出”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E8%AF%A6%E8%A7%A3"><span class="nav-number">7.</span> <span class="nav-text">CPU高速缓存详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">7.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">7.2.</span> <span class="nav-text">硬件内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E5%88%86%E7%B1%BB"><span class="nav-number">7.2.1.</span> <span class="nav-text">缓存分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">7.2.2.</span> <span class="nav-text">工作原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98SRAM%E4%B8%8E%E5%86%85%E5%AD%98DRAM%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">7.3.</span> <span class="nav-text">缓存SRAM与内存DRAM的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%88MESI%EF%BC%89"><span class="nav-number">7.4.</span> <span class="nav-text">缓存一致性（MESI）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E8%A1%8C"><span class="nav-number">7.4.1.</span> <span class="nav-text">缓存行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MESI%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">7.4.2.</span> <span class="nav-text">MESI缓存一致性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E5%92%8Ccache%E6%93%8D%E4%BD%9C"><span class="nav-number">7.5.</span> <span class="nav-text">状态转换和cache操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Modify"><span class="nav-number">7.5.1.</span> <span class="nav-text">Modify</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Exclusive"><span class="nav-number">7.5.2.</span> <span class="nav-text">Exclusive</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shared"><span class="nav-number">7.5.3.</span> <span class="nav-text">Shared</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Invalid"><span class="nav-number">7.5.4.</span> <span class="nav-text">Invalid</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">92</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">470k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">7:07</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '1be7cec818f7facea17b350e81db9f48',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
