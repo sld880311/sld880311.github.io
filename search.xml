@@ -78,40 +78,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hibernate系统化学习之常用方法</title>
-    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<h2 id="session-find-load"><a href="#session-find-load" class="headerlink" title="session.find/load"></a>session.find/load</h2><p>hibernate中session.find/load方法都能通过指定实体类名和id从数据库中读取指定的记录，并且返回与之对映的实体对象。但是它们也有很大的区别 ,find()和load()方法在执行检索时的区别：</p>
-<ol>
-<li><p>find()在类检索级别时总是执行立即检索而且如果检索不到相关的对象的话会返回null,load()方法则会抛出一个ObjectNotException</p>
-</li>
-<li><p>load()方法可返回一个实体代理类类型，而find()方法直接返回的是实体类对象。</p>
-</li>
-<li><p>load()方法可以充分利用内部缓存和二级缓存，而find()方法会忽略二级缓存，若内部缓存没有查询到会到数据库中去查询。</p>
-<a id="more"></a>
-<h2 id="Session-get-load"><a href="#Session-get-load" class="headerlink" title="Session.get/load"></a>Session.get/load</h2></li>
-<li><p>如果未能发现符合条件的记录，get方法返回null，而load方法会抛出一个ObejctNotFoundException。</p>
-</li>
-<li><p>Load方法可返回实体的代理类类型，而get方法永远直接返回实体类。</p>
-</li>
-<li><p>Load方法可以充分利用内部缓存和二级缓存中现有数据，而get方法则仅仅在内部缓存中进行数据查找，如没有发现对应数据，将越过二级缓存，直接调用SQL完成数据读取。</p>
-</li>
-</ol>
-<p>Session 的load(), get() , find() 方法都可实现对业务数据的查询，其中load()会因所要查询的对象类的映射文件（比如Customer.hbm.xml文件）中设置的检索策略，而实现立即检索或延迟检索。get()方法和find()方法却不受这种控制，它们总是会执行立即检索。</p>
-<p>那么象load()这样的方法，当其被设置为使用延迟检索时，它会返回什么样的实例呢？当使用延迟检索时返回为这一对象的代理类实例，代理类实例也有一个标志性的OID, 但没有被实例化，其所有属性为默认初始值或为空。提到检索，load() 和get()方法都是用指定了OID的方式检索并返回一个与数据库中记录相对应的实例对象。如Customer customer = (Customer)session.get(Customer.class, new Long(1)) 将会返回一个Customer实例对象customer. 而 find()可以实现批量的检索，其返回类型为List的对象集合。例如：<br>List customerList = session.find( “from Customer as c”);</p>
-<p>Load(): 另一种读取数据的方法,和get的区别是: 1.异常处理: load有异常处理,get没有,它返回null,2.get从数据库读数据,load可能去读缓冲区。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
-      <categories>
-        <category>Java</category>
-        <category>Hibernate</category>
-        <category>开源框架</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Hibernate</tag>
-        <tag>常用方法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hibernate系统化学习之缓存</title>
     <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/</url>
     <content><![CDATA[<h2 id="N-1问题"><a href="#N-1问题" class="headerlink" title="N+1问题"></a>N+1问题</h2><p>所谓N+1问题，使用hibernate查询数据，首先返回数据的id信息，并没有返回所有的对象信息，只有在真正使用的时候，在使用这个id对数据库中查询数据，一次查询多次调用数据库（缓存）的情况，就是所谓的N+1问题。以下方法或者策略会出现N+1问题：</p>
@@ -168,6 +134,40 @@
         <tag>Java</tag>
         <tag>Hibernate</tag>
         <tag>缓存</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hibernate系统化学习之常用方法</title>
+    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<h2 id="session-find-load"><a href="#session-find-load" class="headerlink" title="session.find/load"></a>session.find/load</h2><p>hibernate中session.find/load方法都能通过指定实体类名和id从数据库中读取指定的记录，并且返回与之对映的实体对象。但是它们也有很大的区别 ,find()和load()方法在执行检索时的区别：</p>
+<ol>
+<li><p>find()在类检索级别时总是执行立即检索而且如果检索不到相关的对象的话会返回null,load()方法则会抛出一个ObjectNotException</p>
+</li>
+<li><p>load()方法可返回一个实体代理类类型，而find()方法直接返回的是实体类对象。</p>
+</li>
+<li><p>load()方法可以充分利用内部缓存和二级缓存，而find()方法会忽略二级缓存，若内部缓存没有查询到会到数据库中去查询。</p>
+<a id="more"></a>
+<h2 id="Session-get-load"><a href="#Session-get-load" class="headerlink" title="Session.get/load"></a>Session.get/load</h2></li>
+<li><p>如果未能发现符合条件的记录，get方法返回null，而load方法会抛出一个ObejctNotFoundException。</p>
+</li>
+<li><p>Load方法可返回实体的代理类类型，而get方法永远直接返回实体类。</p>
+</li>
+<li><p>Load方法可以充分利用内部缓存和二级缓存中现有数据，而get方法则仅仅在内部缓存中进行数据查找，如没有发现对应数据，将越过二级缓存，直接调用SQL完成数据读取。</p>
+</li>
+</ol>
+<p>Session 的load(), get() , find() 方法都可实现对业务数据的查询，其中load()会因所要查询的对象类的映射文件（比如Customer.hbm.xml文件）中设置的检索策略，而实现立即检索或延迟检索。get()方法和find()方法却不受这种控制，它们总是会执行立即检索。</p>
+<p>那么象load()这样的方法，当其被设置为使用延迟检索时，它会返回什么样的实例呢？当使用延迟检索时返回为这一对象的代理类实例，代理类实例也有一个标志性的OID, 但没有被实例化，其所有属性为默认初始值或为空。提到检索，load() 和get()方法都是用指定了OID的方式检索并返回一个与数据库中记录相对应的实例对象。如Customer customer = (Customer)session.get(Customer.class, new Long(1)) 将会返回一个Customer实例对象customer. 而 find()可以实现批量的检索，其返回类型为List的对象集合。例如：<br>List customerList = session.find( “from Customer as c”);</p>
+<p>Load(): 另一种读取数据的方法,和get的区别是: 1.异常处理: load有异常处理,get没有,它返回null,2.get从数据库读数据,load可能去读缓冲区。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>Hibernate</category>
+        <category>开源框架</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Hibernate</tag>
+        <tag>常用方法</tag>
       </tags>
   </entry>
   <entry>
@@ -998,6 +998,268 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux /proc/vmstat详解</title>
+    <url>/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>内核中虚拟内存的统计信息，对于性能分析有很大益处</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nr_free_pages 24320</span><br><span class="line">nr_alloc_batch 293</span><br><span class="line">nr_inactive_anon 13215</span><br><span class="line">nr_active_anon 58077</span><br><span class="line">nr_inactive_file 148719</span><br><span class="line">nr_active_file 172552</span><br><span class="line">nr_unevictable 0</span><br><span class="line">nr_mlock 0</span><br><span class="line">nr_anon_pages 19933</span><br><span class="line"><span class="comment"># 映射到文件的页数</span></span><br><span class="line">nr_mapped 8526</span><br><span class="line">nr_file_pages 348571</span><br><span class="line"><span class="comment"># 脏页数</span></span><br><span class="line">nr_dirty 16</span><br><span class="line"><span class="comment"># 会写页数</span></span><br><span class="line">nr_writeback 0</span><br><span class="line">nr_slab_reclaimable 17986</span><br><span class="line">nr_slab_unreclaimable 2986</span><br><span class="line"><span class="comment"># 分配到页面的页数</span></span><br><span class="line">nr_page_table_pages 1396</span><br><span class="line">nr_kernel_stack 123</span><br><span class="line"><span class="comment"># 不稳定页数</span></span><br><span class="line">nr_unstable 0</span><br><span class="line">nr_bounce 0</span><br><span class="line">nr_vmscan_write 0</span><br><span class="line">nr_vmscan_immediate_reclaim 26</span><br><span class="line">nr_writeback_temp 0</span><br><span class="line">nr_isolated_anon 0</span><br><span class="line">nr_isolated_file 0</span><br><span class="line">nr_shmem 27300</span><br><span class="line">nr_dirtied 8354426</span><br><span class="line">nr_written 8097732</span><br><span class="line">numa_hit 1187165492</span><br><span class="line">numa_miss 0</span><br><span class="line">numa_foreign 0</span><br><span class="line">numa_interleave 12459</span><br><span class="line">numa_local 1187165492</span><br><span class="line">numa_other 0</span><br><span class="line">workingset_refault 552268</span><br><span class="line">workingset_activate 81267</span><br><span class="line">workingset_nodereclaim 0</span><br><span class="line">nr_anon_transparent_hugepages 47</span><br><span class="line">nr_free_cma 0</span><br><span class="line">nr_dirty_threshold 94636</span><br><span class="line">nr_dirty_background_threshold 31545</span><br><span class="line"><span class="comment"># 从启动到现在读入的内存页数</span></span><br><span class="line">pgpgin 3168538</span><br><span class="line"><span class="comment"># 从启动到现在换出的内存页数</span></span><br><span class="line">pgpgout 49091671</span><br><span class="line"><span class="comment"># 从启动到现在读入的交换分区页数</span></span><br><span class="line">pswpin 0</span><br><span class="line"><span class="comment"># 从启动到现在换出的交换分区页数</span></span><br><span class="line">pswpout 0</span><br><span class="line"><span class="comment"># 从启动到现在dma存储区分配的页数</span></span><br><span class="line">pgalloc_dma 3730811</span><br><span class="line"><span class="comment"># 从启动到现在dma32存储区分配的页数</span></span><br><span class="line">pgalloc_dma32 1237816587</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区分配的页数</span></span><br><span class="line">pgalloc_normal 0</span><br><span class="line">pgalloc_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在释放的页数</span></span><br><span class="line">pgfree 1241571794</span><br><span class="line"><span class="comment"># 从启动到现在激活的页数</span></span><br><span class="line">pgactivate 2698296</span><br><span class="line"><span class="comment"># 从启动到现在去激活的页数</span></span><br><span class="line">pgdeactivate 747037</span><br><span class="line"><span class="comment"># 从启动到现在二级页面错误数</span></span><br><span class="line">pgfault 4099623847</span><br><span class="line"><span class="comment"># 从启动到现在一级页面错误数</span></span><br><span class="line">pgmajfault 4447</span><br><span class="line">pglazyfreed 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区再填充的页面数</span></span><br><span class="line">pgrefill_dma 2398</span><br><span class="line">pgrefill_dma32 778799</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区填充的页数</span></span><br><span class="line">pgrefill_normal 0</span><br><span class="line">pgrefill_movable 0</span><br><span class="line">pgsteal_kswapd_dma 6587</span><br><span class="line">pgsteal_kswapd_dma32 1977434</span><br><span class="line">pgsteal_kswapd_normal 0</span><br><span class="line">pgsteal_kswapd_movable 0</span><br><span class="line">pgsteal_direct_dma 0</span><br><span class="line">pgsteal_direct_dma32 0</span><br><span class="line">pgsteal_direct_normal 0</span><br><span class="line">pgsteal_direct_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的DMA存储区页面数</span></span><br><span class="line">pgscan_kswapd_dma 6645</span><br><span class="line">pgscan_kswapd_dma32 1992050</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的普通存储区页面数</span></span><br><span class="line">pgscan_kswapd_normal 0</span><br><span class="line">pgscan_kswapd_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_dma 0</span><br><span class="line">pgscan_direct_dma32 0</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_normal 0</span><br><span class="line">pgscan_direct_movable 0</span><br><span class="line">pgscan_direct_throttle 0</span><br><span class="line">zone_reclaim_failed 0</span><br><span class="line"><span class="comment"># kswapd 之外其他线程在回收过程中，因为回收 inode 而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">pginodesteal 0</span><br><span class="line"><span class="comment"># 从启动到现在被扫描的切片数</span></span><br><span class="line">slabs_scanned 1120768</span><br><span class="line"><span class="comment"># 在kswapd回收的过程中，因为回收inode而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">kswapd_inodesteal 105460</span><br><span class="line">kswapd_low_wmark_hit_quickly 47</span><br><span class="line">kswapd_high_wmark_hit_quickly 198</span><br><span class="line"><span class="comment"># 从启动到现在通过kswapd调用来回收的页面数</span></span><br><span class="line">pageoutrun 563</span><br><span class="line"><span class="comment"># 从启动到现在请求直接回收的页面数</span></span><br><span class="line">allocstall 0</span><br><span class="line"><span class="comment"># 从启动到现在轮换的页面数</span></span><br><span class="line">pgrotated 24</span><br><span class="line">drop_pagecache 0</span><br><span class="line">drop_slab 0</span><br><span class="line">numa_pte_updates 0</span><br><span class="line">numa_huge_pte_updates 0</span><br><span class="line">numa_hint_faults 0</span><br><span class="line">numa_hint_faults_local 0</span><br><span class="line">numa_pages_migrated 0</span><br><span class="line">pgmigrate_success 0</span><br><span class="line">pgmigrate_fail 0</span><br><span class="line">compact_migrate_scanned 0</span><br><span class="line">compact_free_scanned 0</span><br><span class="line">compact_isolated 0</span><br><span class="line">compact_stall 0</span><br><span class="line">compact_fail 0</span><br><span class="line">compact_success 0</span><br><span class="line">htlb_buddy_alloc_success 129</span><br><span class="line">htlb_buddy_alloc_fail 0</span><br><span class="line">unevictable_pgs_culled 0</span><br><span class="line">unevictable_pgs_scanned 0</span><br><span class="line">unevictable_pgs_rescued 0</span><br><span class="line">unevictable_pgs_mlocked 0</span><br><span class="line">unevictable_pgs_munlocked 0</span><br><span class="line">unevictable_pgs_cleared 0</span><br><span class="line">unevictable_pgs_stranded 0</span><br><span class="line">thp_fault_alloc 5482</span><br><span class="line">thp_fault_fallback 345</span><br><span class="line">thp_collapse_alloc 606</span><br><span class="line">thp_collapse_alloc_failed 48146</span><br><span class="line">thp_split 180</span><br><span class="line">thp_zero_page_alloc 2</span><br><span class="line">thp_zero_page_alloc_failed 0</span><br><span class="line">balloon_inflate 0</span><br><span class="line">balloon_deflate 0</span><br><span class="line">balloon_migrate 0</span><br><span class="line">swap_ra 0</span><br><span class="line">swap_ra_hit 0</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.kernel.org/doc/Documentation/vm/transhuge.txt">/proc/vmstat帮助手册</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>proc</tag>
+        <tag>vmstat</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux timewait问题分析</title>
+    <url>/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h2 id="TCP协议说明"><a href="#TCP协议说明" class="headerlink" title="TCP协议说明"></a>TCP协议说明</h2><p>TCP协议规定，对于已经建立的连接，网络双方要进行四次握手才能成功断开连接，如果缺少了其中某个步骤，将会使连接处于假死状态，连接本身占用的资源不会被释放。网络服务器程序要同时管理大量连接，所以很有必要保证无用连接完全断开，否则大量僵死的连接会浪费许多服务器资源。在众多TCP状态中，最值得注意的状态有两个：<strong>CLOSE_WAIT和TIME_WAIT。</strong></p>
+<a id="more"></a>
+
+<h3 id="TCP建立连接的过程"><a href="#TCP建立连接的过程" class="headerlink" title="TCP建立连接的过程"></a>TCP建立连接的过程</h3><div align="center">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1602666879773.png" class title="TCP建立连接的过程">
+
+</div>
+
+<h3 id="TCP断开连接"><a href="#TCP断开连接" class="headerlink" title="TCP断开连接"></a>TCP断开连接</h3><div align="center">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1602667375240.png" class title="TCP断开连接过程">
+
+</div>
+
+<h3 id="常用配置参数"><a href="#常用配置参数" class="headerlink" title="常用配置参数"></a>常用配置参数</h3><div align="center">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1602667762547.png" class title="tcp常用配置">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1606352049779.png" class title="tcp优化点">
+
+</div>
+
+<h2 id="状态说明"><a href="#状态说明" class="headerlink" title="状态说明"></a>状态说明</h2><h3 id="LISTENING状态"><a href="#LISTENING状态" class="headerlink" title="LISTENING状态"></a>LISTENING状态</h3><p>FTP服务启动后首先处于侦听（LISTENING）状态。</p>
+<h3 id="ESTABLISHED状态"><a href="#ESTABLISHED状态" class="headerlink" title="ESTABLISHED状态"></a>ESTABLISHED状态</h3><p>ESTABLISHED的意思是建立连接。表示两台机器正在通信。</p>
+<h3 id="CLOSE-WAIT"><a href="#CLOSE-WAIT" class="headerlink" title="CLOSE_WAIT"></a>CLOSE_WAIT</h3><p>对方主动关闭连接或者网络异常导致连接中断，这时我方的状态会变成CLOSE_WAIT 此时我方要调用close()来使得连接正确关闭</p>
+<h3 id="TIME-WAIT"><a href="#TIME-WAIT" class="headerlink" title="TIME_WAIT"></a>TIME_WAIT</h3><p>我方主动调用close()断开连接，收到对方确认后状态变为TIME_WAIT。TCP协议规定TIME_WAIT状态会一直持续2MSL(Max Segment Lifetime，即两倍的分段最大生存期，Windows下默认为4分钟)，以此来确保旧的连接状态不会对新连接产生影响。<strong>处于TIME_WAIT状态的连接占用的资源不会被内核释放</strong>，所以作为服务器，在可能的情况下，尽量不要主动断开连接，以减少TIME_WAIT状态造成的资源浪费。  </p>
+<p>目前有一种避免TIME_WAIT资源浪费的方法，就是关闭socket的LINGER选项。但这种做法是TCP协议不推荐使用的，在某些情况下这个操作可能会带来错误。<br><strong>TIME_WAIT是TCP协议用以保证被重新分配的socket不会受到之前残留的延迟重发报文影响的机制,是必要的逻辑保证.</strong></p>
+<h3 id="SYN-SENT状态"><a href="#SYN-SENT状态" class="headerlink" title="SYN_SENT状态"></a>SYN_SENT状态</h3><p>SYN_SENT状态表示请求连接，当你要访问其它的计算机的服务时首先要发个同步信号给该端口，此时状态为SYN_SENT，如果连接成功了就变为 ESTABLISHED，此时SYN_SENT状态非常短暂。但如果发现SYN_SENT非常多且在向不同的机器发出，那你的机器可能中了冲击波或震荡波 之类的病毒了。这类病毒为了感染别的计算机，它就要扫描别的计算机，在扫描的过程中对每个要扫描的计算机都要发出了同步请求，这也是出现许多 SYN_SENT的原因。</p>
+<h2 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h2><div align="center">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1588043788007.png" class title="TCP状态转换图">
+
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1594448316079.png" class title="TCP状态转换图">
+
+
+</div>
+
+<h2 id="TIME-WAIT配置"><a href="#TIME-WAIT配置" class="headerlink" title="TIME_WAIT配置"></a>TIME_WAIT配置</h2><h3 id="windows-机器设置"><a href="#windows-机器设置" class="headerlink" title="windows 机器设置"></a>windows 机器设置</h3><p>在HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters,右键添加名为TcpTimedWaitDelay的<br>DWORD键,设置为60,以缩短TIME_WAIT的等待时间</p>
+<h3 id="ubuntu机器设置"><a href="#ubuntu机器设置" class="headerlink" title="ubuntu机器设置"></a>ubuntu机器设置</h3><p><code>vi /etc/sysctl.conf</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1:表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击</span></span><br><span class="line"><span class="comment"># 默认为0，表示关闭；</span></span><br><span class="line">net.ipv4.tcp_syncookies = 1</span><br><span class="line"><span class="comment"># 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；</span></span><br><span class="line">net.ipv4.tcp_tw_reuse = 1</span><br><span class="line"><span class="comment"># 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。</span></span><br><span class="line">net.ipv4.tcp_tw_recycle = 1</span><br><span class="line"><span class="comment"># 修改系統默认的 TIMEOUT 时间</span></span><br><span class="line">net.ipv4.tcp_fin_timeout = 30</span><br><span class="line"></span><br><span class="line"><span class="comment"># 表示当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时，改为20分钟。</span></span><br><span class="line">net.ipv4.tcp_keepalive_time = 1200</span><br><span class="line"><span class="comment"># 表示用于向外连接的端口范围。缺省情况下很小：32768到61000，改为1024到65000。</span></span><br><span class="line">net.ipv4.ip_local_port_range = 1024 65000</span><br><span class="line"><span class="comment"># 表示SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数。</span></span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 8192</span><br><span class="line"><span class="comment"># 表示系统同时保持TIME_WAIT套接字的最大数量，如果超过这个数字，TIME_WAIT套接字将立刻被清除并打印警告信息。默认为180000，改为5000。</span></span><br><span class="line">net.ipv4.tcp_max_tw_buckets = 5000</span><br></pre></td></tr></table></figure>
+<h2 id="查看系统TCP连接资源命令"><a href="#查看系统TCP连接资源命令" class="headerlink" title="查看系统TCP连接资源命令"></a>查看系统TCP连接资源命令</h2><p><code>netstat -n | awk &#39;/^tcp/ &#123;++S[$NF]&#125; END &#123;for(a in S) print a, S[a]&#125;&#39;</code></p>
+<p>一般情况下，系统的socket资源默认5000个。（非官方）</p>
+<h2 id="TCP协议中有TIME-WAIT这个状态的原因"><a href="#TCP协议中有TIME-WAIT这个状态的原因" class="headerlink" title="TCP协议中有TIME_WAIT这个状态的原因"></a>TCP协议中有TIME_WAIT这个状态的原因</h2><ol>
+<li>防止上一次连接中的包，迷路后重新出现，影响新连接（经过2MSL，上一次连接中所有的重复包都会消失）</li>
+<li>可靠的关闭TCP连接。在主动关闭方发送的最后一个 ack(fin) ，有可能丢失，这时被动方会重新发<br>fin, 如果这时主动方处于 CLOSED 状态 ，就会响应 rst 而不是 ack。所以主动方要处于 TIME_WAIT 状态，而不能是 CLOSED 。</li>
+</ol>
+<h2 id="TIME-WAIT造成的影响"><a href="#TIME-WAIT造成的影响" class="headerlink" title="TIME_WAIT造成的影响"></a>TIME_WAIT造成的影响</h2><ol>
+<li>场景：在高并发短连接的TCP服务器上，当服务器处理完请求后立刻主动正常关闭连接，会出现大量socket处于TIME_WAIT状态<ol>
+<li>高并发可以让服务器在短时间范围内同时占用大量端口（0~65535）</li>
+<li>短连接表示“业务处理+传输数据的时间 远远小于 TIMEWAIT超时的时间”的连接。</li>
+</ol>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>命令参考《<a href="book/linux-netstat-ss.md">netstat/ss</a>》</li>
+<li><a href="https://www.cnblogs.com/dadonggg/p/8778318.html">解决TIME_WAIT过多造成的问题</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>timewait</tag>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 性能分析思路与工具</title>
+    <url>/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<h2 id="关注点"><a href="#关注点" class="headerlink" title="关注点"></a>关注点</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133930457.png" class>
+
+</div>
+<a id="more"></a>
+
+<h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133995578.png" class>
+
+</div>
+
+<h2 id="CPU时间量级"><a href="#CPU时间量级" class="headerlink" title="CPU时间量级"></a>CPU时间量级</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134065698.png" class>
+
+</div>
+
+<h2 id="三部曲"><a href="#三部曲" class="headerlink" title="三部曲"></a>三部曲</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134095303.png" class>
+
+</div>
+
+<h2 id="分析视角"><a href="#分析视角" class="headerlink" title="分析视角"></a>分析视角</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134132100.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134149886.png" class>
+
+</div>
+
+<h2 id="常用性能分析工具"><a href="#常用性能分析工具" class="headerlink" title="常用性能分析工具"></a>常用性能分析工具</h2><h3 id="CPU性能工具"><a href="#CPU性能工具" class="headerlink" title="CPU性能工具"></a>CPU性能工具</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448604003.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448790369.png" class>
+
+
+</div>
+
+<h3 id="内存分析工具"><a href="#内存分析工具" class="headerlink" title="内存分析工具"></a>内存分析工具</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448638953.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448740381.png" class>
+
+
+</div>
+
+<h3 id="文件磁盘性能分析工具"><a href="#文件磁盘性能分析工具" class="headerlink" title="文件磁盘性能分析工具"></a>文件磁盘性能分析工具</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448675711.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448755937.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448777177.png" class>
+
+
+</div>
+
+<h3 id="网络性能分析工具"><a href="#网络性能分析工具" class="headerlink" title="网络性能分析工具"></a>网络性能分析工具</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448706341.png" class>
+
+</div>
+
+<h3 id="Analysis-and-Tools"><a href="#Analysis-and-Tools" class="headerlink" title="Analysis and Tools"></a>Analysis and Tools</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133105522.png" class>
+
+</div>
+
+<h3 id="perf"><a href="#perf" class="headerlink" title="perf"></a>perf</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134224092.png" class>
+
+</div>
+
+<h2 id="定位CPU瓶颈"><a href="#定位CPU瓶颈" class="headerlink" title="定位CPU瓶颈"></a>定位CPU瓶颈</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134201912.png" class>
+
+</div>
+
+<h2 id="定位IO瓶颈"><a href="#定位IO瓶颈" class="headerlink" title="定位IO瓶颈"></a>定位IO瓶颈</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134256935.png" class>
+
+</div>
+
+<h2 id="定位锁瓶颈"><a href="#定位锁瓶颈" class="headerlink" title="定位锁瓶颈"></a>定位锁瓶颈</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134286008.png" class>
+
+</div>
+
+<h3 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134314979.png" class>
+
+</div>
+
+<h2 id="内存和对象管理"><a href="#内存和对象管理" class="headerlink" title="内存和对象管理"></a>内存和对象管理</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134340771.png" class>
+
+</div>
+
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134379518.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134384936.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134398412.png" class>
+
+</div>
+
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux cpu过高分析</title>
+    <url>/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h2 id="CPU使用率过高"><a href="#CPU使用率过高" class="headerlink" title="CPU使用率过高"></a>CPU使用率过高</h2><p>在高负载情况下CPU持续使用率高一般没有问题，但是导致任务无法正常调度或者load持续增加就需要重点关注，并且定位具体原因。（<strong>一般计算密集型应用 CPU 使用率偏高 load 偏低，IO 密集型相反。</strong>）</p>
+<a id="more"></a>
+
+<h3 id="计算方式"><a href="#计算方式" class="headerlink" title="计算方式"></a>计算方式</h3><div align="center">
+
+<img src="/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/1587429499354.png" class title="CPU使用率计算公式">
+
+</div>
+
+<h3 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h3><ol>
+<li>频繁 FullGC/YongGC</li>
+<li>代码异常，出现死循环</li>
+<li>死锁</li>
+</ol>
+<h3 id="定位步骤"><a href="#定位步骤" class="headerlink" title="定位步骤"></a>定位步骤</h3><h3 id="处理方式"><a href="#处理方式" class="headerlink" title="处理方式"></a>处理方式</h3><ol>
+<li>登录服务器之后使用<a href="#_Top">top</a>命令，并且输入1按照cpu使用率降序排序获取使用率最高的线程</li>
+<li>perf top -g -p pid查看调用关系（-g开启调用关系分析，-p指定线程号）</li>
+<li>top -Hp pid可以查看某个进程的线程信息（ ps mp pid -o THREAD,tid）</li>
+<li>jstack 线程ID 可以查看某个线程的堆栈情况，特别对于hung挂死的线程，可以使用选项-F强制打印dump信息jstack -F pid</li>
+<li>执行 jstack pid|grep -A 10 pid的16进制，得到线程堆栈信息中1371这个线程所在行的后面10行</li>
+</ol>
+<h2 id="load过高"><a href="#load过高" class="headerlink" title="load过高"></a>load过高</h2><h2 id="cpu-wait过高"><a href="#cpu-wait过高" class="headerlink" title="cpu_wait过高"></a>cpu_wait过高</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://developer.aliyun.com/article/757655?spm=a2cdg.index.lists.18">重启大法好！线上常见问题排查手册</a></li>
+<li><a href="https://github.com/alibaba/arthas">arthas开源组件</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>CPU过高</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux命令之TOP</title>
     <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/</url>
     <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@incloudos logs]<span class="comment"># top -h</span></span><br><span class="line">  procps-ng version 3.3.10</span><br><span class="line">Usage:</span><br><span class="line">  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]</span><br><span class="line">s – 改变画面更新频率</span><br><span class="line">l – 关闭或开启第一部分第一行 top 信息的表示</span><br><span class="line">t – 关闭或开启第一部分第二行 Tasks 和第三行 Cpus 信息的表示</span><br><span class="line">m – 关闭或开启第一部分第四行 Mem 和 第五行 Swap 信息的表示</span><br><span class="line">N – 以 PID 的大小的顺序排列表示进程列表</span><br><span class="line">P – 以 CPU 占用率大小的顺序排列进程列表</span><br><span class="line">M – 以内存占用率大小的顺序排列进程列表</span><br><span class="line">h – 显示帮助</span><br><span class="line">n – 设置在进程列表所显示进程的数量</span><br><span class="line">q – 退出 top</span><br><span class="line">s – 改变画面更新周期</span><br><span class="line">请在top里面按下E，注意是大写。你会发现内存那一行的最左侧，</span><br><span class="line">也就是Mem前面，会有Kib、MiB、GiB等单位变化，</span><br><span class="line">但是数字后面不会直接写明单位。</span><br></pre></td></tr></table></figure>
@@ -1204,25 +1466,6 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>Linux</tag>
         <tag>TOP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux /proc/vmstat详解</title>
-    <url>/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>内核中虚拟内存的统计信息，对于性能分析有很大益处</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nr_free_pages 24320</span><br><span class="line">nr_alloc_batch 293</span><br><span class="line">nr_inactive_anon 13215</span><br><span class="line">nr_active_anon 58077</span><br><span class="line">nr_inactive_file 148719</span><br><span class="line">nr_active_file 172552</span><br><span class="line">nr_unevictable 0</span><br><span class="line">nr_mlock 0</span><br><span class="line">nr_anon_pages 19933</span><br><span class="line"><span class="comment"># 映射到文件的页数</span></span><br><span class="line">nr_mapped 8526</span><br><span class="line">nr_file_pages 348571</span><br><span class="line"><span class="comment"># 脏页数</span></span><br><span class="line">nr_dirty 16</span><br><span class="line"><span class="comment"># 会写页数</span></span><br><span class="line">nr_writeback 0</span><br><span class="line">nr_slab_reclaimable 17986</span><br><span class="line">nr_slab_unreclaimable 2986</span><br><span class="line"><span class="comment"># 分配到页面的页数</span></span><br><span class="line">nr_page_table_pages 1396</span><br><span class="line">nr_kernel_stack 123</span><br><span class="line"><span class="comment"># 不稳定页数</span></span><br><span class="line">nr_unstable 0</span><br><span class="line">nr_bounce 0</span><br><span class="line">nr_vmscan_write 0</span><br><span class="line">nr_vmscan_immediate_reclaim 26</span><br><span class="line">nr_writeback_temp 0</span><br><span class="line">nr_isolated_anon 0</span><br><span class="line">nr_isolated_file 0</span><br><span class="line">nr_shmem 27300</span><br><span class="line">nr_dirtied 8354426</span><br><span class="line">nr_written 8097732</span><br><span class="line">numa_hit 1187165492</span><br><span class="line">numa_miss 0</span><br><span class="line">numa_foreign 0</span><br><span class="line">numa_interleave 12459</span><br><span class="line">numa_local 1187165492</span><br><span class="line">numa_other 0</span><br><span class="line">workingset_refault 552268</span><br><span class="line">workingset_activate 81267</span><br><span class="line">workingset_nodereclaim 0</span><br><span class="line">nr_anon_transparent_hugepages 47</span><br><span class="line">nr_free_cma 0</span><br><span class="line">nr_dirty_threshold 94636</span><br><span class="line">nr_dirty_background_threshold 31545</span><br><span class="line"><span class="comment"># 从启动到现在读入的内存页数</span></span><br><span class="line">pgpgin 3168538</span><br><span class="line"><span class="comment"># 从启动到现在换出的内存页数</span></span><br><span class="line">pgpgout 49091671</span><br><span class="line"><span class="comment"># 从启动到现在读入的交换分区页数</span></span><br><span class="line">pswpin 0</span><br><span class="line"><span class="comment"># 从启动到现在换出的交换分区页数</span></span><br><span class="line">pswpout 0</span><br><span class="line"><span class="comment"># 从启动到现在dma存储区分配的页数</span></span><br><span class="line">pgalloc_dma 3730811</span><br><span class="line"><span class="comment"># 从启动到现在dma32存储区分配的页数</span></span><br><span class="line">pgalloc_dma32 1237816587</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区分配的页数</span></span><br><span class="line">pgalloc_normal 0</span><br><span class="line">pgalloc_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在释放的页数</span></span><br><span class="line">pgfree 1241571794</span><br><span class="line"><span class="comment"># 从启动到现在激活的页数</span></span><br><span class="line">pgactivate 2698296</span><br><span class="line"><span class="comment"># 从启动到现在去激活的页数</span></span><br><span class="line">pgdeactivate 747037</span><br><span class="line"><span class="comment"># 从启动到现在二级页面错误数</span></span><br><span class="line">pgfault 4099623847</span><br><span class="line"><span class="comment"># 从启动到现在一级页面错误数</span></span><br><span class="line">pgmajfault 4447</span><br><span class="line">pglazyfreed 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区再填充的页面数</span></span><br><span class="line">pgrefill_dma 2398</span><br><span class="line">pgrefill_dma32 778799</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区填充的页数</span></span><br><span class="line">pgrefill_normal 0</span><br><span class="line">pgrefill_movable 0</span><br><span class="line">pgsteal_kswapd_dma 6587</span><br><span class="line">pgsteal_kswapd_dma32 1977434</span><br><span class="line">pgsteal_kswapd_normal 0</span><br><span class="line">pgsteal_kswapd_movable 0</span><br><span class="line">pgsteal_direct_dma 0</span><br><span class="line">pgsteal_direct_dma32 0</span><br><span class="line">pgsteal_direct_normal 0</span><br><span class="line">pgsteal_direct_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的DMA存储区页面数</span></span><br><span class="line">pgscan_kswapd_dma 6645</span><br><span class="line">pgscan_kswapd_dma32 1992050</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的普通存储区页面数</span></span><br><span class="line">pgscan_kswapd_normal 0</span><br><span class="line">pgscan_kswapd_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_dma 0</span><br><span class="line">pgscan_direct_dma32 0</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_normal 0</span><br><span class="line">pgscan_direct_movable 0</span><br><span class="line">pgscan_direct_throttle 0</span><br><span class="line">zone_reclaim_failed 0</span><br><span class="line"><span class="comment"># kswapd 之外其他线程在回收过程中，因为回收 inode 而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">pginodesteal 0</span><br><span class="line"><span class="comment"># 从启动到现在被扫描的切片数</span></span><br><span class="line">slabs_scanned 1120768</span><br><span class="line"><span class="comment"># 在kswapd回收的过程中，因为回收inode而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">kswapd_inodesteal 105460</span><br><span class="line">kswapd_low_wmark_hit_quickly 47</span><br><span class="line">kswapd_high_wmark_hit_quickly 198</span><br><span class="line"><span class="comment"># 从启动到现在通过kswapd调用来回收的页面数</span></span><br><span class="line">pageoutrun 563</span><br><span class="line"><span class="comment"># 从启动到现在请求直接回收的页面数</span></span><br><span class="line">allocstall 0</span><br><span class="line"><span class="comment"># 从启动到现在轮换的页面数</span></span><br><span class="line">pgrotated 24</span><br><span class="line">drop_pagecache 0</span><br><span class="line">drop_slab 0</span><br><span class="line">numa_pte_updates 0</span><br><span class="line">numa_huge_pte_updates 0</span><br><span class="line">numa_hint_faults 0</span><br><span class="line">numa_hint_faults_local 0</span><br><span class="line">numa_pages_migrated 0</span><br><span class="line">pgmigrate_success 0</span><br><span class="line">pgmigrate_fail 0</span><br><span class="line">compact_migrate_scanned 0</span><br><span class="line">compact_free_scanned 0</span><br><span class="line">compact_isolated 0</span><br><span class="line">compact_stall 0</span><br><span class="line">compact_fail 0</span><br><span class="line">compact_success 0</span><br><span class="line">htlb_buddy_alloc_success 129</span><br><span class="line">htlb_buddy_alloc_fail 0</span><br><span class="line">unevictable_pgs_culled 0</span><br><span class="line">unevictable_pgs_scanned 0</span><br><span class="line">unevictable_pgs_rescued 0</span><br><span class="line">unevictable_pgs_mlocked 0</span><br><span class="line">unevictable_pgs_munlocked 0</span><br><span class="line">unevictable_pgs_cleared 0</span><br><span class="line">unevictable_pgs_stranded 0</span><br><span class="line">thp_fault_alloc 5482</span><br><span class="line">thp_fault_fallback 345</span><br><span class="line">thp_collapse_alloc 606</span><br><span class="line">thp_collapse_alloc_failed 48146</span><br><span class="line">thp_split 180</span><br><span class="line">thp_zero_page_alloc 2</span><br><span class="line">thp_zero_page_alloc_failed 0</span><br><span class="line">balloon_inflate 0</span><br><span class="line">balloon_deflate 0</span><br><span class="line">balloon_migrate 0</span><br><span class="line">swap_ra 0</span><br><span class="line">swap_ra_hit 0</span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://www.kernel.org/doc/Documentation/vm/transhuge.txt">/proc/vmstat帮助手册</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>proc</tag>
-        <tag>vmstat</tag>
       </tags>
   </entry>
   <entry>
@@ -1924,6 +2167,45 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>使用hexo+github+next部署个人博客</title>
+    <url>/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="依赖环境"><a href="#依赖环境" class="headerlink" title="依赖环境"></a>依赖环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line"><span class="comment"># 修改原</span></span><br><span class="line">npm config <span class="built_in">set</span> registry http://registry.npm.taobao.org/</span><br><span class="line"><span class="comment"># 改回去</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmjs.org/</span><br></pre></td></tr></table></figure>
+<h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><p>使用npm安装hexo(<a href="https://hexo.io/zh-cn/">详细文档</a>)，命令是<code>npm install -g hexo-cli</code>,安装完成之后初始化博客,命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir sld880311.github.io</span><br><span class="line"><span class="built_in">cd</span> sld880311.github.io</span><br><span class="line">hexo init </span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+<p>初始化完成之后目录结构如下：<a id="more"></a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml <span class="comment"># 网站的配置信息，您可以在此配置大部分的参数。 </span></span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds <span class="comment"># 模版文件夹</span></span><br><span class="line">├── <span class="built_in">source</span>  <span class="comment"># 资源文件夹，除 _posts 文件，其他以下划线_开头的文件或者文件夹不会被编译打包到public文件夹</span></span><br><span class="line">|   ├── _drafts <span class="comment"># 草稿文件</span></span><br><span class="line">|   └── _posts <span class="comment"># 文章Markdowm文件 </span></span><br><span class="line">└── themes  <span class="comment"># 主题文件夹</span></span><br></pre></td></tr></table></figure>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo s         <span class="comment"># 启动服务，然后可以使用 http://localhost:4000访问</span></span><br><span class="line">hexo init      <span class="comment">#生成文档</span></span><br><span class="line">hexo g         <span class="comment">#生成网页</span></span><br><span class="line">hexo clean     <span class="comment">#清除网页</span></span><br><span class="line">hexo d         <span class="comment">#部署博客</span></span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure>
+<h2 id="特殊配置"><a href="#特殊配置" class="headerlink" title="特殊配置"></a>特殊配置</h2><h3 id="配置SSH-Key"><a href="#配置SSH-Key" class="headerlink" title="配置SSH Key"></a>配置SSH Key</h3><p>获取<code>cat ~/.ssh/id_rsa.pub</code>中的数据，如果没有数据需要按照以下命令配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;sunliaodong&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;sld880311@hotmail.com&quot;</span></span><br><span class="line">ssh-keygen -t rsa -C <span class="string">&#x27;sld880311@hotmail.com&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>然后把生成的key添加中自己的github中即可。</p>
+<h3 id="部署到github"><a href="#部署到github" class="headerlink" title="部署到github"></a>部署到github</h3><h4 id="修改根目录下的-config-yml"><a href="#修改根目录下的-config-yml" class="headerlink" title="修改根目录下的_config.yml"></a>修改根目录下的_config.yml</h4><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/one-command-deployment</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&#x27;git&#x27;</span></span><br><span class="line">  <span class="attr">repo:</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">https://github.com/sld880311/sld880311.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<h4 id="安装部署插件hexo-deployer-git"><a href="#安装部署插件hexo-deployer-git" class="headerlink" title="安装部署插件hexo-deployer-git"></a>安装部署插件hexo-deployer-git</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<h4 id="部署命令"><a href="#部署命令" class="headerlink" title="部署命令"></a>部署命令</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
+<h3 id="添加字数统计和阅读时长"><a href="#添加字数统计和阅读时长" class="headerlink" title="添加字数统计和阅读时长"></a>添加字数统计和阅读时长</h3><h4 id="添加插件"><a href="#添加插件" class="headerlink" title="添加插件"></a>添加插件</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-symbols-count-time --save</span><br></pre></td></tr></table></figure>
+<h4 id="修改根目录的-config-yml"><a href="#修改根目录的-config-yml" class="headerlink" title="修改根目录的_config.yml"></a>修改根目录的_config.yml</h4><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 文章字数统计</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">time:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h4 id="修改主题-config-yml"><a href="#修改主题-config-yml" class="headerlink" title="修改主题_config.yml"></a>修改主题_config.yml</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/theme-next/hexo-symbols-count-time</span></span><br><span class="line">symbols_count_time:</span><br><span class="line">  separated_meta: <span class="literal">true</span></span><br><span class="line">  item_text_post: <span class="literal">true</span></span><br><span class="line">  item_text_total: <span class="literal">true</span></span><br><span class="line">  awl: 4</span><br><span class="line">  wpm: 275</span><br></pre></td></tr></table></figure>
+<h2 id="开始写作"><a href="#开始写作" class="headerlink" title="开始写作"></a>开始写作</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new <span class="string">&quot;文章名称&quot;</span>      <span class="comment"># 使用命令创建文章</span></span><br><span class="line">hexo new page categories  <span class="comment"># 定义分类</span></span><br><span class="line">hexo new page tags        <span class="comment"># 定义标签</span></span><br><span class="line">hexo new page about       <span class="comment"># 定义关于</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol>
+<li><a href="http://theme-next.iissnan.com/">theme-next.iissnan</a></li>
+<li><a href="https://theme-next.js.org/docs/">theme-next.js</a></li>
+<li><a href="https://www.jianshu.com/p/446ec02bb0a8">Hexo+Next搭建个人博客</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/185015237">hexo之主题优化篇</a></li>
+<li><a href="https://segmentfault.com/a/1190000017986794">超详细Hexo+Github Page搭建技术博客教程【持续更新】</a></li>
+<li><a href="https://blog.csdn.net/u014786530/article/details/103548737">Hexo+NexT搭建个人博客</a></li>
+<li><a href="https://blog.csdn.net/qq_40930491/article/details/87902310">从头开始搭建hexo+github+hexo-theme-next主题博客（高级设置）</a></li>
+<li></li>
+</ol>
+]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+        <tag>github</tag>
+        <tag>Next</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>git详解</title>
     <url>/2021/02/04/git%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h2 id="提交本地工程到github"><a href="#提交本地工程到github" class="headerlink" title="提交本地工程到github"></a>提交本地工程到github</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;注释&quot;</span></span><br><span class="line">git remote add origin https://github.com/sld880311/parkspaceagent</span><br><span class="line"></span><br><span class="line">git pull origin master</span><br><span class="line"><span class="comment">#如果出现fatal: refusing to merge unrelated histories</span></span><br><span class="line">使用如下命令 git pull origin master --allow-unrelated-histories</span><br><span class="line"></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
@@ -1970,45 +2252,6 @@ SHR：shared memory 共享内存<br>
       </categories>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用hexo+github+next部署个人博客</title>
-    <url>/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="依赖环境"><a href="#依赖环境" class="headerlink" title="依赖环境"></a>依赖环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line"><span class="comment"># 修改原</span></span><br><span class="line">npm config <span class="built_in">set</span> registry http://registry.npm.taobao.org/</span><br><span class="line"><span class="comment"># 改回去</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmjs.org/</span><br></pre></td></tr></table></figure>
-<h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><p>使用npm安装hexo(<a href="https://hexo.io/zh-cn/">详细文档</a>)，命令是<code>npm install -g hexo-cli</code>,安装完成之后初始化博客,命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir sld880311.github.io</span><br><span class="line"><span class="built_in">cd</span> sld880311.github.io</span><br><span class="line">hexo init </span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
-<p>初始化完成之后目录结构如下：<a id="more"></a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml <span class="comment"># 网站的配置信息，您可以在此配置大部分的参数。 </span></span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds <span class="comment"># 模版文件夹</span></span><br><span class="line">├── <span class="built_in">source</span>  <span class="comment"># 资源文件夹，除 _posts 文件，其他以下划线_开头的文件或者文件夹不会被编译打包到public文件夹</span></span><br><span class="line">|   ├── _drafts <span class="comment"># 草稿文件</span></span><br><span class="line">|   └── _posts <span class="comment"># 文章Markdowm文件 </span></span><br><span class="line">└── themes  <span class="comment"># 主题文件夹</span></span><br></pre></td></tr></table></figure>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo s         <span class="comment"># 启动服务，然后可以使用 http://localhost:4000访问</span></span><br><span class="line">hexo init      <span class="comment">#生成文档</span></span><br><span class="line">hexo g         <span class="comment">#生成网页</span></span><br><span class="line">hexo clean     <span class="comment">#清除网页</span></span><br><span class="line">hexo d         <span class="comment">#部署博客</span></span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure>
-<h2 id="特殊配置"><a href="#特殊配置" class="headerlink" title="特殊配置"></a>特殊配置</h2><h3 id="配置SSH-Key"><a href="#配置SSH-Key" class="headerlink" title="配置SSH Key"></a>配置SSH Key</h3><p>获取<code>cat ~/.ssh/id_rsa.pub</code>中的数据，如果没有数据需要按照以下命令配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;sunliaodong&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;sld880311@hotmail.com&quot;</span></span><br><span class="line">ssh-keygen -t rsa -C <span class="string">&#x27;sld880311@hotmail.com&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>然后把生成的key添加中自己的github中即可。</p>
-<h3 id="部署到github"><a href="#部署到github" class="headerlink" title="部署到github"></a>部署到github</h3><h4 id="修改根目录下的-config-yml"><a href="#修改根目录下的-config-yml" class="headerlink" title="修改根目录下的_config.yml"></a>修改根目录下的_config.yml</h4><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/one-command-deployment</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&#x27;git&#x27;</span></span><br><span class="line">  <span class="attr">repo:</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">https://github.com/sld880311/sld880311.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<h4 id="安装部署插件hexo-deployer-git"><a href="#安装部署插件hexo-deployer-git" class="headerlink" title="安装部署插件hexo-deployer-git"></a>安装部署插件hexo-deployer-git</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<h4 id="部署命令"><a href="#部署命令" class="headerlink" title="部署命令"></a>部署命令</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
-<h3 id="添加字数统计和阅读时长"><a href="#添加字数统计和阅读时长" class="headerlink" title="添加字数统计和阅读时长"></a>添加字数统计和阅读时长</h3><h4 id="添加插件"><a href="#添加插件" class="headerlink" title="添加插件"></a>添加插件</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-symbols-count-time --save</span><br></pre></td></tr></table></figure>
-<h4 id="修改根目录的-config-yml"><a href="#修改根目录的-config-yml" class="headerlink" title="修改根目录的_config.yml"></a>修改根目录的_config.yml</h4><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 文章字数统计</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">time:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<h4 id="修改主题-config-yml"><a href="#修改主题-config-yml" class="headerlink" title="修改主题_config.yml"></a>修改主题_config.yml</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/theme-next/hexo-symbols-count-time</span></span><br><span class="line">symbols_count_time:</span><br><span class="line">  separated_meta: <span class="literal">true</span></span><br><span class="line">  item_text_post: <span class="literal">true</span></span><br><span class="line">  item_text_total: <span class="literal">true</span></span><br><span class="line">  awl: 4</span><br><span class="line">  wpm: 275</span><br></pre></td></tr></table></figure>
-<h2 id="开始写作"><a href="#开始写作" class="headerlink" title="开始写作"></a>开始写作</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new <span class="string">&quot;文章名称&quot;</span>      <span class="comment"># 使用命令创建文章</span></span><br><span class="line">hexo new page categories  <span class="comment"># 定义分类</span></span><br><span class="line">hexo new page tags        <span class="comment"># 定义标签</span></span><br><span class="line">hexo new page about       <span class="comment"># 定义关于</span></span><br></pre></td></tr></table></figure>
-<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol>
-<li><a href="http://theme-next.iissnan.com/">theme-next.iissnan</a></li>
-<li><a href="https://theme-next.js.org/docs/">theme-next.js</a></li>
-<li><a href="https://www.jianshu.com/p/446ec02bb0a8">Hexo+Next搭建个人博客</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/185015237">hexo之主题优化篇</a></li>
-<li><a href="https://segmentfault.com/a/1190000017986794">超详细Hexo+Github Page搭建技术博客教程【持续更新】</a></li>
-<li><a href="https://blog.csdn.net/u014786530/article/details/103548737">Hexo+NexT搭建个人博客</a></li>
-<li><a href="https://blog.csdn.net/qq_40930491/article/details/87902310">从头开始搭建hexo+github+hexo-theme-next主题博客（高级设置）</a></li>
-<li></li>
-</ol>
-]]></content>
-      <categories>
-        <category>其他</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-        <tag>github</tag>
-        <tag>Next</tag>
       </tags>
   </entry>
   <entry>

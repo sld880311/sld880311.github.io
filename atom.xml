@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-05T08:02:37.987Z</updated>
+  <updated>2021-02-05T08:46:42.389Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,79 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux 性能分析思路与工具</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/</id>
+    <published>2021-02-05T08:33:53.000Z</published>
+    <updated>2021-02-05T08:46:42.389Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;关注点&quot;&gt;&lt;a href=&quot;#关注点&quot; class=&quot;headerlink&quot; title=&quot;关注点&quot;&gt;&lt;/a&gt;关注点&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133930457.png&quot; class&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
+    
+    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux cpu过高分析</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/</id>
+    <published>2021-02-05T08:23:17.000Z</published>
+    <updated>2021-02-05T08:30:52.906Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;CPU使用率过高&quot;&gt;&lt;a href=&quot;#CPU使用率过高&quot; class=&quot;headerlink&quot; title=&quot;CPU使用率过高&quot;&gt;&lt;/a&gt;CPU使用率过高&lt;/h2&gt;&lt;p&gt;在高负载情况下CPU持续使用率高一般没有问题，但是导致任务无法正常调度或者load持续增加就需要重点关注，并且定位具体原因。（&lt;strong&gt;一般计算密集型应用 CPU 使用率偏高 load 偏低，IO 密集型相反。&lt;/strong&gt;）&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
+    
+    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
+    
+    <category term="CPU过高" scheme="https://www.sunliaodong.cn/tags/CPU%E8%BF%87%E9%AB%98/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux timewait问题分析</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</id>
+    <published>2021-02-05T08:23:00.000Z</published>
+    <updated>2021-02-05T08:28:34.869Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;TCP协议说明&quot;&gt;&lt;a href=&quot;#TCP协议说明&quot; class=&quot;headerlink&quot; title=&quot;TCP协议说明&quot;&gt;&lt;/a&gt;TCP协议说明&lt;/h2&gt;&lt;p&gt;TCP协议规定，对于已经建立的连接，网络双方要进行四次握手才能成功断开连接，如果缺少了其中某个步骤，将会使连接处于假死状态，连接本身占用的资源不会被释放。网络服务器程序要同时管理大量连接，所以很有必要保证无用连接完全断开，否则大量僵死的连接会浪费许多服务器资源。在众多TCP状态中，最值得注意的状态有两个：&lt;strong&gt;CLOSE_WAIT和TIME_WAIT。&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
+    
+    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
+    
+    <category term="timewait" scheme="https://www.sunliaodong.cn/tags/timewait/"/>
+    
+    <category term="网络" scheme="https://www.sunliaodong.cn/tags/%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
   
   <entry>
     <title>Linux /proc/vmstat详解</title>
@@ -519,95 +592,6 @@
     <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
     
     <category term="show status" scheme="https://www.sunliaodong.cn/tags/show-status/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之高可用</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%AB%98%E5%8F%AF%E7%94%A8/</id>
-    <published>2021-02-04T12:45:21.000Z</published>
-    <updated>2021-02-04T12:47:59.487Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;互为主从复制&quot;&gt;&lt;a href=&quot;#互为主从复制&quot; class=&quot;headerlink&quot; title=&quot;互为主从复制&quot;&gt;&lt;/a&gt;互为主从复制&lt;/h2&gt;&lt;h3 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h3&gt;&lt;p&gt;在一些高可用的环境中，mysql的主从不能满足现实中的一些实际需求。比如，一些流量大的网站数据库访问有了瓶颈，需要负载均衡的时候就用两个或者多个的mysql服务器，而这些mysql服务器的数据库数据必须要保持一致，那么就会用到主主复制。  &lt;/p&gt;
-&lt;p&gt;mysql主从架构中其实就一个主在工作，而从就相当于一个备份机器，从通过日志监测的方式来备份主库上的数据而保证主库的数据安全。在这种架构中如果从上的数据做了改变，主数据是不会用任何变化的。因为mysql主从架构主要是mysql从监控mysql主的日志变化来实现同步，相反的在这个架构中主并没有监控从的日志变化。所以，mysql从数据反生变化，主也就没有什么变化了。  &lt;/p&gt;
-&lt;p&gt;通过上述描述，可以看到如果想实现主主复制，无非就是在mysql主从架构上让mysql主实现监测从的日志变化，从而实现两台机器相互同步。  &lt;/p&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    <category term="高可用" scheme="https://www.sunliaodong.cn/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="高可用" scheme="https://www.sunliaodong.cn/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之备份与恢复</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/</id>
-    <published>2021-02-04T12:43:21.000Z</published>
-    <updated>2021-02-04T12:44:26.403Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;h3 id=&quot;备份的目的&quot;&gt;&lt;a href=&quot;#备份的目的&quot; class=&quot;headerlink&quot; title=&quot;备份的目的&quot;&gt;&lt;/a&gt;备份的目的&lt;/h3&gt;&lt;ol&gt;
-&lt;li&gt;做灾难恢复：对损坏的数据进行恢复和还原&lt;/li&gt;
-&lt;li&gt;需求改变：因需求改变而需要把数据还原到改变以前&lt;/li&gt;
-&lt;li&gt;测试：测试新功能是否可用&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;备份需要考虑的问题&quot;&gt;&lt;a href=&quot;#备份需要考虑的问题&quot; class=&quot;headerlink&quot; title=&quot;备份需要考虑的问题&quot;&gt;&lt;/a&gt;备份需要考虑的问题&lt;/h3&gt;&lt;ol&gt;
-&lt;li&gt;可以容忍丢失多长时间的数据；&lt;/li&gt;
-&lt;li&gt;恢复数据要在多长时间内完；&lt;/li&gt;
-&lt;li&gt;恢复的时候是否需要持续提供服务；&lt;/li&gt;
-&lt;li&gt;恢复的对象，是整个库，多个表，还是单个库，单个表。&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="备份" scheme="https://www.sunliaodong.cn/tags/%E5%A4%87%E4%BB%BD/"/>
-    
-    <category term="恢复" scheme="https://www.sunliaodong.cn/tags/%E6%81%A2%E5%A4%8D/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之优化技巧</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7/</id>
-    <published>2021-02-04T12:41:07.000Z</published>
-    <updated>2021-02-04T12:42:42.648Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;优化技巧&quot;&gt;&lt;a href=&quot;#优化技巧&quot; class=&quot;headerlink&quot; title=&quot;优化技巧&quot;&gt;&lt;/a&gt;优化技巧&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;配置文件的快速查找&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;/usr/libexec/mysqld --verbose --&lt;span class=&quot;built_in&quot;&gt;help&lt;/span&gt;|grep -A 1 &lt;span class=&quot;string&quot;&gt;&amp;#x27;Default options&amp;#x27;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;200815 16:01:04 [Note] Plugin &lt;span class=&quot;string&quot;&gt;&amp;#x27;FEEDBACK&amp;#x27;&lt;/span&gt; is disabled.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Default options are &lt;span class=&quot;built_in&quot;&gt;read&lt;/span&gt; from the following files &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; the given order:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;/etc/mysql/my.cnf /etc/my.cnf ~/.my.cnf&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/li&gt;
-&lt;li&gt;配置项使用小写，单词之间使用横线或下划线分隔，并且使用统一的规范&lt;/li&gt;
-&lt;li&gt;作用域：全局、会话、对象&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    <category term="调优" scheme="https://www.sunliaodong.cn/categories/%E8%B0%83%E4%BC%98/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="调优" scheme="https://www.sunliaodong.cn/tags/%E8%B0%83%E4%BC%98/"/>
     
   </entry>
   
