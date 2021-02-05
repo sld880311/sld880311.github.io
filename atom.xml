@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-05T00:56:35.974Z</updated>
+  <updated>2021-02-05T06:16:05.613Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,119 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>JVM加载机制</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</id>
+    <published>2021-02-05T06:08:06.000Z</published>
+    <updated>2021-02-05T06:16:05.613Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;Java虚拟机把描述类的数据从class文件加载到内存，并且对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程称为&lt;strong&gt;Java虚拟机的类加载机制&lt;/strong&gt;，Java天生可以动态扩展的语言特性就是依赖运行期动态加载和动态连接这个特点实现的，JVM 类加载机制分为五个部分：加载，验证，准备，解析，初始化，这五部分是在程序&lt;strong&gt;运行期间&lt;/strong&gt;完成；还有使用和卸载，共七个阶段，参考下图所示：&lt;/p&gt;
+&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1588727499000.png&quot; class title=&quot;JVM加载机制&quot;&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="JVM" scheme="https://www.sunliaodong.cn/categories/JVM/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="JVM加载" scheme="https://www.sunliaodong.cn/tags/JVM%E5%8A%A0%E8%BD%BD/"/>
+    
+    <category term="ClassLoader" scheme="https://www.sunliaodong.cn/tags/ClassLoader/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JVM HotSpot虚拟机对象探秘</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/</id>
+    <published>2021-02-05T05:56:10.000Z</published>
+    <updated>2021-02-05T06:07:07.340Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;对象的创建&quot;&gt;&lt;a href=&quot;#对象的创建&quot; class=&quot;headerlink&quot; title=&quot;对象的创建&quot;&gt;&lt;/a&gt;对象的创建&lt;/h2&gt;&lt;h2 id=&quot;对象的内存布局&quot;&gt;&lt;a href=&quot;#对象的内存布局&quot; class=&quot;headerlink&quot; title=&quot;对象的内存布局&quot;&gt;&lt;/a&gt;对象的内存布局&lt;/h2&gt;&lt;p&gt;在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、实例数据（Instance Data）和对齐填充（Padding）。&lt;/p&gt;
+&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589103879536.png&quot; class title=&quot;对象的内存布局&quot;&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="JVM" scheme="https://www.sunliaodong.cn/categories/JVM/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="Java虚拟机" scheme="https://www.sunliaodong.cn/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/"/>
+    
+    <category term="Java内存对象" scheme="https://www.sunliaodong.cn/tags/Java%E5%86%85%E5%AD%98%E5%AF%B9%E8%B1%A1/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java常见问题之两套JRE</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/</id>
+    <published>2021-02-05T05:52:46.000Z</published>
+    <updated>2021-02-05T05:54:33.695Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;JDK在安装过程中如果勾选安装JRE最终会在安装目录中有两套JRE。简单来说一套用于Java本身的运行（比如java本身的javac、还有监控套件javap等），一套用于程序的运行。两套JRE的路径默认为：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;C:\Program Files\Java\jdk1.8.0_192\jre&lt;/li&gt;
+&lt;li&gt;C:\Program Files\Java\jre1.8.0_192&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="JDK" scheme="https://www.sunliaodong.cn/tags/JDK/"/>
+    
+    <category term="JRE" scheme="https://www.sunliaodong.cn/tags/JRE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JVM内存区域</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</id>
+    <published>2021-02-05T03:22:34.000Z</published>
+    <updated>2021-02-05T03:29:58.947Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;知识图谱&quot;&gt;&lt;a href=&quot;#知识图谱&quot; class=&quot;headerlink&quot; title=&quot;知识图谱&quot;&gt;&lt;/a&gt;知识图谱&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png&quot; class title=&quot;JVM内存区域知识图谱&quot;&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="JVM" scheme="https://www.sunliaodong.cn/categories/JVM/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="JVM内存区域" scheme="https://www.sunliaodong.cn/tags/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/"/>
+    
+  </entry>
   
   <entry>
     <title>MySQL之日志-扩展</title>
@@ -485,126 +598,6 @@
     <category term="集合" scheme="https://www.sunliaodong.cn/tags/%E9%9B%86%E5%90%88/"/>
     
     <category term="HashMap" scheme="https://www.sunliaodong.cn/tags/HashMap/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之Type</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/</id>
-    <published>2021-02-04T11:06:39.000Z</published>
-    <updated>2021-02-04T11:08:12.975Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;p&gt;这里的Type指java.lang.reflect.Type, 是Java中所有类型的公共高级接口, 代表了Java中的所有类型. Type体系中类型的包括：数组类型(GenericArrayType)、参数化类型(ParameterizedType)、类型变量(TypeVariable)、通配符类型(WildcardType)、原始类型(Class)、基本类型(Class), 以上这些类型都实现Type接口.  &lt;/p&gt;
-&lt;p&gt;Type 表示的全部类型而每个Class对象表示一个具体类型的实例，如String.class仅代表String类型。由此看来Type与 Class 表示类型几乎是相同的（Class实现接口Type），只不过 Type表示的范围比Class要广得多而已。当然Type还有其他子类。&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;参数化类型（ParameterizedType）：有原始类型和具体的类型参数，泛型List&lt;String&gt;、Map；&lt;/String&gt;&lt;/li&gt;
-&lt;li&gt;数组类型（GenericArrayType）：不是数组String[] 、byte[]，而是带有泛型的数组，即T[] ；&lt;/li&gt;
-&lt;li&gt;通配符类型（WildcardType）： 指的是&amp;lt;?&amp;gt;, &amp;lt;? extends T&amp;gt;等等&lt;/li&gt;
-&lt;li&gt;原始类型（Class）： 不仅仅包含我们平常所指的类，还包括枚举、数组、注解等；&lt;/li&gt;
-&lt;li&gt;基本类型（Class）, 也就是我们所说的java的基本类型，即int,float,double等&lt;/li&gt;
-&lt;li&gt;类型变量(TypeVariable)：表示类型参数，可以有上界，比如：T extends Number&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="Type" scheme="https://www.sunliaodong.cn/tags/Type/"/>
-    
-    <category term="反射" scheme="https://www.sunliaodong.cn/tags/%E5%8F%8D%E5%B0%84/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之String</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BString/</id>
-    <published>2021-02-04T11:00:22.000Z</published>
-    <updated>2021-02-04T11:05:47.575Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;String介绍&quot;&gt;&lt;a href=&quot;#String介绍&quot; class=&quot;headerlink&quot; title=&quot;String介绍&quot;&gt;&lt;/a&gt;String介绍&lt;/h2&gt;&lt;h3 id=&quot;API描述&quot;&gt;&lt;a href=&quot;#API描述&quot; class=&quot;headerlink&quot; title=&quot;API描述&quot;&gt;&lt;/a&gt;API描述&lt;/h3&gt;&lt;blockquote&gt;
-&lt;p&gt;在&lt;code&gt;java.lang.String&lt;/code&gt;的源码中明确说明，&lt;code&gt;String&lt;/code&gt;类表示字符串，Java中所有的字符串传字面值（如：”abc”）都是该类的实例；并且字符串是常量，一旦创建之后则不可以改变，String buffers支持可变的字符串。因为&lt;code&gt;String&lt;/code&gt;对象是不可变的，但是可以共享。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt; * The &amp;#123;&lt;span class=&quot;meta&quot;&gt;@code&lt;/span&gt; String&amp;#125; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;represents&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;character&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;strings&lt;/span&gt;. &lt;span class=&quot;title&quot;&gt;All&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt; * &lt;span class=&quot;title&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;literals&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Java&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;programs&lt;/span&gt;, &lt;span class=&quot;title&quot;&gt;such&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;as&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;span class=&quot;meta&quot;&gt;@code&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&amp;quot;abc&amp;quot;&lt;/span&gt;&amp;#125;, are&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * implemented as instances of &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt; class.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * &amp;lt;p&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * Strings are constant; their values cannot be changed after they&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * are created. String buffers support mutable strings.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * Because String objects are immutable they can be shared.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;String&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;java&lt;/span&gt;.&lt;span class=&quot;title&quot;&gt;io&lt;/span&gt;.&lt;span class=&quot;title&quot;&gt;Serializable&lt;/span&gt;,&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;    &lt;span class=&quot;title&quot;&gt;Comparable&lt;/span&gt;&amp;lt;&lt;span class=&quot;title&quot;&gt;String&lt;/span&gt;&amp;gt;, &lt;span class=&quot;title&quot;&gt;CharSequence&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;通过API定义总结以下信息：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;使用final修饰，则不能被继承（该类中的成员方法默认都是final）&lt;/li&gt;
-&lt;li&gt;实现接口&lt;code&gt;Serializable&lt;/code&gt;，说明可以进行序列化&lt;/li&gt;
-&lt;li&gt;实现接口&lt;code&gt;Comparable&lt;/code&gt;,说明可以大小比较&lt;/li&gt;
-&lt;li&gt;实现接口&lt;code&gt;CharSequence&lt;/code&gt;,说明String本身就是char类型的数组，而且通过成员变量定义可以进行佐证&lt;/li&gt;
-&lt;li&gt;通过char字符数组实现&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="String" scheme="https://www.sunliaodong.cn/tags/String/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之传递方式</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E4%BC%A0%E9%80%92%E6%96%B9%E5%BC%8F/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E4%BC%A0%E9%80%92%E6%96%B9%E5%BC%8F/</id>
-    <published>2021-02-04T10:56:04.000Z</published>
-    <updated>2021-02-04T10:57:55.674Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;在Java中的方法调用使用的都是&lt;strong&gt;值传递&lt;/strong&gt;，Java 中的所有自变量或参数传递都是通过传递句柄进行的。也就是说，当我们传递“一个对象”时，&lt;strong&gt;实际传递的只是指向位于方法外部的那个对象的“一个句柄”&lt;/strong&gt;。所以一旦要对那个句柄进行任何修改，便相当于修改外部对象。此外：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;■参数传递过程中会自动产生别名问题&lt;/li&gt;
-&lt;li&gt;■不存在本地对象，只有本地句柄&lt;/li&gt;
-&lt;li&gt;■句柄有自己的作用域，而对象没有&lt;/li&gt;
-&lt;li&gt;■对象的“存在时间”在 Java 里不是个问题&lt;/li&gt;
-&lt;li&gt;■没有语言上的支持（如常量）可防止对象被修改（以避免别名的副作用）&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="传递方式" scheme="https://www.sunliaodong.cn/tags/%E4%BC%A0%E9%80%92%E6%96%B9%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之克隆</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%85%8B%E9%9A%86/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%85%8B%E9%9A%86/</id>
-    <published>2021-02-04T10:49:16.000Z</published>
-    <updated>2021-02-04T10:50:17.212Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;所谓克隆就是对原有对象复用的复用，&lt;strong&gt;Java语言中克隆针对的是类的实例（对象）&lt;/strong&gt;，在Java中一共有三种方式实现。&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;直接赋值&lt;/li&gt;
-&lt;li&gt;浅拷贝&lt;/li&gt;
-&lt;li&gt;深拷贝&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="clone" scheme="https://www.sunliaodong.cn/tags/clone/"/>
-    
-    <category term="克隆" scheme="https://www.sunliaodong.cn/tags/%E5%85%8B%E9%9A%86/"/>
     
   </entry>
   

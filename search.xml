@@ -171,6 +171,409 @@
       </tags>
   </entry>
   <entry>
+    <title>JVM HotSpot虚拟机对象探秘</title>
+    <url>/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/</url>
+    <content><![CDATA[<h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><h2 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h2><p>在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、实例数据（Instance Data）和对齐填充（Padding）。</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589103879536.png" class title="对象的内存布局">
+
+</div>
+
+<a id="more"></a>
+
+<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><h4 id="Markword"><a href="#Markword" class="headerlink" title="Markword"></a>Markword</h4><p>markword数据的长度在32位和64位的虚拟机（未开启压缩指针）中分别为32bit和64bit，它的最后2bit是锁状态标志位，用来标记当前对象的状态，对象的所处的状态，决定了markword存储的内容，如下表所示:</p>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+.tg .tg-sjuo{background-color:#C2FFD6;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;&nbsp;状态&nbsp;&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;&nbsp;标志位&nbsp;&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;&nbsp;存储内容&nbsp;&nbsp;&nbsp;&nbsp;</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;未锁定&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;01&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;对象哈希码、对象分代年龄&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;轻量级锁定&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;00&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;指向锁记录的指针&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;膨胀(重量级锁定)&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;执行重量级锁定的指针&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;GC标记&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;空(不需要记录信息)&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;可偏向&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;01&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;偏向线程ID、偏向时间戳、对象分代年龄&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+</tbody>
+</table>
+
+<p>32位虚拟机在不同状态下markword结构如下图所示：</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589103945089.png" class title="Java对象头">
+
+</div>
+
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589103960151.png" class title="Java对象实例-状态信息">
+
+</div>
+
+<h4 id="klass"><a href="#klass" class="headerlink" title="klass"></a>klass</h4><p>对象头的另外一部分是klass类型指针，即对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例.</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589103982486.png" class title="Java对象实例-kclass">
+
+</div>
+
+
+<h4 id="数组长度（只有数组对象有）"><a href="#数组长度（只有数组对象有）" class="headerlink" title="数组长度（只有数组对象有）"></a>数组长度（只有数组对象有）</h4><p>如果对象是一个数组, 那在对象头中还必须有一块数据用于记录数组长度.</p>
+<h4 id="常用对象头结构"><a href="#常用对象头结构" class="headerlink" title="常用对象头结构"></a>常用对象头结构</h4><h5 id="普通对象"><a href="#普通对象" class="headerlink" title="普通对象"></a>普通对象</h5><div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1590667814291.png" class title="普通对象头">
+
+</div>
+
+<h5 id="数组对象"><a href="#数组对象" class="headerlink" title="数组对象"></a>数组对象</h5><div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1590667874263.png" class title="数据对象头">
+
+</div>
+
+<h5 id="其中-Mark-Word-结构为"><a href="#其中-Mark-Word-结构为" class="headerlink" title="其中 Mark Word 结构为"></a>其中 Mark Word 结构为</h5><div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1590667902242.png" class title="mark word结构">
+
+</div>
+
+<h5 id="64-位虚拟机-Mark-Word"><a href="#64-位虚拟机-Mark-Word" class="headerlink" title="64 位虚拟机 Mark Word"></a>64 位虚拟机 Mark Word</h5><div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1590667923591.png" class title="64位mark word">
+
+</div>
+
+<h3 id="实例数据"><a href="#实例数据" class="headerlink" title="实例数据"></a>实例数据</h3><p>实例数据部分是对象真正存储的有效信息，也是在程序代码中所定义的各种类型的字段内容。无论是从父类继承下来的，还是在子类中定义的，都需要记录起来。</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104023579.png" class title="实例数据填充">
+
+</div>
+
+<h3 id="对齐填充"><a href="#对齐填充" class="headerlink" title="对齐填充"></a>对齐填充</h3><p>第三部分对齐填充并不是必然存在的，也没有特别的含义，它仅仅起着占位符的作用。由于HotSpot VM的自动内存管理系统要求对象起始地址必须是8字节的整数倍，换句话说，就是对象的大小必须是8字节的整数倍。而对象头部分正好是8字节的倍数（1倍或者2倍），因此，当对象实例数据部分没有对齐时，就需要通过对齐填充来补全。</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104045582.png" class title="实例数据对齐填充">
+
+</div>
+
+
+<h2 id="对象大小计算"><a href="#对象大小计算" class="headerlink" title="对象大小计算"></a>对象大小计算</h2><ol>
+<li>在32位系统下，存放Class指针的空间大小是4字节,MarkWord是4字节，对象头为8字节。</li>
+<li>在64位系统下，存放Class指针的空间大小是8字节,MarkWord是8字节，对象头为16字节。</li>
+<li>64位开启指针压缩的情况下，存放Class指针的空间大小是4字节，MarkWord是8字节，对象头为12字节。 数组长度4字节+数组对象头8字节(对象引用4字节（未开启指针压缩的64位为8字节）+数组markword为4字节（64位未开启指针压缩的为8字节）)+对齐4=16字节。</li>
+<li>静态属性不算在对象大小内。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104073081.png" class title="对象大小计算">
+
+</div>
+
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104088136.png" class title="对象大小计算">
+
+</div>
+
+<h2 id="对象的定位"><a href="#对象的定位" class="headerlink" title="对象的定位"></a>对象的定位</h2><h3 id="HotSpot对象模型"><a href="#HotSpot对象模型" class="headerlink" title="HotSpot对象模型"></a>HotSpot对象模型</h3><p>HotSpot中采用了OOP-Klass模型，它是描述Java对象实例的模型，它分为两部分：</p>
+<ol>
+<li>类被加载到内存时，就被封装成了klass，klass包含类的元数据信息，像类的方法、常量池这些信息都是存在klass里的，你可以认为它是java里面的java.lang.Class对象，记录了类的全部信息；</li>
+<li>OOP（Ordinary Object Pointer）指的是普通对象指针，它包含MarkWord 和元数据指针，MarkWord用来存储当前指针指向的对象运行时的一些状态数据；元数据指针则指向klass,用来告诉你当前指针指向的对象是什么类型，也就是使用哪个类来创建出来的；</li>
+<li>HotSopt JVM的设计者不想让每个对象中都含有一个vtable（虚函数表），所以就把对象模型拆成klass和oop，其中oop中不含有任何虚函数，而klass就含有虚函数表，可以进行method dispatch。</li>
+<li>HotSpot中，OOP-Klass实现的代码都在/hotspot/src/share/vm/oops/路径下，oop的实现为instanceOop 和 arrayOop，他们来描述对象头，其中arrayOop对象用于描述数组类型。</li>
+</ol>
+<p>以下就是oop.hhp文件中oopDesc的源码，可以看到两个变量_mark就是MarkWord，_metadata就是元数据指针，指向klass对象，这个指针压缩的是32位，未压缩的是64位；</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104116231.png" class>
+
+</div>
+
+<p>一个Java对象在内存中的布局可以连续分成两部分：instanceOop（继承自oop.hpp）和实例数据；</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104144970.png" class>
+
+</div>
+
+
+<p>上图可以看到，通过栈帧中的对象引用reference找到Java堆中的对象，再通过对象的instanceOop中的元数据指针klass来找到方法区中的instanceKlass，从而确定该对象的类型。</p>
+<p>执行new A()的时候，JVM 做了什么工作。首先，如果这个类没有被加载过，JVM就会进行类的加载，并在JVM内部创建一个instanceKlass对象表示这个类的运行时元数据（相当于Java层的Class对象）。初始化对象的时候（执行invokespecial A::），JVM就会创建一个instanceOopDesc对象表示这个对象的实例，然后进行Mark Word的填充，将元数据指针指向Klass对象，并填充实例变量。</p>
+<p>元数据—— instanceKlass 对象会存在元空间（方法区），而对象实例—— instanceOopDesc 会存在Java堆。Java虚拟机栈中会存有这个对象实例的引用。</p>
+<h3 id="成员变量重排序"><a href="#成员变量重排序" class="headerlink" title="成员变量重排序"></a>成员变量重排序</h3><p>为了提高性能，每个对象的起始地址都对齐于8字节，当封装对象的时候为了高效率，对象字段声明的顺序会被重排序成下列基于字节大小的顺序：</p>
+<p>    double (8字节) 和 long (8字节)<br>    int (4字节) 和 float (4字节)<br>    short (2字节) 和 char (2字节)：char在java中是2个字节。java采用unicode，2个字节（16位）来表示一个字符。<br>    boolean (1字节) 和 byte (1字节)<br>    reference引用 (4/8 字节)<br>    &lt;子类字段重复上述顺序&gt;<br>子类字段重复上述顺序。<br>我们可以测试一下java对不同类型的重排序，使用jdk1.8，采用反射的方式先获取到unsafe类，然后获取到每个field在类里面的偏移地址，就能看出来了<br>测试代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.class1;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sun.misc.Contended;</span><br><span class="line"><span class="keyword">import</span> sun.misc.Unsafe;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TypeSequence</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> contended_boolean;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">byte</span> a;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> b;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> contended_short;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">char</span> d;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">short</span> c;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> e;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">float</span> f;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> contended_int;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> contended_double;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">double</span> g;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">long</span> h;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span>  Unsafe UNSAFE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="meta">@SuppressWarnings(&quot;ALL&quot;)</span></span><br><span class="line">                Field theUnsafe = Unsafe.class.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);</span><br><span class="line">                theUnsafe.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                UNSAFE = (Unsafe) theUnsafe.get(<span class="keyword">null</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchFieldException, SecurityException</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;e:int    \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;e&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;g:double \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;g&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;h:long   \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;h&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;f:float  \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;f&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;c:short  \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;c&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;d:char   \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;d&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;a:byte   \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;a&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;b:boolean\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;b&quot;</span>)));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;contended_boolean:boolean\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_boolean&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;contended_short:short\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_short&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;contended_int:int\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_int&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;contended_double:double\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_double&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码运行结果如下</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104179460.png" class>
+
+</div>
+
+<p>除了int字段跑到了前面来了，还有两个添加了contended注解的字段外，其它字段都是按照重排序的顺序，类型由最长到最短的顺序排序的；</p>
+<h4 id="对象头对成员变量排序的影响"><a href="#对象头对成员变量排序的影响" class="headerlink" title="对象头对成员变量排序的影响"></a>对象头对成员变量排序的影响</h4><p>有的童鞋疑惑了，为啥int跑到前面来了呢？这是因为int字段被提升到前面填充对象头了，对象头有12个字节，会优先在字段中选择一个或多个能够将对象头填充为16个字节的field放到前面，如果填充不满，就加上padding，上面的例子加上一个4字节的int，正好是16字节，地址按8字节对齐；</p>
+<h4 id="扩展contended对成员变量排序的影响"><a href="#扩展contended对成员变量排序的影响" class="headerlink" title="扩展contended对成员变量排序的影响"></a>扩展contended对成员变量排序的影响</h4><p>那么contended注解呢？这个注解是为了解决cpu缓存行伪共享问题的，cpu缓存伪共享是并发编程性能杀手，不知道什么是伪共享的可以查看我前面写的LongAdder类的源码解读 或者《java 中的锁 – 偏向锁、轻量级锁、自旋锁、重量级锁》这篇文章都有讲到，加了contended注解的字段会按照声明的顺序放到末尾，contended注解如果是用在类的field上会在该field前面插入128字节的padding，如果是用在类上则会在类所有field的前后都加上128字节的padding。</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>JVM</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Java虚拟机</tag>
+        <tag>Java内存对象</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JVM内存区域</title>
+    <url>/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</url>
+    <content><![CDATA[<h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png" class title="JVM内存区域知识图谱">
+
+</div>
+
+<a id="more"></a>
+
+<h2 id="总体介绍"><a href="#总体介绍" class="headerlink" title="总体介绍"></a>总体介绍</h2><ol>
+<li>JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区域【JAVA 堆、方法区】、直接内存。</li>
+<li>线程私有数据区域生命周期与线程相同, 依赖用户线程的启动/结束而创建/销毁，线程共享区域随虚拟机的启动/关闭而创建/销毁。</li>
+<li>直接内存并不是 JVM 运行时数据区的一部分, 但也会被频繁的使用（NIO，DirectByteBuffer）</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103001540.png" class>
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456777274.png" class>
+
+</div>
+
+<h2 id="程序计数器-线程私有"><a href="#程序计数器-线程私有" class="headerlink" title="程序计数器(线程私有)"></a>程序计数器(线程私有)</h2><p> 由于JAVA的多线程是通过线程轮流切换分配处理时间的方式实现，为了保证能够恢复到线程的正确位置，每个线程再启动的时候都会创建<strong>一块较小的内存区域</strong>，这块区域是<strong>线程隔离</strong>的，生命周期同线程绑定，线程结束，则释放该内存区域，可以看作是当前线程所执行的字节码的行号子令器。  </p>
+<p><strong>字节码子令器的工作模式是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</strong>  </p>
+<p>计数器的大小是一个字长，因此既可以持有一个本地指针，又可以持有一个returnAddress。计数器中记录的内容根据方法类型就行划分，如果当前方法是java方法，这个计数器记录的是正在执行的虚拟机字节码指令的地址（可以是一个本地指针，也可以是在方法字节码中相对于该方法起始指令的偏移量）；如果方法是Native方法，这个计数器记录的内容则为Undefined。  </p>
+<blockquote>
+<p>Each thread of a running program has its own pc register, or program counter, which is created when the thread is started. The pc register is one word in size, so it can hold both a native pointer and a returnValue. As a thread executes a Java method, the pc register contains the address of the current instruction being executed by the thread. An “address” can be a native pointer or an offset from the beginning of a method’s bytecodes. If a thread is executing a native method, the value of the pc register is undefined.</p>
+</blockquote>
+<p><strong>此内存区域是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。</strong></p>
+<h2 id="虚拟机栈-线程私有"><a href="#虚拟机栈-线程私有" class="headerlink" title="虚拟机栈(线程私有)"></a>虚拟机栈(线程私有)</h2><p>用于描述java方法执行的线程内存模型，每个方法被执行的时候线程都会在栈中创建一个栈帧（Stack Frame），用于存储局部变量表、操作数栈、动态链接、返回值等信息的数据集。生命周期与线程同步，每个方法从调用到执行完成就是一个栈帧在VM Stack中入栈出栈的过程。</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589457383204.png" class>
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512623885.png" class>
+
+</div>
+栈帧的数据结构：  
+
+<ol>
+<li>局部变量表：输入参数和输出参数以及方法内的变量；</li>
+<li>操作数栈：记录出栈和入栈的操作；</li>
+<li>栈帧数据：包括类文件、方法等等。</li>
+</ol>
+<h3 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h3><p>可以理解为使用素组管理内存的方式，从0开始；存放编译期可知的Java基本类型（8种）、对象引用、入参信息以及出参信息（returnAddress）。</p>
+<h4 id="slot"><a href="#slot" class="headerlink" title="slot"></a>slot</h4><p>局部变量表中存储空间以局部变量槽（Slot，32位）表示，局部变量表所需要的内存在编译阶段完成分配。64位的long和double使用两个slot。</p>
+<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">runClassMethod</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">long</span> l,<span class="keyword">float</span> f,<span class="keyword">double</span> d,Object o,<span class="keyword">byte</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">runInstanceMethod</span><span class="params">(<span class="keyword">char</span> c,<span class="keyword">double</span> d,<span class="keyword">short</span> s,<span class="keyword">boolean</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512957352.png" class>
+
+</div>
+
+<p>runInstanceMethod的局部变量区第一项是个reference（引用），它指定的就是对象本身的引用，也就是我们常用的this,但是在runClassMethod方法中，没这个引用，那是因为runClassMethod是个静态方法。</p>
+<h3 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h3><p>与局部变量表类似，组织成一个以字长为单位的数组。但是是使用出栈入栈的方式进行访问；操作数栈是临时数据的存储区域。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a= <span class="number">100</span>;</span><br><span class="line"><span class="keyword">int</span> b =<span class="number">5</span>;</span><br><span class="line"><span class="keyword">int</span> c = a+b;</span><br></pre></td></tr></table></figure>
+<p>对应的操作数栈变化为：  </p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589513290674.png" class>
+
+</div>
+
+<blockquote>
+<p>JVM实现里，有一种基于栈的指令集(Hotspot，oracle JVM)，还有一种基于寄存器的指令集(DalvikVM，安卓 JVM)</p>
+</blockquote>
+<h3 id="帧数据区"><a href="#帧数据区" class="headerlink" title="帧数据区"></a>帧数据区</h3><p>帧数据区存放了指向常量池的指针地址，当某些指令需要获得常量池的数据时，通过帧数据区中的指针地址来访问常量池的数据。此外，帧数据区还存放方法正常返回和异常终止需要的一些数据。</p>
+<h3 id="异常情况"><a href="#异常情况" class="headerlink" title="异常情况"></a>异常情况</h3><ol>
+<li>如果线程请求的栈深度大于虚拟机所允许的深度，将抛出StackOverflowError异常。</li>
+<li>如果VM栈可以动态扩展，在初始化新线程时没有足够内存创建栈则抛出OutOfMemoryError异常。</li>
+</ol>
+<h2 id="本地方法栈-线程私有"><a href="#本地方法栈-线程私有" class="headerlink" title="本地方法栈(线程私有)"></a>本地方法栈(线程私有)</h2><p>与Java Stack类似，主要区别是，Java Stack用于执行Java方法服务，本地方法栈用于native方法服务。</p>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>当调用一个native方法时，jvm使用c-linkage模型支持native调用，并且创建一个C栈，由于《Java虚拟机规范》没有对该实现有具体要求，所以不同厂商的实现方式不同，比如HotSpot VM 直接就把本地方法栈和虚拟机栈合二为一。它的具体做法是在本地方法栈中登记native方法，在执行引擎执行时加载Native Liberies。</p>
+<h2 id="Java堆（Heap-线程共享）-运行时数据区"><a href="#Java堆（Heap-线程共享）-运行时数据区" class="headerlink" title="Java堆（Heap-线程共享）-运行时数据区"></a>Java堆（Heap-线程共享）-运行时数据区</h2><ol>
+<li>线程共享区域</li>
+<li>存储对象和数组数据</li>
+<li>垃圾回收重点关注区域（内存最大的一块区域）</li>
+<li>从 GC 的角度还可以细分为:<strong>新生代(Eden区、From Survivor区和To Survivor区)和老年代。</strong></li>
+<li>从分配内存的角度看，所有线程共享的Java堆中可以划分出多个线程私有的分配缓冲区（Thread LocalAllocation Buffer，TLAB），以提升对象分配时的效率。</li>
+<li>通过-Xmx和-Xms设置内存大小，内存溢出则出现OOM错误，最小默认为物理内存的1/64，最大为物理内存的1/4</li>
+<li>默认当空余堆内存小于40%时，JVM会增大Heap到-Xmx指定的大小，可通过-XX:MinHeapFreeRation=来指定这个比列；当空余堆内存大于70%时，JVM会减小heap的大小到-Xms指定的大小，可通过XX:MaxHeapFreeRation=来指定这个比列</li>
+<li>建议-Xmx和-Xms设置一致</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103176740.png" class>
+
+</div>
+
+<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><ol>
+<li>存放新创建的对象</li>
+<li>占用堆的1/3空间</li>
+<li>回收机制：MinorGC</li>
+<li>划分Eden 区、ServivorFrom、ServivorTo 三个区。</li>
+<li>可通过-Xmn参数来指定新生代的大小，也可以通过-XX:SurvivorRation来调整Eden Space及Survivor Space的大小。</li>
+</ol>
+<h4 id="Eden-区"><a href="#Eden-区" class="headerlink" title="Eden 区"></a>Eden 区</h4><p>Java新对象的出生地（如果新创建的对象占用内存很大，则直接分配到老代）。当Eden区内存不够的时候就会触发MinorGC，对新生代区进行一次垃圾回收。</p>
+<h4 id="ServivorFrom"><a href="#ServivorFrom" class="headerlink" title="ServivorFrom"></a>ServivorFrom</h4><p>上一次 GC 的幸存者，作为这一次 GC 的被扫描者。</p>
+<h4 id="ServivorTo"><a href="#ServivorTo" class="headerlink" title="ServivorTo"></a>ServivorTo</h4><p>保留了一次 MinorGC 过程中的幸存者。</p>
+<h4 id="MinorGC-的过程（复制-gt-清空-gt-互换）"><a href="#MinorGC-的过程（复制-gt-清空-gt-互换）" class="headerlink" title="MinorGC 的过程（复制-&gt;清空-&gt;互换）"></a>MinorGC 的过程（复制-&gt;清空-&gt;互换）</h4><ol>
+<li>MinorGC 采用复制算法。</li>
+<li>把Eden和ServivorFrom区域中存活的对象复制到ServicorTo区域（如果有对象的年龄以及达到了老年的标准，则赋值到老年代区），同时把这些对象的年龄+1（如果 ServicorTo 不够位置了就放到老年区）；</li>
+<li>清空 Eden 和 ServicorFrom 中的对象；</li>
+<li>ServicorTo 和 ServicorFrom 互换，原 ServicorTo 成为下一次 GC的ServicorFrom 区。</li>
+</ol>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><ol>
+<li>存放生命周期较长的对象</li>
+<li>该区域对象比较稳定，MajorGC不会频繁执行</li>
+<li>进行 MajorGC 前一般都先进行了一次 MinorGC，使得有新生代的对象晋身入老年代，导致空间不够用时才触发。</li>
+<li>当无法找到足够大的连续空间分配给新创建的较大对象时也会提前触发一次 MajorGC 进行垃圾回收腾出空间。</li>
+<li>MajorGC 采用标记清除算法：首先扫描一次所有老年代，标记出存活的对象，然后回收没有标记的对象。MajorGC 的耗时比较长，因为要扫描再回收。MajorGC 会产生内存碎片，为了减少内存损耗，我们一般需要进行合并或者标记出来方便下次直接分配。当老年代也满了装不下的时候，就会抛出 OOM（Out of Memory）异常。</li>
+<li>新建对象直接进入该区域的条件：①.大对象，可通过启动参数设置-XX:PretenureSizeThreshold=1024(单位为字节，默认为0)来代表超过多大时就不在新生代分配，而是直接在老年代分配。②.大的数组对象，切数组中无引用外部对象。</li>
+<li>内存大小为-Xmx对应的值减去-Xmn对应的值</li>
+</ol>
+<h3 id="内存展现图例"><a href="#内存展现图例" class="headerlink" title="内存展现图例"></a>内存展现图例</h3><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589511590668.png" class>
+
+</div>
+
+<h2 id="方法区-永久代（Permanent-Generation，线程共享）"><a href="#方法区-永久代（Permanent-Generation，线程共享）" class="headerlink" title="方法区/永久代（Permanent Generation，线程共享）"></a>方法区/永久代（Permanent Generation，线程共享）</h2><ol>
+<li>线程共享</li>
+<li>存储被jvm加载的类型信息、常量、静态变量、即时编译期编译后的代码缓存数据</li>
+<li>HotSpot VM也会针对该区域进行垃圾回收，主要是针对常量池回收和类型卸载，收益比较低</li>
+<li>内存不足出现OOM</li>
+<li>JDK8之后使用元空间替代了永久代</li>
+<li>默认最小16MB，最大64MB，可以通过-XX:PermSize 和 -XX:MaxPermSize 参数限制方法区的大小</li>
+</ol>
+<h3 id="JAVA8-与元数据"><a href="#JAVA8-与元数据" class="headerlink" title="JAVA8 与元数据"></a>JAVA8 与元数据</h3><p>在Java8中，永久代已经被移除，被一个称为“元数据区”（元空间）的区域所取代。元空间的本质和永久代类似，元空间与永久代之间最大的区别在于：<strong>元空间并不在虚拟机中，而是使用本地内存</strong>。因此，默认情况下，元空间的大小仅受本地内存限制。<strong>类的元数据放入native memory, 字符串池和类的静态变量放入 java 堆中</strong>，这样可以加载多少类的元数据就不再由<br>MaxPermSize 控制, 而由系统的实际可用空间来控制。</p>
+<h3 id="运行时常量池（Runtime-Constant-Pool）"><a href="#运行时常量池（Runtime-Constant-Pool）" class="headerlink" title="运行时常量池（Runtime Constant Pool）"></a>运行时常量池（Runtime Constant Pool）</h3><ol>
+<li>Class文件中的常量池表</li>
+<li>存放编译期生成的各种<strong>字面量和符号引用</strong>，这部分内容将在类加载后存放到方法区的运行时常量池中。</li>
+<li>相较于Class文件常量池，运行时常量池更具动态性，在运行期间也可以将新的变量放入常量池中，而不是一定要在编译时确定的常量才能放入。最主要的运用便是String类的intern()方法。</li>
+<li>内存不足会出现OOM</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103068348.png" class>
+
+</div>
+
+<h2 id="直接内存（Direct-Memory）"><a href="#直接内存（Direct-Memory）" class="headerlink" title="直接内存（Direct Memory）"></a>直接内存（Direct Memory）</h2><ol>
+<li>不属于JVM运行时的数据区域</li>
+<li>内存不足会出现OOM错误</li>
+<li>JDK中NIO使用通道和缓冲区的IO方式，使用native函数库直接在堆外分配内存，然后通过一个存储在Java堆里面的DirectByteBuffer对象作为这块内存的引用进行操作</li>
+<li>受限于本机内存</li>
+</ol>
+<h2 id="执行引擎-Execution-Engine"><a href="#执行引擎-Execution-Engine" class="headerlink" title="执行引擎(Execution Engine)"></a>执行引擎(Execution Engine)</h2><p>执行引擎执行包在装载类的方法中的指令，也就是方法。执行引擎以指令为单位读取Java字节码。它就像一个CPU一样，一条一条地执行机器指令。每个字节码指令都由一个1字节的操作码和附加的操作数组成。执行引擎取得一个操作码，然后根据操作数来执行任务，完成后就继续执行下一条操作码。</p>
+<p>执行引擎必须把字节码转换成可以直接被JVM执行的语言。字节码可以通过以下两种方式转换成合适的语言：</p>
+<ol>
+<li>解释器： 一条一条地读取，解释并执行字节码执行，所以它可以很快地解释字节码，但是执行起来会比较慢。</li>
+<li>即时编译器：用来弥补解释器的缺点，执行引擎首先按照解释执行的方式来执行，然后在合适的时候，即时编译器把整段字节码编译成本地代码。然后，执行引擎就没有必要再去解释执行方法了，它可以直接通过本地代码去执行。执行本地代码比一条一条进行解释执行的速度快很多，编译后的代码可以执行的很快，因为本地代码是保存在缓存里的。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103093701.png" class>
+
+</div>
+
+<h2 id="场景内存溢出分析"><a href="#场景内存溢出分析" class="headerlink" title="场景内存溢出分析"></a>场景内存溢出分析</h2><h2 id="对象分析"><a href="#对象分析" class="headerlink" title="对象分析"></a>对象分析</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《深入理解Java虚拟机》</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>JVM</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>JVM内存区域</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java常见问题之两套JRE</title>
+    <url>/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/</url>
+    <content><![CDATA[<p>JDK在安装过程中如果勾选安装JRE最终会在安装目录中有两套JRE。简单来说一套用于Java本身的运行（比如java本身的javac、还有监控套件javap等），一套用于程序的运行。两套JRE的路径默认为：</p>
+<ol>
+<li>C:\Program Files\Java\jdk1.8.0_192\jre</li>
+<li>C:\Program Files\Java\jre1.8.0_192<a id="more"></a>
+
+</li>
+</ol>
+<h2 id="JDK、JRE、JVM之间的关系"><a href="#JDK、JRE、JVM之间的关系" class="headerlink" title="JDK、JRE、JVM之间的关系"></a>JDK、JRE、JVM之间的关系</h2><p>JDK本身运行环境中的jre比jre目录下多了Server端的Java虚拟机。  </p>
+<p>JRE：Java编译后的可运行环境。<br>JVM：Java虚拟机</p>
+<h3 id="使用两套JDK的原因"><a href="#使用两套JDK的原因" class="headerlink" title="使用两套JDK的原因"></a>使用两套JDK的原因</h3><p>JDK里面有很多用Java所编写的开发工具（如javac.exe、jar.exe等），而且都放置在 &lt;JDK安装目录&gt;\lib\tools.jar 里。<code>javac.exe与输入 java -cp c:\jdk\lib\tools.jar com.sun.tools.javac.Main</code>是一样的，会得到相同的结果。</p>
+<h3 id="如何选择使用那套JRE"><a href="#如何选择使用那套JRE" class="headerlink" title="如何选择使用那套JRE"></a>如何选择使用那套JRE</h3><p>由<code>java.exe</code>决定，执行顺序如下：</p>
+<ol>
+<li>自己的目录下有没有JRE；</li>
+<li>父目录有没有JRE；</li>
+<li>查询注册表：<br>[HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment]</li>
+</ol>
+<h3 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h3><p><strong>JRE目录下的Bin目录有两个目录：server与client。这就是真正的jvm.dll所在。</strong><br>jvm.dll 无法单独工作，当jvm.dll启动后，会使用explicit的方法（就是使用Win32 API之中的LoadLibrary()与GetProcAddress()来载入辅助用的动态链接库），而这些辅助用的动态链接库（.dll）都必须位于jvm.dll所在目录的父目录之中。因此想使用哪个JVM，只需要设置PATH，指向JRE所在目录底下的jvm.dll。</p>
+<h2 id="名称解释"><a href="#名称解释" class="headerlink" title="名称解释"></a>名称解释</h2><ol>
+<li><strong>JAVA IDE</strong>:JAVA集成开发环境，如JBuilder Eclipse NetBeans,JEdit,TaxPad等等。</li>
+<li><strong>JDK Java开发包</strong>:java development kit ，它是使用JAVA进行开发的基础，包含：JVM（JAVA虚拟机）,JAVA 类库，JAVA运行环境。简单的说就是个开发平台：包含开发平台，和JAVA运行平台（即JRE或J2RE是Java2 Runtime Environment，即Java运行环境，有时简称JRE。如果你只需要运行Java程序或Applet，下载并安装它即可。）</li>
+<li><strong>SDK（Software Development Kit）</strong>一般指软件开发包，可以包括函数库、编译程序等。</li>
+<li><strong>JRE（Java Runtime Enviroment）</strong>是指Java的运行环境，是面向Java程序的使用者，而不是开发者。其内部含有JVM(JAVA虚拟机）</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="jdk下bin目录里的java-exe与外部jre中的java-exe的秘密"><a href="#jdk下bin目录里的java-exe与外部jre中的java-exe的秘密" class="headerlink" title="jdk下bin目录里的java.exe与外部jre中的java.exe的秘密"></a>jdk下bin目录里的java.exe与外部jre中的java.exe的秘密</h3><p>jdk里的java.exe和jre中的java.exe其实是一样的，但我们在运行的时候用的却是优先使用外部jre中的java.exe（即使我们安装了JDK且也配置了环境变量）。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>安装JDK时一定会在其子目录下面安装一个JRE，同时在安装的过程也会询问你是否要安装一个外部的JRE。</li>
+<li>如果我们选择安装则就同时拥有了两个jre。这两个JRE其实本质上是没有任何分别的。最主要的区别在于：JDK目录里面的JRE主要是设计用来运行JDK自带的那些工具的（Bin目录下）。而外部的JRE在安装的时候会自动注册到操作系统的path（但在我的电脑\属性\高级系统设置\环境变量\系统变量中的 path中并没有包含该命令的路径值）里面一般是：System32文件夹下（该文件夹下包含：java.exe javaw.exe  javaws.exe 三个文件）面。</li>
+<li>因此我们只要安装了外部的JRE（即使JDK没有安装，环境变量没有配置）则运行Java程序时都是用的外部JRE的java.exe程序来运行的（即使安装了JDK且配置了环境变量）（系统的默认path具有优先）。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>JDK</tag>
+        <tag>JRE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Javap详解</title>
     <url>/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>javap 命令用于解析类文件。其输出取决于所用的选项。若没有使用选项，javap 将输出传递给它的类的 public 域及方法。javap 将其输出到标准输出设备上。</p>
@@ -1292,6 +1695,273 @@
         <tag>Java</tag>
         <tag>设计模式</tag>
         <tag>单例模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JVM加载机制</title>
+    <url>/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p>Java虚拟机把描述类的数据从class文件加载到内存，并且对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这个过程称为<strong>Java虚拟机的类加载机制</strong>，Java天生可以动态扩展的语言特性就是依赖运行期动态加载和动态连接这个特点实现的，JVM 类加载机制分为五个部分：加载，验证，准备，解析，初始化，这五部分是在程序<strong>运行期间</strong>完成；还有使用和卸载，共七个阶段，参考下图所示：</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1588727499000.png" class title="JVM加载机制">
+
+</div>
+<a id="more"></a>
+
+<h2 id="类加载时机"><a href="#类加载时机" class="headerlink" title="类加载时机"></a>类加载时机</h2><ol>
+<li><strong>创建类的实例</strong>：new、getstatic、putstatic或invokestatic这四条字节码指令时，如果类型没有进行过初始化，则需要先触发其初始化阶段。具体场景：<ul>
+<li>使用new关键字实例化对象的时候</li>
+<li>读取或设置一个类型的静态字段（被final修饰、已在编译期把结果放入常量池的静态字段除外）的时候。</li>
+<li>调用一个类型的静态方法的时候。</li>
+</ul>
+</li>
+<li><strong>反射</strong>：使用java.lang.reflect包的方法对类型进行反射调用的时候，如果类型没有进行过初始化，则需要先触发其初始化。</li>
+<li><strong>初始化子类</strong>：当初始化类的时候，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化。</li>
+<li><strong>主类</strong>：当虚拟机启动时，用户需要指定一个要执行的主类（包含main()方法的那个类），虚拟机会先初始化这个主类。</li>
+<li><strong>JDK 7新加入的动态语言支持</strong>：，如果一个java.lang.invoke.MethodHandle实例最后的解析结果为REF_getStatic、REF_putStatic、REF_invokeStatic、REF_newInvokeSpecial四种类型的方法句柄，并且这个方法句柄对应的类没有进行过初始化，则需要先触发其初始化。</li>
+<li>当一个接口中定义了JDK 8新加入的默认方法（被default关键字修饰的接口方法）时，如果有这个接口的实现类发生了初始化，那该接口要在其之前被初始化。</li>
+</ol>
+<blockquote>
+<p>说明</p>
+<blockquote>
+<p>对于静态字段，只有直接定义这个字段的类才会被初始化<br>接口与类真正有所区别的是前面讲述的六种“有且仅有”需要触发初始化场景中的第三种：当一个类在初始化时，要求其父类全部都已经初始化过了，但是一个接口在初始化时，并不要求其父接口全部都完成了初始化，只有在真正使用到父接口的时候（如引用接口中定义的常量）才会初始化。  </p>
+</blockquote>
+</blockquote>
+<h2 id="加载（Loading）"><a href="#加载（Loading）" class="headerlink" title="加载（Loading）"></a>加载（Loading）</h2><p>类加载（Class Loading）的第一个阶段，在<code>加载</code>过程中主要完成以下操作：</p>
+<ol>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流，比如<code>java.lang.String</code>，二进制字节流的形式可以是：<ul>
+<li> ZIP中获取：jar、ear、war</li>
+<li> 网络获取：Web Applet</li>
+<li> 动态代理：*<em>java.lang.reflect.Proxy中的ProxyGenerator.generateProxyClass()来为特定接口生成形式为“</em>$Proxy”的代理类的二进制字节流**</li>
+<li> JSP编译后的class文件</li>
+<li> 加密后的class文件，然后使用时解密</li>
+</ul>
+</li>
+<li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。</li>
+<li>在内存<strong>堆</strong>中生成一个代表这个类的<code>java.lang.Class</code>对象，作为方法区这个类的各种数据的访问入口。</li>
+</ol>
+<h3 id="数组的加载"><a href="#数组的加载" class="headerlink" title="数组的加载"></a>数组的加载</h3><ol>
+<li>数组本身不通过类加载创建，由java虚拟机直接在内存中动态构建。</li>
+<li>数组类的元素类型（Element Type，指的是数组去掉所有维度的类型）最终还是要靠类加载器来完成加载</li>
+</ol>
+<p>如果一个数组类（比如：C）的<strong>组件类型</strong>（Component Type，指的是数组去掉一个维度的类型）是：</p>
+<ol>
+<li><strong>引用类型</strong>，就会使用类加载器来递归完成组件类型的加载。<strong>数组C将被标识在加载该组件类型的类加载器的类名称空间上</strong>；</li>
+<li>非引用类型（例如int[]数组的组件类型为int），<strong>Java虚拟机将会把数组C标记为与引导类加载器关联</strong>。</li>
+<li>数组类的可访问性与它的组件类型的可访问性一致，如果组件类型不是引用类型，它的数组类的可访问性将默认为public，可被所有的类和接口访问到。</li>
+</ol>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>验证是连接阶段的第一步，这一阶段的目的是<strong>确保Class文件的字节流中包含的信息符合《Java虚拟机规范》的全部约束要求</strong>，保证这些信息被当作代码运行后不会危害虚拟机自身的安全。主要完成以下四个阶段的校验的工作：<strong>文件格式验证、元数据验证、字节码验证和符号引用验证</strong>。</p>
+<h3 id="文件格式验证"><a href="#文件格式验证" class="headerlink" title="文件格式验证"></a>文件格式验证</h3><p>基于二进制流，判断字节流是否符合Class文件格式的规范，并且能被当前版本的虚拟机处理，解析完成之后可以正确的保存到方法区中，包括但不限于：</p>
+<ol>
+<li>是否以魔数0xCAFEBABE开头</li>
+<li>主、次版本号</li>
+<li>常量池中非法常量类型检查（检查常量tag标志）</li>
+<li>指向常量的各种索引值中是否有指向不存在的常量或不符合类型的常量</li>
+<li>CONSTANT_Utf8_info型的常量中是否有不符合UTF-8编码的数据。</li>
+<li>Class文件中各个部分及文件本身是否有被删除的或附加的其他信息</li>
+</ol>
+<h3 id="元数据验证（语法验证）"><a href="#元数据验证（语法验证）" class="headerlink" title="元数据验证（语法验证）"></a>元数据验证（语法验证）</h3><p>元数据验证主要完成字节码描述信息的<strong>语义分析（面向元数据信息中的数据类型）</strong>，符合《Java语言规范》的要求，主要完成以下信息：</p>
+<ol>
+<li>这个类是否有父类（除了java.lang.Object之外，所有的类都应当有父类）。</li>
+<li>这个类的父类是否继承了不允许被继承的类（被final修饰的类）。</li>
+<li>如果这个类不是抽象类，是否实现了其父类或接口之中要求实现的所有方法。</li>
+<li>类中的字段、方法是否与父类产生矛盾（例如覆盖了父类的final字段，或者出现不符合规则的方法重载）</li>
+</ol>
+<h3 id="字节码验证"><a href="#字节码验证" class="headerlink" title="字节码验证"></a>字节码验证</h3><p>通过<strong>数据流分析和控制流分析</strong>，确定程序语义是合法的、符合逻辑的。面向<strong>类的方法体【Class文件中的Code属性】</strong> 进行校验分析，具体如下：</p>
+<ol>
+<li>保证任意时刻操作数栈的数据类型与指令代码序列都能配合工作（入栈的类型与出栈后的使用类型一致）</li>
+<li>保证任何跳转指令都不会跳转到方法体以外的字节码指令上。</li>
+<li>保证方法体中的类型转换总是有效的（合法的类型转换）</li>
+</ol>
+<h4 id="StackMapTable"><a href="#StackMapTable" class="headerlink" title="StackMapTable"></a>StackMapTable</h4><p>为了提高字节码验证阶段的时间，JDK6之后在javac编译期阶段的方法体code中增加了一个<code>StackMapTable</code>的新属性，这项属性描述了<strong>方法体所有的基本块</strong>（Basic Block，指按照控制流拆分的代码块）开始时本地变量表和操作栈应有的状态，在字节码验证期间，Java虚拟机就不需要根据程序推导这些状态的合法性，只需要检查StackMapTable属性中的记录是否合法即可。StackMapTable属性也存在错误或被篡改的可能，所以是否有可能在恶意篡改了Code属性的同时，也生成相应的StackMapTable属性来骗过虚拟机的类型校验。</p>
+<blockquote>
+<p>扩展知识  </p>
+<blockquote>
+<p>使用<code>-XX：-UseSplitVerifier</code>关闭该优化，或使用<code>-XX：+FailOverToOldVerifier</code>要求在类型校验失败的时候退回到旧的类型推导方式进行校验。<br>JDK 7之后，尽管虚拟机中仍然保留着类型推导验证器的代码，但是对于主版本号大于50（对应JDK 6）的Class文件，使用类型检查来完成数据流分析校验则是唯一的选择，不允许再退回到原来的类型推导的校验方式。  </p>
+</blockquote>
+</blockquote>
+<h3 id="符号引用验证"><a href="#符号引用验证" class="headerlink" title="符号引用验证"></a>符号引用验证</h3><p>发生在虚拟机将符号引用转化为直接引用时（<strong>解析阶段</strong>），<strong>符号引用验证可以看作是对类自身以外【常量池中的各种符号引用】的各类信息进行匹配性校验，该类是否缺少或者被禁止访问它依赖的某些外部类、方法、字段等资源。</strong> 具体如下：</p>
+<ol>
+<li>符号引用中通过字符串描述的全限定名是否能找到对应的类。</li>
+<li>在指定类中是否存在符合方法的字段描述符及简单名称所描述的方法和字段。</li>
+<li>符号引用中的类、字段、方法的可访问性（private、protected、public、&lt;package&gt;）是否可被当前类访问。</li>
+</ol>
+<p>符号引用验证的主要目的是确保解析行为能正常执行，如果无法通过符号引用验证，Java虚拟机将会抛出一个java.lang.IncompatibleClassChangeError的子类异常，典型的如：java.lang.IllegalAccessError、java.lang.NoSuchFieldError、java.lang.NoSuchMethodError等。</p>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>该阶段是正式为<strong>类变量（static修饰）分配内存并且完成初始化赋值的阶段（即在方法区分配内存空间）</strong>。</p>
+<blockquote>
+<p>关于方法区的特殊说明</p>
+<blockquote>
+<p>JDK 7及之前，HotSpot使用永久代来实现方法区<br>JDK 8及之后，类变量则会随着Class对象一起存放在Java堆中  </p>
+</blockquote>
+</blockquote>
+<h3 id="初始值的概念"><a href="#初始值的概念" class="headerlink" title="初始值的概念"></a>初始值的概念</h3><p>该阶段主要完成“0”值的处理，具体如下：</p>
+<p><code>public static int v = 8080;</code>,则为0，将 v 赋值为 8080 的 put static 指令是程序被编译后，存放于static方法(<code>&lt;clinit&gt;()</code>)之中。<code>public static final int v = 8080;</code>在编译阶段会为 v 生成 ConstantValue 属性，在准备阶段虚拟机会根据 ConstantValue 属性将 v 赋值为 8080。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestStatic</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> a = <span class="number">10</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> b = <span class="number">20</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">警告: 二进制文件Test/bin/com.sunld.TestStatic包含com.sunld.TestStatic</span><br><span class="line">Classfile /D:/Workspaces/java/TestJVM/Test/bin/com/sunld/TestStatic.class</span><br><span class="line">  Last modified <span class="number">2020</span>-<span class="number">5</span>-<span class="number">9</span>; size <span class="number">409</span> bytes</span><br><span class="line">  MD5 checksum 7f77187644282a651264bddec7487130</span><br><span class="line">  Compiled from <span class="string">&quot;TestStatic.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">sunld</span>.<span class="title">TestStatic</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Class              #2             // com/sunld/TestStatic</span><br><span class="line">   #2 = Utf8               com/sunld/TestStatic</span><br><span class="line">   #3 = Class              #4             // java/lang/Object</span><br><span class="line">   #4 = Utf8               java/lang/Object</span><br><span class="line">   #5 = Utf8               a</span><br><span class="line">   #6 = Utf8               I</span><br><span class="line">   #7 = Utf8               b</span><br><span class="line">   #8 = Utf8               ConstantValue</span><br><span class="line">   #9 = Integer            20</span><br><span class="line">  #10 = Utf8               &lt;clinit&gt;</span><br><span class="line">  #11 = Utf8               ()V</span><br><span class="line">  #12 = Utf8               Code</span><br><span class="line">  #13 = Fieldref           #1.#14         // com/sunld/TestStatic.a:I</span><br><span class="line">  #14 = NameAndType        #5:#6          // a:I</span><br><span class="line">  #15 = Utf8               LineNumberTable</span><br><span class="line">  #16 = Utf8               LocalVariableTable</span><br><span class="line">  #17 = Utf8               &lt;init&gt;</span><br><span class="line">  #18 = Methodref          #3.#19         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #19 = NameAndType        #17:#11        // &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #20 = Utf8               this</span><br><span class="line">  #21 = Utf8               Lcom/sunld/TestStatic;</span><br><span class="line">  #22 = Utf8               SourceFile</span><br><span class="line">  #23 = Utf8               TestStatic.java</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> a;</span><br><span class="line">    descriptor: I</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> b;</span><br><span class="line">    descriptor: I</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC, ACC_FINAL</span><br><span class="line">    ConstantValue: <span class="keyword">int</span> <span class="number">20</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> &#123;&#125;;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">0</span>, args_size=<span class="number">0</span></span><br><span class="line">         <span class="number">0</span>: bipush        <span class="number">10</span></span><br><span class="line">         2: putstatic     #13                 // Field a:I</span><br><span class="line">         <span class="number">5</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">5</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">7</span>: <span class="number">5</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> com.sunld.TestStatic();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: invokespecial #18                 // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">3</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestStatic;</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">&quot;TestStatic.java&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>零值参考表</strong>：  </p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1589021066885.png" class title="基本类型零值">
+
+</div>
+
+<h2 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h2><p>该阶段主要是完成Java虚拟机中常量池中符号引用替换为直接引用的过程。符号引用主要是指class文件中的：</p>
+<ol>
+<li>CONSTANT_Class_info</li>
+<li>CONSTANT_Field_info</li>
+<li>CONSTANT_Method_info</li>
+</ol>
+<h3 id="符号引用（Symbolic-References）"><a href="#符号引用（Symbolic-References）" class="headerlink" title="符号引用（Symbolic References）"></a>符号引用（Symbolic References）</h3><ol>
+<li>一组描述引用目标的符号，该符号可以是任意字面量（符合《Java虚拟机规范》）</li>
+<li>与虚拟机实现的内存布局无关，引用的目标并不一定是已经加载到虚拟机内存当中的内容</li>
+</ol>
+<h3 id="直接引用（Direct-References）"><a href="#直接引用（Direct-References）" class="headerlink" title="直接引用（Direct References）"></a>直接引用（Direct References）</h3><ol>
+<li>直接指向目标的指针、相对偏移量或者是一个能间接定位到目标的句柄。</li>
+<li>直接引用是和虚拟机实现的内存布局直接相关的，同一个符号引用在不同虚拟机实例上翻译出来的直接引用一般不会相同。如果有了直接引用，那引用的目标必定已经在虚拟机的内存中存在。</li>
+</ol>
+<h3 id="解析范围"><a href="#解析范围" class="headerlink" title="解析范围"></a>解析范围</h3><p>主要针对<strong>类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符</strong>这7类符号引用进行，分别对应于常量池的<strong>CONSTANT_Class_info、CONSTANT_Fieldref_info、CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType_info、CONSTANT_MethodHandle_info、CONSTANT_Dynamic_info和CONSTANT_InvokeDynamic_info</strong> 8种常量类型。</p>
+<h4 id="类或接口的解析-CONSTANT-Class-info"><a href="#类或接口的解析-CONSTANT-Class-info" class="headerlink" title="类或接口的解析(CONSTANT_Class_info)"></a>类或接口的解析(CONSTANT_Class_info)</h4><div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1589283530987.png" class title="CONSTANT_Class_info">
+
+</div>
+
+<p>举例：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">D</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> C N;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>JVM的解析过程：</p>
+<ol>
+<li>C <code>!=</code>数组类型，D类会使用N的全限定名去加载这个类C。在加载过程中，由于元数据验证、字节码验证的需要，又可能触发其他相关类的加载动作，例如加载这个类的父类或实现的接口。一旦这个加载过程出现了任何异常，解析过程就将宣告失败。</li>
+<li>C<code>=</code>数组类型，并且数组的元素类型为对象（如：<code>[Ljava/lang/Integer</code>），那将会按照第一点的规则加载数组元素类型。如果N的描述符如前面所假设的形式，需要加载的元素类型就是<code>java.lang.Integer</code>，<strong>接着由虚拟机生成一个代表该数组维度和元素的数组对象</strong>。</li>
+<li>以上通过之后，C在虚拟机中实际上已经成为一个有效的类或接口了，但在解析完成前还要进行符号引用验证，确认D是否具备对C的<strong>访问权限</strong>。如果发现不具备访问权限，将抛出java.lang.IllegalAccessError异常。如果我们说一个D拥有C的访问权限，那就意味着以下3条规则中至少有其中一条成立：<ul>
+<li>被访问类C是public的，并且与访问类D处于同一个模块。</li>
+<li>被访问类C是public的，不与访问类D处于同一个模块，但是被访问类C的模块允许被访问类D的模块进行访问。</li>
+<li>被访问类C不是public的，但是它与访问类D处于同一个包中。</li>
+</ul>
+</li>
+</ol>
+<h4 id="字段解析-CONSTANT-Fieldref-info"><a href="#字段解析-CONSTANT-Fieldref-info" class="headerlink" title="字段解析(CONSTANT_Fieldref_info)"></a>字段解析(CONSTANT_Fieldref_info)</h4><div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1589283359953.png" class title="CONSTANT_Fieldref_info">
+
+</div>
+
+<ol>
+<li>解析<code>class_index</code>项中索引的<code>CONSTANT_Class_info</code>符号引用，也就是字段所属的类或接口的符号引用。解析成功之后定义为<code>C</code></li>
+<li>C本身就包含了简单名称和字段描述符都与目标相匹配的字段，则返回这个字段的直接引用，查找结束。</li>
+<li><strong>接口搜索</strong>：C中实现了接口，将会按照继承关系从下往上递归搜索各个接口和它的父接口，如果接口中包含了简单名称和字段描述符都与目标相匹配的字段，则返回这个字段的直接引用，查找结束。</li>
+<li><strong>继承搜索</strong>：C不是java.lang.Object的话，将会按照继承关系从下往上递归搜索其父类，如果在父类中包含了简单名称和字段描述符都与目标相匹配的字段，则返回这个字段的直接引用，查找结束。</li>
+<li><strong>查找失败</strong>，抛出java.lang.NoSuchFieldError异常。</li>
+</ol>
+<p>如果查找过程成功返回了引用，将会对这个字段进行权限验证，如果发现不具备对字段的访问权限，将抛出java.lang.IllegalAccessError异常。</p>
+<h4 id="方法解析-CONSTANT-Methodref-info"><a href="#方法解析-CONSTANT-Methodref-info" class="headerlink" title="方法解析(CONSTANT_Methodref_info)"></a>方法解析(CONSTANT_Methodref_info)</h4><div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1589284121859.png" class title="CONSTANT_Methodref_info">
+
+</div>
+
+<ol>
+<li>首先解析class_index项中索引的方法所属的类或接口的符号引用，解析成功使用C表示该类</li>
+<li>在类的方法表中发现class_index中索引的C是个接口的话，那就直接抛出java.lang.IncompatibleClassChangeError异常。</li>
+<li>在类C中查找是否有简单名称和描述符都与目标相匹配的方法，如果有则返回这个方法的直接引用，查找结束。</li>
+<li>在类C的父类中递归查找是否有简单名称和描述符都与目标相匹配的方法，如果有则返回这个方法的直接引用，查找结束。</li>
+<li>在类C实现的接口列表及它们的父接口之中递归查找是否有简单名称和描述符都与目标相匹配的方法，如果存在匹配的方法，说明类C是一个抽象类，这时候查找结束，抛出java.lang.AbstractMethodError异常。</li>
+<li>宣告方法查找失败，抛出java.lang.NoSuchMethodError。</li>
+<li>最后，如果查找过程成功返回了直接引用，将会对这个方法进行权限验证，如果发现不具备对此方法的访问权限，将抛出java.lang.IllegalAccessError异常。</li>
+</ol>
+<h4 id="接口方法解析-CONSTANT-InterfaceMethodref-info"><a href="#接口方法解析-CONSTANT-InterfaceMethodref-info" class="headerlink" title="接口方法解析(CONSTANT_InterfaceMethodref_info)"></a>接口方法解析(CONSTANT_InterfaceMethodref_info)</h4><div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1589284472436.png" class title="CONSTANT_InterfaceMethodref_info">
+
+</div>
+
+<ol>
+<li>首先解析class_index项中索引的方法所属的类或接口的符号引用，如果解析成功，使用C表示这个接口</li>
+<li>与类的方法解析相反，如果在接口方法表中发现class_index中的索引C是个类而不是接口，那么就直接抛出java.lang.IncompatibleClassChangeError异常。</li>
+<li>在接口C中查找是否有简单名称和描述符都与目标相匹配的方法，如果有则返回这个方法的直接引用，查找结束。</li>
+<li>在接口C的父接口中递归查找，直到java.lang.Object类（接口方法的查找范围也会包括Object类中的方法）为止，看是否有简单名称和描述符都与目标相匹配的方法，如果有则返回这个方法的直接引用，查找结束。</li>
+<li>对于规则4，由于Java的接口允许多重继承，如果C的不同父接口中存有多个简单名称和描述符都与目标相匹配的方法，那将会从这多个方法中返回其中一个并结束查找，《Java虚拟机规范》中并没有进一步规则约束应该返回哪一个接口方法。但与之前字段查找类似地，不同发行商实现的Javac编译器有可能会按照更严格的约束拒绝编译这种代码来避免不确定性。</li>
+<li>宣告方法查找失败，抛出java.lang.NoSuchMethodError异常。</li>
+<li>JDK9之后接口会出现访问权限的问题，抛出java.lang.IllegalAccessError异常。</li>
+</ol>
+<h2 id="初始化（类变量完成初始化）"><a href="#初始化（类变量完成初始化）" class="headerlink" title="初始化（类变量完成初始化）"></a>初始化（类变量完成初始化）</h2><p>最优一个阶段，前面的类加载阶段之后，除了在加载阶段可以自定义类加载器以外，其它操作都由 JVM 主导。到了<strong>初始阶段，才开始真正执行类中定义的 Java 程序代码</strong>。</p>
+<ol>
+<li>在初始化阶段会根据业务代码完成静态变量的初始化</li>
+<li>初始化阶段就是执行类构造器<code>&lt;clinit&gt;()</code>（javac自动生成的）方法的过程。</li>
+<li><code>&lt;clinit&gt;()</code>方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块（static{}块）中的语句合并产生的，编译器收集的顺序是由语句在源文件中出现的顺序决定的，静态语句块中只能访问到定义在静态语句块之前的变量，定义在它之后的变量，在前面的静态语句块可以赋值，但是不能访问</li>
+<li>在Java虚拟机中第一个被执行的<code>&lt;clinit&gt;()</code>方法的类型肯定是java.lang.Object。由于父类的<code>&lt;clinit&gt;()</code>方法先执行，也就意味着父类中定义的静态语句块要优先于子类的变量赋值操作</li>
+<li><code>&lt;clinit&gt;()</code>方法对于类或接口来说并不是必需的，如果没有想过的静态变量和静态代码块，编译期会自动忽略该方法</li>
+<li>接口中不能使用静态代码块，但是可以定义静态变量，所以接口编译之后也会存在<code>&lt;clinit&gt;()</code>方法。<strong>但接口与类不同的是，执行接口的<code>&lt;clinit&gt;()</code>方法不需要先执行父接口的<code>&lt;clinit&gt;()</code>方法，因为只有当父接口中定义的变量被使用时，父接口才会被初始化。此外，接口的实现类在初始化时也一样不会执行接口的<code>&lt;clinit&gt;()</code>方法。</strong></li>
+<li>Java虚拟机必须保证一个类的<code>&lt;clinit&gt;()</code>方法在多线程环境中被正确地加锁同步，如果多个线程同时去初始化一个类，那么只会有其中一个线程去执行这个类的<code>&lt;clinit&gt;()</code>方法，其他线程都需要<strong>阻塞等待</strong>，直到活动线程执行完毕<code>&lt;clinit&gt;()</code>方法。如果在一个类的<code>&lt;clinit&gt;()</code>方法中有耗时很长的操作，那就可能造成多个进程阻塞</li>
+</ol>
+<h3 id="不会初始化的情况"><a href="#不会初始化的情况" class="headerlink" title="不会初始化的情况"></a>不会初始化的情况</h3><ol>
+<li>通过子类引用父类的静态字段，只会触发父类的初始化，而不会触发子类的初始化。</li>
+<li>定义对象数组，不会触发该类的初始化。</li>
+<li>常量在编译期间会存入调用类的常量池中，本质上并没有直接引用定义常量的类，不会触发定义常量所在的类。</li>
+<li>通过类名获取 Class 对象，不会触发类的初始化。</li>
+<li>通过 Class.forName 加载指定类时，如果指定参数 initialize 为 false 时，也不会触发类初始化，其实这个参数是告诉虚拟机，是否要对类进行初始化。</li>
+<li>通过 ClassLoader 默认的 loadClass 方法，也不会触发初始化动作。</li>
+</ol>
+<h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p>类加载器只用于实现类的加载动作，并且每个类记载器都有一个独立的类名称空间（<strong>类加载器+类全限定名来确定类的唯一性</strong>）。类装载的过程是先装在其父类，然后才是自己，卸载则相反。</p>
+<h3 id="加载模式"><a href="#加载模式" class="headerlink" title="加载模式"></a>加载模式</h3><p>通常基础类库需要预先载入（常驻内存）、自定义类库需要按需载入（使用时载入，不用时自动被回收）。实例如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		A a = <span class="keyword">new</span> A();</span><br><span class="line">		a.testA();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testA</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testB</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行以下命令：<code>java -verbose Test</code>运行结果如下：<br>部分截图：</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1589349448488.png" class>
+
+</div>
+
+<p>通过运行结果发现，<strong>java是按需载入</strong>。  </p>
+<h3 id="加载方式"><a href="#加载方式" class="headerlink" title="加载方式"></a>加载方式</h3><ol>
+<li>隐式：使用new</li>
+<li>显示：Class.forName或ClassLoader的loadClass</li>
+</ol>
+<h3 id="双亲委派原则"><a href="#双亲委派原则" class="headerlink" title="双亲委派原则"></a>双亲委派原则</h3><p>JVM 通过双亲委派模型进行类的加载，当然我们也可以通过继承 java.lang.ClassLoader 实现自定义的类加载器。</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1589028654976.png" class title="双亲委派原则">
+
+</div>
+
+<p>当一个类收到了类加载请求，他首先不会尝试自己去加载这个类，而是把这个请求委派给父类去完成，每一个层次类加载器都是如此，因此所有的加载请求都应该传送到启动类加载其中，只有当父类加载器反馈自己无法完成这个请求的时候（在它的加载路径下没有找到所需加载的Class），子类加载器才会尝试自己去加载。采用双亲委派的一个好处是比如加载位于 rt.jar 包中的类 java.lang.Object，不管是哪个加载器加载这个类，最终都是委托给顶层的启动类加载器进行加载，这样就<strong>保证了使用不同的类加载器最终得到的都是同样一个 Object 对象。</strong></p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1589028697138.png" class>
+
+</div>
+
+<ol>
+<li><p>启动类加载器(Bootstrap ClassLoader，C++实现，JVM的一部分)：负责加载 JAVA_HOME\lib 目录中的，或通过-Xbootclasspath 参数指定路径中的，且被虚拟机认可（按文件名识别，如 rt.jar，不能识别的则不能加载）的类。启动类加载器无法被Java程序直接引用，用户在编写自定义类加载器时，如果需要把加载请求委派给引导类加载器去处理，那直接使用null代替即可。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the class loader for the class.  Some implementations may use</span></span><br><span class="line"><span class="comment"> * null to represent the bootstrap class loader. This method will return</span></span><br><span class="line"><span class="comment"> * null in such implementations if this class was loaded by the bootstrap</span></span><br><span class="line"><span class="comment"> * class loader.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt; If a security manager is present, and the caller&#x27;s class loader is</span></span><br><span class="line"><span class="comment"> * not null and the caller&#x27;s class loader is not the same as or an ancestor of</span></span><br><span class="line"><span class="comment"> * the class loader for the class whose class loader is requested, then</span></span><br><span class="line"><span class="comment"> * this method calls the security manager&#x27;s &#123;<span class="doctag">@code</span> checkPermission&#125;</span></span><br><span class="line"><span class="comment"> * method with a &#123;<span class="doctag">@code</span> RuntimePermission(&quot;getClassLoader&quot;)&#125;</span></span><br><span class="line"><span class="comment"> * permission to ensure it&#x27;s ok to access the class loader for the class.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;If this object</span></span><br><span class="line"><span class="comment"> * represents a primitive type or void, null is returned.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  the class loader that loaded the class or interface</span></span><br><span class="line"><span class="comment"> *          represented by this object.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> SecurityException</span></span><br><span class="line"><span class="comment"> *    if a security manager exists and its</span></span><br><span class="line"><span class="comment"> *    &#123;<span class="doctag">@code</span> checkPermission&#125; method denies</span></span><br><span class="line"><span class="comment"> *    access to the class loader for the class.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> java.lang.ClassLoader</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> SecurityManager#checkPermission</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> java.lang.RuntimePermission</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ClassLoader <span class="title">getClassLoader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ClassLoader cl = getClassLoader0();</span><br><span class="line">    <span class="keyword">if</span> (cl == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    SecurityManager sm = System.getSecurityManager();</span><br><span class="line">    <span class="keyword">if</span> (sm != <span class="keyword">null</span>) &#123;</span><br><span class="line">        ClassLoader.checkClassLoaderPermission(cl, Reflection.getCallerClass());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>扩展类加载器(Extension ClassLoader,在sun.misc.Launcher$ExtClassLoader中以Java代码的形式实现的)：负责加载 JAVA_HOME\lib\ext 目录中的，或通过 java.ext.dirs 系统变量指定路径中的类库。</p>
+</li>
+<li><p>应用程序类加载器(Application ClassLoader，由sun.misc.Launcher$AppClassLoader实现)：负责加载用户路径（classpath）上的类库，由于应用程序类加载器是ClassLoader类中的<code>getSystemClassLoader()</code>方法的返回值，所以有些场合中也称它为“系统类加载器”。它负责加载用户类路径（ClassPath）上所有的类库，开发者同样可以直接在代码中使用这个类加载器。</p>
+</li>
+</ol>
+<h4 id="双亲委派原则参考代码"><a href="#双亲委派原则参考代码" class="headerlink" title="双亲委派原则参考代码"></a>双亲委派原则参考代码</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Loads the class with the specified &lt;a href=&quot;#name&quot;&gt;binary name&lt;/a&gt;.  The</span></span><br><span class="line"><span class="comment"> * default implementation of this method searches for classes in the</span></span><br><span class="line"><span class="comment"> * following order:</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;ol&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *   &lt;li&gt;&lt;p&gt; Invoke &#123;<span class="doctag">@link</span> #findLoadedClass(String)&#125; to check if the class</span></span><br><span class="line"><span class="comment"> *   has already been loaded.  &lt;/p&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *   &lt;li&gt;&lt;p&gt; Invoke the &#123;<span class="doctag">@link</span> #loadClass(String) &lt;tt&gt;loadClass&lt;/tt&gt;&#125; method</span></span><br><span class="line"><span class="comment"> *   on the parent class loader.  If the parent is &lt;tt&gt;null&lt;/tt&gt; the class</span></span><br><span class="line"><span class="comment"> *   loader built-in to the virtual machine is used, instead.  &lt;/p&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *   &lt;li&gt;&lt;p&gt; Invoke the &#123;<span class="doctag">@link</span> #findClass(String)&#125; method to find the</span></span><br><span class="line"><span class="comment"> *   class.  &lt;/p&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;/ol&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt; If the class was found using the above steps, and the</span></span><br><span class="line"><span class="comment"> * &lt;tt&gt;resolve&lt;/tt&gt; flag is true, this method will then invoke the &#123;<span class="doctag">@link</span></span></span><br><span class="line"><span class="comment"> * #resolveClass(Class)&#125; method on the resulting &lt;tt&gt;Class&lt;/tt&gt; object.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt; Subclasses of &lt;tt&gt;ClassLoader&lt;/tt&gt; are encouraged to override &#123;<span class="doctag">@link</span></span></span><br><span class="line"><span class="comment"> * #findClass(String)&#125;, rather than this method.  &lt;/p&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt; Unless overridden, this method synchronizes on the result of</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@link</span> #getClassLoadingLock &lt;tt&gt;getClassLoadingLock&lt;/tt&gt;&#125; method</span></span><br><span class="line"><span class="comment"> * during the entire class loading process.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>  name</span></span><br><span class="line"><span class="comment"> *         The &lt;a href=&quot;#name&quot;&gt;binary name&lt;/a&gt; of the class</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>  resolve</span></span><br><span class="line"><span class="comment"> *         If &lt;tt&gt;true&lt;/tt&gt; then resolve the class</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  The resulting &lt;tt&gt;Class&lt;/tt&gt; object</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span>  ClassNotFoundException</span></span><br><span class="line"><span class="comment"> *          If the class could not be found</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; loadClass(String name, <span class="keyword">boolean</span> resolve)</span><br><span class="line">    <span class="keyword">throws</span> ClassNotFoundException</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (getClassLoadingLock(name)) &#123;</span><br><span class="line">        <span class="comment">// First, check if the class has already been loaded</span></span><br><span class="line">        Class&lt;?&gt; c = findLoadedClass(name);</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">long</span> t0 = System.nanoTime();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    c = parent.loadClass(name, <span class="keyword">false</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    c = findBootstrapClassOrNull(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">                <span class="comment">// ClassNotFoundException thrown if class not found</span></span><br><span class="line">                <span class="comment">// from the non-null parent class loader</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// If still not found, then invoke findClass in order</span></span><br><span class="line">                <span class="comment">// to find the class.</span></span><br><span class="line">                <span class="keyword">long</span> t1 = System.nanoTime();</span><br><span class="line">                c = findClass(name);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// this is the defining class loader; record the stats</span></span><br><span class="line">                sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);</span><br><span class="line">                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);</span><br><span class="line">                sun.misc.PerfCounter.getFindClasses().increment();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (resolve) &#123;</span><br><span class="line">            resolveClass(c);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="类装载器的层次关系"><a href="#类装载器的层次关系" class="headerlink" title="类装载器的层次关系"></a>类装载器的层次关系</h3><p>当执行java.exe程序时，首先确认使用的jre，然后激活jre中的jvm，激活完成之后会首先完成初始化工作，然后就会初始化类装载器，并且形成类装载器的层次体系。如下所示：</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/1589350033984.png" class title="类装载器的层次关系">
+
+</div>
+
+<h3 id="ClassLoader详解"><a href="#ClassLoader详解" class="headerlink" title="ClassLoader详解"></a>ClassLoader详解</h3><h2 id="OSGI（动态模型系统）-模块化系统"><a href="#OSGI（动态模型系统）-模块化系统" class="headerlink" title="OSGI（动态模型系统）:模块化系统"></a>OSGI（动态模型系统）:模块化系统</h2><p>OSGi(Open Service Gateway Initiative)，是面向 Java 的动态模型系统，是 Java 动态化模块化系统的一系列规范。</p>
+<h3 id="动态改变构造"><a href="#动态改变构造" class="headerlink" title="动态改变构造"></a>动态改变构造</h3><p>OSGi 服务平台提供在多种网络设备上无需重启的动态改变构造的功能。为了最小化耦合度和促使这些耦合度可管理，OSGi 技术提供一种面向服务的架构，它能使这些组件动态地发现对方。</p>
+<h3 id="模块化编程与热插拔"><a href="#模块化编程与热插拔" class="headerlink" title="模块化编程与热插拔"></a>模块化编程与热插拔</h3><p>OSGi 旨在为实现 Java 程序的模块化编程提供基础条件，基于 OSGi 的程序很可能可以实现模块级的热插拔功能，当程序升级更新时，可以只停用、重新安装然后启动程序的其中一部分，这对企业级程序开发来说是非常具有诱惑力的特性。</p>
+<p>OSGi 描绘了一个很美好的模块化开发目标，而且定义了实现这个目标的所需要服务与架构，同时也有成熟的框架进行实现支持。但并非所有的应用都适合采用 OSGi 作为基础架构，它在提供强大功能同时，也引入了额外的复杂度，因为它不遵守了类加载的双亲委托模型。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《深入理解Java虚拟机》</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>JVM</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>JVM加载</tag>
+        <tag>ClassLoader</tag>
       </tags>
   </entry>
   <entry>

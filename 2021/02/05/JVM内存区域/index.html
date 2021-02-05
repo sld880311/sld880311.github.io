@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="知识图谱">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM内存区域">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="知识图谱">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103001540.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456777274.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589457383204.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512623885.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512957352.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589513290674.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103176740.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589511590668.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103068348.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103093701.png">
+<meta property="article:published_time" content="2021-02-05T03:22:34.000Z">
+<meta property="article:modified_time" content="2021-02-05T03:29:58.947Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JVM内存区域">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JVM内存区域 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM内存区域
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-05 11:22:34 / 修改时间：11:29:58" itemprop="dateCreated datePublished" datetime="2021-02-05T11:22:34+08:00">2021-02-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png" class title="JVM内存区域知识图谱">
+
+</div>
+
+<a id="more"></a>
+
+<h2 id="总体介绍"><a href="#总体介绍" class="headerlink" title="总体介绍"></a>总体介绍</h2><ol>
+<li>JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区域【JAVA 堆、方法区】、直接内存。</li>
+<li>线程私有数据区域生命周期与线程相同, 依赖用户线程的启动/结束而创建/销毁，线程共享区域随虚拟机的启动/关闭而创建/销毁。</li>
+<li>直接内存并不是 JVM 运行时数据区的一部分, 但也会被频繁的使用（NIO，DirectByteBuffer）</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103001540.png" class>
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456777274.png" class>
+
+</div>
+
+<h2 id="程序计数器-线程私有"><a href="#程序计数器-线程私有" class="headerlink" title="程序计数器(线程私有)"></a>程序计数器(线程私有)</h2><p> 由于JAVA的多线程是通过线程轮流切换分配处理时间的方式实现，为了保证能够恢复到线程的正确位置，每个线程再启动的时候都会创建<strong>一块较小的内存区域</strong>，这块区域是<strong>线程隔离</strong>的，生命周期同线程绑定，线程结束，则释放该内存区域，可以看作是当前线程所执行的字节码的行号子令器。  </p>
+<p><strong>字节码子令器的工作模式是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</strong>  </p>
+<p>计数器的大小是一个字长，因此既可以持有一个本地指针，又可以持有一个returnAddress。计数器中记录的内容根据方法类型就行划分，如果当前方法是java方法，这个计数器记录的是正在执行的虚拟机字节码指令的地址（可以是一个本地指针，也可以是在方法字节码中相对于该方法起始指令的偏移量）；如果方法是Native方法，这个计数器记录的内容则为Undefined。  </p>
+<blockquote>
+<p>Each thread of a running program has its own pc register, or program counter, which is created when the thread is started. The pc register is one word in size, so it can hold both a native pointer and a returnValue. As a thread executes a Java method, the pc register contains the address of the current instruction being executed by the thread. An “address” can be a native pointer or an offset from the beginning of a method’s bytecodes. If a thread is executing a native method, the value of the pc register is undefined.</p>
+</blockquote>
+<p><strong>此内存区域是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。</strong></p>
+<h2 id="虚拟机栈-线程私有"><a href="#虚拟机栈-线程私有" class="headerlink" title="虚拟机栈(线程私有)"></a>虚拟机栈(线程私有)</h2><p>用于描述java方法执行的线程内存模型，每个方法被执行的时候线程都会在栈中创建一个栈帧（Stack Frame），用于存储局部变量表、操作数栈、动态链接、返回值等信息的数据集。生命周期与线程同步，每个方法从调用到执行完成就是一个栈帧在VM Stack中入栈出栈的过程。</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589457383204.png" class>
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512623885.png" class>
+
+</div>
+栈帧的数据结构：  
+
+<ol>
+<li>局部变量表：输入参数和输出参数以及方法内的变量；</li>
+<li>操作数栈：记录出栈和入栈的操作；</li>
+<li>栈帧数据：包括类文件、方法等等。</li>
+</ol>
+<h3 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h3><p>可以理解为使用素组管理内存的方式，从0开始；存放编译期可知的Java基本类型（8种）、对象引用、入参信息以及出参信息（returnAddress）。</p>
+<h4 id="slot"><a href="#slot" class="headerlink" title="slot"></a>slot</h4><p>局部变量表中存储空间以局部变量槽（Slot，32位）表示，局部变量表所需要的内存在编译阶段完成分配。64位的long和double使用两个slot。</p>
+<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">runClassMethod</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">long</span> l,<span class="keyword">float</span> f,<span class="keyword">double</span> d,Object o,<span class="keyword">byte</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">runInstanceMethod</span><span class="params">(<span class="keyword">char</span> c,<span class="keyword">double</span> d,<span class="keyword">short</span> s,<span class="keyword">boolean</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512957352.png" class>
+
+</div>
+
+<p>runInstanceMethod的局部变量区第一项是个reference（引用），它指定的就是对象本身的引用，也就是我们常用的this,但是在runClassMethod方法中，没这个引用，那是因为runClassMethod是个静态方法。</p>
+<h3 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h3><p>与局部变量表类似，组织成一个以字长为单位的数组。但是是使用出栈入栈的方式进行访问；操作数栈是临时数据的存储区域。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a= <span class="number">100</span>;</span><br><span class="line"><span class="keyword">int</span> b =<span class="number">5</span>;</span><br><span class="line"><span class="keyword">int</span> c = a+b;</span><br></pre></td></tr></table></figure>
+<p>对应的操作数栈变化为：  </p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589513290674.png" class>
+
+</div>
+
+<blockquote>
+<p>JVM实现里，有一种基于栈的指令集(Hotspot，oracle JVM)，还有一种基于寄存器的指令集(DalvikVM，安卓 JVM)</p>
+</blockquote>
+<h3 id="帧数据区"><a href="#帧数据区" class="headerlink" title="帧数据区"></a>帧数据区</h3><p>帧数据区存放了指向常量池的指针地址，当某些指令需要获得常量池的数据时，通过帧数据区中的指针地址来访问常量池的数据。此外，帧数据区还存放方法正常返回和异常终止需要的一些数据。</p>
+<h3 id="异常情况"><a href="#异常情况" class="headerlink" title="异常情况"></a>异常情况</h3><ol>
+<li>如果线程请求的栈深度大于虚拟机所允许的深度，将抛出StackOverflowError异常。</li>
+<li>如果VM栈可以动态扩展，在初始化新线程时没有足够内存创建栈则抛出OutOfMemoryError异常。</li>
+</ol>
+<h2 id="本地方法栈-线程私有"><a href="#本地方法栈-线程私有" class="headerlink" title="本地方法栈(线程私有)"></a>本地方法栈(线程私有)</h2><p>与Java Stack类似，主要区别是，Java Stack用于执行Java方法服务，本地方法栈用于native方法服务。</p>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>当调用一个native方法时，jvm使用c-linkage模型支持native调用，并且创建一个C栈，由于《Java虚拟机规范》没有对该实现有具体要求，所以不同厂商的实现方式不同，比如HotSpot VM 直接就把本地方法栈和虚拟机栈合二为一。它的具体做法是在本地方法栈中登记native方法，在执行引擎执行时加载Native Liberies。</p>
+<h2 id="Java堆（Heap-线程共享）-运行时数据区"><a href="#Java堆（Heap-线程共享）-运行时数据区" class="headerlink" title="Java堆（Heap-线程共享）-运行时数据区"></a>Java堆（Heap-线程共享）-运行时数据区</h2><ol>
+<li>线程共享区域</li>
+<li>存储对象和数组数据</li>
+<li>垃圾回收重点关注区域（内存最大的一块区域）</li>
+<li>从 GC 的角度还可以细分为:<strong>新生代(Eden区、From Survivor区和To Survivor区)和老年代。</strong></li>
+<li>从分配内存的角度看，所有线程共享的Java堆中可以划分出多个线程私有的分配缓冲区（Thread LocalAllocation Buffer，TLAB），以提升对象分配时的效率。</li>
+<li>通过-Xmx和-Xms设置内存大小，内存溢出则出现OOM错误，最小默认为物理内存的1/64，最大为物理内存的1/4</li>
+<li>默认当空余堆内存小于40%时，JVM会增大Heap到-Xmx指定的大小，可通过-XX:MinHeapFreeRation=来指定这个比列；当空余堆内存大于70%时，JVM会减小heap的大小到-Xms指定的大小，可通过XX:MaxHeapFreeRation=来指定这个比列</li>
+<li>建议-Xmx和-Xms设置一致</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103176740.png" class>
+
+</div>
+
+<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><ol>
+<li>存放新创建的对象</li>
+<li>占用堆的1/3空间</li>
+<li>回收机制：MinorGC</li>
+<li>划分Eden 区、ServivorFrom、ServivorTo 三个区。</li>
+<li>可通过-Xmn参数来指定新生代的大小，也可以通过-XX:SurvivorRation来调整Eden Space及Survivor Space的大小。</li>
+</ol>
+<h4 id="Eden-区"><a href="#Eden-区" class="headerlink" title="Eden 区"></a>Eden 区</h4><p>Java新对象的出生地（如果新创建的对象占用内存很大，则直接分配到老代）。当Eden区内存不够的时候就会触发MinorGC，对新生代区进行一次垃圾回收。</p>
+<h4 id="ServivorFrom"><a href="#ServivorFrom" class="headerlink" title="ServivorFrom"></a>ServivorFrom</h4><p>上一次 GC 的幸存者，作为这一次 GC 的被扫描者。</p>
+<h4 id="ServivorTo"><a href="#ServivorTo" class="headerlink" title="ServivorTo"></a>ServivorTo</h4><p>保留了一次 MinorGC 过程中的幸存者。</p>
+<h4 id="MinorGC-的过程（复制-gt-清空-gt-互换）"><a href="#MinorGC-的过程（复制-gt-清空-gt-互换）" class="headerlink" title="MinorGC 的过程（复制-&gt;清空-&gt;互换）"></a>MinorGC 的过程（复制-&gt;清空-&gt;互换）</h4><ol>
+<li>MinorGC 采用复制算法。</li>
+<li>把Eden和ServivorFrom区域中存活的对象复制到ServicorTo区域（如果有对象的年龄以及达到了老年的标准，则赋值到老年代区），同时把这些对象的年龄+1（如果 ServicorTo 不够位置了就放到老年区）；</li>
+<li>清空 Eden 和 ServicorFrom 中的对象；</li>
+<li>ServicorTo 和 ServicorFrom 互换，原 ServicorTo 成为下一次 GC的ServicorFrom 区。</li>
+</ol>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><ol>
+<li>存放生命周期较长的对象</li>
+<li>该区域对象比较稳定，MajorGC不会频繁执行</li>
+<li>进行 MajorGC 前一般都先进行了一次 MinorGC，使得有新生代的对象晋身入老年代，导致空间不够用时才触发。</li>
+<li>当无法找到足够大的连续空间分配给新创建的较大对象时也会提前触发一次 MajorGC 进行垃圾回收腾出空间。</li>
+<li>MajorGC 采用标记清除算法：首先扫描一次所有老年代，标记出存活的对象，然后回收没有标记的对象。MajorGC 的耗时比较长，因为要扫描再回收。MajorGC 会产生内存碎片，为了减少内存损耗，我们一般需要进行合并或者标记出来方便下次直接分配。当老年代也满了装不下的时候，就会抛出 OOM（Out of Memory）异常。</li>
+<li>新建对象直接进入该区域的条件：①.大对象，可通过启动参数设置-XX:PretenureSizeThreshold=1024(单位为字节，默认为0)来代表超过多大时就不在新生代分配，而是直接在老年代分配。②.大的数组对象，切数组中无引用外部对象。</li>
+<li>内存大小为-Xmx对应的值减去-Xmn对应的值</li>
+</ol>
+<h3 id="内存展现图例"><a href="#内存展现图例" class="headerlink" title="内存展现图例"></a>内存展现图例</h3><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589511590668.png" class>
+
+</div>
+
+<h2 id="方法区-永久代（Permanent-Generation，线程共享）"><a href="#方法区-永久代（Permanent-Generation，线程共享）" class="headerlink" title="方法区/永久代（Permanent Generation，线程共享）"></a>方法区/永久代（Permanent Generation，线程共享）</h2><ol>
+<li>线程共享</li>
+<li>存储被jvm加载的类型信息、常量、静态变量、即时编译期编译后的代码缓存数据</li>
+<li>HotSpot VM也会针对该区域进行垃圾回收，主要是针对常量池回收和类型卸载，收益比较低</li>
+<li>内存不足出现OOM</li>
+<li>JDK8之后使用元空间替代了永久代</li>
+<li>默认最小16MB，最大64MB，可以通过-XX:PermSize 和 -XX:MaxPermSize 参数限制方法区的大小</li>
+</ol>
+<h3 id="JAVA8-与元数据"><a href="#JAVA8-与元数据" class="headerlink" title="JAVA8 与元数据"></a>JAVA8 与元数据</h3><p>在Java8中，永久代已经被移除，被一个称为“元数据区”（元空间）的区域所取代。元空间的本质和永久代类似，元空间与永久代之间最大的区别在于：<strong>元空间并不在虚拟机中，而是使用本地内存</strong>。因此，默认情况下，元空间的大小仅受本地内存限制。<strong>类的元数据放入native memory, 字符串池和类的静态变量放入 java 堆中</strong>，这样可以加载多少类的元数据就不再由<br>MaxPermSize 控制, 而由系统的实际可用空间来控制。</p>
+<h3 id="运行时常量池（Runtime-Constant-Pool）"><a href="#运行时常量池（Runtime-Constant-Pool）" class="headerlink" title="运行时常量池（Runtime Constant Pool）"></a>运行时常量池（Runtime Constant Pool）</h3><ol>
+<li>Class文件中的常量池表</li>
+<li>存放编译期生成的各种<strong>字面量和符号引用</strong>，这部分内容将在类加载后存放到方法区的运行时常量池中。</li>
+<li>相较于Class文件常量池，运行时常量池更具动态性，在运行期间也可以将新的变量放入常量池中，而不是一定要在编译时确定的常量才能放入。最主要的运用便是String类的intern()方法。</li>
+<li>内存不足会出现OOM</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103068348.png" class>
+
+</div>
+
+<h2 id="直接内存（Direct-Memory）"><a href="#直接内存（Direct-Memory）" class="headerlink" title="直接内存（Direct Memory）"></a>直接内存（Direct Memory）</h2><ol>
+<li>不属于JVM运行时的数据区域</li>
+<li>内存不足会出现OOM错误</li>
+<li>JDK中NIO使用通道和缓冲区的IO方式，使用native函数库直接在堆外分配内存，然后通过一个存储在Java堆里面的DirectByteBuffer对象作为这块内存的引用进行操作</li>
+<li>受限于本机内存</li>
+</ol>
+<h2 id="执行引擎-Execution-Engine"><a href="#执行引擎-Execution-Engine" class="headerlink" title="执行引擎(Execution Engine)"></a>执行引擎(Execution Engine)</h2><p>执行引擎执行包在装载类的方法中的指令，也就是方法。执行引擎以指令为单位读取Java字节码。它就像一个CPU一样，一条一条地执行机器指令。每个字节码指令都由一个1字节的操作码和附加的操作数组成。执行引擎取得一个操作码，然后根据操作数来执行任务，完成后就继续执行下一条操作码。</p>
+<p>执行引擎必须把字节码转换成可以直接被JVM执行的语言。字节码可以通过以下两种方式转换成合适的语言：</p>
+<ol>
+<li>解释器： 一条一条地读取，解释并执行字节码执行，所以它可以很快地解释字节码，但是执行起来会比较慢。</li>
+<li>即时编译器：用来弥补解释器的缺点，执行引擎首先按照解释执行的方式来执行，然后在合适的时候，即时编译器把整段字节码编译成本地代码。然后，执行引擎就没有必要再去解释执行方法了，它可以直接通过本地代码去执行。执行本地代码比一条一条进行解释执行的速度快很多，编译后的代码可以执行的很快，因为本地代码是保存在缓存里的。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103093701.png" class>
+
+</div>
+
+<h2 id="场景内存溢出分析"><a href="#场景内存溢出分析" class="headerlink" title="场景内存溢出分析"></a>场景内存溢出分析</h2><h2 id="对象分析"><a href="#对象分析" class="headerlink" title="对象分析"></a>对象分析</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《深入理解Java虚拟机》</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" rel="tag"><i class="fa fa-tag"></i> JVM内存区域</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/" rel="prev" title="MySQL之日志-扩展">
+      <i class="fa fa-chevron-left"></i> MySQL之日志-扩展
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/" rel="next" title="Java常见问题之两套JRE">
+      Java常见问题之两套JRE <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1"><span class="nav-number">1.</span> <span class="nav-text">知识图谱</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8-%E7%BA%BF%E7%A8%8B%E7%A7%81%E6%9C%89"><span class="nav-number">3.</span> <span class="nav-text">程序计数器(线程私有)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88-%E7%BA%BF%E7%A8%8B%E7%A7%81%E6%9C%89"><span class="nav-number">4.</span> <span class="nav-text">虚拟机栈(线程私有)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E8%A1%A8"><span class="nav-number">4.1.</span> <span class="nav-text">局部变量表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#slot"><span class="nav-number">4.1.1.</span> <span class="nav-text">slot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-number">4.1.2.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%95%B0%E6%A0%88"><span class="nav-number">4.2.</span> <span class="nav-text">操作数栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A7%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="nav-number">4.3.</span> <span class="nav-text">帧数据区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5"><span class="nav-number">4.4.</span> <span class="nav-text">异常情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88-%E7%BA%BF%E7%A8%8B%E7%A7%81%E6%9C%89"><span class="nav-number">5.</span> <span class="nav-text">本地方法栈(线程私有)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-number">5.1.</span> <span class="nav-text">实现方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java%E5%A0%86%EF%BC%88Heap-%E7%BA%BF%E7%A8%8B%E5%85%B1%E4%BA%AB%EF%BC%89-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="nav-number">6.</span> <span class="nav-text">Java堆（Heap-线程共享）-运行时数据区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3"><span class="nav-number">6.1.</span> <span class="nav-text">新生代</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Eden-%E5%8C%BA"><span class="nav-number">6.1.1.</span> <span class="nav-text">Eden 区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ServivorFrom"><span class="nav-number">6.1.2.</span> <span class="nav-text">ServivorFrom</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ServivorTo"><span class="nav-number">6.1.3.</span> <span class="nav-text">ServivorTo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MinorGC-%E7%9A%84%E8%BF%87%E7%A8%8B%EF%BC%88%E5%A4%8D%E5%88%B6-gt-%E6%B8%85%E7%A9%BA-gt-%E4%BA%92%E6%8D%A2%EF%BC%89"><span class="nav-number">6.1.4.</span> <span class="nav-text">MinorGC 的过程（复制-&gt;清空-&gt;互换）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%81%E5%B9%B4%E4%BB%A3"><span class="nav-number">6.2.</span> <span class="nav-text">老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B1%95%E7%8E%B0%E5%9B%BE%E4%BE%8B"><span class="nav-number">6.3.</span> <span class="nav-text">内存展现图例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA-%E6%B0%B8%E4%B9%85%E4%BB%A3%EF%BC%88Permanent-Generation%EF%BC%8C%E7%BA%BF%E7%A8%8B%E5%85%B1%E4%BA%AB%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">方法区&#x2F;永久代（Permanent Generation，线程共享）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JAVA8-%E4%B8%8E%E5%85%83%E6%95%B0%E6%8D%AE"><span class="nav-number">7.1.</span> <span class="nav-text">JAVA8 与元数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%88Runtime-Constant-Pool%EF%BC%89"><span class="nav-number">7.2.</span> <span class="nav-text">运行时常量池（Runtime Constant Pool）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98%EF%BC%88Direct-Memory%EF%BC%89"><span class="nav-number">8.</span> <span class="nav-text">直接内存（Direct Memory）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-Execution-Engine"><span class="nav-number">9.</span> <span class="nav-text">执行引擎(Execution Engine)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E5%88%86%E6%9E%90"><span class="nav-number">10.</span> <span class="nav-text">场景内存溢出分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%88%86%E6%9E%90"><span class="nav-number">11.</span> <span class="nav-text">对象分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">12.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">375k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">5:41</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : 'f58c3e04256677d1f8af0dc2461d6537',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

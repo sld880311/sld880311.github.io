@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.sunliaodong.cn/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</loc>
+    
+    <lastmod>2021-02-05</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/</loc>
+    
+    <lastmod>2021-02-05</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/</loc>
+    
+    <lastmod>2021-02-05</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</loc>
+    
+    <lastmod>2021-02-05</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/</loc>
     
     <lastmod>2021-02-05</lastmod>
@@ -305,6 +333,41 @@
   </url>
   
   <url>
+    <loc>https://www.sunliaodong.cn/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
+    <lastmod>2021-02-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/tags/Java%E5%86%85%E5%AD%98%E5%AF%B9%E8%B1%A1/</loc>
+    <lastmod>2021-02-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/tags/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</loc>
+    <lastmod>2021-02-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/tags/JDK/</loc>
+    <lastmod>2021-02-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/tags/JRE/</loc>
+    <lastmod>2021-02-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.sunliaodong.cn/tags/Javap/</loc>
     <lastmod>2021-02-05</lastmod>
     <changefreq>daily</changefreq>
@@ -494,6 +557,20 @@
   </url>
   
   <url>
+    <loc>https://www.sunliaodong.cn/tags/JVM%E5%8A%A0%E8%BD%BD/</loc>
+    <lastmod>2021-02-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/tags/ClassLoader/</loc>
+    <lastmod>2021-02-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.sunliaodong.cn/tags/%E5%BC%82%E5%B8%B8/</loc>
     <lastmod>2021-02-05</lastmod>
     <changefreq>daily</changefreq>
@@ -601,7 +678,7 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/</loc>
+    <loc>https://www.sunliaodong.cn/categories/JVM/</loc>
     <lastmod>2021-02-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -615,6 +692,13 @@
   </url>
   
   <url>
+    <loc>https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/</loc>
+    <lastmod>2021-02-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</loc>
     <lastmod>2021-02-05</lastmod>
     <changefreq>daily</changefreq>
@@ -622,14 +706,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
+    <loc>https://www.sunliaodong.cn/categories/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/</loc>
     <lastmod>2021-02-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/categories/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/</loc>
+    <loc>https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
     <lastmod>2021-02-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -650,13 +734,6 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</loc>
-    <lastmod>2021-02-05</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.sunliaodong.cn/categories/MySQL/</loc>
     <lastmod>2021-02-05</lastmod>
     <changefreq>daily</changefreq>
@@ -665,6 +742,13 @@
   
   <url>
     <loc>https://www.sunliaodong.cn/categories/%E8%B0%83%E4%BC%98/</loc>
+    <lastmod>2021-02-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</loc>
     <lastmod>2021-02-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
