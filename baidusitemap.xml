@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://www.sunliaodong.cn/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2021-02-05</lastmod>
+  </url>
+  <url>
+    <loc>https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Bnetstat-ss/</loc>
+    <lastmod>2021-02-05</lastmod>
+  </url>
+  <url>
+    <loc>https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</loc>
+    <lastmod>2021-02-05</lastmod>
+  </url>
+  <url>
+    <loc>https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/</loc>
+    <lastmod>2021-02-05</lastmod>
+  </url>
+  <url>
     <loc>https://www.sunliaodong.cn/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</loc>
     <lastmod>2021-02-05</lastmod>
   </url>

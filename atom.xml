@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-05T06:16:05.613Z</updated>
+  <updated>2021-02-05T08:02:37.987Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,126 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux /proc/vmstat详解</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/</id>
+    <published>2021-02-05T07:50:20.000Z</published>
+    <updated>2021-02-05T08:02:37.987Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;内核中虚拟内存的统计信息，对于性能分析有很大益处&lt;/p&gt;
+&lt;figure class=&quot;highlight</summary>
+        
+      
+    
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
+    
+    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
+    
+    <category term="proc" scheme="https://www.sunliaodong.cn/tags/proc/"/>
+    
+    <category term="vmstat" scheme="https://www.sunliaodong.cn/tags/vmstat/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux命令之netstat/ss</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Bnetstat-ss/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Bnetstat-ss/</id>
+    <published>2021-02-05T07:47:58.000Z</published>
+    <updated>2021-02-05T07:48:57.913Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;语法&quot;&gt;&lt;a href=&quot;#语法&quot; class=&quot;headerlink&quot; title=&quot;语法&quot;&gt;&lt;/a&gt;语法&lt;/h2&gt;&lt;p&gt;netstat命令用于显示与IP、TCP、UDP和ICMP协议相关的统计数据，一般用于检验本机各端口的网络连接情况。netstat是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。&lt;br&gt;在Linux下，如果连接数比较大，可以使用效率更高的ss来替代netstat。&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;usage: netstat [-vWeenNcCF] [&amp;lt;Af&amp;gt;] -r         netstat &amp;#123;-V|--version|-h|--&lt;span class=&quot;built_in&quot;&gt;help&lt;/span&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       netstat [-vWnNcaeol] [&amp;lt;Socket&amp;gt; ...]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       netstat &amp;#123; [-vWeenNac] -I[&amp;lt;Iface&amp;gt;] | [-veenNac] -i | [-cnNe] -M | -s [-6tuw] &amp;#125; [delay]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -r, --route              display routing table&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -I, --interfaces=&amp;lt;Iface&amp;gt; display interface table &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; &amp;lt;Iface&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -i, --interfaces         display interface table&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -g, --groups             display multicast group memberships&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -s, --statistics         display networking statistics (like SNMP)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -M, --masquerade         display masqueraded connections&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -v, --verbose            be verbose&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -W, --wide               don&lt;span class=&quot;string&quot;&gt;&amp;#x27;t truncate IP addresses&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -n, --numeric            don&amp;#x27;&lt;/span&gt;t resolve names&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        --numeric-hosts          don&lt;span class=&quot;string&quot;&gt;&amp;#x27;t resolve host names&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        --numeric-ports          don&amp;#x27;&lt;/span&gt;t resolve port names&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        --numeric-users          don&lt;span class=&quot;string&quot;&gt;&amp;#x27;t resolve user names&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -N, --symbolic           resolve hardware names&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -e, --extend             display other/more information&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -p, --programs           display PID/Program name for sockets&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -o, --timers             display timers&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -c, --continuous         continuous listing&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -l, --listening          display listening server sockets&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -a, --all                display all sockets (default: connected)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -F, --fib                display Forwarding Information Base (default)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -C, --cache              display routing cache instead of FIB&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -Z, --context            display SELinux security context for sockets&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;  &amp;lt;Socket&amp;gt;=&amp;#123;-t|--tcp&amp;#125; &amp;#123;-u|--udp&amp;#125; &amp;#123;-U|--udplite&amp;#125; &amp;#123;-S|--sctp&amp;#125; &amp;#123;-w|--raw&amp;#125;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;           &amp;#123;-x|--unix&amp;#125; --ax25 --ipx --netrom&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;  &amp;lt;AF&amp;gt;=Use &amp;#x27;&lt;/span&gt;-6|-4&lt;span class=&quot;string&quot;&gt;&amp;#x27; or &amp;#x27;&lt;/span&gt;-A &amp;lt;af&amp;gt;&lt;span class=&quot;string&quot;&gt;&amp;#x27; or &amp;#x27;&lt;/span&gt;--&amp;lt;af&amp;gt;&lt;span class=&quot;string&quot;&gt;&amp;#x27;; default: inet&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;  List of possible address families (which support routing):&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;    inet (DARPA Internet) inet6 (IPv6) ax25 (AMPR AX.25) &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;    netrom (AMPR NET/ROM) ipx (Novell IPX) ddp (Appletalk DDP) &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;    x25 (CCITT X.25) &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
+    
+    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
+    
+    <category term="netstat" scheme="https://www.sunliaodong.cn/tags/netstat/"/>
+    
+    <category term="ss" scheme="https://www.sunliaodong.cn/tags/ss/"/>
+    
+    <category term="网络分析" scheme="https://www.sunliaodong.cn/tags/%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux命令之iostat</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</id>
+    <published>2021-02-05T07:46:24.000Z</published>
+    <updated>2021-02-05T07:47:25.249Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;p&gt;iostat 主要用于输出磁盘IO 和 CPU的统计信息。&lt;br&gt;iostat属于sysstat软件包。可以用yum install sysstat 直接安装。&lt;/p&gt;
+&lt;h2 id=&quot;用法&quot;&gt;&lt;a href=&quot;#用法&quot; class=&quot;headerlink&quot; title=&quot;用法&quot;&gt;&lt;/a&gt;用法&lt;/h2&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Usage: iostat [ options ] [ &amp;lt;interval&amp;gt; [ &amp;lt;count&amp;gt; ] ]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Options are:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;[ -j &amp;#123; ID | LABEL | PATH | UUID | ... &amp;#125; ]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;[ [ -T ] -g &amp;lt;group_name&amp;gt; ] [ -p [ &amp;lt;device&amp;gt; [,...] | ALL ] ]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;[ &amp;lt;device&amp;gt; [...] | ALL ]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h2 id=&quot;参数说明&quot;&gt;&lt;a href=&quot;#参数说明&quot; class=&quot;headerlink&quot; title=&quot;参数说明&quot;&gt;&lt;/a&gt;参数说明&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;-c： 显示CPU使用情况&lt;/li&gt;
+&lt;li&gt;-d： 显示磁盘使用情况&lt;/li&gt;
+&lt;li&gt;-N： 显示磁盘阵列(LVM) 信息&lt;/li&gt;
+&lt;li&gt;-n： 显示NFS 使用情况&lt;/li&gt;
+&lt;li&gt;-k： 以 KB 为单位显示&lt;/li&gt;
+&lt;li&gt;-m： 以 M 为单位显示&lt;/li&gt;
+&lt;li&gt;-t： 报告每秒向终端读取和写入的字符数和CPU的信息&lt;/li&gt;
+&lt;li&gt;-V： 显示版本信息&lt;/li&gt;
+&lt;li&gt;-x： 显示详细信息&lt;/li&gt;
+&lt;li&gt;-p：[磁盘] 显示磁盘和分区的情况&lt;/li&gt;&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
+    
+    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
+    
+    <category term="iostat" scheme="https://www.sunliaodong.cn/tags/iostat/"/>
+    
+    <category term="磁盘分析" scheme="https://www.sunliaodong.cn/tags/%E7%A3%81%E7%9B%98%E5%88%86%E6%9E%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux命令之TOP</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/</id>
+    <published>2021-02-05T07:43:40.000Z</published>
+    <updated>2021-02-05T07:45:35.404Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;语法&quot;&gt;&lt;a href=&quot;#语法&quot; class=&quot;headerlink&quot; title=&quot;语法&quot;&gt;&lt;/a&gt;语法&lt;/h2&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;[root@incloudos logs]&lt;span class=&quot;comment&quot;&gt;# top -h&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  procps-ng version 3.3.10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Usage:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;s – 改变画面更新频率&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;l – 关闭或开启第一部分第一行 top 信息的表示&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;t – 关闭或开启第一部分第二行 Tasks 和第三行 Cpus 信息的表示&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;m – 关闭或开启第一部分第四行 Mem 和 第五行 Swap 信息的表示&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;N – 以 PID 的大小的顺序排列表示进程列表&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;P – 以 CPU 占用率大小的顺序排列进程列表&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;M – 以内存占用率大小的顺序排列进程列表&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;h – 显示帮助&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;n – 设置在进程列表所显示进程的数量&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;q – 退出 top&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;s – 改变画面更新周期&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;请在top里面按下E，注意是大写。你会发现内存那一行的最左侧，&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;也就是Mem前面，会有Kib、MiB、GiB等单位变化，&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;但是数字后面不会直接写明单位。&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
+    
+    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
+    
+    <category term="TOP" scheme="https://www.sunliaodong.cn/tags/TOP/"/>
+    
+  </entry>
   
   <entry>
     <title>JVM加载机制</title>
@@ -488,116 +608,6 @@
     <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
     
     <category term="调优" scheme="https://www.sunliaodong.cn/tags/%E8%B0%83%E4%BC%98/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之配置文件</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/</id>
-    <published>2021-02-04T12:39:18.000Z</published>
-    <updated>2021-02-04T12:40:27.873Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;下面是72GB内存生产环境中my.cnf配置文件，读者可以作为一个优化参考：&lt;/p&gt;
-&lt;figure class=&quot;highlight sql&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span</summary>
-        
-      
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="配置文件" scheme="https://www.sunliaodong.cn/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之账户管理</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/MySQL%E4%B9%8B%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/</id>
-    <published>2021-02-04T12:35:57.000Z</published>
-    <updated>2021-02-04T12:37:52.344Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;Mysql账户体系&quot;&gt;&lt;a href=&quot;#Mysql账户体系&quot; class=&quot;headerlink&quot; title=&quot;Mysql账户体系&quot;&gt;&lt;/a&gt;Mysql账户体系&lt;/h2&gt;&lt;figure class=&quot;highlight sql&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;mysql&lt;span class=&quot;operator&quot;&gt;&amp;gt;&lt;/span&gt; use mysql;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;mysql&lt;span class=&quot;operator&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;show&lt;/span&gt; tables;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;---------------------------+&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; Tables_in_mysql           &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;---------------------------+&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; columns_priv              &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; db                        &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; procs_priv                &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; proxies_priv              &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; tables_priv               &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;user&lt;/span&gt;                      &lt;span class=&quot;operator&quot;&gt;|&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;operator&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;---------------------------+&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;31&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;rows&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;set&lt;/span&gt; (&lt;span class=&quot;number&quot;&gt;0.00&lt;/span&gt; sec)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="账户管理" scheme="https://www.sunliaodong.cn/tags/%E8%B4%A6%E6%88%B7%E7%AE%A1%E7%90%86/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之集合概述</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/</id>
-    <published>2021-02-04T12:19:31.000Z</published>
-    <updated>2021-02-04T12:31:34.035Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;使用集合需要考虑几个关注点：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;线程安全性&lt;/li&gt;
-&lt;li&gt;是否有序&lt;/li&gt;
-&lt;li&gt;是否重复&lt;/li&gt;
-&lt;li&gt;关注查询还是关注写入&lt;/li&gt;
-&lt;li&gt;equals和hashCode方法的重写需要同步&lt;/li&gt;
-&lt;li&gt;使用接口返回集合数据&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="集合" scheme="https://www.sunliaodong.cn/tags/%E9%9B%86%E5%90%88/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之HashMap</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BHashMap/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BHashMap/</id>
-    <published>2021-02-04T12:08:50.000Z</published>
-    <updated>2021-02-04T12:17:19.164Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;HashMap是一种使用&lt;strong&gt;数组+链表+红黑树&lt;/strong&gt;数据结构实现的Map&lt;/li&gt;
-&lt;li&gt;HashMap 根据键的 hashCode 值存储数据，大多数情况下可以直接定位到它的值，因而具有很快的访问速度，但遍历顺序不确定。&lt;/li&gt;
-&lt;li&gt;HashMap只允许一个key为null，允许多个value为null&lt;/li&gt;
-&lt;li&gt;HashMap 非线程安全，可以用 Collections 的 synchronizedMap 方法使 HashMap 具有线程安全的能力，或者使用 ConcurrentHashMap。&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="集合" scheme="https://www.sunliaodong.cn/tags/%E9%9B%86%E5%90%88/"/>
-    
-    <category term="HashMap" scheme="https://www.sunliaodong.cn/tags/HashMap/"/>
     
   </entry>
   

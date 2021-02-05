@@ -532,6 +532,29 @@
       </tags>
   </entry>
   <entry>
+    <title>Javap详解</title>
+    <url>/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>javap 命令用于解析类文件。其输出取决于所用的选项。若没有使用选项，javap 将输出传递给它的类的 public 域及方法。javap 将其输出到标准输出设备上。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">用法: javap &lt;options&gt; &lt;classes&gt;</span><br><span class="line">其中, 可能的选项包括:</span><br><span class="line">  -help  --help  -?        输出此用法消息</span><br><span class="line">  -version                 版本信息</span><br><span class="line">  -v  -verbose             输出附加信息,输出堆栈大小、各方法的 locals 及 args 数。</span><br><span class="line">  -l                       输出行号和本地变量表</span><br><span class="line">  -<span class="keyword">public</span>                  仅显示公共类和成员</span><br><span class="line">  -<span class="keyword">protected</span>               显示受保护的/公共类和成员</span><br><span class="line">  -<span class="keyword">package</span>                 显示程序包/受保护的/公共类和成员 (默认)</span><br><span class="line">  -p  -<span class="keyword">private</span>             显示所有类和成员</span><br><span class="line">  -c                       输出类中各方法的未解析的代码，即构成 Java 字节码的指令。</span><br><span class="line">  -s                       输出内部类型签名</span><br><span class="line">  -sysinfo                 显示正在处理的类的</span><br><span class="line">                           系统信息 (路径, 大小, 日期, MD5 散列)</span><br><span class="line">  -constants               显示最终常量</span><br><span class="line">  -classpath &lt;path&gt;        指定查找用户类文件的位置,如果设置了该选项，则它将覆盖缺省值或 CLASSPATH 环境变量。目录用冒号分隔。</span><br><span class="line">  -cp &lt;path&gt;               指定查找用户类文件的位置</span><br><span class="line">  -bootclasspath &lt;path&gt;    覆盖引导类文件的位置,缺省情况下，自举类是实现核心 Java 平台的类，位于 jrelibt.jar 和 jrelibi18n.jar 中。</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="分析代码"><a href="#分析代码" class="headerlink" title="分析代码"></a>分析代码</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestPassByValue</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> temp1 = <span class="number">10</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPassInt</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> temp = <span class="number">100</span>;</span><br><span class="line">		<span class="keyword">this</span>.passInt(temp);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">passInt</span><span class="params">(<span class="keyword">int</span> abc)</span> </span>&#123; &#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPassObject</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		String temp = <span class="string">&quot;abcddd&quot;</span>;</span><br><span class="line">		PassByValue val = <span class="keyword">new</span> PassByValue();</span><br><span class="line">		<span class="keyword">this</span>.passObject(val, temp);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">passObject</span><span class="params">(PassByValue passByValue, String value)</span> </span>&#123; </span><br><span class="line">		passByValue = <span class="keyword">null</span>;</span><br><span class="line">		value = <span class="string">&quot;value&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PassByValue</span></span>&#123;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="javap分析"><a href="#javap分析" class="headerlink" title="javap分析"></a>javap分析</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">警告: 二进制文件Test/bin/com.sunld.TestPassByValue包含com.sunld.TestPassByValue</span><br><span class="line">Classfile /D:/Workspaces/java/TestJVM/Test/bin/com/sunld/TestPassByValue.class</span><br><span class="line">  Last modified <span class="number">2020</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">939</span> bytes</span><br><span class="line">  MD5 checksum ae6cce5733ce01797de9d8ae30359bdd</span><br><span class="line">  Compiled from <span class="string">&quot;TestPassByValue.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">sunld</span>.<span class="title">TestPassByValue</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Class              #2             // com/sunld/TestPassByValue</span><br><span class="line">   #2 = Utf8               com/sunld/TestPassByValue</span><br><span class="line">   #3 = Class              #4             // java/lang/Object</span><br><span class="line">   #4 = Utf8               java/lang/Object</span><br><span class="line">   #5 = Utf8               temp1</span><br><span class="line">   #6 = Utf8               I</span><br><span class="line">   #7 = Utf8               &lt;init&gt;</span><br><span class="line">   #8 = Utf8               ()V</span><br><span class="line">   #9 = Utf8               Code</span><br><span class="line">  #10 = Methodref          #3.#11         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #11 = NameAndType        #7:#8          // &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #12 = Fieldref           #1.#13         // com/sunld/TestPassByValue.temp1:I</span><br><span class="line">  #13 = NameAndType        #5:#6          // temp1:I</span><br><span class="line">  #14 = Utf8               LineNumberTable</span><br><span class="line">  #15 = Utf8               LocalVariableTable</span><br><span class="line">  #16 = Utf8               this</span><br><span class="line">  #17 = Utf8               Lcom/sunld/TestPassByValue;</span><br><span class="line">  #18 = Utf8               doPassInt</span><br><span class="line">  #19 = Methodref          #1.#20         // com/sunld/TestPassByValue.passInt:(I)V</span><br><span class="line">  #20 = NameAndType        #21:#22        // passInt:(I)V</span><br><span class="line">  #21 = Utf8               passInt</span><br><span class="line">  #22 = Utf8               (I)V</span><br><span class="line">  #23 = Utf8               temp</span><br><span class="line">  #24 = Utf8               abc</span><br><span class="line">  #25 = Utf8               doPassObject</span><br><span class="line">  #26 = String             #27            // abcddd</span><br><span class="line">  #27 = Utf8               abcddd</span><br><span class="line">  #28 = Class              #29            // com/sunld/PassByValue</span><br><span class="line">  #29 = Utf8               com/sunld/PassByValue</span><br><span class="line">  #30 = Methodref          #28.#11        // com/sunld/PassByValue.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #31 = Methodref          #1.#32         // com/sunld/TestPassByValue.passObject:(Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">  #32 = NameAndType        #33:#34        // passObject:(Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">  #33 = Utf8               passObject</span><br><span class="line">  #34 = Utf8               (Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">  #35 = Utf8               Ljava/lang/String;</span><br><span class="line">  #36 = Utf8               val</span><br><span class="line">  #37 = Utf8               Lcom/sunld/PassByValue;</span><br><span class="line">  #38 = String             #39            // value</span><br><span class="line">  #39 = Utf8               value</span><br><span class="line">  #40 = Utf8               passByValue</span><br><span class="line">  #41 = Utf8               SourceFile</span><br><span class="line">  #42 = Utf8               TestPassByValue.java</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//默认的构造方法，在构造方法执行时主要完成一些初始化操作，包括一些成员变量的初始化赋值等操作</span></span><br><span class="line">  <span class="keyword">public</span> com.sunld.TestPassByValue();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="comment">//*load_*：将本地变量表中索引为*的局部变量加载到操作栈</span></span><br><span class="line">         <span class="comment">//从本地变量表中加载索引为0的变量的值到操作栈，也即this的引用，压入栈</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="comment">//invokespecial：用于调用对象的实例方法，根据对象的实际类型进行分派（虚方法分派）</span></span><br><span class="line">         <span class="comment">//出栈，调用java/lang/Object.&quot;&lt;init&gt;&quot;:()V 初始化对象，就是this指定的对象的init()方法完成初始化</span></span><br><span class="line">         1: invokespecial #10                 // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="comment">// 4到7表示，完成this.temp1 = 10的赋值。这里this引用入栈</span></span><br><span class="line">         <span class="number">4</span>: aload_0</span><br><span class="line">         <span class="comment">//将常量10加入到操作数栈</span></span><br><span class="line">         <span class="number">5</span>: bipush        <span class="number">10</span></span><br><span class="line">         <span class="comment">//出栈前面压入的两个值（this引用，常量值10）， 将10取出，并赋值给temp1</span></span><br><span class="line">         7: putfield      #12                 // Field temp1:I</span><br><span class="line">        <span class="number">10</span>: <span class="keyword">return</span></span><br><span class="line">      <span class="comment">//指令与代码行数的偏移对应关系，每一行第一个数字对应代码行数，第二个数字对应前面code中指令前面的数字</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">3</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">5</span>: <span class="number">4</span></span><br><span class="line">        line <span class="number">3</span>: <span class="number">10</span></span><br><span class="line">      <span class="comment">//局部变量表，start+length表示这个变量在字节码中的生命周期起始和结束的偏移位置（this生命周期从头0到结尾10）</span></span><br><span class="line">      <span class="comment">//slot就是这个变量在局部变量表中的槽位（槽位可复用），name就是变量名称，Signatur局部变量类型描述</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPassInt</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="comment">// 常量100入栈</span></span><br><span class="line">         <span class="number">0</span>: bipush        <span class="number">100</span></span><br><span class="line">         <span class="comment">// 将一个数值从操作数栈存储到局部变量表,存储100给temp</span></span><br><span class="line">         <span class="number">2</span>: istore_1</span><br><span class="line">         <span class="comment">// 加载this入栈</span></span><br><span class="line">         <span class="number">3</span>: aload_0</span><br><span class="line">         <span class="comment">// temp入栈</span></span><br><span class="line">         <span class="number">4</span>: iload_1</span><br><span class="line">         5: invokevirtual #19                 // Method passInt:(I)V</span><br><span class="line">         <span class="number">8</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">8</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">9</span>: <span class="number">3</span></span><br><span class="line">        line <span class="number">10</span>: <span class="number">8</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">9</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line">            <span class="number">3</span>       <span class="number">6</span>     <span class="number">1</span>  temp   I</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">passInt</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">    descriptor: (I)V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">0</span>, locals=<span class="number">2</span>, args_size=<span class="number">2</span></span><br><span class="line">         <span class="number">0</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">12</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">1</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line">            <span class="number">0</span>       <span class="number">1</span>     <span class="number">1</span>   abc   I</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPassObject</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">3</span>, locals=<span class="number">3</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="comment">// 从常量池取出abcddd入栈</span></span><br><span class="line">         0: ldc           #26                 // String abcddd</span><br><span class="line">         <span class="comment">// 出栈赋值给temp</span></span><br><span class="line">         <span class="number">2</span>: astore_1</span><br><span class="line">         <span class="comment">// 创建PassByValue对象，将引用压入栈</span></span><br><span class="line">         3: new           #28                 // class com/sunld/PassByValue</span><br><span class="line">         <span class="comment">// 将操作数栈顶的数据复制一份，并压入栈，此时栈中有两个引用值（目前有两个PassByValue的引用）</span></span><br><span class="line">         <span class="number">6</span>: dup</span><br><span class="line">         7: invokespecial #30                 // Method com/sunld/PassByValue.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="comment">// 出栈栈顶数据（对象PassByValue）复制给val</span></span><br><span class="line">        <span class="number">10</span>: astore_2</span><br><span class="line">        <span class="comment">// 入栈this</span></span><br><span class="line">        <span class="number">11</span>: aload_0</span><br><span class="line">        <span class="comment">// 入栈val</span></span><br><span class="line">        <span class="number">12</span>: aload_2</span><br><span class="line">        <span class="comment">// 入栈temp</span></span><br><span class="line">        <span class="number">13</span>: aload_1</span><br><span class="line">        <span class="comment">// 执行方法</span></span><br><span class="line">        14: invokevirtual #31                 // Method passObject:(Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">        <span class="number">17</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">15</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">16</span>: <span class="number">3</span></span><br><span class="line">        line <span class="number">17</span>: <span class="number">11</span></span><br><span class="line">        line <span class="number">18</span>: <span class="number">17</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">18</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line">            <span class="number">3</span>      <span class="number">15</span>     <span class="number">1</span>  temp   Ljava/lang/String;</span><br><span class="line">           <span class="number">11</span>       <span class="number">7</span>     <span class="number">2</span>   val   Lcom/sunld/PassByValue;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">passObject</span><span class="params">(com.sunld.PassByValue, java.lang.String)</span></span>;</span><br><span class="line">    descriptor: (Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">3</span>, args_size=<span class="number">3</span></span><br><span class="line">         <span class="number">0</span>: aconst_null</span><br><span class="line">         <span class="number">1</span>: astore_1</span><br><span class="line">         2: ldc           #38                 // String value</span><br><span class="line">         <span class="number">4</span>: astore_2</span><br><span class="line">         <span class="number">5</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">21</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">22</span>: <span class="number">2</span></span><br><span class="line">        line <span class="number">23</span>: <span class="number">5</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">6</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line">            <span class="number">0</span>       <span class="number">6</span>     <span class="number">1</span> passByValue   Lcom/sunld/PassByValue;</span><br><span class="line">            <span class="number">0</span>       <span class="number">6</span>     <span class="number">2</span> value   Ljava/lang/String;</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">&quot;TestPassByValue.java&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.jianshu.com/p/6a8997560b05">通过javap命令分析java汇编指令</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>常用工具</category>
+      </categories>
+      <tags>
+        <tag>Javap</tag>
+        <tag>Class分析</tag>
+        <tag>JVM</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java常见问题之两套JRE</title>
     <url>/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/</url>
     <content><![CDATA[<p>JDK在安装过程中如果勾选安装JRE最终会在安装目录中有两套JRE。简单来说一套用于Java本身的运行（比如java本身的javac、还有监控套件javap等），一套用于程序的运行。两套JRE的路径默认为：</p>
@@ -571,29 +594,6 @@
         <tag>Java</tag>
         <tag>JDK</tag>
         <tag>JRE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Javap详解</title>
-    <url>/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>javap 命令用于解析类文件。其输出取决于所用的选项。若没有使用选项，javap 将输出传递给它的类的 public 域及方法。javap 将其输出到标准输出设备上。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">用法: javap &lt;options&gt; &lt;classes&gt;</span><br><span class="line">其中, 可能的选项包括:</span><br><span class="line">  -help  --help  -?        输出此用法消息</span><br><span class="line">  -version                 版本信息</span><br><span class="line">  -v  -verbose             输出附加信息,输出堆栈大小、各方法的 locals 及 args 数。</span><br><span class="line">  -l                       输出行号和本地变量表</span><br><span class="line">  -<span class="keyword">public</span>                  仅显示公共类和成员</span><br><span class="line">  -<span class="keyword">protected</span>               显示受保护的/公共类和成员</span><br><span class="line">  -<span class="keyword">package</span>                 显示程序包/受保护的/公共类和成员 (默认)</span><br><span class="line">  -p  -<span class="keyword">private</span>             显示所有类和成员</span><br><span class="line">  -c                       输出类中各方法的未解析的代码，即构成 Java 字节码的指令。</span><br><span class="line">  -s                       输出内部类型签名</span><br><span class="line">  -sysinfo                 显示正在处理的类的</span><br><span class="line">                           系统信息 (路径, 大小, 日期, MD5 散列)</span><br><span class="line">  -constants               显示最终常量</span><br><span class="line">  -classpath &lt;path&gt;        指定查找用户类文件的位置,如果设置了该选项，则它将覆盖缺省值或 CLASSPATH 环境变量。目录用冒号分隔。</span><br><span class="line">  -cp &lt;path&gt;               指定查找用户类文件的位置</span><br><span class="line">  -bootclasspath &lt;path&gt;    覆盖引导类文件的位置,缺省情况下，自举类是实现核心 Java 平台的类，位于 jrelibt.jar 和 jrelibi18n.jar 中。</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="分析代码"><a href="#分析代码" class="headerlink" title="分析代码"></a>分析代码</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestPassByValue</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> temp1 = <span class="number">10</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPassInt</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> temp = <span class="number">100</span>;</span><br><span class="line">		<span class="keyword">this</span>.passInt(temp);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">passInt</span><span class="params">(<span class="keyword">int</span> abc)</span> </span>&#123; &#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPassObject</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		String temp = <span class="string">&quot;abcddd&quot;</span>;</span><br><span class="line">		PassByValue val = <span class="keyword">new</span> PassByValue();</span><br><span class="line">		<span class="keyword">this</span>.passObject(val, temp);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">passObject</span><span class="params">(PassByValue passByValue, String value)</span> </span>&#123; </span><br><span class="line">		passByValue = <span class="keyword">null</span>;</span><br><span class="line">		value = <span class="string">&quot;value&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PassByValue</span></span>&#123;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="javap分析"><a href="#javap分析" class="headerlink" title="javap分析"></a>javap分析</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">警告: 二进制文件Test/bin/com.sunld.TestPassByValue包含com.sunld.TestPassByValue</span><br><span class="line">Classfile /D:/Workspaces/java/TestJVM/Test/bin/com/sunld/TestPassByValue.class</span><br><span class="line">  Last modified <span class="number">2020</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">939</span> bytes</span><br><span class="line">  MD5 checksum ae6cce5733ce01797de9d8ae30359bdd</span><br><span class="line">  Compiled from <span class="string">&quot;TestPassByValue.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">sunld</span>.<span class="title">TestPassByValue</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Class              #2             // com/sunld/TestPassByValue</span><br><span class="line">   #2 = Utf8               com/sunld/TestPassByValue</span><br><span class="line">   #3 = Class              #4             // java/lang/Object</span><br><span class="line">   #4 = Utf8               java/lang/Object</span><br><span class="line">   #5 = Utf8               temp1</span><br><span class="line">   #6 = Utf8               I</span><br><span class="line">   #7 = Utf8               &lt;init&gt;</span><br><span class="line">   #8 = Utf8               ()V</span><br><span class="line">   #9 = Utf8               Code</span><br><span class="line">  #10 = Methodref          #3.#11         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #11 = NameAndType        #7:#8          // &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #12 = Fieldref           #1.#13         // com/sunld/TestPassByValue.temp1:I</span><br><span class="line">  #13 = NameAndType        #5:#6          // temp1:I</span><br><span class="line">  #14 = Utf8               LineNumberTable</span><br><span class="line">  #15 = Utf8               LocalVariableTable</span><br><span class="line">  #16 = Utf8               this</span><br><span class="line">  #17 = Utf8               Lcom/sunld/TestPassByValue;</span><br><span class="line">  #18 = Utf8               doPassInt</span><br><span class="line">  #19 = Methodref          #1.#20         // com/sunld/TestPassByValue.passInt:(I)V</span><br><span class="line">  #20 = NameAndType        #21:#22        // passInt:(I)V</span><br><span class="line">  #21 = Utf8               passInt</span><br><span class="line">  #22 = Utf8               (I)V</span><br><span class="line">  #23 = Utf8               temp</span><br><span class="line">  #24 = Utf8               abc</span><br><span class="line">  #25 = Utf8               doPassObject</span><br><span class="line">  #26 = String             #27            // abcddd</span><br><span class="line">  #27 = Utf8               abcddd</span><br><span class="line">  #28 = Class              #29            // com/sunld/PassByValue</span><br><span class="line">  #29 = Utf8               com/sunld/PassByValue</span><br><span class="line">  #30 = Methodref          #28.#11        // com/sunld/PassByValue.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #31 = Methodref          #1.#32         // com/sunld/TestPassByValue.passObject:(Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">  #32 = NameAndType        #33:#34        // passObject:(Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">  #33 = Utf8               passObject</span><br><span class="line">  #34 = Utf8               (Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">  #35 = Utf8               Ljava/lang/String;</span><br><span class="line">  #36 = Utf8               val</span><br><span class="line">  #37 = Utf8               Lcom/sunld/PassByValue;</span><br><span class="line">  #38 = String             #39            // value</span><br><span class="line">  #39 = Utf8               value</span><br><span class="line">  #40 = Utf8               passByValue</span><br><span class="line">  #41 = Utf8               SourceFile</span><br><span class="line">  #42 = Utf8               TestPassByValue.java</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//默认的构造方法，在构造方法执行时主要完成一些初始化操作，包括一些成员变量的初始化赋值等操作</span></span><br><span class="line">  <span class="keyword">public</span> com.sunld.TestPassByValue();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="comment">//*load_*：将本地变量表中索引为*的局部变量加载到操作栈</span></span><br><span class="line">         <span class="comment">//从本地变量表中加载索引为0的变量的值到操作栈，也即this的引用，压入栈</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="comment">//invokespecial：用于调用对象的实例方法，根据对象的实际类型进行分派（虚方法分派）</span></span><br><span class="line">         <span class="comment">//出栈，调用java/lang/Object.&quot;&lt;init&gt;&quot;:()V 初始化对象，就是this指定的对象的init()方法完成初始化</span></span><br><span class="line">         1: invokespecial #10                 // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="comment">// 4到7表示，完成this.temp1 = 10的赋值。这里this引用入栈</span></span><br><span class="line">         <span class="number">4</span>: aload_0</span><br><span class="line">         <span class="comment">//将常量10加入到操作数栈</span></span><br><span class="line">         <span class="number">5</span>: bipush        <span class="number">10</span></span><br><span class="line">         <span class="comment">//出栈前面压入的两个值（this引用，常量值10）， 将10取出，并赋值给temp1</span></span><br><span class="line">         7: putfield      #12                 // Field temp1:I</span><br><span class="line">        <span class="number">10</span>: <span class="keyword">return</span></span><br><span class="line">      <span class="comment">//指令与代码行数的偏移对应关系，每一行第一个数字对应代码行数，第二个数字对应前面code中指令前面的数字</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">3</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">5</span>: <span class="number">4</span></span><br><span class="line">        line <span class="number">3</span>: <span class="number">10</span></span><br><span class="line">      <span class="comment">//局部变量表，start+length表示这个变量在字节码中的生命周期起始和结束的偏移位置（this生命周期从头0到结尾10）</span></span><br><span class="line">      <span class="comment">//slot就是这个变量在局部变量表中的槽位（槽位可复用），name就是变量名称，Signatur局部变量类型描述</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPassInt</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="comment">// 常量100入栈</span></span><br><span class="line">         <span class="number">0</span>: bipush        <span class="number">100</span></span><br><span class="line">         <span class="comment">// 将一个数值从操作数栈存储到局部变量表,存储100给temp</span></span><br><span class="line">         <span class="number">2</span>: istore_1</span><br><span class="line">         <span class="comment">// 加载this入栈</span></span><br><span class="line">         <span class="number">3</span>: aload_0</span><br><span class="line">         <span class="comment">// temp入栈</span></span><br><span class="line">         <span class="number">4</span>: iload_1</span><br><span class="line">         5: invokevirtual #19                 // Method passInt:(I)V</span><br><span class="line">         <span class="number">8</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">8</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">9</span>: <span class="number">3</span></span><br><span class="line">        line <span class="number">10</span>: <span class="number">8</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">9</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line">            <span class="number">3</span>       <span class="number">6</span>     <span class="number">1</span>  temp   I</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">passInt</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">    descriptor: (I)V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">0</span>, locals=<span class="number">2</span>, args_size=<span class="number">2</span></span><br><span class="line">         <span class="number">0</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">12</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">1</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line">            <span class="number">0</span>       <span class="number">1</span>     <span class="number">1</span>   abc   I</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPassObject</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">3</span>, locals=<span class="number">3</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="comment">// 从常量池取出abcddd入栈</span></span><br><span class="line">         0: ldc           #26                 // String abcddd</span><br><span class="line">         <span class="comment">// 出栈赋值给temp</span></span><br><span class="line">         <span class="number">2</span>: astore_1</span><br><span class="line">         <span class="comment">// 创建PassByValue对象，将引用压入栈</span></span><br><span class="line">         3: new           #28                 // class com/sunld/PassByValue</span><br><span class="line">         <span class="comment">// 将操作数栈顶的数据复制一份，并压入栈，此时栈中有两个引用值（目前有两个PassByValue的引用）</span></span><br><span class="line">         <span class="number">6</span>: dup</span><br><span class="line">         7: invokespecial #30                 // Method com/sunld/PassByValue.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="comment">// 出栈栈顶数据（对象PassByValue）复制给val</span></span><br><span class="line">        <span class="number">10</span>: astore_2</span><br><span class="line">        <span class="comment">// 入栈this</span></span><br><span class="line">        <span class="number">11</span>: aload_0</span><br><span class="line">        <span class="comment">// 入栈val</span></span><br><span class="line">        <span class="number">12</span>: aload_2</span><br><span class="line">        <span class="comment">// 入栈temp</span></span><br><span class="line">        <span class="number">13</span>: aload_1</span><br><span class="line">        <span class="comment">// 执行方法</span></span><br><span class="line">        14: invokevirtual #31                 // Method passObject:(Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">        <span class="number">17</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">15</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">16</span>: <span class="number">3</span></span><br><span class="line">        line <span class="number">17</span>: <span class="number">11</span></span><br><span class="line">        line <span class="number">18</span>: <span class="number">17</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">18</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line">            <span class="number">3</span>      <span class="number">15</span>     <span class="number">1</span>  temp   Ljava/lang/String;</span><br><span class="line">           <span class="number">11</span>       <span class="number">7</span>     <span class="number">2</span>   val   Lcom/sunld/PassByValue;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">passObject</span><span class="params">(com.sunld.PassByValue, java.lang.String)</span></span>;</span><br><span class="line">    descriptor: (Lcom/sunld/PassByValue;Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">3</span>, args_size=<span class="number">3</span></span><br><span class="line">         <span class="number">0</span>: aconst_null</span><br><span class="line">         <span class="number">1</span>: astore_1</span><br><span class="line">         2: ldc           #38                 // String value</span><br><span class="line">         <span class="number">4</span>: astore_2</span><br><span class="line">         <span class="number">5</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">21</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">22</span>: <span class="number">2</span></span><br><span class="line">        line <span class="number">23</span>: <span class="number">5</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">6</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestPassByValue;</span><br><span class="line">            <span class="number">0</span>       <span class="number">6</span>     <span class="number">1</span> passByValue   Lcom/sunld/PassByValue;</span><br><span class="line">            <span class="number">0</span>       <span class="number">6</span>     <span class="number">2</span> value   Ljava/lang/String;</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">&quot;TestPassByValue.java&quot;</span></span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://www.jianshu.com/p/6a8997560b05">通过javap命令分析java汇编指令</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>常用工具</category>
-      </categories>
-      <tags>
-        <tag>Javap</tag>
-        <tag>Class分析</tag>
-        <tag>JVM</tag>
       </tags>
   </entry>
   <entry>
@@ -995,6 +995,435 @@
       <tags>
         <tag>Java</tag>
         <tag>注解</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux命令之TOP</title>
+    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/</url>
+    <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@incloudos logs]<span class="comment"># top -h</span></span><br><span class="line">  procps-ng version 3.3.10</span><br><span class="line">Usage:</span><br><span class="line">  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]</span><br><span class="line">s – 改变画面更新频率</span><br><span class="line">l – 关闭或开启第一部分第一行 top 信息的表示</span><br><span class="line">t – 关闭或开启第一部分第二行 Tasks 和第三行 Cpus 信息的表示</span><br><span class="line">m – 关闭或开启第一部分第四行 Mem 和 第五行 Swap 信息的表示</span><br><span class="line">N – 以 PID 的大小的顺序排列表示进程列表</span><br><span class="line">P – 以 CPU 占用率大小的顺序排列进程列表</span><br><span class="line">M – 以内存占用率大小的顺序排列进程列表</span><br><span class="line">h – 显示帮助</span><br><span class="line">n – 设置在进程列表所显示进程的数量</span><br><span class="line">q – 退出 top</span><br><span class="line">s – 改变画面更新周期</span><br><span class="line">请在top里面按下E，注意是大写。你会发现内存那一行的最左侧，</span><br><span class="line">也就是Mem前面，会有Kib、MiB、GiB等单位变化，</span><br><span class="line">但是数字后面不会直接写明单位。</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="常用语法"><a href="#常用语法" class="headerlink" title="常用语法"></a>常用语法</h2><ul>
+<li>top查看进程使用资源情况</li>
+<li>top -c显示详细的进程信息</li>
+<li>top -bn1静态显示所有进程</li>
+<li>q退出，数值1显示所有核cpu，大写字母M按内存使用排序，大写字母P按照cpu使用排序</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top - 19:40:49 up 104 days, 11:55,  1 user,  load average: 0.00, 0.01, 0.05</span><br><span class="line">Tasks:  87 total,   2 running,  85 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem :  2046936 total,   148592 free,   282184 used,  1616160 buff/cache</span><br><span class="line">KiB Swap:        0 total,        0 free,        0 used.  1461432 avail Mem</span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND</span><br><span class="line">    1 root      20   0  125496   3980   2516 S  0.0  0.2   5:54.39 systemd</span><br><span class="line">    2 root      20   0       0      0      0 S  0.0  0.0   0:00.25 kthreadd</span><br><span class="line">    4 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 kworker/0:0H</span><br></pre></td></tr></table></figure>
+<h2 id="显示列"><a href="#显示列" class="headerlink" title="显示列"></a>显示列</h2><p>默认情况下仅显示比较重要的 PID、USER、PR、NI、VIRT、RES、SHR、S、%CPU、%MEM、TIME+、COMMAND 列。可以通过下面的快捷键来更改显示内容。通过 f 键可以选择显示的内容。按 f 键之后会显示列的列表，按 a-z 即可显示或隐藏对应的列，最后按回车键确定。按 o 键可以改变列的显示顺序。按小写的 a-z 可以将相应的列向右移动，而大写的 A-Z 可以将相应的列向左移动。最后按回车键确定。按大写的 F 或 O 键，然后按 a-z 可以将进程按照相应的列进行排序。而大写的 R 键可以将当前的排序倒转。</p>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-0lax">序号</th>
+    <th class="tg-0lax">列名</th>
+    <th class="tg-0lax">解释</th>
+  </tr>
+  <tr>
+    <td class="tg-0lax">a</td>
+    <td class="tg-0lax">PID</td>
+    <td class="tg-0lax">进程id</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">b</td>
+    <td class="tg-0lax">PPID</td>
+    <td class="tg-0lax">父进程id</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">c</td>
+    <td class="tg-0lax">RUSER</td>
+    <td class="tg-0lax">Real user name</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">d</td>
+    <td class="tg-0lax">UID</td>
+    <td class="tg-0lax">进程所有者的用户id</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">e</td>
+    <td class="tg-0lax">USER</td>
+    <td class="tg-0lax">进程所有者的用户名</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">f</td>
+    <td class="tg-0lax">GROUP</td>
+    <td class="tg-0lax">进程所有者的组名</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">g</td>
+    <td class="tg-0lax">TTY</td>
+    <td class="tg-0lax">启动进程的终端名。不是从终端启动的进程则显示为 ?</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">h</td>
+    <td class="tg-0lax">PR</td>
+    <td class="tg-0lax">优先级</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">i</td>
+    <td class="tg-0lax">NI</td>
+    <td class="tg-0lax">nice值。负值表示高优先级，正值表示低优先级</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">j</td>
+    <td class="tg-0lax">P</td>
+    <td class="tg-0lax">最后使用的CPU，仅在多CPU环境下有意义</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">k</td>
+    <td class="tg-0lax">%CPU</td>
+    <td class="tg-0lax">上次更新到现在的CPU时间占用百分比</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">l</td>
+    <td class="tg-0lax">TIME</td>
+    <td class="tg-0lax">进程使用的CPU时间总计，单位秒</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">m</td>
+    <td class="tg-0lax">TIME+</td>
+    <td class="tg-0lax">进程使用的CPU时间总计，单位1/100秒</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">n</td>
+    <td class="tg-0lax">%MEM</td>
+    <td class="tg-0lax">进程使用的物理内存百分比，simply RES divided by total physical memory</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">o</td>
+    <td class="tg-0lax">VIRT</td>
+    <td class="tg-0lax">
+进程使用的虚拟内存总量，单位kb。<br>
+VIRT：virtual memory usage 虚拟内存<br>
+1、进程“需要的”虚拟内存大小，包括进程使用的库、代码、数据等<br>
+2、假如进程申请100m的内存，但实际只使用了10m，那么它会增长100m，而不是实际的使用量<br>
+</td>
+  </tr>
+  
+  <tr>
+    <td class="tg-0lax">p</td>
+    <td class="tg-0lax">SWAP</td>
+    <td class="tg-0lax">进程使用的虚拟内存中，被换出的大小，单位kb。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">q</td>
+    <td class="tg-0lax">RES</td>
+    <td class="tg-0lax">
+进程使用的、未被换出的物理内存大小，单位kb。<br>
+RES：resident memory usage 常驻内存
+</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">r</td>
+    <td class="tg-0lax">CODE</td>
+    <td class="tg-0lax">可执行代码占用的物理内存大小，单位kb</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">s</td>
+    <td class="tg-0lax">DATA</td>
+    <td class="tg-0lax">
+可执行代码以外的部分(数据段+栈)占用的物理内存大小，单位kb<br>
+1、数据占用的内存。如果top没有显示，按f键可以显示出来。<br>
+2、真正的该程序要求的数据空间，是真正在运行中要使用的。<br>
+</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">t</td>
+    <td class="tg-0lax">SHR</td>
+    <td class="tg-0lax">
+共享内存大小，单位kb<br>
+SHR：shared memory 共享内存<br>
+1、除了自身进程的共享内存，也包括其他进程的共享内存<br>
+2、虽然进程只使用了几个共享库的函数，但它包含了整个共享库的大小<br>
+3、swap out后，它将会降下来<br>
+</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">u</td>
+    <td class="tg-0lax">nFLT</td>
+    <td class="tg-0lax">页面错误次数</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">v</td>
+    <td class="tg-0lax">nDRT</td>
+    <td class="tg-0lax">最后一次写入到现在，被修改过的页面数。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">w</td>
+    <td class="tg-0lax">S</td>
+    <td class="tg-0lax">进程状态。（D=不可中断的睡眠状态，R=运行，S=睡眠，T=跟踪/停止，Z=僵尸进程）</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">x</td>
+    <td class="tg-0lax">COMMAND</td>
+    <td class="tg-0lax">命令名/命令行</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">y</td>
+    <td class="tg-0lax">WCHAN</td>
+    <td class="tg-0lax">若该进程在睡眠，则显示睡眠中的系统函数名</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">z</td>
+    <td class="tg-0lax">Flags</td>
+    <td class="tg-0lax">任务标志，参考 sched.h</td>
+  </tr>
+</table>
+
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>top命令作为Linux下最常用的性能分析工具之一，可以监控、收集进程的CPU、IO、内存使用情况。比如我们可以通过top命令获得一个进程使用了多少虚拟内存（VIRT）、物理内存（RES）、共享内存（SHR）。</p>
+<h2 id="VIRT-RES-SHR的准确含义"><a href="#VIRT-RES-SHR的准确含义" class="headerlink" title="VIRT RES SHR的准确含义"></a>VIRT RES SHR的准确含义</h2><ol>
+<li>top命令通过解析/proc/&lt;pid&gt;/statm统计VIRT和RES和SHR字段值。</li>
+<li>VIRT是申请的虚拟内存总量。</li>
+<li>RES是进程使用的物理内存总和。</li>
+<li>SHR是RES中”映射至文件”的物理内存总和。包括：<ul>
+<li>程序的代码段。</li>
+<li>动态库的代码段。</li>
+<li>通过mmap做的文件映射。</li>
+<li>通过mmap做的匿名映射，但指明了MAP_SHARED属性。</li>
+<li>通过shmget申请的共享内存。</li>
+</ul>
+</li>
+<li>/proc/&lt;pid&gt;/smaps内Shared_*统计的是RES中映射数量&gt;=2的物理内存。</li>
+<li>/proc/&lt;pid&gt;/smaps内Private_*统计的是RES中映射数量=1的物理内存。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://blog.sina.com.cn/s/blog_4e41487001016eio.html">剖析top命令显示的VIRT RES SHR值</a></li>
+<li><a href="https://www.cnblogs.com/shengulong/p/8513652.html">top命令查看线程信息和jstack使用介绍</a></li>
+<li><a href="http://blog.51cto.com/13578154/2088684">10.1-10.5 w查看系统负载 vmstat , top, sar, nload</a></li>
+<li><a href="http://man7.org/linux/man-pages/man1/top.1.html">Linux TOP官方帮助文档</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>TOP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux /proc/vmstat详解</title>
+    <url>/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>内核中虚拟内存的统计信息，对于性能分析有很大益处</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nr_free_pages 24320</span><br><span class="line">nr_alloc_batch 293</span><br><span class="line">nr_inactive_anon 13215</span><br><span class="line">nr_active_anon 58077</span><br><span class="line">nr_inactive_file 148719</span><br><span class="line">nr_active_file 172552</span><br><span class="line">nr_unevictable 0</span><br><span class="line">nr_mlock 0</span><br><span class="line">nr_anon_pages 19933</span><br><span class="line"><span class="comment"># 映射到文件的页数</span></span><br><span class="line">nr_mapped 8526</span><br><span class="line">nr_file_pages 348571</span><br><span class="line"><span class="comment"># 脏页数</span></span><br><span class="line">nr_dirty 16</span><br><span class="line"><span class="comment"># 会写页数</span></span><br><span class="line">nr_writeback 0</span><br><span class="line">nr_slab_reclaimable 17986</span><br><span class="line">nr_slab_unreclaimable 2986</span><br><span class="line"><span class="comment"># 分配到页面的页数</span></span><br><span class="line">nr_page_table_pages 1396</span><br><span class="line">nr_kernel_stack 123</span><br><span class="line"><span class="comment"># 不稳定页数</span></span><br><span class="line">nr_unstable 0</span><br><span class="line">nr_bounce 0</span><br><span class="line">nr_vmscan_write 0</span><br><span class="line">nr_vmscan_immediate_reclaim 26</span><br><span class="line">nr_writeback_temp 0</span><br><span class="line">nr_isolated_anon 0</span><br><span class="line">nr_isolated_file 0</span><br><span class="line">nr_shmem 27300</span><br><span class="line">nr_dirtied 8354426</span><br><span class="line">nr_written 8097732</span><br><span class="line">numa_hit 1187165492</span><br><span class="line">numa_miss 0</span><br><span class="line">numa_foreign 0</span><br><span class="line">numa_interleave 12459</span><br><span class="line">numa_local 1187165492</span><br><span class="line">numa_other 0</span><br><span class="line">workingset_refault 552268</span><br><span class="line">workingset_activate 81267</span><br><span class="line">workingset_nodereclaim 0</span><br><span class="line">nr_anon_transparent_hugepages 47</span><br><span class="line">nr_free_cma 0</span><br><span class="line">nr_dirty_threshold 94636</span><br><span class="line">nr_dirty_background_threshold 31545</span><br><span class="line"><span class="comment"># 从启动到现在读入的内存页数</span></span><br><span class="line">pgpgin 3168538</span><br><span class="line"><span class="comment"># 从启动到现在换出的内存页数</span></span><br><span class="line">pgpgout 49091671</span><br><span class="line"><span class="comment"># 从启动到现在读入的交换分区页数</span></span><br><span class="line">pswpin 0</span><br><span class="line"><span class="comment"># 从启动到现在换出的交换分区页数</span></span><br><span class="line">pswpout 0</span><br><span class="line"><span class="comment"># 从启动到现在dma存储区分配的页数</span></span><br><span class="line">pgalloc_dma 3730811</span><br><span class="line"><span class="comment"># 从启动到现在dma32存储区分配的页数</span></span><br><span class="line">pgalloc_dma32 1237816587</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区分配的页数</span></span><br><span class="line">pgalloc_normal 0</span><br><span class="line">pgalloc_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在释放的页数</span></span><br><span class="line">pgfree 1241571794</span><br><span class="line"><span class="comment"># 从启动到现在激活的页数</span></span><br><span class="line">pgactivate 2698296</span><br><span class="line"><span class="comment"># 从启动到现在去激活的页数</span></span><br><span class="line">pgdeactivate 747037</span><br><span class="line"><span class="comment"># 从启动到现在二级页面错误数</span></span><br><span class="line">pgfault 4099623847</span><br><span class="line"><span class="comment"># 从启动到现在一级页面错误数</span></span><br><span class="line">pgmajfault 4447</span><br><span class="line">pglazyfreed 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区再填充的页面数</span></span><br><span class="line">pgrefill_dma 2398</span><br><span class="line">pgrefill_dma32 778799</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区填充的页数</span></span><br><span class="line">pgrefill_normal 0</span><br><span class="line">pgrefill_movable 0</span><br><span class="line">pgsteal_kswapd_dma 6587</span><br><span class="line">pgsteal_kswapd_dma32 1977434</span><br><span class="line">pgsteal_kswapd_normal 0</span><br><span class="line">pgsteal_kswapd_movable 0</span><br><span class="line">pgsteal_direct_dma 0</span><br><span class="line">pgsteal_direct_dma32 0</span><br><span class="line">pgsteal_direct_normal 0</span><br><span class="line">pgsteal_direct_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的DMA存储区页面数</span></span><br><span class="line">pgscan_kswapd_dma 6645</span><br><span class="line">pgscan_kswapd_dma32 1992050</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的普通存储区页面数</span></span><br><span class="line">pgscan_kswapd_normal 0</span><br><span class="line">pgscan_kswapd_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_dma 0</span><br><span class="line">pgscan_direct_dma32 0</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_normal 0</span><br><span class="line">pgscan_direct_movable 0</span><br><span class="line">pgscan_direct_throttle 0</span><br><span class="line">zone_reclaim_failed 0</span><br><span class="line"><span class="comment"># kswapd 之外其他线程在回收过程中，因为回收 inode 而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">pginodesteal 0</span><br><span class="line"><span class="comment"># 从启动到现在被扫描的切片数</span></span><br><span class="line">slabs_scanned 1120768</span><br><span class="line"><span class="comment"># 在kswapd回收的过程中，因为回收inode而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">kswapd_inodesteal 105460</span><br><span class="line">kswapd_low_wmark_hit_quickly 47</span><br><span class="line">kswapd_high_wmark_hit_quickly 198</span><br><span class="line"><span class="comment"># 从启动到现在通过kswapd调用来回收的页面数</span></span><br><span class="line">pageoutrun 563</span><br><span class="line"><span class="comment"># 从启动到现在请求直接回收的页面数</span></span><br><span class="line">allocstall 0</span><br><span class="line"><span class="comment"># 从启动到现在轮换的页面数</span></span><br><span class="line">pgrotated 24</span><br><span class="line">drop_pagecache 0</span><br><span class="line">drop_slab 0</span><br><span class="line">numa_pte_updates 0</span><br><span class="line">numa_huge_pte_updates 0</span><br><span class="line">numa_hint_faults 0</span><br><span class="line">numa_hint_faults_local 0</span><br><span class="line">numa_pages_migrated 0</span><br><span class="line">pgmigrate_success 0</span><br><span class="line">pgmigrate_fail 0</span><br><span class="line">compact_migrate_scanned 0</span><br><span class="line">compact_free_scanned 0</span><br><span class="line">compact_isolated 0</span><br><span class="line">compact_stall 0</span><br><span class="line">compact_fail 0</span><br><span class="line">compact_success 0</span><br><span class="line">htlb_buddy_alloc_success 129</span><br><span class="line">htlb_buddy_alloc_fail 0</span><br><span class="line">unevictable_pgs_culled 0</span><br><span class="line">unevictable_pgs_scanned 0</span><br><span class="line">unevictable_pgs_rescued 0</span><br><span class="line">unevictable_pgs_mlocked 0</span><br><span class="line">unevictable_pgs_munlocked 0</span><br><span class="line">unevictable_pgs_cleared 0</span><br><span class="line">unevictable_pgs_stranded 0</span><br><span class="line">thp_fault_alloc 5482</span><br><span class="line">thp_fault_fallback 345</span><br><span class="line">thp_collapse_alloc 606</span><br><span class="line">thp_collapse_alloc_failed 48146</span><br><span class="line">thp_split 180</span><br><span class="line">thp_zero_page_alloc 2</span><br><span class="line">thp_zero_page_alloc_failed 0</span><br><span class="line">balloon_inflate 0</span><br><span class="line">balloon_deflate 0</span><br><span class="line">balloon_migrate 0</span><br><span class="line">swap_ra 0</span><br><span class="line">swap_ra_hit 0</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.kernel.org/doc/Documentation/vm/transhuge.txt">/proc/vmstat帮助手册</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>proc</tag>
+        <tag>vmstat</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux命令之iostat</title>
+    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
+<li>-c： 显示CPU使用情况</li>
+<li>-d： 显示磁盘使用情况</li>
+<li>-N： 显示磁盘阵列(LVM) 信息</li>
+<li>-n： 显示NFS 使用情况</li>
+<li>-k： 以 KB 为单位显示</li>
+<li>-m： 以 M 为单位显示</li>
+<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
+<li>-V： 显示版本信息</li>
+<li>-x： 显示详细信息</li>
+<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
+
+</li>
+</ul>
+<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第一行</td>
+<td>最上面指示系统版本、主机名和当前日期</td>
+</tr>
+<tr>
+<td>avg-cpu</td>
+<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
+</tr>
+<tr>
+<td>Device</td>
+<td>各磁盘设备的IO统计信息</td>
+</tr>
+</tbody></table>
+<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%user</td>
+<td>CPU在用户态执行进程的时间百分比。</td>
+</tr>
+<tr>
+<td>%nice</td>
+<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%system</td>
+<td>CPU处在内核态执行进程的时间百分比</td>
+</tr>
+<tr>
+<td>%iowait</td>
+<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%steal</td>
+<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
+</tr>
+<tr>
+<td>%idle</td>
+<td>CPU空闲时间百分比</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
+<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Device</td>
+<td>设备名称</td>
+</tr>
+<tr>
+<td>tps</td>
+<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
+</tr>
+<tr>
+<td>Blk_read/s</td>
+<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
+</tr>
+<tr>
+<td>Blk_wrtn/s</td>
+<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
+</tr>
+<tr>
+<td>Blk_read</td>
+<td>取样时间间隔内读扇区总数量</td>
+</tr>
+<tr>
+<td>Blk_wrtn</td>
+<td>取样时间间隔内写扇区总数量</td>
+</tr>
+</tbody></table>
+<ul>
+<li>iostat 1 5：间隔1秒，总共显示5次</li>
+<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
+<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
+<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
+<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
+<li>iostat -m：以M为单位显示所有信息</li>
+<li>iostat -d sda：显示指定硬盘信息</li>
+<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
+<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
+<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
+<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
+</ul>
+<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rrqm/s</td>
+<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
+</tr>
+<tr>
+<td>wrqm/s</td>
+<td>每秒对该设备的写请求被合并次数</td>
+</tr>
+<tr>
+<td>r/s</td>
+<td>每秒完成的读 I/O 设备次数</td>
+</tr>
+<tr>
+<td>w/s</td>
+<td>每秒完成的写 I/O 设备次数</td>
+</tr>
+<tr>
+<td>rkB/s</td>
+<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
+</tr>
+<tr>
+<td>wkB/s</td>
+<td>每秒写K字节数。是 wsect/s 的一半</td>
+</tr>
+<tr>
+<td>avgrq-sz</td>
+<td>平均每次IO操作的数据量(扇区数为单位)</td>
+</tr>
+<tr>
+<td>avgqu-sz</td>
+<td>平均等待处理的IO请求队列长度</td>
+</tr>
+<tr>
+<td>rsec/s</td>
+<td>每秒读扇区数。即 rsect/s</td>
+</tr>
+<tr>
+<td>wsec/s</td>
+<td>每秒写扇区数。即 wsect/s</td>
+</tr>
+<tr>
+<td>r_await</td>
+<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>w_await</td>
+<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>await</td>
+<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
+</tr>
+<tr>
+<td>svctm</td>
+<td>平均每次IO请求的处理时间(毫秒为单位)</td>
+</tr>
+<tr>
+<td>%util</td>
+<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
+</blockquote>
+<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>iostat</tag>
+        <tag>磁盘分析</tag>
       </tags>
   </entry>
   <entry>
@@ -3121,6 +3550,138 @@
       <tags>
         <tag>Java</tag>
         <tag>编程技巧</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux命令之netstat/ss</title>
+    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Bnetstat-ss/</url>
+    <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>netstat命令用于显示与IP、TCP、UDP和ICMP协议相关的统计数据，一般用于检验本机各端口的网络连接情况。netstat是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。<br>在Linux下，如果连接数比较大，可以使用效率更高的ss来替代netstat。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">usage: netstat [-vWeenNcCF] [&lt;Af&gt;] -r         netstat &#123;-V|--version|-h|--<span class="built_in">help</span>&#125;</span><br><span class="line">       netstat [-vWnNcaeol] [&lt;Socket&gt; ...]</span><br><span class="line">       netstat &#123; [-vWeenNac] -I[&lt;Iface&gt;] | [-veenNac] -i | [-cnNe] -M | -s [-6tuw] &#125; [delay]</span><br><span class="line"></span><br><span class="line">        -r, --route              display routing table</span><br><span class="line">        -I, --interfaces=&lt;Iface&gt; display interface table <span class="keyword">for</span> &lt;Iface&gt;</span><br><span class="line">        -i, --interfaces         display interface table</span><br><span class="line">        -g, --groups             display multicast group memberships</span><br><span class="line">        -s, --statistics         display networking statistics (like SNMP)</span><br><span class="line">        -M, --masquerade         display masqueraded connections</span><br><span class="line"></span><br><span class="line">        -v, --verbose            be verbose</span><br><span class="line">        -W, --wide               don<span class="string">&#x27;t truncate IP addresses</span></span><br><span class="line"><span class="string">        -n, --numeric            don&#x27;</span>t resolve names</span><br><span class="line">        --numeric-hosts          don<span class="string">&#x27;t resolve host names</span></span><br><span class="line"><span class="string">        --numeric-ports          don&#x27;</span>t resolve port names</span><br><span class="line">        --numeric-users          don<span class="string">&#x27;t resolve user names</span></span><br><span class="line"><span class="string">        -N, --symbolic           resolve hardware names</span></span><br><span class="line"><span class="string">        -e, --extend             display other/more information</span></span><br><span class="line"><span class="string">        -p, --programs           display PID/Program name for sockets</span></span><br><span class="line"><span class="string">        -o, --timers             display timers</span></span><br><span class="line"><span class="string">        -c, --continuous         continuous listing</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        -l, --listening          display listening server sockets</span></span><br><span class="line"><span class="string">        -a, --all                display all sockets (default: connected)</span></span><br><span class="line"><span class="string">        -F, --fib                display Forwarding Information Base (default)</span></span><br><span class="line"><span class="string">        -C, --cache              display routing cache instead of FIB</span></span><br><span class="line"><span class="string">        -Z, --context            display SELinux security context for sockets</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  &lt;Socket&gt;=&#123;-t|--tcp&#125; &#123;-u|--udp&#125; &#123;-U|--udplite&#125; &#123;-S|--sctp&#125; &#123;-w|--raw&#125;</span></span><br><span class="line"><span class="string">           &#123;-x|--unix&#125; --ax25 --ipx --netrom</span></span><br><span class="line"><span class="string">  &lt;AF&gt;=Use &#x27;</span>-6|-4<span class="string">&#x27; or &#x27;</span>-A &lt;af&gt;<span class="string">&#x27; or &#x27;</span>--&lt;af&gt;<span class="string">&#x27;; default: inet</span></span><br><span class="line"><span class="string">  List of possible address families (which support routing):</span></span><br><span class="line"><span class="string">    inet (DARPA Internet) inet6 (IPv6) ax25 (AMPR AX.25) </span></span><br><span class="line"><span class="string">    netrom (AMPR NET/ROM) ipx (Novell IPX) ddp (Appletalk DDP) </span></span><br><span class="line"><span class="string">    x25 (CCITT X.25) </span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="输出结果"><a href="#输出结果" class="headerlink" title="输出结果"></a>输出结果</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat</span></span><br><span class="line">Active Internet connections (w/o servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State</span><br><span class="line">tcp        0      0 instance-gctg007a:ssh   ip152.ip-66-70-13:35204 ESTABLISHED</span><br><span class="line">tcp        0      0 instance-gctg007a:42940 100.64.253.36:tdp-suite ESTABLISHED</span><br><span class="line">tcp        0      0 instance-gctg007a:53248 100.64.253.:radius-acct ESTABLISHED</span><br><span class="line">tcp        0      0 instance-gctg007a:52486 100.64.253.41:http      ESTABLISHED</span><br><span class="line">tcp        0      0 instance-gctg007a:ssh   58.56.96.27:59100       ESTABLISHED</span><br><span class="line">tcp        0      0 instance-gctg007a:52504 100.64.253.41:http      ESTABLISHED</span><br><span class="line">tcp6       0      0 localhost:781           localhost:44440         TIME_WAIT  </span><br><span class="line">tcp6       0      0 localhost:781           localhost:44446         TIME_WAIT  </span><br><span class="line">Active UNIX domain sockets (w/o servers)</span><br><span class="line">Proto RefCnt Flags       Type       State         I-Node   Path</span><br><span class="line">unix  2      [ ]         DGRAM                    128926   /var/run/chrony/chronyd.sock</span><br><span class="line">unix  2      [ ]         DGRAM                    13279    /run/systemd/shutdownd</span><br><span class="line">unix  3      [ ]         DGRAM                    7391     /run/systemd/notify</span><br><span class="line">unix  2      [ ]         DGRAM                    7393     /run/systemd/cgroups-agent</span><br><span class="line">unix  6      [ ]         DGRAM                    7405     /run/systemd/journal/socket</span><br><span class="line">unix  14     [ ]         DGRAM                    7407     /dev/<span class="built_in">log</span></span><br><span class="line">unix  3      [ ]         STREAM     CONNECTED     243842   /run/systemd/journal/stdout</span><br></pre></td></tr></table></figure>
+<h3 id="有源TCP连接"><a href="#有源TCP连接" class="headerlink" title="有源TCP连接"></a>有源TCP连接</h3><p>Active Internet connections，称为有源TCP连接，其中”Recv-Q”和”Send-Q”指的是接收队列和发送队列。这些数字一般都应该是0。如果不是则表示软件包正在队列中堆积。这种情况只能在非常少的情况见到。</p>
+<h3 id="有源Unix域套接口"><a href="#有源Unix域套接口" class="headerlink" title="有源Unix域套接口"></a>有源Unix域套接口</h3><p>Active UNIX domain sockets，称为有源Unix域套接口(和网络套接字一样，但是只能用于本机通信，性能可以提高一倍)。</p>
+<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><ul>
+<li>Proto显示连接使用的协议</li>
+<li>RefCnt表示连接到本套接口上的进程号</li>
+<li>Types显示套接口的类型</li>
+<li>State显示套接口当前的状态</li>
+<li>Path表示连接到套接口的其它进程使用的路径名</li>
+</ul>
+<h3 id="状态说明"><a href="#状态说明" class="headerlink" title="状态说明"></a>状态说明</h3><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#bbb;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#594F4F;background-color:#E0FFEB;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#493F3F;background-color:#9DE0AD;}
+.tg .tg-cly1{text-align:left;vertical-align:middle}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-cly1">CLOSED</th>
+    <th class="tg-0lax">初始（无连接）状态</th>
+  </tr>
+  <tr>
+    <td class="tg-cly1">LISTEN</td>
+    <td class="tg-0lax">侦听状态，等待远程机器的连接请求</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">SYN_SEND</td>
+    <td class="tg-0lax">在TCP三次握手期间，主动连接端发送了SYN包后，进入SYN_SEND状态，等待对方的ACK包</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">SYN_RECV</td>
+    <td class="tg-0lax">在TCP三次握手期间，主动连接端收到SYN包后，进入SYN_RECV状态</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">ESTABLISHED</td>
+    <td class="tg-0lax">完成TCP三次握手后，主动连接端进入ESTABLISHED状态。此时，TCP连接已经建立，可以进行通信</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">FIN_WAIT_1</td>
+    <td class="tg-0lax">在TCP四次挥手时，主动关闭端发送FIN包后，进入FIN_WAIT_1状态</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">FIN_WAIT_2</td>
+    <td class="tg-0lax">在TCP四次挥手时，主动关闭端收到ACK包后，进入FIN_WAIT_2状态</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">TIME_WAIT</td>
+    <td class="tg-0lax">在TCP四次挥手时，主动关闭端发送了ACK包之后，进入TIME_WAIT状态，等待最多MSL时间，让被动关闭端收到ACK包</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">CLOSING</td>
+    <td class="tg-0lax">在TCP四次挥手期间，主动关闭端发送了FIN包后，没有收到对应的ACK包，却收到对方的FIN包，此时，进入CLOSING状态</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">CLOSE_WAIT</td>
+    <td class="tg-0lax">在TCP四次挥手期间，被动关闭端收到FIN包后，进入CLOSE_WAIT状态</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">LAST_ACK</td>
+    <td class="tg-0lax">在TCP四次挥手时，被动关闭端发送FIN包后，进入LAST_ACK状态，等待对方的ACK包</td>
+  </tr>
+</table>
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#bbb;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#594F4F;background-color:#E0FFEB;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#493F3F;background-color:#9DE0AD;}
+.tg .tg-cly1{text-align:left;vertical-align:middle}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-cly1">主动连接端可能的状态有</th>
+    <th class="tg-0lax">CLOSED        SYN_SEND        ESTABLISHED</th>
+  </tr>
+  <tr>
+    <td class="tg-cly1">主动关闭端可能的状态有</td>
+    <td class="tg-0lax">FIN_WAIT_1    FIN_WAIT_2      TIME_WAIT</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">被动连接端可能的状态有</td>
+    <td class="tg-0lax">LISTEN        SYN_RECV        ESTABLISHED</td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">被动关闭端可能的状态有</td>
+    <td class="tg-0lax">CLOSE_WAIT    LAST_ACK        CLOSED</td>
+  </tr>
+</table>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="显示网卡列表"><a href="#显示网卡列表" class="headerlink" title="显示网卡列表"></a>显示网卡列表</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -i</span></span><br><span class="line">Kernel Interface table</span><br><span class="line">Iface             MTU    RX-OK RX-ERR RX-DRP RX-OVR    TX-OK TX-ERR TX-DRP TX-OVR Flg</span><br><span class="line">docker0          1500        0      0      0 0             0      0      0      0 BMU</span><br><span class="line">eth0             1500 24097762      0      0 0      24283960      0      0      0 BMRU</span><br><span class="line">lo              65536  5213562      0      0 0       5213562      0      0      0 LRU</span><br></pre></td></tr></table></figure>
+<h3 id="显示组播信息"><a href="#显示组播信息" class="headerlink" title="显示组播信息"></a>显示组播信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -g</span></span><br><span class="line">IPv6/IPv4 Group Memberships</span><br><span class="line">Interface       RefCnt Group</span><br><span class="line">--------------- ------ ---------------------</span><br><span class="line">lo              1      all-systems.mcast.net</span><br><span class="line">eth0            1      all-systems.mcast.net</span><br><span class="line">docker0         1      all-systems.mcast.net</span><br><span class="line">lo              1      ff02::1</span><br><span class="line">lo              1      ff01::1</span><br><span class="line">eth0            1      ff02::202</span><br><span class="line">eth0            1      ff02::1:ff55:3dea</span><br><span class="line">eth0            1      ff02::1</span><br><span class="line">eth0            1      ff01::1</span><br><span class="line">docker0         1      ff02::1</span><br><span class="line">docker0         1      ff01::1</span><br></pre></td></tr></table></figure>
+<h3 id="显示网络统计"><a href="#显示网络统计" class="headerlink" title="显示网络统计"></a>显示网络统计</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -s | more 4</span></span><br><span class="line">Ip:</span><br><span class="line">    29005184 total packets received</span><br><span class="line">    0 forwarded</span><br><span class="line">    18 with unknown protocol</span><br><span class="line">    0 incoming packets discarded</span><br><span class="line">    29005160 incoming packets delivered</span><br><span class="line">    29191565 requests sent out</span><br></pre></td></tr></table></figure>
+<h3 id="常用组合"><a href="#常用组合" class="headerlink" title="常用组合"></a>常用组合</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -lntup</span></span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    </span><br><span class="line">tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      1162/mysqld         </span><br><span class="line">tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      1/systemd           </span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      2099/sshd           </span><br><span class="line">tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      2055/master         </span><br><span class="line">tcp6       0      0 :::781                  :::*                    LISTEN      2145/./bcm-agent    </span><br><span class="line">tcp6       0      0 :::111                  :::*                    LISTEN      1/systemd           </span><br><span class="line">tcp6       0      0 :::22                   :::*                    LISTEN      2099/sshd           </span><br><span class="line">tcp6       0      0 ::1:25                  :::*                    LISTEN      2055/master         </span><br><span class="line">udp        0      0 0.0.0.0:68              0.0.0.0:*                           1580/dhclient       </span><br><span class="line">udp        0      0 0.0.0.0:111             0.0.0.0:*                           1/systemd           </span><br><span class="line">udp        0      0 127.0.0.1:323           0.0.0.0:*                           13421/chronyd       </span><br><span class="line">udp        0      0 0.0.0.0:827             0.0.0.0:*                           13372/rpcbind       </span><br><span class="line">udp6       0      0 :::111                  :::*                                1/systemd           </span><br><span class="line">udp6       0      0 ::1:323                 :::*                                13421/chronyd       </span><br><span class="line">udp6       0      0 :::827                  :::*                                13372/rpcbind</span><br></pre></td></tr></table></figure>
+<h3 id="显示关于以太网的统计数据"><a href="#显示关于以太网的统计数据" class="headerlink" title="显示关于以太网的统计数据"></a>显示关于以太网的统计数据</h3><p>用于显示关于以太网的统计数据。它列出的项目包括传送的数据报的总字节数、错误数、删除数、数据报的数量和广播的数量。这些统计数据既有发送的数据报数量，也有接收的数据报数量。这个选项可以用来统计一些基本的网络流量）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -e</span></span><br><span class="line">Active Internet connections (w/o servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode     </span><br><span class="line">tcp        0      0 instance-gctg007a:52948 100.64.253.41:http      ESTABLISHED root       41318395  </span><br><span class="line">tcp        0      0 localhost:44890         localhost:781           ESTABLISHED root       41318388  </span><br><span class="line">tcp        0      0 instance-gctg007a:42940 100.64.253.36:tdp-suite ESTABLISHED root       41007269  </span><br><span class="line">tcp        0      0 instance-gctg007a:53248 100.64.253.:radius-acct ESTABLISHED root       41007268  </span><br><span class="line">tcp        0      0 instance-gctg007a:ssh   188.131.142.109:51650   ESTABLISHED root       41318433  </span><br><span class="line">tcp        0      0 instance-gctg007a:ssh   58.56.96.27:59100       ESTABLISHED root       41305929  </span><br><span class="line">tcp        0      0 instance-gctg007a:50304 100.64.253.42:http      ESTABLISHED root       41318403  </span><br><span class="line">tcp6       0      0 localhost:781           localhost:44886         TIME_WAIT   root       0         </span><br><span class="line">tcp6       0      0 localhost:781           localhost:44890         ESTABLISHED root       41318389  </span><br><span class="line">Active UNIX domain sockets (w/o servers)</span><br><span class="line">Proto RefCnt Flags       Type       State         I-Node   Path</span><br><span class="line">unix  2      [ ]         DGRAM                    128926   /var/run/chrony/chronyd.sock</span><br><span class="line">unix  2      [ ]         DGRAM                    13279    /run/systemd/shutdownd</span><br><span class="line">unix  3      [ ]         DGRAM                    7391     /run/systemd/notify</span><br><span class="line">unix  2      [ ]         DGRAM                    7393     /run/systemd/cgroups-agent</span><br><span class="line">unix  6      [ ]         DGRAM                    7405     /run/systemd/journal/socket</span><br><span class="line">unix  15     [ ]         DGRAM                    7407     /dev/<span class="built_in">log</span></span><br><span class="line">unix  3      [ ]         STREAM     CONNECTED     243842   /run/systemd/journal/stdout</span><br></pre></td></tr></table></figure>
+<h3 id="显示路由信息"><a href="#显示路由信息" class="headerlink" title="显示路由信息"></a>显示路由信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -r</span></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface</span><br><span class="line">default         gateway         0.0.0.0         UG        0 0          0 eth0</span><br><span class="line">169.254.169.254 192.168.16.2    255.255.255.255 UGH       0 0          0 eth0</span><br><span class="line">172.17.0.0      0.0.0.0         255.255.0.0     U         0 0          0 docker0</span><br><span class="line">192.168.16.0    0.0.0.0         255.255.240.0   U         0 0          0 eth0</span><br></pre></td></tr></table></figure>
+<h3 id="统计机器中网络连接各个状态个数"><a href="#统计机器中网络连接各个状态个数" class="headerlink" title="统计机器中网络连接各个状态个数"></a>统计机器中网络连接各个状态个数</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -an | awk &#x27;/^tcp/ &#123;++S[$NF]&#125;  END &#123;for (a in S) print a,S[a]&#125; &#x27;</span></span><br><span class="line">LISTEN 8</span><br><span class="line">SYN_RECV 2</span><br><span class="line">ESTABLISHED 5</span><br><span class="line">TIME_WAIT 2</span><br></pre></td></tr></table></figure>
+<h3 id="查看连接某服务端口最多的的IP地址"><a href="#查看连接某服务端口最多的的IP地址" class="headerlink" title="查看连接某服务端口最多的的IP地址"></a>查看连接某服务端口最多的的IP地址</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -ant|grep &quot;127.*&quot;|awk &#x27;&#123;print $5&#125;&#x27;|awk -F: &#x27;&#123;print $1&#125;&#x27;|sort -nr|uniq -c</span></span><br><span class="line">      4 127.0.0.1</span><br><span class="line">      1 0.0.0.0</span><br></pre></td></tr></table></figure>
+<h3 id="找出程序运行的端口"><a href="#找出程序运行的端口" class="headerlink" title="找出程序运行的端口"></a>找出程序运行的端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -ap | grep ssh</span></span><br><span class="line">tcp        0      0 0.0.0.0:ssh             0.0.0.0:*               LISTEN      2099/sshd           </span><br><span class="line">tcp        0      0 instance-gctg007a:ssh   58.56.96.27:59100       ESTABLISHED 14074/sshd: root@pt </span><br><span class="line">tcp        0      0 instance-gctg007a:ssh   67.205.138.198:42924    ESTABLISHED 14679/sshd: root [p </span><br><span class="line">tcp       23      0 instance-gctg007a:ssh   193-93-12-122.sol:41056 ESTABLISHED 14678/sshd: [accept </span><br><span class="line">tcp6       0      0 [::]:ssh                [::]:*                  LISTEN      2099/sshd           </span><br><span class="line">unix  2      [ ]         DGRAM                    41319468 14678/sshd: [accept  </span><br><span class="line">unix  3      [ ]         STREAM     CONNECTED     41319497 14680/sshd: root [n  </span><br><span class="line">unix  3      [ ]         STREAM     CONNECTED     41319498 14679/sshd: root [p  </span><br><span class="line">unix  2      [ ]         DGRAM                    41319513 14679/sshd: root [p  </span><br><span class="line">unix  2      [ ]         DGRAM                    41306028 14074/sshd: root@pt  </span><br><span class="line">unix  3      [ ]         STREAM     CONNECTED     20226    2099/sshd </span><br></pre></td></tr></table></figure>
+<h3 id="在-netstat-输出中显示-TCP连接信息"><a href="#在-netstat-输出中显示-TCP连接信息" class="headerlink" title="在 netstat 输出中显示 TCP连接信息"></a>在 netstat 输出中显示 TCP连接信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># netstat -pt</span></span><br><span class="line">Active Internet connections (w/o servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    </span><br><span class="line">tcp        0      0 instance-gctg007a:53010 100.64.253.41:http      ESTABLISHED 2145/./bcm-agent    </span><br><span class="line">tcp        0      0 instance-gctg007a:42940 100.64.253.36:tdp-suite ESTABLISHED 20485/hosteye       </span><br><span class="line">tcp        0      0 instance-gctg007a:53248 100.64.253.:radius-acct ESTABLISHED 20485/hosteye       </span><br><span class="line">tcp        0      0 instance-gctg007a:53008 100.64.253.41:http      ESTABLISHED 2145/./bcm-agent    </span><br><span class="line">tcp        0      0 instance-gctg007a:ssh   58.56.96.27:59100       ESTABLISHED 14074/sshd: root@pt </span><br><span class="line">tcp6       0      0 localhost:781           localhost:44944         TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 localhost:781           localhost:44948         TIME_WAIT   -  </span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="ss"><a href="#ss" class="headerlink" title="ss"></a>ss</h3><p>ss命令可以用来获取socket统计信息，它可以显示和netstat类似的内容。<br>ss的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比netstat更快速更高效。原因如下：</p>
+<ol>
+<li>当服务器的socket连接数量变得非常大时，无论是使用netstat命令还是直接cat /proc/net/tcp，执行速度都会很慢。当服务器维持的连接达到上万个的时候，使用netstat等于浪费 生命，而用ss才是节省时间。</li>
+<li>而ss快的秘诀在于它利用到了TCP协议栈中tcp_diag。tcp_diag是一个用于分析统计的模块，可以获得Linux内核中第一手的信息，这就确保了ss的快捷高效。当然，如果你的系统中没有tcp_diag，ss也可以正常运行，只是效率会变得稍慢（但仍然比 netstat要快）。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.cnblogs.com/ftl1012/p/netstat.html">Linux netstat命令详解</a></li>
+<li><a href="https://www.cnblogs.com/kevingrace/p/6211509.html">SS命令和Netstat命令比较</a></li>
+<li><a href="https://www.cnblogs.com/dadonggg/p/8778318.html">解决TIME_WAIT过多造成的问题</a></li>
+<li><a href="https://www.cnblogs.com/bakari/p/10515977.html">一文掌握 Linux 性能分析之网络篇</a></li>
+<li><a href="https://www.cnblogs.com/Security-Darren/p/4700387.html">Linux系统排查4——网络篇</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>netstat</tag>
+        <tag>ss</tag>
+        <tag>网络分析</tag>
       </tags>
   </entry>
   <entry>

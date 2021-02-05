@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="语法123456789101112131415161718[root@incloudos logs]# top -h  procps-ng version 3.3.10Usage:  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]s – 改变画面更新频率l – 关闭或开启第一部分第一行 top 信息的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux命令之TOP">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="语法123456789101112131415161718[root@incloudos logs]# top -h  procps-ng version 3.3.10Usage:  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]s – 改变画面更新频率l – 关闭或开启第一部分第一行 top 信息的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-05T07:43:40.000Z">
+<meta property="article:modified_time" content="2021-02-05T07:45:35.404Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="TOP">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Linux命令之TOP | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">62</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">42</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux命令之TOP
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-05 15:43:40 / 修改时间：15:45:35" itemprop="dateCreated datePublished" datetime="2021-02-05T15:43:40+08:00">2021-02-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">性能分析</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@incloudos logs]<span class="comment"># top -h</span></span><br><span class="line">  procps-ng version 3.3.10</span><br><span class="line">Usage:</span><br><span class="line">  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]</span><br><span class="line">s – 改变画面更新频率</span><br><span class="line">l – 关闭或开启第一部分第一行 top 信息的表示</span><br><span class="line">t – 关闭或开启第一部分第二行 Tasks 和第三行 Cpus 信息的表示</span><br><span class="line">m – 关闭或开启第一部分第四行 Mem 和 第五行 Swap 信息的表示</span><br><span class="line">N – 以 PID 的大小的顺序排列表示进程列表</span><br><span class="line">P – 以 CPU 占用率大小的顺序排列进程列表</span><br><span class="line">M – 以内存占用率大小的顺序排列进程列表</span><br><span class="line">h – 显示帮助</span><br><span class="line">n – 设置在进程列表所显示进程的数量</span><br><span class="line">q – 退出 top</span><br><span class="line">s – 改变画面更新周期</span><br><span class="line">请在top里面按下E，注意是大写。你会发现内存那一行的最左侧，</span><br><span class="line">也就是Mem前面，会有Kib、MiB、GiB等单位变化，</span><br><span class="line">但是数字后面不会直接写明单位。</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="常用语法"><a href="#常用语法" class="headerlink" title="常用语法"></a>常用语法</h2><ul>
+<li>top查看进程使用资源情况</li>
+<li>top -c显示详细的进程信息</li>
+<li>top -bn1静态显示所有进程</li>
+<li>q退出，数值1显示所有核cpu，大写字母M按内存使用排序，大写字母P按照cpu使用排序</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">top - 19:40:49 up 104 days, 11:55,  1 user,  load average: 0.00, 0.01, 0.05</span><br><span class="line">Tasks:  87 total,   2 running,  85 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem :  2046936 total,   148592 free,   282184 used,  1616160 buff/cache</span><br><span class="line">KiB Swap:        0 total,        0 free,        0 used.  1461432 avail Mem</span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND</span><br><span class="line">    1 root      20   0  125496   3980   2516 S  0.0  0.2   5:54.39 systemd</span><br><span class="line">    2 root      20   0       0      0      0 S  0.0  0.0   0:00.25 kthreadd</span><br><span class="line">    4 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 kworker/0:0H</span><br></pre></td></tr></table></figure>
+<h2 id="显示列"><a href="#显示列" class="headerlink" title="显示列"></a>显示列</h2><p>默认情况下仅显示比较重要的 PID、USER、PR、NI、VIRT、RES、SHR、S、%CPU、%MEM、TIME+、COMMAND 列。可以通过下面的快捷键来更改显示内容。通过 f 键可以选择显示的内容。按 f 键之后会显示列的列表，按 a-z 即可显示或隐藏对应的列，最后按回车键确定。按 o 键可以改变列的显示顺序。按小写的 a-z 可以将相应的列向右移动，而大写的 A-Z 可以将相应的列向左移动。最后按回车键确定。按大写的 F 或 O 键，然后按 a-z 可以将进程按照相应的列进行排序。而大写的 R 键可以将当前的排序倒转。</p>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-0lax">序号</th>
+    <th class="tg-0lax">列名</th>
+    <th class="tg-0lax">解释</th>
+  </tr>
+  <tr>
+    <td class="tg-0lax">a</td>
+    <td class="tg-0lax">PID</td>
+    <td class="tg-0lax">进程id</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">b</td>
+    <td class="tg-0lax">PPID</td>
+    <td class="tg-0lax">父进程id</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">c</td>
+    <td class="tg-0lax">RUSER</td>
+    <td class="tg-0lax">Real user name</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">d</td>
+    <td class="tg-0lax">UID</td>
+    <td class="tg-0lax">进程所有者的用户id</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">e</td>
+    <td class="tg-0lax">USER</td>
+    <td class="tg-0lax">进程所有者的用户名</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">f</td>
+    <td class="tg-0lax">GROUP</td>
+    <td class="tg-0lax">进程所有者的组名</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">g</td>
+    <td class="tg-0lax">TTY</td>
+    <td class="tg-0lax">启动进程的终端名。不是从终端启动的进程则显示为 ?</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">h</td>
+    <td class="tg-0lax">PR</td>
+    <td class="tg-0lax">优先级</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">i</td>
+    <td class="tg-0lax">NI</td>
+    <td class="tg-0lax">nice值。负值表示高优先级，正值表示低优先级</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">j</td>
+    <td class="tg-0lax">P</td>
+    <td class="tg-0lax">最后使用的CPU，仅在多CPU环境下有意义</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">k</td>
+    <td class="tg-0lax">%CPU</td>
+    <td class="tg-0lax">上次更新到现在的CPU时间占用百分比</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">l</td>
+    <td class="tg-0lax">TIME</td>
+    <td class="tg-0lax">进程使用的CPU时间总计，单位秒</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">m</td>
+    <td class="tg-0lax">TIME+</td>
+    <td class="tg-0lax">进程使用的CPU时间总计，单位1/100秒</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">n</td>
+    <td class="tg-0lax">%MEM</td>
+    <td class="tg-0lax">进程使用的物理内存百分比，simply RES divided by total physical memory</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">o</td>
+    <td class="tg-0lax">VIRT</td>
+    <td class="tg-0lax">
+进程使用的虚拟内存总量，单位kb。<br>
+VIRT：virtual memory usage 虚拟内存<br>
+1、进程“需要的”虚拟内存大小，包括进程使用的库、代码、数据等<br>
+2、假如进程申请100m的内存，但实际只使用了10m，那么它会增长100m，而不是实际的使用量<br>
+</td>
+  </tr>
+  
+  <tr>
+    <td class="tg-0lax">p</td>
+    <td class="tg-0lax">SWAP</td>
+    <td class="tg-0lax">进程使用的虚拟内存中，被换出的大小，单位kb。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">q</td>
+    <td class="tg-0lax">RES</td>
+    <td class="tg-0lax">
+进程使用的、未被换出的物理内存大小，单位kb。<br>
+RES：resident memory usage 常驻内存
+</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">r</td>
+    <td class="tg-0lax">CODE</td>
+    <td class="tg-0lax">可执行代码占用的物理内存大小，单位kb</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">s</td>
+    <td class="tg-0lax">DATA</td>
+    <td class="tg-0lax">
+可执行代码以外的部分(数据段+栈)占用的物理内存大小，单位kb<br>
+1、数据占用的内存。如果top没有显示，按f键可以显示出来。<br>
+2、真正的该程序要求的数据空间，是真正在运行中要使用的。<br>
+</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">t</td>
+    <td class="tg-0lax">SHR</td>
+    <td class="tg-0lax">
+共享内存大小，单位kb<br>
+SHR：shared memory 共享内存<br>
+1、除了自身进程的共享内存，也包括其他进程的共享内存<br>
+2、虽然进程只使用了几个共享库的函数，但它包含了整个共享库的大小<br>
+3、swap out后，它将会降下来<br>
+</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">u</td>
+    <td class="tg-0lax">nFLT</td>
+    <td class="tg-0lax">页面错误次数</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">v</td>
+    <td class="tg-0lax">nDRT</td>
+    <td class="tg-0lax">最后一次写入到现在，被修改过的页面数。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">w</td>
+    <td class="tg-0lax">S</td>
+    <td class="tg-0lax">进程状态。（D=不可中断的睡眠状态，R=运行，S=睡眠，T=跟踪/停止，Z=僵尸进程）</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">x</td>
+    <td class="tg-0lax">COMMAND</td>
+    <td class="tg-0lax">命令名/命令行</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">y</td>
+    <td class="tg-0lax">WCHAN</td>
+    <td class="tg-0lax">若该进程在睡眠，则显示睡眠中的系统函数名</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">z</td>
+    <td class="tg-0lax">Flags</td>
+    <td class="tg-0lax">任务标志，参考 sched.h</td>
+  </tr>
+</table>
+
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>top命令作为Linux下最常用的性能分析工具之一，可以监控、收集进程的CPU、IO、内存使用情况。比如我们可以通过top命令获得一个进程使用了多少虚拟内存（VIRT）、物理内存（RES）、共享内存（SHR）。</p>
+<h2 id="VIRT-RES-SHR的准确含义"><a href="#VIRT-RES-SHR的准确含义" class="headerlink" title="VIRT RES SHR的准确含义"></a>VIRT RES SHR的准确含义</h2><ol>
+<li>top命令通过解析/proc/&lt;pid&gt;/statm统计VIRT和RES和SHR字段值。</li>
+<li>VIRT是申请的虚拟内存总量。</li>
+<li>RES是进程使用的物理内存总和。</li>
+<li>SHR是RES中”映射至文件”的物理内存总和。包括：<ul>
+<li>程序的代码段。</li>
+<li>动态库的代码段。</li>
+<li>通过mmap做的文件映射。</li>
+<li>通过mmap做的匿名映射，但指明了MAP_SHARED属性。</li>
+<li>通过shmget申请的共享内存。</li>
+</ul>
+</li>
+<li>/proc/&lt;pid&gt;/smaps内Shared_*统计的是RES中映射数量&gt;=2的物理内存。</li>
+<li>/proc/&lt;pid&gt;/smaps内Private_*统计的是RES中映射数量=1的物理内存。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://blog.sina.com.cn/s/blog_4e41487001016eio.html">剖析top命令显示的VIRT RES SHR值</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/shengulong/p/8513652.html">top命令查看线程信息和jstack使用介绍</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.51cto.com/13578154/2088684">10.1-10.5 w查看系统负载 vmstat , top, sar, nload</a></li>
+<li><a target="_blank" rel="noopener" href="http://man7.org/linux/man-pages/man1/top.1.html">Linux TOP官方帮助文档</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+              <a href="/tags/TOP/" rel="tag"><i class="fa fa-tag"></i> TOP</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/05/JVM%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" rel="prev" title="JVM加载机制">
+      <i class="fa fa-chevron-left"></i> JVM加载机制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/" rel="next" title="Linux命令之iostat">
+      Linux命令之iostat <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">常用语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E5%88%97"><span class="nav-number">3.</span> <span class="nav-text">显示列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VIRT-RES-SHR%E7%9A%84%E5%87%86%E7%A1%AE%E5%90%AB%E4%B9%89"><span class="nav-number">5.</span> <span class="nav-text">VIRT RES SHR的准确含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">62</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">394k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">5:58</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '7eba43af90c78134d069abc61e089047',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
