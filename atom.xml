@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-04T12:50:08.531Z</updated>
+  <updated>2021-02-05T00:56:35.974Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,248 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>MySQL之日志-扩展</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/</id>
+    <published>2021-02-05T00:23:29.000Z</published>
+    <updated>2021-02-05T00:56:35.974Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;数据日志文件比对&quot;&gt;&lt;a href=&quot;#数据日志文件比对&quot; class=&quot;headerlink&quot; title=&quot;数据日志文件比对&quot;&gt;&lt;/a&gt;数据日志文件比对&lt;/h2&gt;&lt;h3 id=&quot;ib-logfile与log-bin区别&quot;&gt;&lt;a href=&quot;#ib-logfile与log-bin区别&quot; class=&quot;headerlink&quot; title=&quot;ib_logfile与log-bin区别&quot;&gt;&lt;/a&gt;ib_logfile与log-bin区别&lt;/h3&gt;&lt;style type=&quot;text/css&quot;&gt;
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+&lt;/style&gt;
+&lt;table class=&quot;tg&quot;&gt;
+  &lt;tr&gt;
+    &lt;td class=&quot;tg-0lax&quot;&gt;ib_logfile&lt;/td&gt;
+    &lt;td class=&quot;tg-0lax&quot;&gt;
+        记录系统的回滚，重做日志（在你修改数据之前，会先把 修改的操作 作为日志先记录下来）&lt;br&gt;
+        记录文件的物理更改&lt;br&gt;
+        记录的是redo log和undo log（应该记录在ibdata1中）的信息，这里记录的基本是commit之前的数据
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td class=&quot;tg-0lax&quot;&gt;mysql-bin.******&lt;/td&gt;
+    &lt;td class=&quot;tg-0lax&quot;&gt;
+        记录系统的所有更新记录，数据库的更细日志，记录的是逻辑更改&lt;br&gt;
+        主从：mysql会把日志发送到slave，salve会接收日志，然后解析日志，把里面的sql语句重新应用到数据库里，于是就能同步数据了&lt;br&gt;
+        记录的是已经执行完毕的对数据库的dml和ddl信息，这里记录的基本是commit之后的数据信息。
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="日志" scheme="https://www.sunliaodong.cn/tags/%E6%97%A5%E5%BF%97/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之日志-中继日志</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/</id>
+    <published>2021-02-05T00:23:20.000Z</published>
+    <updated>2021-02-05T00:42:46.994Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;中继日志用于主从复制架构中的从服务器上，从服务器的 slave 进程从主服务器处获取二进制日志的内容并写入中继日志，然后由 IO 进程读取并执行中继日志中的语句。在复制过程中产生的日志一个线程读取别人的二进制日志,存到本地叫做中继日志,然后本地在开启一个线程去读取中继日志在本地做回放,就完成了数据的同步&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="中继日志" scheme="https://www.sunliaodong.cn/tags/%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之日志-事务日志</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/</id>
+    <published>2021-02-05T00:23:05.000Z</published>
+    <updated>2021-02-05T00:41:33.616Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;MySQL会最大程度的利用缓存，从而提高数据的访问效率。那么换一句话来说，任何高性能的系统都必须利用到缓存，从各个层面来讲，缓存都发挥了巨大的作用。再上升到一个高度提炼一下：缓存和队列是实现高性能的必走之路。那么对于数据库来说这个却是个很棘手的问题，要保证数据更高效率的读取和存储，所以要利用到缓存。但是要保证数据的一致性，则必须保证所有的数据都必须准确无误的存储到数据库中，及时发生意外，也要保证数据可恢复。我们知道InnoDB是一个事务安全的存储引擎，而一致性是事务ACID中的一个重要特性。InnoDB存储引擎主要是通过InnoDB事务日志实现数据一致性的，InnoDB事务日志包括重做（redo、循环写入）日志，以及回滚（undo）日志。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="事务日志" scheme="https://www.sunliaodong.cn/tags/%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/"/>
+    
+    <category term="redo" scheme="https://www.sunliaodong.cn/tags/redo/"/>
+    
+    <category term="undo" scheme="https://www.sunliaodong.cn/tags/undo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之日志-Binlog日志</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/</id>
+    <published>2021-02-05T00:22:55.000Z</published>
+    <updated>2021-02-05T00:37:44.317Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;记录信息&quot;&gt;&lt;a href=&quot;#记录信息&quot; class=&quot;headerlink&quot; title=&quot;记录信息&quot;&gt;&lt;/a&gt;记录信息&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;二进制日志记录 MySQL 数据库中所有与更新相关的操作，即二进制日志记录了所有的 DDL（数据定义语言）语句和 DML（数据操纵语言）语句，但是不包括数据查询语句。常用于恢复数据库和主从复制。&lt;/li&gt;
+&lt;li&gt;二进制日志主要记录数据库的变化情况，因此可以用作主从库的同步。内容主要包括数据库所有的更新操作，use语句、insert语句、delete语句、update语句、create语句、alter语句、drop语句。用一句更简洁易懂的话概括就是：所有涉及数据变动的操作，都要记录进二进制日志中。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;特性&quot;&gt;&lt;a href=&quot;#特性&quot; class=&quot;headerlink&quot; title=&quot;特性&quot;&gt;&lt;/a&gt;特性&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;只要重启了服务, binlog二进制日志就会自己滚动一个新的, 或者使用flush logs 手动滚动日志&lt;/li&gt;
+&lt;li&gt;记录的信息 主要是记录修改数据或有可能引起数据改变的MySql语句, 记录时间,操作时长,等等信息&lt;/li&gt;
+&lt;li&gt;日志格式: 基于(语句, row, mixed) 默认mixed&lt;/li&gt;
+&lt;li&gt;每一个二进制日志叫做一个Binary log event(二进制日志事件), 每一个二进制日志事件都有自己的元数据(meta data)信息, 时间,操作时长….&lt;/li&gt;
+&lt;li&gt;每个二进制日志的上限是1G&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="二进制日志" scheme="https://www.sunliaodong.cn/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97/"/>
+    
+    <category term="Binlog日志" scheme="https://www.sunliaodong.cn/tags/Binlog%E6%97%A5%E5%BF%97/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之日志-慢查询日志</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</id>
+    <published>2021-02-05T00:22:36.000Z</published>
+    <updated>2021-02-05T00:26:43.125Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;记录执行时间超过指定时间（long_query_time，默认10s）的查询语句（包括dml和ddl等）&lt;/li&gt;
+&lt;li&gt;慢查询日志默认不启动&lt;/li&gt;
+&lt;li&gt;慢查询日志支持将日志写入文件或数据库表中&lt;/li&gt;
+&lt;li&gt;优点：可以有效的跟踪 执行时间过长 或者 没有使用索引的查询语句（包括select 语句，update语句，delete语句，以及insert语句）&lt;/li&gt;
+&lt;li&gt;缺点：存在性能损耗，不建议默认开启&lt;/li&gt;
+&lt;li&gt;慢查询日志只包含成功执行过的查询语句&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="慢查询日志" scheme="https://www.sunliaodong.cn/tags/%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之日志-查询日志</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</id>
+    <published>2021-02-05T00:16:00.000Z</published>
+    <updated>2021-02-05T00:21:25.054Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;默认情况下查询日志是关闭的。由于查询日志会记录用户的所有操作，其中还包含增删查改等信息，&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;insert查询为了避免数据冲突，如果此前插入过数据，而如果跟主键或唯一键的数据重复那肯定会报错&lt;/li&gt;
+&lt;li&gt;update时也会查询因为更新的时候很可能会更新某一块数据&lt;/li&gt;
+&lt;li&gt;delete查询，只删除符合条件的数据&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;MySQL普通查询日志记录MySQL服务实例所有的操作，如select、update、insert、delete等操作，无论该操作是否成功执行。还有MySQL客户机与MySQL服务端连接及断开的相关信息，无论连接成功还是失败。&lt;br&gt;注意：由于普通查询日志几乎记录了MySQL的所有操作，对于数据访问频繁的数据库服务器而言，如果开启MySQL的普通查询日志将会大幅度的降低数据库的性能，因此建议关闭普通查询日志。只有在特殊时期，如需要追踪某些特殊的查询日志，可以临时打开普通的查询日志。在并发操作大的环境下会产生大量的信息从而导致不必要的磁盘IO，会影响mysql的性能的。如若不是为了调试数据库的目的建议不要开启查询日志。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;log = on|off 是否开启日志功能, 这个设置包含了查询日志和慢查询日志&lt;/li&gt;
+&lt;li&gt;general_log = on|off 是否开启查询日志&lt;/li&gt;
+&lt;li&gt;general_log_file = /path/to/file 指定查询日志的位置&lt;/li&gt;
+&lt;li&gt;log_output = FILE|table 日志输出的位置, 这个指令对慢查询日志也起作用&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="查询日志" scheme="https://www.sunliaodong.cn/tags/%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之日志-错误日志</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/</id>
+    <published>2021-02-05T00:15:49.000Z</published>
+    <updated>2021-02-05T00:19:19.855Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;在mysql数据库中，错误日志功能是默认开启的。并且，错误日志无法被禁止。默认情况下，错误日志存储在mysql数据库的数据文件中。错误日志文件通常的名称为hostname.err。其中，hostname表示服务器主机名。&lt;br&gt;错误日志信息可以自己进行配置的，错误日志所记录的信息是可以通过log-error和log-warnings来定义的，其中log-err是定义是否启用错误日志的功能和错误日志的存储位置，log-warnings是定义是否将警告信息也定义至错误日志中。默认情况下错误日志大概记录以下几个方面的信息：服务器启动和关闭过程中的信息（未必是错误信息，如mysql如何启动InnoDB的表空间文件的、如何初始化自己的存储引擎的等等）、服务器运行过程中的错误信息、事件调度器运行一个事件时产生的信息、在从服务器上启动服务器进程时产生的信息。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="错误日志" scheme="https://www.sunliaodong.cn/tags/%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之日志-概述</title>
+    <link href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%A6%82%E8%BF%B0/"/>
+    <id>https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%A6%82%E8%BF%B0/</id>
+    <published>2021-02-05T00:00:45.000Z</published>
+    <updated>2021-02-05T00:15:05.723Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;日志是mysql数据库的重要组成部分。日志文件中记录着mysql数据库运行期间发生的变化；也就是说用来记录mysql数据库的客户端连接状况、SQL语句的执行情况和错误信息等。当数据库遭到意外的损坏时，可以通过日志查看文件出错的原因，并且可以通过日志文件进行数据恢复。  &lt;/p&gt;
+&lt;p&gt;默认情况下，所有日志创建于mysqld数据目录中。通过刷新日志，你可以强制 mysqld来关闭和重新打开日志文件（或者在某些情况下切换到一个新的日志）。当你执行一个FLUSH LOGS语句或执行mysqladmin flush-logs或mysqladmin refresh时，出现日志刷新  &lt;/p&gt;
+&lt;p&gt;mysql日志分类：错误日志、查询日志、慢查询日志、事务日志、二进制日志；  &lt;/p&gt;
+&lt;p&gt;官网：&lt;a href=&quot;https://dev.mysql.com/doc/refman/5.7/en/server-logs.html&quot;&gt;https://dev.mysql.com/doc/refman/5.7/en/server-logs.html&lt;/a&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="日志" scheme="https://www.sunliaodong.cn/tags/%E6%97%A5%E5%BF%97/"/>
+    
+  </entry>
   
   <entry>
     <title>MySQL之show status详解</title>
@@ -363,292 +605,6 @@
     <category term="clone" scheme="https://www.sunliaodong.cn/tags/clone/"/>
     
     <category term="克隆" scheme="https://www.sunliaodong.cn/tags/%E5%85%8B%E9%9A%86/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hibernate系统化学习之常用方法</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</id>
-    <published>2021-02-04T10:40:28.000Z</published>
-    <updated>2021-02-04T10:42:34.548Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;session-find-load&quot;&gt;&lt;a href=&quot;#session-find-load&quot; class=&quot;headerlink&quot; title=&quot;session.find/load&quot;&gt;&lt;/a&gt;session.find/load&lt;/h2&gt;&lt;p&gt;hibernate中session.find/load方法都能通过指定实体类名和id从数据库中读取指定的记录，并且返回与之对映的实体对象。但是它们也有很大的区别 ,find()和load()方法在执行检索时的区别：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;find()在类检索级别时总是执行立即检索而且如果检索不到相关的对象的话会返回null,load()方法则会抛出一个ObjectNotException&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;load()方法可返回一个实体代理类类型，而find()方法直接返回的是实体类对象。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;load()方法可以充分利用内部缓存和二级缓存，而find()方法会忽略二级缓存，若内部缓存没有查询到会到数据库中去查询。&lt;/p&gt;&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="Hibernate" scheme="https://www.sunliaodong.cn/categories/Hibernate/"/>
-    
-    <category term="开源框架" scheme="https://www.sunliaodong.cn/categories/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="常用方法" scheme="https://www.sunliaodong.cn/tags/%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/"/>
-    
-    <category term="Hibernate" scheme="https://www.sunliaodong.cn/tags/Hibernate/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hibernate系统化学习之缓存</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/</id>
-    <published>2021-02-04T10:40:16.000Z</published>
-    <updated>2021-02-04T10:43:11.756Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;N-1问题&quot;&gt;&lt;a href=&quot;#N-1问题&quot; class=&quot;headerlink&quot; title=&quot;N+1问题&quot;&gt;&lt;/a&gt;N+1问题&lt;/h2&gt;&lt;p&gt;所谓N+1问题，使用hibernate查询数据，首先返回数据的id信息，并没有返回所有的对象信息，只有在真正使用的时候，在使用这个id对数据库中查询数据，一次查询多次调用数据库（缓存）的情况，就是所谓的N+1问题。以下方法或者策略会出现N+1问题：&lt;/p&gt;
-&lt;h3 id=&quot;使用iterate（）方法&quot;&gt;&lt;a href=&quot;#使用iterate（）方法&quot; class=&quot;headerlink&quot; title=&quot;使用iterate（）方法&quot;&gt;&lt;/a&gt;使用iterate（）方法&lt;/h3&gt;&lt;p&gt;存在iterator的原因是，有可能会在一个session中查询两次数据，如果使用list每一次都会把所有的对象查询上来，如果使用iterator仅仅只会查询id，此时所有的对象已经存储在一级缓存(session的缓存)中，可以直接获取&lt;/p&gt;
-&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/**&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;* Return the query results as an &amp;lt;tt&amp;gt;Iterator&amp;lt;/tt&amp;gt;. If the query&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;* contains multiple results per row, the results are returned in&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;* an instance of &amp;lt;tt&amp;gt;Object[]&amp;lt;/tt&amp;gt;.&amp;lt;br&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;* &amp;lt;br&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;* Entities returned as results are initialized on demand. The first&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;* SQL query returns identifiers only.&amp;lt;br&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;*&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;* &lt;span class=&quot;doctag&quot;&gt;@return&lt;/span&gt; the result iterator&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;*/&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;Iterator&amp;lt;R&amp;gt; &lt;span class=&quot;title&quot;&gt;iterate&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="Hibernate" scheme="https://www.sunliaodong.cn/categories/Hibernate/"/>
-    
-    <category term="开源框架" scheme="https://www.sunliaodong.cn/categories/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="Hibernate" scheme="https://www.sunliaodong.cn/tags/Hibernate/"/>
-    
-    <category term="缓存" scheme="https://www.sunliaodong.cn/tags/%E7%BC%93%E5%AD%98/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hibernate系统化学习之对象状态</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/</id>
-    <published>2021-02-04T10:37:05.000Z</published>
-    <updated>2021-02-04T10:39:42.025Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;style type=&quot;text/css&quot;&gt;
-.tg  {border-collapse:collapse;border-color:#C44D58;border-spacing:0;}
-.tg td{background-color:#F9CDAD;border-color:#C44D58;border-style:solid;border-width:1px;color:#002b36;
-  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{background-color:#FE4365;border-color:#C44D58;border-style:solid;border-width:1px;color:#fdf6e3;
-  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-&lt;/style&gt;
-&lt;table class=&quot;tg&quot;&gt;
-&lt;thead&gt;
-  &lt;tr&gt;
-    &lt;th class=&quot;tg-0lax&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;状态&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/th&gt;
-    &lt;th class=&quot;tg-0lax&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;说明&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/th&gt;
-  &lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;临时状态（Transient）&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/td&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;刚创建的对象（new）还没有被Session持久化、缓存中不存在这个对象的数据并且数据库中没有这个对象对应的数据为瞬时状态这个时候是没有OID。&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;持久状态（Persistent）&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/td&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;对象经过Session持久化操作，缓存中存在这个对象的数据为持久状态并且数据库中存在这个对象对应的数据为持久状态这个时候有OID。&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;游离状态（Detached）&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/td&gt;
-    &lt;td class=&quot;tg-0lax&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;已经被持久化，但不处于session的缓存中。&amp;nbsp;&amp;nbsp;&amp;nbsp;当Session关闭，缓存中不存在这个对象数据而数据库中有这个对象的数据并且有OID为游离状态。&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="Hibernate" scheme="https://www.sunliaodong.cn/categories/Hibernate/"/>
-    
-    <category term="开源框架" scheme="https://www.sunliaodong.cn/categories/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="Hibernate" scheme="https://www.sunliaodong.cn/tags/Hibernate/"/>
-    
-    <category term="对象状态" scheme="https://www.sunliaodong.cn/tags/%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之异常</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%BC%82%E5%B8%B8/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%BC%82%E5%B8%B8/</id>
-    <published>2021-02-04T09:36:56.000Z</published>
-    <updated>2021-02-04T09:43:09.960Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;p&gt;在Java中任务或方法的运行，要不就是正常执行完成(包括虚拟机退出，比如&lt;code&gt;System.exit()&lt;/code&gt;)，要不就是出现异常终止(&lt;code&gt;Throwable&lt;/code&gt;)。本章节重点讲解在Java中对异常的处理。当程序出现异常之后，Java会抛出一个封装好的异常堆栈信息，并且终止当前的方法，异常处理机制会将代码执行交给异常处理器。整体结构如下图所示：&lt;/p&gt;
-&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%BC%82%E5%B8%B8/1587714125412.png&quot; class title=&quot;Java异常架构图&quot;&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="异常" scheme="https://www.sunliaodong.cn/tags/%E5%BC%82%E5%B8%B8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之泛型</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%9B%E5%9E%8B/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%9B%E5%9E%8B/</id>
-    <published>2021-02-04T09:33:34.000Z</published>
-    <updated>2021-02-04T09:34:16.124Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;泛型在JDK1.5引入，其本质是一种&lt;strong&gt;参数化类型（Parameterized Type），在使用时传入实际类型即可&lt;/strong&gt;，即可以将操作的数据类型指定为方法签名中的一种特殊参数,可以作用在类、接口、方法中。泛型是编译期的一种概念，主要是用于编译期类型安全检查（编译之后泛型会被擦除）。&lt;/p&gt;
-&lt;h3 id=&quot;常用泛型类型常量&quot;&gt;&lt;a href=&quot;#常用泛型类型常量&quot; class=&quot;headerlink&quot; title=&quot;常用泛型类型常量&quot;&gt;&lt;/a&gt;常用泛型类型常量&lt;/h3&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;E：元素（Element），多用于java集合框架&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;K：关键字（Key）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;N：数字（Number）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;T：类型（Type）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;V：值（Value）&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="泛型" scheme="https://www.sunliaodong.cn/tags/%E6%B3%9B%E5%9E%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之反射</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/</id>
-    <published>2021-02-04T09:18:34.000Z</published>
-    <updated>2021-02-04T09:35:26.046Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;h3 id=&quot;知识点&quot;&gt;&lt;a href=&quot;#知识点&quot; class=&quot;headerlink&quot; title=&quot;知识点&quot;&gt;&lt;/a&gt;知识点&lt;/h3&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/1587523711269.png&quot; class title=&quot;反射知识点&quot;&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="反射" scheme="https://www.sunliaodong.cn/tags/%E5%8F%8D%E5%B0%84/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java系统化学习之内部类</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%86%85%E9%83%A8%E7%B1%BB/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%86%85%E9%83%A8%E7%B1%BB/</id>
-    <published>2021-02-04T09:16:48.000Z</published>
-    <updated>2021-02-04T09:32:21.781Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;定义：外部类内部定义的类，类名不需要与文件名不同&lt;/li&gt;
-&lt;li&gt;static修饰（静态内部类）&lt;/li&gt;
-&lt;li&gt;作用域（public、default、protected、private）&lt;/li&gt;
-&lt;li&gt;作用范围：编译期概念，一但编译成功就是有不同的class文件（outer.class和outer$inner.class），所以内部类的成员变量/方法名可以和外部类的相同。&lt;/li&gt;
-&lt;li&gt;分类：静态内部类，成员内部类，局部内部类，匿名内部类四种。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;场景&quot;&gt;&lt;a href=&quot;#场景&quot; class=&quot;headerlink&quot; title=&quot;场景&quot;&gt;&lt;/a&gt;场景&lt;/h2&gt;&lt;p&gt;Ø 在一个方法内部使用&lt;br&gt;Ø 在方法的一个作用域中使用&lt;br&gt;Ø 一个匿名类，用于实现一个接口&lt;br&gt;Ø 一个匿名类，用于扩展拥有非默认构造器的类&lt;br&gt;Ø 一个匿名类，用于执行字段初始化&lt;br&gt;Ø 一个匿名类，通过实例初始化进行构建（匿名内部类不能拥有构造器)  &lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="内部类" scheme="https://www.sunliaodong.cn/tags/%E5%86%85%E9%83%A8%E7%B1%BB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java高效编程技巧</title>
-    <link href="https://www.sunliaodong.cn/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/"/>
-    <id>https://www.sunliaodong.cn/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/</id>
-    <published>2021-02-04T08:27:17.000Z</published>
-    <updated>2021-02-04T08:30:34.594Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;Java代码规范&quot;&gt;&lt;a href=&quot;#Java代码规范&quot; class=&quot;headerlink&quot; title=&quot;Java代码规范&quot;&gt;&lt;/a&gt;Java代码规范&lt;/h2&gt;&lt;h3 id=&quot;命名规范（阿里规范）&quot;&gt;&lt;a href=&quot;#命名规范（阿里规范）&quot; class=&quot;headerlink&quot; title=&quot;命名规范（阿里规范）&quot;&gt;&lt;/a&gt;命名规范（阿里规范）&lt;/h3&gt;&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;名称只能是有含义的英文，不能出现下划线或美元符号&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;方法名、参数名、成员变量、局部变量统一使用驼峰方式命名，形如lowerCamelCase&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;类名使用UpperCamelCase命名，DO/BO/DTO/VO/AO/PO/UID除外&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;常量或类变量都需要使用大写，并且中间使用下划线分割&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;抽象类必须以Abstract或Base开头，异常类，必须以Exception结果，测试类必须以待测试代码_Test&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;类型与中括号紧挨相连来表示数组,形如&lt;code&gt;int[] arrayDemo&lt;/code&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;成员变量不能以is开头&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;包使用小写定义，并且使用单数，中间使用英文句号分割，并且定义必须有意义和唯一性&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;子类与父类之间不要使用相同的成员变量命名&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;完全杜绝不规范的缩写，尽量使用完整的单词&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;在常量与变量命名时，表示类型的名称放在词尾&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;如果模块、接口、类、方法使用了设计模式，在命名时需体现出具体模式&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;接口中不要定义变量，方式不需要增加任何修饰符，都必须有注释信息&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;接口与实现类的命名规范是&lt;strong&gt;Service/**ServiceImpl、&lt;/strong&gt;DAO/**DAOImpl&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;枚举类名带上 Enum 后缀，枚举成员名称需要全大写，单词间用下划线隔开&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;各层命名规范：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Service/DAO 层方法命名规约&lt;ul&gt;
-&lt;li&gt;获取单个对象的方法用 get 做前缀。&lt;/li&gt;
-&lt;li&gt;获取多个对象的方法用 list 做前缀，复数形式结尾如：listObjects。&lt;/li&gt;
-&lt;li&gt;获取统计值的方法用 count 做前缀。&lt;/li&gt;
-&lt;li&gt;插入的方法用 save/insert 做前缀。&lt;/li&gt;
-&lt;li&gt;删除的方法用 remove/delete 做前缀。&lt;/li&gt;
-&lt;li&gt;修改的方法用 update 做前缀。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;领域模型命名规约&lt;ul&gt;
-&lt;li&gt;数据对象：xxxDO，xxx 即为数据表名。&lt;/li&gt;
-&lt;li&gt;数据传输对象：xxxDTO，xxx 为业务领域相关的名称。&lt;/li&gt;
-&lt;li&gt;展示对象：xxxVO，xxx 一般为网页名称。&lt;/li&gt;
-&lt;li&gt;POJO 是 DO/DTO/BO/VO 的统称，禁止命名成 xxxPOJO。&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="软件架构" scheme="https://www.sunliaodong.cn/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="编程技巧" scheme="https://www.sunliaodong.cn/tags/%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/"/>
     
   </entry>
   

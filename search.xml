@@ -1,6 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Hibernate系统化学习之对象状态</title>
+    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><style type="text/css">
+.tg  {border-collapse:collapse;border-color:#C44D58;border-spacing:0;}
+.tg td{background-color:#F9CDAD;border-color:#C44D58;border-style:solid;border-width:1px;color:#002b36;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#FE4365;border-color:#C44D58;border-style:solid;border-width:1px;color:#fdf6e3;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;状态&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;说明&nbsp;&nbsp;&nbsp;</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;临时状态（Transient）&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;刚创建的对象（new）还没有被Session持久化、缓存中不存在这个对象的数据并且数据库中没有这个对象对应的数据为瞬时状态这个时候是没有OID。&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;持久状态（Persistent）&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;对象经过Session持久化操作，缓存中存在这个对象的数据为持久状态并且数据库中存在这个对象对应的数据为持久状态这个时候有OID。&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;游离状态（Detached）&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;已经被持久化，但不处于session的缓存中。&nbsp;&nbsp;&nbsp;当Session关闭，缓存中不存在这个对象数据而数据库中有这个对象的数据并且有OID为游离状态。&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+</tbody>
+</table>
+
+<a id="more"></a>
+
+<h2 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h2><div align="center">
+
+<img src="/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/1588843982557.png" class title="对象状态转换">
+
+</div>
+
+<p>当对象在持久化状态时，它一直位于 Session 的缓存中，对它的任何操作在事务提交时都将同步到数据库，因此，对一个已经持久的对象调用 save() 或 update() 方法是没有意义的。</p>
+<blockquote>
+<p>save()和persist()将会引发SQL的INSERT，delete()会引发SQLDELETE， 而update()或merge()会引发SQLUPDATE。对持久化（persistent）实例的修改在刷新提交的时候会被检测到， 它也会引起SQLUPDATE。saveOrUpdate()或者replicate()会引发SQLINSERT或者UPDATE</p>
+</blockquote>
+<h3 id="相关方法说明"><a href="#相关方法说明" class="headerlink" title="相关方法说明"></a>相关方法说明</h3><ol>
+<li>get、load、find: 方法的使用上较为类似，他们都是将数据库中对应Id的数据映射为Java对象，此时对象变为持久化状态。</li>
+<li>save: 保存，此时Java对象已经与数据库记录建立的关系。将对象从临时状态的变为持久化状态或者将游离状态的数据变为持久状态。</li>
+<li>saveOrUpdate: 保存或者更新，如果没有与数据库记录所对应的oid，则执行保存，如果有，则执行更新。将对象从临时状态的变为持久化状态或者将游离状态的数据变为持久状态。</li>
+<li>delete: 删除对象，将对象从持久化状态或者游离状态变为临时状态。</li>
+<li>close: 关闭session, 先将session清空，然后再关闭。将对象从持久状态变为临时状态。</li>
+<li>clear: 清空session缓存。将对象从持久状态变为临时状态。</li>
+<li>evict: 清除指定的对象。将对象从持久状态变为临时状态.</li>
+</ol>
+<h2 id="实例说明"><a href="#实例说明" class="headerlink" title="实例说明"></a>实例说明</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.cnblogs.com/flqcchblog/p/4619022.html">hibernate的各种保存方式的区别 (save,persist,update,saveOrUpdte,merge,flush,lock)</a></li>
+<li><a href="https://blog.csdn.net/pangqiandou/article/details/53386728">Hibernate一级缓存</a></li>
+<li><a href="https://blog.csdn.net/looyo/article/details/6309136">hibernate session的flushMode的区别</a></li>
+<li><a href="https://blog.csdn.net/lzm1340458776/article/details/32729127">Hibernate的Session_flush与隔离级别</a></li>
+<li><a href="https://blog.csdn.net/chuck_kui/article/details/51531089">Hibernate 中的session 的flush、reflush 和clear 方法 ，及数据库的隔离级别</a></li>
+<li><a href="https://blog.csdn.net/oChangWen/article/details/52582958">Hibernate深入理解—-03操作Session缓存方法（flush、refresh、clear，事务隔离级别）</a></li>
+<li><a href="http://blog.csdn.net/fg2006/article/details/6436517">Hibernate中对象的三种状态及相互转化</a></li>
+<li><a href="https://www.cnblogs.com/xiaoluo501395377/p/3380270.html">深入hibernate的三种状态</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>Hibernate</category>
+        <category>开源框架</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>对象状态</tag>
+        <tag>Hibernate</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hibernate系统化学习之常用方法</title>
     <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</url>
     <content><![CDATA[<h2 id="session-find-load"><a href="#session-find-load" class="headerlink" title="session.find/load"></a>session.find/load</h2><p>hibernate中session.find/load方法都能通过指定实体类名和id从数据库中读取指定的记录，并且返回与之对映的实体对象。但是它们也有很大的区别 ,find()和load()方法在执行检索时的区别：</p>
@@ -30,8 +107,8 @@
       </categories>
       <tags>
         <tag>Java</tag>
-        <tag>常用方法</tag>
         <tag>Hibernate</tag>
+        <tag>常用方法</tag>
       </tags>
   </entry>
   <entry>
@@ -575,6 +652,382 @@
       </tags>
   </entry>
   <entry>
+    <title>MySQL之日志-中继日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<p>中继日志用于主从复制架构中的从服务器上，从服务器的 slave 进程从主服务器处获取二进制日志的内容并写入中继日志，然后由 IO 进程读取并执行中继日志中的语句。在复制过程中产生的日志一个线程读取别人的二进制日志,存到本地叫做中继日志,然后本地在开启一个线程去读取中继日志在本地做回放,就完成了数据的同步</p>
+<a id="more"></a>
+
+<h2 id="参数配置"><a href="#参数配置" class="headerlink" title="参数配置"></a>参数配置</h2><p>max_relay_log_size 最大中继日志大小<br>relay_log_info_file=relay-log.info 中继日志存放的文件  </p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>中继日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之日志-事务日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<p>MySQL会最大程度的利用缓存，从而提高数据的访问效率。那么换一句话来说，任何高性能的系统都必须利用到缓存，从各个层面来讲，缓存都发挥了巨大的作用。再上升到一个高度提炼一下：缓存和队列是实现高性能的必走之路。那么对于数据库来说这个却是个很棘手的问题，要保证数据更高效率的读取和存储，所以要利用到缓存。但是要保证数据的一致性，则必须保证所有的数据都必须准确无误的存储到数据库中，及时发生意外，也要保证数据可恢复。我们知道InnoDB是一个事务安全的存储引擎，而一致性是事务ACID中的一个重要特性。InnoDB存储引擎主要是通过InnoDB事务日志实现数据一致性的，InnoDB事务日志包括重做（redo、循环写入）日志，以及回滚（undo）日志。</p>
+<a id="more"></a>
+
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>事务日志（InnoDB特有的日志）可以帮助提高事务的效率。<br>事物日志是innodb专用功能,这里只考虑innod存储引擎。<br>出于性能和故障恢复的考虑，MySQL 服务器不会立即执行事务，而是先将事务记录在日志里面，这样可以将随机IO转换成顺序IO，从而提高IO性能。<br>事物日志默认情况下会有两个文件，名称分别为ib_logfile0和ib_logfile1。当其中一个写满时，MySQL会将事务日志写入另一个日志文件(先清空原有内容)。当 MySQL 从崩溃中恢复时，会读取事务日志，将其中已经 commit 的事务写入数据库，没有 commit 的事务 rollback 。<br>在事物提交时，innodb是否将缓冲到文件中同步，只要提交则立刻同步，同时又不会保证每个语句都同步，因此性能不会有特别大的影响。<br>使用事务日志，存储引擎在修改表的数据时只需要修改其内存拷贝，再把该修改行为记录到持久在硬盘上的事务日志中，而不用每次都将修改的数据本身持久到磁盘。<br>事务日志采用追加的方式，因此写日志的操作是磁盘上一小块区域内的顺序I/O，而不像随机I/O需要在磁盘的多个地方移动磁头，所以采用事务日志的方式相对来说要快得多。<br>事务日志持久以后，内存中被修改的数据在后台可以慢慢的刷回到磁盘。目前大多数的存储引擎都是这样实现的，我们通常称之为预写式日志，修改数据需要写两次磁盘。<br>如果数据的修改已经记录到事务日志并持久化，但数据本身还没有写回磁盘，此时系统崩溃，存储引擎在重启时能够自动恢复这部分修改的数据。具有的恢复方式则视存储引擎而定。<br>事务日志是被轮转的,一启动就分配完毕了, 并且是连续的存储空间,默认每个文件的大小为5M<br>主要功能: 将随机I/O转换为顺序I/O<br>ib_logfile0, ib_logfile1, 这两个文件如果坏了那么对于mysql来说是致命的, 所以建议事务log使用raid<br>会把一些相关信息记录事务日志中(记录对数据文件数据修改的物理位置或叫做偏移量);<br>作用:在系统崩溃重启时，作事务重做；在系统正常时，每次checkpoint时间点，会将之前写入事务应用到数据文件中。<br>有了 redo log，InnoDB 就可以保证即使数据库发生异常重启，之前提交的记录都不会丢失，这个能力称为 crash-safe。  </p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544132375.png" class>
+
+</div>
+
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544168998.png" class title="redo log循环写入">
+
+</div>
+
+<h2 id="查看事务日志定义"><a href="#查看事务日志定义" class="headerlink" title="查看事务日志定义"></a>查看事务日志定义</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">global</span> variables <span class="keyword">like</span> <span class="string">&#x27;innodb_log%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544274091.png" class>
+
+</div>
+
+<h3 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> <span class="keyword">global</span> variables <span class="keyword">like</span> <span class="string">&#x27;innodb_log%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------+----------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name               <span class="operator">|</span> <span class="keyword">Value</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------+----------+</span></span><br><span class="line"># 定义内存空间的大小，万一都写在buffer里面，如果进程崩溃，也会丢失事物，</span><br><span class="line"># 因此避免这种情况，一旦事物提交了，那么需要立即同步到磁盘中，而不是间断同步</span><br><span class="line"># 事务日志缓存区,可设置<span class="number">1</span>M<span class="operator">~</span><span class="number">8</span>M,默认<span class="number">8</span>M,延迟事务日志写入磁盘,</span><br><span class="line"># 启用大的事务日志缓存,可以将完整运行大事务日志，暂时存放在事务缓存区中,</span><br><span class="line"># 不必(事务提交前)写入磁盘保存,同时也起到节约磁盘空间占用;</span><br><span class="line"><span class="operator">|</span> innodb_log_buffer_size      <span class="operator">|</span> <span class="number">16777216</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_checksums        <span class="operator">|</span> <span class="keyword">ON</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_compressed_pages <span class="operator">|</span> <span class="keyword">ON</span>       <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 控制事务日志ib_logfile的大小,范围<span class="number">5</span>MB<span class="operator">~</span><span class="number">4</span>G；</span><br><span class="line"># 所有事务日志ib_logfile0<span class="operator">+</span>ib_logfile1<span class="operator">+</span>..累加大小不能超过<span class="number">4</span>G，</span><br><span class="line"># 事务日志大，checkpoint会少,节省磁盘IO，</span><br><span class="line"># 但是大的事务日志意味着数据库crash时，恢复起来较慢.</span><br><span class="line"># 引入问题:修改该参数大小，导致ib_logfile文件的大小和之前存在的文件大小不匹配</span><br><span class="line"># 解决方式：在干净关闭数据库情况下，删除ib_logfile，而后重启数据库，会自行创建该文件;</span><br><span class="line">#每个日志的单位大小为<span class="number">5</span>MB，如果有些大数据的话，则需要将其调大，</span><br><span class="line">#否则恢复起来会比较慢，但是太大了也会导致恢复比较慢</span><br><span class="line"><span class="operator">|</span> innodb_log_file_size        <span class="operator">|</span> <span class="number">50331648</span> <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 至少有两个</span><br><span class="line"><span class="operator">|</span> innodb_log_files_in_group   <span class="operator">|</span> <span class="number">2</span>        <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 定义innodb事务日志组的位置，</span><br><span class="line"># 定义事物日志组的位置，一般来讲会有<span class="number">2</span>个日志，</span><br><span class="line"># 一个写满后会重建文件（达到轮询功能，写满后会同步到磁盘并将其清空）</span><br><span class="line"># 一般来讲，日志文件大小是固定的，凡是mysql已启动日志空间会在磁盘上立即分配，</span><br><span class="line"># 因为他们的主要功能是将随机IO转为顺序IO ，默认大小是每个文件为<span class="number">5</span>MB，</span><br><span class="line"># 明确说明事物日志的路径保存在.<span class="operator">/</span> 表示在当前路径下</span><br><span class="line"><span class="operator">|</span> innodb_log_group_home_dir   <span class="operator">|</span> .<span class="operator">/</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_write_ahead_size <span class="operator">|</span> <span class="number">8192</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------+----------+</span></span><br><span class="line"><span class="number">7</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="innodb-flush-log-at-trx-commit"><a href="#innodb-flush-log-at-trx-commit" class="headerlink" title="innodb_flush_log_at_trx_commit"></a>innodb_flush_log_at_trx_commit</h4><p>在事务提交时innodb是否同步日志从缓冲到文件中（1表示事务一提交就同步不提交每隔一秒同步一次，性能会很差造成大量的磁盘I/O；定义为2表示只有在事务提交时才会同步但是可能会丢失整个事务 ）<br>innodb_flush_log_at_trx_commit：控制事务日志何时写盘和刷盘，安全递增：0,2,1；事务缓存区:log_buffer;<br>如果innodb_flush_log_at_trx_commit设置为0，log buffer将每秒一次地写入log file中，并且log file的flush(刷到磁盘)操作同时进行.该模式下，在事务提交的时候，不会主动触发写入磁盘的操作。<br>如果innodb_flush_log_at_trx_commit设置为1，每次事务提交时MySQL都会把log buffer的数据写入log file，并且flush(刷到磁盘)中去. （最安全）<br>如果innodb_flush_log_at_trx_commit设置为2，每次事务提交时MySQL都会把log buffer的数据写入log file.但是flush(刷到磁盘)操作并不会同时进行。该模式下,MySQL会每秒执行一次 flush(刷到磁盘)操作。<br>适用环境:</p>
+<ul>
+<li>0:磁盘IO能力有限,安全方便较差,无复制或复制延迟可以接受，如日志性业务，mysql损坏丢失1s事务数据;</li>
+<li>2:数据安全性有要求，可以丢失一点事务日志，复制延迟也可以接受，OS损坏时才可能丢失数据;</li>
+<li>1:数据安全性要求非常高，且磁盘IO能力足够支持业务，如充值消费，敏感业务;</li>
+</ul>
+<h4 id="innodb-mirrored-log-groups"><a href="#innodb-mirrored-log-groups" class="headerlink" title="innodb_mirrored_log_groups"></a>innodb_mirrored_log_groups</h4><p>表示对日志组做镜像</p>
+<h3 id="文件位置"><a href="#文件位置" class="headerlink" title="文件位置"></a>文件位置</h3><div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544946386.png" class>
+
+</div>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>事务日志</tag>
+        <tag>redo</tag>
+        <tag>undo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之日志-扩展</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/</url>
+    <content><![CDATA[<h2 id="数据日志文件比对"><a href="#数据日志文件比对" class="headerlink" title="数据日志文件比对"></a>数据日志文件比对</h2><h3 id="ib-logfile与log-bin区别"><a href="#ib-logfile与log-bin区别" class="headerlink" title="ib_logfile与log-bin区别"></a>ib_logfile与log-bin区别</h3><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <td class="tg-0lax">ib_logfile</td>
+    <td class="tg-0lax">
+        记录系统的回滚，重做日志（在你修改数据之前，会先把 修改的操作 作为日志先记录下来）<br>
+        记录文件的物理更改<br>
+        记录的是redo log和undo log（应该记录在ibdata1中）的信息，这里记录的基本是commit之前的数据
+    </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">mysql-bin.******</td>
+    <td class="tg-0lax">
+        记录系统的所有更新记录，数据库的更细日志，记录的是逻辑更改<br>
+        主从：mysql会把日志发送到slave，salve会接收日志，然后解析日志，把里面的sql语句重新应用到数据库里，于是就能同步数据了<br>
+        记录的是已经执行完毕的对数据库的dml和ddl信息，这里记录的基本是commit之后的数据信息。
+    </td>
+  </tr>
+</table>
+
+<a id="more"></a>
+
+<h3 id="redo、undo、binlog的区别"><a href="#redo、undo、binlog的区别" class="headerlink" title="redo、undo、binlog的区别"></a>redo、undo、binlog的区别</h3><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-0lax"></th>
+    <th class="tg-0lax">redo</th>
+    <th class="tg-0lax">undo</th>
+    <th class="tg-0lax">binlog</th>
+  </tr>
+  <tr>
+    <td class="tg-0lax">作用</td>
+    <td class="tg-0lax">保持事务的持久性</td>
+    <td class="tg-0lax">帮助事务回滚及MVCC的功能</td>
+    <td class="tg-0lax">进行Point-In_Time的恢复及主从复制的建立</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">产生主体</td>
+    <td class="tg-0lax">InnoDB</td>
+    <td class="tg-0lax">MySql</td>
+    <td class="tg-0lax">MySql</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">类型</td>
+    <td class="tg-0lax">物理日志，只记录有关InnoDB引擎本身的事务日志。</td>
+    <td class="tg-0lax">逻辑日志</td>
+    <td class="tg-0lax">
+        记录的都是关于一个事务的具体操作内容,逻辑日志。<br>
+        记录所有与MySQL数据库有关的日志记录，包括InnoDB、MyISAM、Heap等其他存储引擎的日志。
+    </td>
+  </tr>
+
+  <tr>
+    <td class="tg-0lax">内容</td>
+    <td class="tg-0lax">每个页的修改，重做日志主要是记录已经全部完成的事务,即执行了commit的日志，在默认情况下重做日志的值记录在iblogfile0 以及iblogfile1重做日志中。</td>
+    <td class="tg-0lax">修改前的行数据，回滚日志主要记录已经部分完成并且写入硬盘的未完成事务，默认情况情况下，回滚日志的信息记录在表空间文件，共享表空间文件ibdata1或者独享表空间未见ibd中。</td>
+    <td class="tg-0lax">执行的SQL语句</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">每个事务的日志数量</td>
+    <td class="tg-0lax">事务执行中不断写入，多事务可并发写入</td>
+    <td class="tg-0lax">看修改的行数据量</td>
+    <td class="tg-0lax">事务提交后记录一条SQL语句,根据配置执行</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">幂等性</td>
+    <td class="tg-0lax">是</td>
+    <td class="tg-0lax"></td>
+    <td class="tg-0lax">否</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">日志文件</td>
+    <td class="tg-0lax">ib_logfile</td>
+    <td class="tg-0lax">Ibdata</td>
+    <td class="tg-0lax">mysql-bin.******</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">事务性</td>
+    <td class="tg-0lax">INNODB存储引擎的重做日志，由于其记录是物理操作日志，因此每个事务对应多个日志条目，并且事务的重做日志写入是并发的，并非在事务提交时写入，做其在文件中记录的顺序并非是事务开始的顺序。</td>
+    <td class="tg-0lax"></td>
+    <td class="tg-0lax">二进制日志仅在事务提交时记录，并且对于每一个事务，仅在事务提交时记录，并且对于每一个事务，仅包含对应事务的一个日志。</td>
+  </tr>
+</table>
+
+<ol>
+<li>redo log 是 InnoDB 引擎特有的；binlog 是 MySQL 的 Server 层实现的，所有引擎都可以使用。</li>
+<li>redo log 是物理日志，记录的是“在某个数据页上做了什么修改”；binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如“给 ID=2 这一行的 c 字段加 1 ”。</li>
+<li>redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志（但是可以设置清理策略）。</li>
+</ol>
+<h3 id="ibdata"><a href="#ibdata" class="headerlink" title="ibdata"></a>ibdata</h3><h4 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h4><p>ibdata1是一个用来构建innodb系统表空间的文件，这个文件包含了innodb表的元数据（数据字典）、<br>撤销记录（FIL_PAGE_UNDO_LOG）**<strong>**</strong>出现问题的可能性比较大、<br>修改buffer（innodb_ibuf_max_size 设置最大变更缓冲区<br>双写buffer（innodb_doublewrite_file 来将双写缓冲区存储到一个分离的文件）<br>如果file-per-table选项打开的话，该文件则不一定包含所有表的数据。当innodb_file_per_table选项打开的话，新创建表的数据和索引则不会存在系统表空间中，而是存放在各自表的.ibd文件中。<br>使用命令：<code>SHOW ENGINE INNODB STATUS \g;</code>查看当前二进制的状态。<br>显然这个文件会越来越大，<code>innodb_autoextend_increment</code>选项则指定了该文件每次自动增长的步进，默认是8M。  </p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/1587545996242.png" class>
+
+</div>
+
+<h4 id="导致该文件变大的原因"><a href="#导致该文件变大的原因" class="headerlink" title="导致该文件变大的原因"></a>导致该文件变大的原因</h4><p>显然ibdata文件存的是数据库的表数据，如缓存，索引等。所以随着数据库越来越大，表也会越大，这个无法避免的。</p>
+<h4 id="瘦身"><a href="#瘦身" class="headerlink" title="瘦身"></a>瘦身</h4><ol>
+<li>按照类型分类<ul>
+<li>数据文件与日志信息分文件保存，对于日志文件可以定期执行清理。</li>
+</ul>
+</li>
+<li>或者定期数据备份和恢复<ul>
+<li>先把数据库文件备份下来，然后直接删除ibdata文件，重新导入数据库文件即可。这样就可以把ibdata中的日志和缓存都删除掉了。</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># 备份全部数据库，执行命令</span><br><span class="line">mysqldump <span class="operator">-</span>q <span class="operator">-</span>uroot <span class="operator">-</span>ppassword <span class="comment">--add-drop-table --all-databases &gt;/var/lib/mysql/backall.sql</span></span><br><span class="line"># 做完此步后，停止数据库服务。</span><br><span class="line">service mysqld stop</span><br><span class="line"># 在配置文件中设置如下参数</span><br><span class="line">innodb_file_per_table<span class="operator">=</span><span class="number">1</span></span><br><span class="line"># 验证配置是否生效，可以重启mysql后,执行</span><br><span class="line">service mysqld restart</span><br><span class="line"># 登陆之后使用命令查询 <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%per_table%&#x27;</span>;</span><br><span class="line"># 还原数据库</span><br><span class="line">mysql <span class="operator">-</span>uroot <span class="operator">-</span>p <span class="operator">&lt;</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>backall.sql</span><br></pre></td></tr></table></figure>
+<h5 id="删除原数据文件后"><a href="#删除原数据文件后" class="headerlink" title="删除原数据文件后"></a>删除原数据文件后</h5><div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/1589449237143.png" class>
+
+</div>
+
+<h4 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h4><p>为了添加一个数据文件到表空间中，首先要关闭 MySQL 数据库，编辑 my.cnf 文件，确认innodb ibdata文件的实际情况和my.cnf的配置是否一致，这里有两种情况：</p>
+<ol>
+<li>my.cnf的配置<br><code>innodb_data_file_path=ibdata1:10G;ibdata2:10G:autoextend</code><br>如果当前数据库正在使用ibdata1，或者使用ibdata2，但ibdata2没有超过10G，则对my.cnf配置直接改成：<br><code>innodb_data_file_path=ibdata1:10G;ibdata2:10G;ibdata3:10G:autoextend</code></li>
+<li>如果设置了最后一个ibdata自动扩展时，有可能最后一个ibdata的占用空间大于my.cnf的配置空间。例如：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"> mysql<span class="variable">@test</span>:<span class="operator">/</span>data1<span class="operator">/</span>mysqldata<span class="operator">/</span>innodb<span class="operator">/</span>data<span class="operator">&gt;</span> ls <span class="operator">-</span>lh</span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">---- 1 mysql mysql 10737418240 2010-01-26 16:34 ibdata1</span></span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">---- 1 mysql mysql 16106127360 2010-01-26 16:34 ibdata2</span></span><br></pre></td></tr></table></figure>
+<p>这时，需要精确的计算ibdata2的大小 15360M，修改：</p>
+<p><code>innodb_data_file_path=ibdata1:10G;ibdata2:15360M;ibdata3:10G:autoextend</code></p>
+<p>重启mysql。</p>
+<p>注意：<br>1、扩容前注意磁盘空间是否足够。<br>2、restart后关注是否生成了新的ibdata。</p>
+<h5 id="更多说明"><a href="#更多说明" class="headerlink" title="更多说明"></a>更多说明</h5><p>如果，最后一个文件以关键字 autoextend 来描述，那么编辑 my.cnf 的过程中，必须检查最后一个文件的尺寸，并使它向下接近于 1024 * 1024 bytes (= 1 MB) 的倍数（比方说现在autoextend 的/ibdata/ibdata1为18.5M，而在旧的my.ini中为10M，则需要修改为<code>innodb_data_file_path = /ibdata/ibdata1:19M;</code> 且必须是19M，如果指定20M，就会报错。），并在 innodb_data_file_path 中明确指定它的尺寸。然后你可以添加另一个数据文件。记住只有 innodb_data_file_path 中的最后一个文件可以被指定为 auto-extending。<br>一个例子：假设起先仅仅只有一个 auto-extending 数据文件 ibdata1 ，这个文件接近于 988 MB。下面是添加了另一个 auto-extending 数据文件后的可能示例 。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">innodb_data_home_dir <span class="operator">=</span></span><br><span class="line">innodb_data_file_path <span class="operator">=</span> <span class="operator">/</span>ibdata<span class="operator">/</span>ibdata1:<span class="number">988</span>M;<span class="operator">/</span>disk2<span class="operator">/</span>ibdata2:<span class="number">50</span>M:autoextend</span><br></pre></td></tr></table></figure>
+<h2 id="日志分析工具"><a href="#日志分析工具" class="headerlink" title="日志分析工具"></a>日志分析工具</h2><ol>
+<li>mysqldumpslowmysql：官方提供的慢查询日志分析工具</li>
+<li>mysqlsla：hackmysql.com 推出的一款日志分析工具(该网站还维护了 mysqlreport，mysqlidxchk 等比较实用的mysql 工具)。 整体来说，功能非常强大。输出的数据报表非常有利于分析慢查询的原因，包括执行频率、数据量、查询消耗等。</li>
+<li>myprofi：纯 php 写的一个开源分析工具.项目在 sourceforge 上。功能上，列出了总的慢查询次数和类型、去重后的 sql 语句、执行次数及其占总的 slow log 数量的百分比。从整体输出样式来看，比 mysql-log-filter 还要简洁，省去了很多不必要的内容。对于只想看 sql 语句及执行次数的用户来说，比较推荐。</li>
+<li>mysql-log-filter：google code 上找到的一个分析工具，提供了 python 和 php 两种可执行的脚本。 特色功能除了统计信息外，还针对输出内容做了排版和格式化，保证整体输出的简洁。喜欢简洁报表的朋友，推荐使用一下。</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="主从不一致"><a href="#主从不一致" class="headerlink" title="主从不一致"></a>主从不一致</h3><p>在m/s环境中,innodb写完ib_logfile后,服务异常关闭，会不会主库能用ib_logfile恢复数据，而<br>binlog没写导致从库同步时少少这个事务？从而导致主从不一致;</p>
+<h4 id="redo日志写入方式"><a href="#redo日志写入方式" class="headerlink" title="redo日志写入方式"></a>redo日志写入方式</h4><ol>
+<li>ib_logfile写入当前事务更新数据，并标上事务准备trx_prepare</li>
+<li>写入bin-log</li>
+<li>ib_logfile当前事务提交提交trx_commit</li>
+</ol>
+<h4 id="恢复方式"><a href="#恢复方式" class="headerlink" title="恢复方式"></a>恢复方式</h4><p>如果ib_logfile已经写入事务准备,那么在恢复过程中，会依据bin-log中该事务是否存在恢复数据。<br>假设:</p>
+<ol>
+<li>结束后异常,因没有写入bin-log，从库不会同步这个事务，主库上，重启时，在恢复日志中这个事务没有commit，即rollback这个事务.</li>
+<li>结束后异常，这会bin-log已经写入，从库会同步这个事务。主库依据恢复日志和bin-log，也正常恢复此事务</li>
+</ol>
+<p>综上描述:bin-log写入完成，主从会正常完成事务；bin-log没有写入，主从库rollback事务;不会出现主从库不一致问题.</p>
+<h3 id="日志文件备份"><a href="#日志文件备份" class="headerlink" title="日志文件备份"></a>日志文件备份</h3><p>备份的时候可以使用flush logs，关闭当前的所有日志文件，然后产生新的日志文件。关闭日志文件后，可以采用物理方式备份。 另外flush logs可以添加具体的日志类型：</p>
+<ol>
+<li>flush error logs</li>
+<li>flush general logs</li>
+<li>flush binary logs</li>
+<li>flush slow logs</li>
+</ol>
+<h3 id="Checkpoint机制"><a href="#Checkpoint机制" class="headerlink" title="Checkpoint机制"></a>Checkpoint机制</h3><p>MySQL服务器崩溃后，重新启动MySQL服务时，由于重做日志（redo）与回滚日志（undo）日志的存在，InnoDB通过回滚日志（undo）日志将所有已部分完成并写入硬盘的未完成事务进行回滚操作（rollback）。然后将重做日志（redo）日志中的事务全部重新执行一遍即可恢复所有的数据。但是数据量过大，为了缩短恢复的时间InnoDB引入了Checkpoint 机制。</p>
+<h4 id="Checkpoint-机制原理"><a href="#Checkpoint-机制原理" class="headerlink" title="Checkpoint 机制原理"></a>Checkpoint 机制原理</h4><p>假设在某个时间点，所有的脏页（dirty page）都被刷新到了硬盘上，这个时间点之前的所有重做日志（redo）就不需要重做了.系统就就下这个时间点重做日志的结尾位置作为Checkpoint,Checkpoint之前的重做日志也就不需要再重做了，可以放心的删除掉。为了更好的利用重做日志（redo）的空间,InnoDb采用轮循的策略使用重做日志空间，因此InnoDB的重做日志文件至少为2个。通过Checkpoint 机制，通过重做日志（redo）将数据库崩溃时已经完成但还没有来得及将缓存中已经修改但还未完全写入外存的事务进行重做（undo）操作，即可保证数据的一致性，也可以缩短恢复时间。</p>
+<h3 id="脏页（dirty-page）"><a href="#脏页（dirty-page）" class="headerlink" title="脏页（dirty page）"></a>脏页（dirty page）</h3><p>当事务需要修改某条记录是，InnoDB首先将该数据所在的数据块从外存中读取到硬盘中，事务提交后，InnoDB修改数据页中的记录，这时缓存的数据页已经和外存中的数据块已经不一样了，此时缓存中的数据页称为脏页（dirty page）,脏页刷新到外存中，变为干净页（clean page）。<br>备注：一个内存页默认为4K，或者4K的倍数。你可以把内存想象成一本可以擦洗的书，每次MySQL读数据的时候，向内存申请几张干净的书页，然后书写上去。当数据刷新到硬盘之后，这些数据页马上被擦除，供其他程序使用。</p>
+<h3 id="日志序列号（log-sequence-number）"><a href="#日志序列号（log-sequence-number）" class="headerlink" title="日志序列号（log sequence number）"></a>日志序列号（log sequence number）</h3><p>日志序列号（LSN）是日志空间中每条日志的结束点，用字节偏移量表示，在Checkpoin和恢复时使用。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之日志-查询日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>默认情况下查询日志是关闭的。由于查询日志会记录用户的所有操作，其中还包含增删查改等信息，</p>
+<ol>
+<li>insert查询为了避免数据冲突，如果此前插入过数据，而如果跟主键或唯一键的数据重复那肯定会报错</li>
+<li>update时也会查询因为更新的时候很可能会更新某一块数据</li>
+<li>delete查询，只删除符合条件的数据</li>
+</ol>
+<p>MySQL普通查询日志记录MySQL服务实例所有的操作，如select、update、insert、delete等操作，无论该操作是否成功执行。还有MySQL客户机与MySQL服务端连接及断开的相关信息，无论连接成功还是失败。<br>注意：由于普通查询日志几乎记录了MySQL的所有操作，对于数据访问频繁的数据库服务器而言，如果开启MySQL的普通查询日志将会大幅度的降低数据库的性能，因此建议关闭普通查询日志。只有在特殊时期，如需要追踪某些特殊的查询日志，可以临时打开普通的查询日志。在并发操作大的环境下会产生大量的信息从而导致不必要的磁盘IO，会影响mysql的性能的。如若不是为了调试数据库的目的建议不要开启查询日志。</p>
+<ol>
+<li>log = on|off 是否开启日志功能, 这个设置包含了查询日志和慢查询日志</li>
+<li>general_log = on|off 是否开启查询日志</li>
+<li>general_log_file = /path/to/file 指定查询日志的位置</li>
+<li>log_output = FILE|table 日志输出的位置, 这个指令对慢查询日志也起作用<a id="more"></a>
+
+</li>
+</ol>
+<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span>  variables <span class="keyword">like</span> <span class="string">&#x27;%general_log%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name    <span class="operator">|</span> <span class="keyword">Value</span>                        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> general_log      <span class="operator">|</span> OFF                          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log_file <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>incloudos.log <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/1589443754829.png" class title="查询日志">
+
+</div>
+
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>拓展解析：日志的输出位置一般有三种方式：file(文件)，table(表)，none(不保存)；其中前两个输出位置可以同时定义，none表示是开启日志功能但是不记录日志信息。file就是通过general_log_file  等方式定义的，而输出位置定义为表时查看日志的内容方式为：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> use mysql;#所在数据库</span><br><span class="line">Database changed</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> tables;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="operator">|</span> Tables_in_mysql           <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="operator">|</span> columns_priv              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> db                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> engine_cost               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> event                     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> func                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log               <span class="operator">|</span>查询日志表</span><br><span class="line"><span class="operator">|</span> gtid_executed             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_category             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_keyword              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_relation             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_topic                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_index_stats        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_table_stats        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> ndb_binlog_index          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> plugin                    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> proc                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> procs_priv                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> proxies_priv              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> server_cost               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> servers                   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slave_master_info         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slave_relay_log_info      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slave_worker_info         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slow_log                  <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> tables_priv               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone                 <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_leap_second     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_name            <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_transition      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_transition_type <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">user</span>                      <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="number">31</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>查询日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之日志-错误日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在mysql数据库中，错误日志功能是默认开启的。并且，错误日志无法被禁止。默认情况下，错误日志存储在mysql数据库的数据文件中。错误日志文件通常的名称为hostname.err。其中，hostname表示服务器主机名。<br>错误日志信息可以自己进行配置的，错误日志所记录的信息是可以通过log-error和log-warnings来定义的，其中log-err是定义是否启用错误日志的功能和错误日志的存储位置，log-warnings是定义是否将警告信息也定义至错误日志中。默认情况下错误日志大概记录以下几个方面的信息：服务器启动和关闭过程中的信息（未必是错误信息，如mysql如何启动InnoDB的表空间文件的、如何初始化自己的存储引擎的等等）、服务器运行过程中的错误信息、事件调度器运行一个事件时产生的信息、在从服务器上启动服务器进程时产生的信息。</p>
+<a id="more"></a>
+
+<h2 id="记录内容"><a href="#记录内容" class="headerlink" title="记录内容"></a>记录内容</h2><p>默认情况下错误日志也记录以下几个方面的消息：  </p>
+<ol>
+<li>服务器启动和关闭过程中的信息：未必是错误信息，比如mysql是如何去初始化存储引擎的过程记录在错误日志里等等</li>
+<li>服务器运行过程中的错误信息：如sock文件找不到，无法加载mysql数据库的数据文件，如果忘记初始化mysql或data dir路径找不到，或权限不正确等，都会记录在此。error 日志并不会记录所有的错误信息，只有MySQL服务实例运行过程中发声的关键错误（critical）才会被记录下来</li>
+<li>事件调度器运行一个事件时产生的信息：一旦mysql调度启动一个计划任务的时候，它也会将相关信息记录在错误日志中</li>
+<li>在从服务器上启动从服务器进程时产生的信息：在复制环境下，从服务器进程的信息也会被记录进错误日</li>
+</ol>
+<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><p>log_error可以直接定义为文件路径，也可以为ON|OFF；log_warings只能使用1|0来定义开关启动。<br>log_error = on|文件路径 是否启用错误日志,on表示开启,文件路径表示指定自定义日志路径<br>log_warnings = 1|0 是否记录warnings信息到错误日志中  </p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;log_error&#x27;</span>\G;</span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="number">1.</span> <span class="type">row</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">Variable_name: log_error</span><br><span class="line">        <span class="keyword">Value</span>: <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysqld<span class="operator">-</span>error.log</span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<p>更改错误日志位置可以使用log_error来设置形式如下：</p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/1589443071013.png" class title="错误日志">
+
+</div>
+
+<p>log_error=DIR/[filename]</p>
+<blockquote>
+<p>说明：其中，DIR参数指定错误日志的路径filename参数是错误日志的名称，没有指定该参数时默认为主机名。重启mysql服务器即可生效。</p>
+</blockquote>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">58.691227</span>Z <span class="number">0</span> [Warning] <span class="type">TIMESTAMP</span> <span class="keyword">with</span> implicit <span class="keyword">DEFAULT</span> <span class="keyword">value</span> <span class="keyword">is</span> deprecated. Please use <span class="comment">--explicit_defaults_for_timestamp server option (see documentation for more details).</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">58.700431</span>Z <span class="number">0</span> [Warning] You need <span class="keyword">to</span> use <span class="comment">--log-bin to make --log-slave-updates work.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">59.357341</span>Z <span class="number">0</span> [Warning] InnoDB: <span class="keyword">New</span> log files created, LSN<span class="operator">=</span><span class="number">45790</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">59.462957</span>Z <span class="number">0</span> [Warning] InnoDB: Creating <span class="keyword">foreign</span> <span class="keyword">key</span> <span class="keyword">constraint</span> <span class="keyword">system</span> tables.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410778</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410831</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410860</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;db&#x27;</span> entry <span class="string">&#x27;sys mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410881</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;proxies_priv&#x27;</span> entry <span class="string">&#x27;@ root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410940</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;tables_priv&#x27;</span> entry <span class="string">&#x27;sys_config mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.222131</span>Z <span class="number">0</span> [Warning] Changed limits: max_open_files: <span class="number">5000</span> (requested <span class="number">10000</span>)</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.222594</span>Z <span class="number">0</span> [Warning] Changed limits: table_open_cache: <span class="number">1495</span> (requested <span class="number">2000</span>)</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.429941</span>Z <span class="number">0</span> [Warning] <span class="type">TIMESTAMP</span> <span class="keyword">with</span> implicit <span class="keyword">DEFAULT</span> <span class="keyword">value</span> <span class="keyword">is</span> deprecated. Please use <span class="comment">--explicit_defaults_for_timestamp server option (see documentation for more details).</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.431994</span>Z <span class="number">0</span> [Note] <span class="operator">/</span>usr<span class="operator">/</span>sbin<span class="operator">/</span>mysqld (mysqld <span class="number">5.7</span><span class="number">.17</span><span class="operator">-</span>log) starting <span class="keyword">as</span> process <span class="number">2255</span> ...</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.435711</span>Z <span class="number">0</span> [Warning] You need <span class="keyword">to</span> use <span class="comment">--log-bin to make --log-slave-updates work.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438402</span>Z <span class="number">0</span> [Note] InnoDB: PUNCH HOLE support available</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438441</span>Z <span class="number">0</span> [Note] InnoDB: Mutexes <span class="keyword">and</span> rw_locks use GCC <span class="keyword">atomic</span> builtins#Mutexes（互斥量）和rw_locks（行级锁）是GCC编译的是InnoDB内置的。</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438448</span>Z <span class="number">0</span> [Note] InnoDB: Uses event mutexes</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438454</span>Z <span class="number">0</span> [Note] InnoDB: GCC builtin __atomic_thread_fence() <span class="keyword">is</span> used <span class="keyword">for</span> memory barrier</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438460</span>Z <span class="number">0</span> [Note] InnoDB: Compressed tables use zlib <span class="number">1.2</span><span class="number">.3</span>#默认压缩工具是zlib</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438469</span>Z <span class="number">0</span> [Note] InnoDB: <span class="keyword">Using</span> Linux native AIO</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.440212</span>Z <span class="number">0</span> [Note] InnoDB: Number <span class="keyword">of</span> pools: <span class="number">1</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.440425</span>Z <span class="number">0</span> [Note] InnoDB: <span class="keyword">Using</span> CPU crc32 instructions</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.443133</span>Z <span class="number">0</span> [Note] InnoDB: Initializing buffer pool, total size <span class="operator">=</span> <span class="number">128</span>M, instances <span class="operator">=</span> <span class="number">1</span>, chunk size <span class="operator">=</span> <span class="number">128</span>M#InnoDB引擎的缓冲池（buffer pool）的值大小</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.457773</span>Z <span class="number">0</span> [Note] InnoDB: Completed initialization <span class="keyword">of</span> buffer pool</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.461218</span>Z <span class="number">0</span> [Note] InnoDB: If the mysqld execution <span class="keyword">user</span> <span class="keyword">is</span> authorized, page cleaner thread priority can be changed. See the man page <span class="keyword">of</span> setpriority().</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.474457</span>Z <span class="number">0</span> [Note] InnoDB: Highest supported file format <span class="keyword">is</span> Barracuda.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.490641</span>Z <span class="number">0</span> [Note] InnoDB: Creating shared tablespace <span class="keyword">for</span> temporary tables</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.490762</span>Z <span class="number">0</span> [Note] InnoDB: Setting file <span class="string">&#x27;./ibtmp1&#x27;</span> size <span class="keyword">to</span> <span class="number">12</span> MB. Physically writing the file <span class="keyword">full</span>; Please wait ...</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.548037</span>Z <span class="number">0</span> [Note] InnoDB: File <span class="string">&#x27;./ibtmp1&#x27;</span> size <span class="keyword">is</span> now <span class="number">12</span> MB.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.549679</span>Z <span class="number">0</span> [Note] InnoDB: <span class="number">96</span> redo <span class="keyword">rollback</span> segment(s) found. <span class="number">96</span> redo <span class="keyword">rollback</span> segment(s) <span class="keyword">are</span> active.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.549703</span>Z <span class="number">0</span> [Note] InnoDB: <span class="number">32</span> non<span class="operator">-</span>redo <span class="keyword">rollback</span> segment(s) <span class="keyword">are</span> active.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.551022</span>Z <span class="number">0</span> [Note] InnoDB: Waiting <span class="keyword">for</span> purge <span class="keyword">to</span> <span class="keyword">start</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.601254</span>Z <span class="number">0</span> [Note] InnoDB: <span class="number">5.7</span><span class="number">.17</span> started; log sequence number <span class="number">2534561</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.602149</span>Z <span class="number">0</span> [Note] InnoDB: Loading buffer pool(s) <span class="keyword">from</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>ib_buffer_pool</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.602726</span>Z <span class="number">0</span> [Note] Plugin <span class="string">&#x27;FEDERATED&#x27;</span> <span class="keyword">is</span> disabled.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.604540</span>Z <span class="number">0</span> [Note] InnoDB: Buffer pool(s) load completed <span class="keyword">at</span> <span class="number">171210</span> <span class="number">15</span>:<span class="number">28</span>:<span class="number">04</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.610872</span>Z <span class="number">0</span> [Warning] Failed <span class="keyword">to</span> <span class="keyword">set</span> up SSL because <span class="keyword">of</span> the following SSL library error: SSL context <span class="keyword">is</span> <span class="keyword">not</span> usable <span class="keyword">without</span> certificate <span class="keyword">and</span> private key</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.610909</span>Z <span class="number">0</span> [Note] Server hostname (bind<span class="operator">-</span>address): <span class="string">&#x27;*&#x27;</span>; port: <span class="number">3306</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.610980</span>Z <span class="number">0</span> [Note] IPv6 <span class="keyword">is</span> available.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.611001</span>Z <span class="number">0</span> [Note]   <span class="operator">-</span> <span class="string">&#x27;::&#x27;</span> resolves <span class="keyword">to</span> <span class="string">&#x27;::&#x27;</span>;#主机名解析</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.611025</span>Z <span class="number">0</span> [Note] Server socket created <span class="keyword">on</span> IP: <span class="string">&#x27;::&#x27;</span>.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623503</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623583</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623624</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;db&#x27;</span> entry <span class="string">&#x27;sys mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623645</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;proxies_priv&#x27;</span> entry <span class="string">&#x27;@ root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.625694</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;tables_priv&#x27;</span> entry <span class="string">&#x27;sys_config mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637286</span>Z <span class="number">0</span> [Note] Event Scheduler: Loaded <span class="number">0</span> events#事件调度器没有任何事件，因为没有装载。</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637536</span>Z <span class="number">1</span> [Note] Event Scheduler: scheduler thread started <span class="keyword">with</span> id <span class="number">1</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637618</span>Z <span class="number">0</span> [Note] Executing <span class="string">&#x27;SELECT * FROM INFORMATION_SCHEMA.TABLES;&#x27;</span> <span class="keyword">to</span> <span class="keyword">get</span> a list <span class="keyword">of</span> tables <span class="keyword">using</span> the deprecated <span class="keyword">partition</span> engine. You may use the startup option <span class="string">&#x27;--disable-partition-engine-check&#x27;</span> <span class="keyword">to</span> <span class="keyword">skip</span> this check.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637635</span>Z <span class="number">0</span> [Note] Beginning <span class="keyword">of</span> list <span class="keyword">of</span> non<span class="operator">-</span>natively partitioned tables</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.654416</span>Z <span class="number">0</span> [Note] <span class="keyword">End</span> <span class="keyword">of</span> list <span class="keyword">of</span> non<span class="operator">-</span>natively partitioned tables</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.654591</span>Z <span class="number">0</span> [Note] <span class="operator">/</span>usr<span class="operator">/</span>sbin<span class="operator">/</span>mysqld: ready <span class="keyword">for</span> connections.#mysql启动完成等待客户端的请求。</span><br><span class="line">Version: <span class="string">&#x27;5.7.17-log&#x27;</span>  socket: <span class="string">&#x27;/var/lib/mysql/mysql.sock&#x27;</span>  port: <span class="number">3306</span>  MySQL Community Server (GPL)#创建一个本地sock用于本地连接。</span><br></pre></td></tr></table></figure>
+<h2 id="删除日志"><a href="#删除日志" class="headerlink" title="删除日志"></a>删除日志</h2><p>在mysql5.5.7之前：数据库管理员可以删除很长时间之前的错误日志，以保证mysql服务器上的硬盘空间。mysql数据库中，可以使用mysqladmin命令开启新的错误日志。mysqladmin命令的语法如下：mysqladmin –u root –pflush-logs也可以使用登录mysql数据库中使用FLUSHLOGS语句来开启新的错误日志。<br>在mysql5.5.7之后：服务器将关闭此项功能。只能使用重命名原来的错误日志文件，手动冲洗日志创建一个新的：方式如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv host_name.err host_name.err-old</span><br><span class="line">mysqladmin flush-logs</span><br><span class="line">mv host_name.err-old backup-directory</span><br><span class="line"></span><br><span class="line">mysqladmin -uroot -p flush-logs</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/1589443206690.png" class>
+
+</div>
+
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/1589443228792.png" class>
+
+</div>
+
+<p>On Windows, use rename rather than mv.</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>错误日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>eclipse使用技巧</title>
     <url>/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</url>
     <content><![CDATA[<h2 id="集成javap命令"><a href="#集成javap命令" class="headerlink" title="集成javap命令"></a>集成javap命令</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ol>
@@ -839,83 +1292,6 @@
         <tag>Java</tag>
         <tag>设计模式</tag>
         <tag>单例模式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hibernate系统化学习之对象状态</title>
-    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><style type="text/css">
-.tg  {border-collapse:collapse;border-color:#C44D58;border-spacing:0;}
-.tg td{background-color:#F9CDAD;border-color:#C44D58;border-style:solid;border-width:1px;color:#002b36;
-  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{background-color:#FE4365;border-color:#C44D58;border-style:solid;border-width:1px;color:#fdf6e3;
-  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-</style>
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;状态&nbsp;&nbsp;&nbsp;</th>
-    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;说明&nbsp;&nbsp;&nbsp;</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;临时状态（Transient）&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;刚创建的对象（new）还没有被Session持久化、缓存中不存在这个对象的数据并且数据库中没有这个对象对应的数据为瞬时状态这个时候是没有OID。&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;持久状态（Persistent）&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;对象经过Session持久化操作，缓存中存在这个对象的数据为持久状态并且数据库中存在这个对象对应的数据为持久状态这个时候有OID。&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;游离状态（Detached）&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;已经被持久化，但不处于session的缓存中。&nbsp;&nbsp;&nbsp;当Session关闭，缓存中不存在这个对象数据而数据库中有这个对象的数据并且有OID为游离状态。&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-</tbody>
-</table>
-
-<a id="more"></a>
-
-<h2 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h2><div align="center">
-
-<img src="/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/1588843982557.png" class title="对象状态转换">
-
-</div>
-
-<p>当对象在持久化状态时，它一直位于 Session 的缓存中，对它的任何操作在事务提交时都将同步到数据库，因此，对一个已经持久的对象调用 save() 或 update() 方法是没有意义的。</p>
-<blockquote>
-<p>save()和persist()将会引发SQL的INSERT，delete()会引发SQLDELETE， 而update()或merge()会引发SQLUPDATE。对持久化（persistent）实例的修改在刷新提交的时候会被检测到， 它也会引起SQLUPDATE。saveOrUpdate()或者replicate()会引发SQLINSERT或者UPDATE</p>
-</blockquote>
-<h3 id="相关方法说明"><a href="#相关方法说明" class="headerlink" title="相关方法说明"></a>相关方法说明</h3><ol>
-<li>get、load、find: 方法的使用上较为类似，他们都是将数据库中对应Id的数据映射为Java对象，此时对象变为持久化状态。</li>
-<li>save: 保存，此时Java对象已经与数据库记录建立的关系。将对象从临时状态的变为持久化状态或者将游离状态的数据变为持久状态。</li>
-<li>saveOrUpdate: 保存或者更新，如果没有与数据库记录所对应的oid，则执行保存，如果有，则执行更新。将对象从临时状态的变为持久化状态或者将游离状态的数据变为持久状态。</li>
-<li>delete: 删除对象，将对象从持久化状态或者游离状态变为临时状态。</li>
-<li>close: 关闭session, 先将session清空，然后再关闭。将对象从持久状态变为临时状态。</li>
-<li>clear: 清空session缓存。将对象从持久状态变为临时状态。</li>
-<li>evict: 清除指定的对象。将对象从持久状态变为临时状态.</li>
-</ol>
-<h2 id="实例说明"><a href="#实例说明" class="headerlink" title="实例说明"></a>实例说明</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://www.cnblogs.com/flqcchblog/p/4619022.html">hibernate的各种保存方式的区别 (save,persist,update,saveOrUpdte,merge,flush,lock)</a></li>
-<li><a href="https://blog.csdn.net/pangqiandou/article/details/53386728">Hibernate一级缓存</a></li>
-<li><a href="https://blog.csdn.net/looyo/article/details/6309136">hibernate session的flushMode的区别</a></li>
-<li><a href="https://blog.csdn.net/lzm1340458776/article/details/32729127">Hibernate的Session_flush与隔离级别</a></li>
-<li><a href="https://blog.csdn.net/chuck_kui/article/details/51531089">Hibernate 中的session 的flush、reflush 和clear 方法 ，及数据库的隔离级别</a></li>
-<li><a href="https://blog.csdn.net/oChangWen/article/details/52582958">Hibernate深入理解—-03操作Session缓存方法（flush、refresh、clear，事务隔离级别）</a></li>
-<li><a href="http://blog.csdn.net/fg2006/article/details/6436517">Hibernate中对象的三种状态及相互转化</a></li>
-<li><a href="https://www.cnblogs.com/xiaoluo501395377/p/3380270.html">深入hibernate的三种状态</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>Hibernate</category>
-        <category>开源框架</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Hibernate</tag>
-        <tag>对象状态</tag>
       </tags>
   </entry>
   <entry>
@@ -2075,6 +2451,543 @@
       <tags>
         <tag>Java</tag>
         <tag>编程技巧</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之日志-Binlog日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<h2 id="记录信息"><a href="#记录信息" class="headerlink" title="记录信息"></a>记录信息</h2><ol>
+<li>二进制日志记录 MySQL 数据库中所有与更新相关的操作，即二进制日志记录了所有的 DDL（数据定义语言）语句和 DML（数据操纵语言）语句，但是不包括数据查询语句。常用于恢复数据库和主从复制。</li>
+<li>二进制日志主要记录数据库的变化情况，因此可以用作主从库的同步。内容主要包括数据库所有的更新操作，use语句、insert语句、delete语句、update语句、create语句、alter语句、drop语句。用一句更简洁易懂的话概括就是：所有涉及数据变动的操作，都要记录进二进制日志中。</li>
+</ol>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ol>
+<li>只要重启了服务, binlog二进制日志就会自己滚动一个新的, 或者使用flush logs 手动滚动日志</li>
+<li>记录的信息 主要是记录修改数据或有可能引起数据改变的MySql语句, 记录时间,操作时长,等等信息</li>
+<li>日志格式: 基于(语句, row, mixed) 默认mixed</li>
+<li>每一个二进制日志叫做一个Binary log event(二进制日志事件), 每一个二进制日志事件都有自己的元数据(meta data)信息, 时间,操作时长….</li>
+<li>每个二进制日志的上限是1G<a id="more"></a>
+
+</li>
+</ol>
+<h2 id="查看binlog状态"><a href="#查看binlog状态" class="headerlink" title="查看binlog状态"></a>查看binlog状态</h2><p><code>show variables like &#39;log_bin%&#39;;</code></p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589445692540.png" class>
+
+</div>
+
+<p>开启之后：  </p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589445717921.png" class>
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589445725547.png" class>
+
+</div>
+
+<h2 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h2><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-0lax">参数</th>
+    <th class="tg-0lax">说明</th>
+  </tr>
+  <tr>
+    <td class="tg-0lax">sql_log_bin ={ON|OFF}</td>
+    <td class="tg-0lax">用于控制会话级别二进制日志功能的开启或关闭。默认为ON，表示启用记录功能。用户可以在会话级别修改此变量的值，但其必须具有SUPER权限。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">binlog_cache_size =32768</td>
+    <td class="tg-0lax">默认值32768 Binlog Cache用于在打开了二进制日志（binlog）记录功能的环境，是MySQL 用来提高binlog的记录效率而设计的一个用于短时间内临时缓存binlog数据的内存区域。一般来说，如果我们的数据库中没有什么大事务，写入也不是特别频繁，2MB～4MB是一个合适的选择。但是如果我们的数据库大事务较多，写入量比较大，可与适当调高binlog_cache_size。同时，我们可以通过binlog_cache_use 以及 binlog_cache_disk_use来分析设置的binlog_cache_size是否足够，是否有大量的binlog_cache由于内存大小不够而使用临时文件（binlog_cache_disk_use）来缓存了。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">binlog_stmt_cache_size= 32768</td>
+    <td class="tg-0lax">当非事务语句使用二进制日志缓存，但是超出binlog_stmt_cache_size时，使用一个临时文件来存放这些语句。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">log_bin = mysql-bin</td>
+    <td class="tg-0lax">指定binlog的位置，默认在数据目录下。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">binlog-format= {ROW|STATEMENT|MIXED}</td>
+    <td class="tg-0lax">指定二进制日志的类型，默认为MIXED（row）。如果设定了二进制日志的格式，却没有启用二进制日志，则MySQL启动时会产生警告日志信息并记录于错误日志中</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">sync_binlog = 10</td>
+    <td class="tg-0lax">设定多久同步一次二进制日志至磁盘文件中，0表示不同步，任何正数值都表示对二进制每多少次写操作之后同步一次。当autocommit的值为1时，每条语句的执行都会引起二进制日志同步，否则，每个事务的提交会引起二进制日志同步</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">max_binlog_cache_size= {4096 .. 18446744073709547520}</td>
+    <td class="tg-0lax">二进制日志缓存空间大小，5.5.9及以后的版本仅应用于事务缓存，其上限由max_binlog_stmt_cache_size决定。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">max_binlog_stmt_cache_size= {4096 .. 18446744073709547520}</td>
+    <td class="tg-0lax">二进制日志缓存空间大小，5.5.9及以后的版本仅应用于事务缓存</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">expire_log_days ={0..99}</td>
+    <td class="tg-0lax">设定二进制日志的过期天数，超出此天数的二进制日志文件将被自动删除。默认为0，表示不启用过期自动删除功能。如果启用此功能，自动删除工作通常发生在MySQL启动时或FLUSH日志时。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">log_slave_updates</td>
+    <td class="tg-0lax">logslvaeupdates 用于主从复制</td>
+  </tr>
+</table>
+
+<h3 id="开启二进制日志"><a href="#开启二进制日志" class="headerlink" title="开启二进制日志"></a>开启二进制日志</h3><ol>
+<li>其一、log_bin可以直接定义为文件路径，也可以为ON|OFF。</li>
+<li>其二、通过编辑my.cnf中的log-bin选项可以开启二进制日志；形式如下：my.cnf文件</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">log<span class="operator">-</span>bin [<span class="operator">=</span>DIR \ [filename]]</span><br></pre></td></tr></table></figure>
+<p>其中，DIR参数指定二进制文件的存储路径；filename参数指定二级制文件的文件名，其形式为filename.number，number的形式为000001、000002等。每次重启mysql服务或运行mysql&gt; flush logs;都会生成一个新的二进制日志文件，这些日志文件的number会不断地递增。除了生成上述的文件外还会生成一个名为filename.index的文件。这个文件中存储所有二进制日志文件的清单又称为二进制文件的索引。</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">log-bin</span>=<span class="string">&quot;filename-bin&quot;</span></span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589446006763.png" class>
+
+</div>
+
+<blockquote>
+<p>注意：如果说我们向某个表的某个字段插入一个数据而这个数据为当前时间(日期时间型)；过段时间将此二进制文件应用到另一台服务器上数据就会变动从而导致数据的不一致性所以说对于这种非确定性的数据使用默认的语句定义并不是可靠的；</p>
+</blockquote>
+<h3 id="配置二进制文件大小"><a href="#配置二进制文件大小" class="headerlink" title="配置二进制文件大小"></a>配置二进制文件大小</h3><p>设定二进制日志文件上限，单位为字节，最小值为4K，最大值为1G，默认为1G。某事务所产生的日志信息只能写入一个二进制日志文件，因此，实际上的二进制日志文件可能大于这个指定的上限。作用范围为全局级别，可用于配置文件，属动态变量。<br><code>max_binlog_size=&#123;4096 .. 1073741824&#125; ;</code><br>查看文件<br><code>show binary logs;</code>  </p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589446113339.png" class>
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589446120636.png" class>
+
+</div>
+
+<p>查看主节点的日志  </p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589446146171.png" class>
+
+</div>
+
+<p>文件路径一般在mysql的目录下，如下图所示：  </p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589446172227.png" class>
+
+</div>
+
+<h2 id="查看当前正在使用的二进制文件"><a href="#查看当前正在使用的二进制文件" class="headerlink" title="查看当前正在使用的二进制文件"></a>查看当前正在使用的二进制文件</h2><p><code>show master status;</code></p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589446441990.png" class>
+
+</div>
+
+<blockquote>
+<p>小扩展：二进制日志的记录位置：通常为上一个事件执行结束时间的位置，每一个日志文件本身也有自己的元数据所以说对于当前版本的mysql来说二进制的开始位置通常为107；</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> flushlogs;</span><br><span class="line">Query OK, <span class="number">0</span> rowsaffected (<span class="number">0.23</span> sec)</span><br><span class="line">注意：flush logs一般只会滚动中继日志和二进制日志。</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> master status;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+----------+--------------+------------------+</span></span><br><span class="line"><span class="operator">|</span> File             <span class="operator">|</span> Position <span class="operator">|</span> Binlog_Do_DB <span class="operator">|</span>Binlog_Ignore_DB <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+----------+--------------+------------------+</span></span><br><span class="line"><span class="operator">|</span> mysql<span class="operator">-</span>bin<span class="number">.000011</span><span class="operator">|</span>      <span class="number">107</span> <span class="operator">|</span>              <span class="operator">|</span>                  <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+----------+--------------+------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span>sec)</span><br></pre></td></tr></table></figure>
+<h2 id="二进制日志滚动"><a href="#二进制日志滚动" class="headerlink" title="二进制日志滚动"></a>二进制日志滚动</h2><p>当 MySQL 服务进程启动、当前二进制日志文件的大小已经超过上限时、执行 FLUSH LOG 时，MySQL 会创建一个新的二进制日志文件。新的编号大1的日志用于记录最新的日志，而原日志名字不会被改变。<br>手动滚动命令：flush logs;  </p>
+<h2 id="定义二进制格式日志"><a href="#定义二进制格式日志" class="headerlink" title="定义二进制格式日志"></a>定义二进制格式日志</h2><p>binlog_format= Mixed|Statement|Row  </p>
+<ol>
+<li>语句(statement)：默认的记录格式；</li>
+<li>行(row)：定义的并非数据本身而是这一行的数据是什么；需要解码</li>
+<li>混合模式(mixed)：交替使用行和语句、由mysql服务器自行判断。</li>
+</ol>
+<p>其中基于行的定义格式数据量会大一些但是可以保证数据的精确性  </p>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#bbb;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#594F4F;background-color:#E0FFEB;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#bbb;color:#493F3F;background-color:#9DE0AD;}
+.tg .tg-cly1{text-align:left;vertical-align:middle}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-cly1">模式</th>
+    <th class="tg-cly1">说明</th>
+    <th class="tg-0lax">优点</th>
+    <th class="tg-0lax">缺点</th>
+  </tr>
+  <tr>
+    <td class="tg-cly1">STATEMENT模式（SBR）</td>
+    <td class="tg-cly1">
+        基于SQL语句的复制(statement-based replication, SBR)<br>
+        每一条会修改数据的sql语句会记录到binlog中。
+    </td>
+    <td class="tg-0lax">
+        不需要记录每一条sql语句和每一行的数据变化，减少了binlog日志量，节约IO，提高性能。<br>
+        binlog中包含了所有数据库更改信息，可以据此来审核数据库的安全等情况。<br>
+        binlog可以用于实时的还原，而不仅仅用于复制；主从版本可以不一样，从服务器版本可以比主服务器版本高
+    </td>
+    <td class="tg-0lax">
+        在某些情况下会导致master-slave中的数据不一致(如sleep()函数， last_insert_id()，以及user-defined functions(udf)等会出现问题)<br>
+        不是所有的UPDATE语句都能被复制，尤其是包含不确定操作的时候。<br>
+        调用具有不确定因素的 UDF 时复制也可能出问题<br>
+        INSERT ... SELECT 会产生比 RBR 更多的行级锁<br>
+        使用以下函数的语句也无法被复制：<br>
+        * LOAD_FILE()<br>
+        * UUID()<br>
+        * USER()<br>
+        * FOUND_ROWS()<br>
+        * SYSDATE() (除非启动时启用了 --sysdate-is-now 选项)<br>
+        复制需要进行全表扫描(WHERE 语句中没有使用到索引)的 UPDATE 时，需要比 RBR 请求更多的行级锁<br>
+        对于有 AUTO_INCREMENT 字段的 InnoDB表而言，INSERT 语句会阻塞其他 INSERT 语句<br>
+        对于一些复杂的语句，在从服务器上的耗资源情况会更严重，而 RBR 模式下，只会对那个发生变化的记录产生影响<br>
+        存储函数(不是存储过程)在被调用的同时也会执行一次 NOW() 函数，这个可以说是坏事也可能是好事<br>
+        确定了的 UDF 也需要在从服务器上执行<br>
+        数据表必须几乎和主服务器保持一致才行，否则可能会导致复制出错<br>
+        执行复杂语句如果出错的话，会消耗更多资源
+    </td>
+  </tr>
+  <tr>
+    <td class="tg-cly1">ROW模式（RBR）</td>
+    <td class="tg-cly1">基于行的复制(row-based replication, RBR)</td>
+    <td class="tg-0lax">
+        不记录每条sql语句的上下文信息，仅需记录哪条数据被修改了，修改成什么样了。而且不会出现某些特定情况下的存储过程、或function、或trigger的调用和触发无法被正确复制的问题。<br>
+        任何情况都可以被复制，这对复制来说是最安全可靠的<br>
+        和其他大多数数据库系统的复制技术一样<br>
+        多数情况下，从服务器上的表如果有主键的话，复制就会快了很多<br>
+        复制以下几种语句时的行锁更少：<br>
+        * INSERT ... SELECT<br>
+        * 包含 AUTO_INCREMENT 字段的 INSERT<br>
+        * 没有附带条件或者并没有修改很多记录的 UPDATE 或 DELETE 语句<br>
+        执行 INSERT，UPDATE，DELETE 语句时锁更少<br>
+        从服务器上采用多线程来执行复制成为可能
+    </td>
+    <td class="tg-0lax">
+        会产生大量的日志（binlog 大了很多），尤其是alter table的时候会让日志暴涨。<br>
+        复杂的回滚时 binlog 中会包含大量的数据<br>
+        主服务器上执行 UPDATE 语句时，所有发生变化的记录都会写到 binlog 中，而 SBR 只会写一次，这会导致频繁发生 binlog 的并发写问题<br>
+        UDF 产生的大 BLOB 值会导致复制变慢<br>
+        无法从 binlog 中看到都复制了写什么语句<br>
+        当在非事务表上执行一段堆积的SQL语句时，最好采用 SBR 模式，否则很容易导致主从服务器的数据不一致情况发生<br>
+        另外，针对系统库 mysql 里面的表发生变化时的处理规则如下：<br>
+        如果是采用 INSERT，UPDATE，DELETE 直接操作表的情况，则日志格式根据 binlog_format 的设定而记录<br>
+        如果是采用 GRANT，REVOKE，SET PASSWORD 等管理语句来做的话，那么无论如何都采用 SBR 模式记录<br>
+        注：采用 RBR 模式后，能解决很多原先出现的主键重复问题。
+    </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">MIXED模式（MBR）</td>
+    <td class="tg-0lax" colspan="3">
+        混合模式复制(mixed-based replication, MBR)<br>
+        一般的复制使用STATEMENT模式保存binlog，对于STATEMENT模式无法复制的操作使用ROW模式保存binlog，MySQL会根据执行的SQL语句选择日志保存方式。<br>
+        对于执行的SQL语句中包含now()这样的时间函数，会在日志中产生对应的unix_timestamp()*1000的时间字符串，slave在完成同步时，取用的是sqlEvent发生的时间来保证数据的准确性。另外对于一些功能性函数slave能完成相应的数据同步，而对于上面指定的一些类似于UDF函数，导致Slave无法知晓的情况，则会采用ROW格式存储这些Binlog，以保证产生的Binlog可以供Slave完成数据同步。
+    </td>
+  </tr>
+</table>
+
+<h2 id="二进制日志的有效天数"><a href="#二进制日志的有效天数" class="headerlink" title="二进制日志的有效天数"></a>二进制日志的有效天数</h2><p><code>expire_logs_days = 5</code></p>
+<h2 id="实时将缓存中数据同步到硬盘"><a href="#实时将缓存中数据同步到硬盘" class="headerlink" title="实时将缓存中数据同步到硬盘"></a>实时将缓存中数据同步到硬盘</h2><p>sync_binlog：sync_binlog 的默认值是0，像操作系统刷其他文件的机制一样，MySQL不会同步到磁盘中去而是依赖操作系统来刷新binary log。 当sync_binlog =N (N&gt;0) ，MySQL 在每写 N次 二进制日志binary log时，会使用fdatasync()函数将它的写二进制日志binary log同步到磁盘中去。（如果启用了autocommit，那么每一个语句statement就会有一次写操作；否则每个事务对应一个写操作）在MySQL中系统默认的设置是sync_binlog=0，也就是不做任何强制性的磁盘刷新指令，这时候的性能是最好的，但是风险也是最大的。因为一旦系统Crash，在binlog_cache中的所有binlog信息都会被丢失。而当设置为“1”的时候，是最安全但是性能损耗最大的设置。因为当设置为1的时候，即使系统Crash，也最多丢失binlog_cache中未完成的一个事务，对实际数据没有任何实质性影响。从以往经验和相关测试来看，对于高并发事务的系统来说，“sync_binlog”设置为0和设置为1的系统写入性能差距可能高达5倍甚至更多。</p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1587543929052.png" class>
+
+</div>
+
+<h2 id="数据备份与恢复"><a href="#数据备份与恢复" class="headerlink" title="数据备份与恢复"></a>数据备份与恢复</h2><h3 id="导出此数据库的信息"><a href="#导出此数据库的信息" class="headerlink" title="导出此数据库的信息"></a>导出此数据库的信息</h3><p><code>mysqlbinlog mysql-bin.000017 &gt; /tmp/a.sql</code></p>
+<h3 id="导入此数据库的信息"><a href="#导入此数据库的信息" class="headerlink" title="导入此数据库的信息"></a>导入此数据库的信息</h3><p><code>mysql &lt; a.sql</code></p>
+<h3 id="Mysqlbinlog"><a href="#Mysqlbinlog" class="headerlink" title="Mysqlbinlog"></a>Mysqlbinlog</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">语法</span><br><span class="line"><span class="operator">-</span>s                          以精简的方式显示日志内容</span><br><span class="line"><span class="operator">-</span>v                          以详细的方式显示日志内容</span><br><span class="line"><span class="operator">-</span>d<span class="operator">=</span>数据库名                  只显示指定数据库的日志内容</span><br><span class="line"><span class="operator">-</span>o<span class="operator">=</span>n                        忽略日志中前n行MySQL命令</span><br><span class="line"><span class="operator">-</span>r<span class="operator">=</span>file                    将指定内容写入指定文件</span><br><span class="line"><span class="comment">--start-datetime           显示指定时间范围内的日志内容</span></span><br><span class="line"><span class="comment">--stop-datetime</span></span><br><span class="line"><span class="comment">--start-position        显示指定位置间隔内的日志内容</span></span><br><span class="line"><span class="comment">--stop-position</span></span><br></pre></td></tr></table></figure>
+<p>mysqlbinlog mysql-bin.<strong>**</strong><br>–start-datetime=#<br>–stop-datetime=#<br>–start-position=#<br>–stop-position=#<br>还可以使用-u,-p,-h 去读取其他主机上的二进制日志  </p>
+<h4 id="通过时间恢复方法如下"><a href="#通过时间恢复方法如下" class="headerlink" title="通过时间恢复方法如下"></a>通过时间恢复方法如下</h4><p>mysqlbinlog mysql-bin.000017–stop-date=”恢复截至时间”|mysql -uroot -proot</p>
+<h4 id="通过操作点恢复"><a href="#通过操作点恢复" class="headerlink" title="通过操作点恢复"></a>通过操作点恢复</h4><p>mysqlbinlog –stop-position=”450” mysql-bin.000017  | mysql -u root –p</p>
+<h2 id="清除二进制日志"><a href="#清除二进制日志" class="headerlink" title="清除二进制日志"></a>清除二进制日志</h2><p>二进制日志会记录大量的信息（其中包含一些无用的信息）。如果很长时间不清理二进制日志，将会浪费很多的磁盘空间。但是，删除之后可能导致数据库崩溃时无法进行恢复，所以若要删除二进制日志首先将其和数据库备份一份，其中也只能删除备份前的二进制日志，新产生的日志信息不可删(可以做即时点还原)。也不可在关闭mysql服务器之后直接删除因为这样可能会给数据库带来错误的。若非要删除二进制日志需要做如下操作：导出备份数据库和二进制日志文件进行压缩归档存储。</p>
+<h3 id="清除所有日志（不存在主从复制关系）"><a href="#清除所有日志（不存在主从复制关系）" class="headerlink" title="清除所有日志（不存在主从复制关系）"></a>清除所有日志（不存在主从复制关系）</h3><p>使用RESET MASTER语句可以删除所有的二进制日志。<br><code>RESET MASTER;</code></p>
+<blockquote>
+<p>解析：首先不建议在生产环境下使用此操作；删除所有的二进制日志后，Mysql将会重新创建新的二进制日志。新二进制日志的编号从000001开始。</p>
+</blockquote>
+<h3 id="根据文件或时间点来删除二进制日志"><a href="#根据文件或时间点来删除二进制日志" class="headerlink" title="根据文件或时间点来删除二进制日志"></a>根据文件或时间点来删除二进制日志</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; PURGE &#123; BINARY | MASTER &#125; LOGS &#123;TO <span class="string">&#x27;log_name&#x27;</span> | BEFORE datetime_expr &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>其中TO’log_name’表示把这个文件之前的其他文件都删除掉，也可使用BEFORE datetime_expr指定把哪个时间之前的二进制文件删除了。</p>
+</blockquote>
+<h4 id="清除指定日志之前的所有日志"><a href="#清除指定日志之前的所有日志" class="headerlink" title="清除指定日志之前的所有日志"></a>清除指定日志之前的所有日志</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PURGE MASTER LOGS TO <span class="string">&#x27;mysql-bin.000352&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="清除某一时间点前的所有日志"><a href="#清除某一时间点前的所有日志" class="headerlink" title="清除某一时间点前的所有日志"></a>清除某一时间点前的所有日志</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PURGE MASTER LOGS BEFORE <span class="string">&#x27;2015-01-01 00:00:00&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="清除-n-天前的所有日志"><a href="#清除-n-天前的所有日志" class="headerlink" title="清除 n 天前的所有日志"></a>清除 n 天前的所有日志</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PURGE MASTER LOGS BEFORE CURRENT_DATE - INTERVAL 10 DAY;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>由于二进制日志的重要性,请仅在确定不再需要将要被删除的二进制文件，或者在已经对二进制日志文件进行归档备份，或者已经进行数据库备份的情况下，才进行删除操作，且不要使用 rm 命令删除。</p>
+</blockquote>
+<h3 id="清除二进制日志的最佳实践"><a href="#清除二进制日志的最佳实践" class="headerlink" title="清除二进制日志的最佳实践"></a>清除二进制日志的最佳实践</h3><p>清除之前必须将日志文件备份，备份完毕后再次确认，如果确实可以删除则使用以上命令进行删除<br>假设binglog备份文件已经备份到日志服务器中，当前本地的数据库日志已经确保无误可以删除</p>
+<h4 id="备份二进制文件"><a href="#备份二进制文件" class="headerlink" title="备份二进制文件"></a>备份二进制文件</h4><p><code>cp mysql-bin.0000* /tmp/</code></p>
+<h4 id="备份数据库"><a href="#备份数据库" class="headerlink" title="备份数据库"></a>备份数据库</h4><p><code>mysqldump-u root -p&#39;123456&#39; -A &gt; /tmp/bak.sql</code></p>
+<h4 id="查询日志"><a href="#查询日志" class="headerlink" title="查询日志"></a>查询日志</h4><p><code>tail -5 mysql-bin.index</code>  </p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589447636628.png" class>
+
+</div>
+
+<h4 id="删除某个日志之前的日志"><a href="#删除某个日志之前的日志" class="headerlink" title="删除某个日志之前的日志"></a>删除某个日志之前的日志</h4><p><code>purge binary logs to &#39;mysql-bin.****&#39;;</code></p>
+<h4 id="删除某一事件之前的信息"><a href="#删除某一事件之前的信息" class="headerlink" title="删除某一事件之前的信息"></a>删除某一事件之前的信息</h4><p><code>cat  mysql-bin.index</code></p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589447690099.png" class>
+
+</div>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql&gt;show binlog events <span class="keyword">in</span> <span class="string">&#x27;mysql-bin.****&#x27;</span> <span class="built_in">limit</span> 10;</span><br></pre></td></tr></table></figure>
+<h2 id="查看日志详细"><a href="#查看日志详细" class="headerlink" title="查看日志详细"></a>查看日志详细</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">SHOW BINLOG EVENTS [IN ‘log_name’] [FROM pos] [LIMIT [offset,]row_count]</span><br><span class="line">show binlog events <span class="keyword">in</span> <span class="string">&#x27;mysql-bin.000354&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589447791140.png" class>
+
+</div>
+
+<p>每个语句执行结束后都会向日志记录的，因此如果数据量非常庞大的话会影响性能下降的从哪个位置开始查询  </p>
+<p><code>show binlog events in &#39;mysql-bin.000354&#39; from 192 limit 2;</code></p>
+<h3 id="使用mysqlbinlog命令行"><a href="#使用mysqlbinlog命令行" class="headerlink" title="使用mysqlbinlog命令行"></a>使用mysqlbinlog命令行</h3><p>mysqlbinlog直接在命令行直接去操作二进制文件<br>建议对日志操作之前先将其flush logs 滚动一次再对其进行编辑  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqlbinlog --no-defaults --base64-output=decode-rows -v mysql-bin.000001</span><br></pre></td></tr></table></figure>
+<h3 id="查看二进制日志内容信息"><a href="#查看二进制日志内容信息" class="headerlink" title="查看二进制日志内容信息"></a>查看二进制日志内容信息</h3><p><code>mysqlbinlog mysql-bin.000354  |more</code></p>
+<h4 id="文件头"><a href="#文件头" class="headerlink" title="文件头"></a>文件头</h4><div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589447902810.png" class>
+
+</div>
+
+<h4 id="初始化版本信息"><a href="#初始化版本信息" class="headerlink" title="初始化版本信息"></a>初始化版本信息</h4><p>用户通过mysql服务器进行通告<br>at 4 表示结束的位置  </p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589448003068.png" class>
+
+</div>
+
+<h4 id="开始位置123"><a href="#开始位置123" class="headerlink" title="开始位置123"></a>开始位置123</h4><p>at 123 #开始处，表明了上一个时间结束的时候开始  </p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589448106534.png" class>
+
+</div>
+
+<h4 id="境预设再下面就是sql语句了"><a href="#境预设再下面就是sql语句了" class="headerlink" title="境预设再下面就是sql语句了"></a>境预设再下面就是sql语句了</h4><div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-Binlog%E6%97%A5%E5%BF%97/1589448250858.png" class>
+
+</div>
+
+<h4 id="错误"><a href="#错误" class="headerlink" title="错误"></a>错误</h4><h5 id="mysqlbinlog-查看binlog时报错unknown-variable-‘default-character-set-utf8’"><a href="#mysqlbinlog-查看binlog时报错unknown-variable-‘default-character-set-utf8’" class="headerlink" title="mysqlbinlog 查看binlog时报错unknown variable ‘default-character-set=utf8’"></a>mysqlbinlog 查看binlog时报错unknown variable ‘default-character-set=utf8’</h5><p>原因是mysqlbinlog这个工具无法识别binlog中的配置中的default-character-set=utf8这个指令。<br>两个方法可以解决这个问题</p>
+<ol>
+<li>一是在MySQL的配置/etc/my.cnf中将default-character-set=utf8 修改为 character-set-server = utf8，但是这需要重启MySQL服务，如果你的MySQL服务正在忙，那这样的代价会比较大。</li>
+<li>二是用mysqlbinlog –no-defaults mysql-bin.000004 命令打开</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="mysql二进制日志处理事务与非事务性语句的区别"><a href="#mysql二进制日志处理事务与非事务性语句的区别" class="headerlink" title="mysql二进制日志处理事务与非事务性语句的区别"></a>mysql二进制日志处理事务与非事务性语句的区别</h3><p>在事务性语句执行过程中，服务器将会进行额外的处理，在服务器执行时多个事务是并行执行的，为了把他们的记录在一起，需要引入事务缓存的概念。在事务完成被提交的时候一同刷新到二进制日志。对于非事务性语句的处理。遵循以下3条规则：</p>
+<ol>
+<li>如果非事务性语句被标记为事务性，那么将被写入事务缓冲。</li>
+<li>如果没有标记为事务性语句，而且事务缓存中没有，那么直接写入二进制日志。</li>
+<li>如果没有标记为事务性的，但是事务缓存中有，那么写入事务缓冲。<br>注意如果在一个事务中有非事务性语句，那么将会利用规则2，优先将该影响非事务表语句直接写入二进制日志。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>二进制日志</tag>
+        <tag>Binlog日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之日志-慢查询日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><ol>
+<li>记录执行时间超过指定时间（long_query_time，默认10s）的查询语句（包括dml和ddl等）</li>
+<li>慢查询日志默认不启动</li>
+<li>慢查询日志支持将日志写入文件或数据库表中</li>
+<li>优点：可以有效的跟踪 执行时间过长 或者 没有使用索引的查询语句（包括select 语句，update语句，delete语句，以及insert语句）</li>
+<li>缺点：存在性能损耗，不建议默认开启</li>
+<li>慢查询日志只包含成功执行过的查询语句<a id="more"></a>
+
+</li>
+</ol>
+<h3 id="官方说明"><a href="#官方说明" class="headerlink" title="官方说明"></a>官方说明</h3><p>The slow query log consists of SQL statements that took more than long_query_time seconds to execute and required at least min_examined_row_limit rows to be examined. The minimum and default values of long_query_time are 0 and 10, respectively. The value can be specified to a resolution of microseconds. For logging to a file, times are written including the microseconds part. For logging to tables, only integer times are written; the microseconds part is ignored.  </p>
+<p>By default, administrative statements are not logged, nor are queries that do not use indexes for lookups. This behavior can be changed usinglog_slow_admin_statements and log_queries_not_using_indexes, as described later.  </p>
+<h2 id="慢查询日志相关参数"><a href="#慢查询日志相关参数" class="headerlink" title="慢查询日志相关参数"></a>慢查询日志相关参数</h2><style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;属性&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;说明&nbsp;&nbsp;&nbsp;</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;slow_query_log&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;是否开启慢查询日志，1表示开启，0表示关闭。&nbsp;&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;log-slow-queries&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;旧版（5.6以下版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log&nbsp;&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;slow-query-log-file&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;新版（5.6及以上版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log&nbsp;&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;long_query_time&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;慢查询阈值，当查询时间多于设定的阈值时，记录日志&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;log_queries_not_using_indexes&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;未使用索引的查询也被记录到慢查询日志中（可选项）&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;log_output&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">
+        日志存储方式。<br>
+        log_output='FILE'表示将日志存入文件，默认值是'FILE'。<br>
+        log_output='TABLE'表示将日志存入数据库，这样日志信息就会被写入到mysql.slow_log表中。<br>
+        MySQL数据库支持同时两种日志存储方式，配置的时候以逗号隔开即可，如：log_output='FILE,TABLE'。日志记录到系统的专用日志表中，要比记录到文件耗费更多的系统资源，因此对于需要启用慢查询日志，又需要能够获得更高的系统性能，那么建议优先记录到文件。<br>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+<h2 id="查看慢查询日志"><a href="#查看慢查询日志" class="headerlink" title="查看慢查询日志"></a>查看慢查询日志</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%slow%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+----------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name             <span class="operator">|</span> <span class="keyword">Value</span>          <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+----------------+</span></span><br><span class="line"><span class="operator">|</span> log_slow_admin_statements <span class="operator">|</span> OFF            <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_slow_slave_statements <span class="operator">|</span> OFF            <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slow_launch_time          <span class="operator">|</span> <span class="number">2</span>              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slow_query_log            <span class="operator">|</span> <span class="keyword">ON</span>             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slow_query_log_file       <span class="operator">|</span> SUNLD<span class="operator">-</span>slow.log <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+----------------+</span></span><br><span class="line"><span class="number">5</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span>, <span class="number">1</span> warning (<span class="number">0.03</span> sec)</span><br></pre></td></tr></table></figure>
+<h2 id="启动和设置慢查询日志"><a href="#启动和设置慢查询日志" class="headerlink" title="启动和设置慢查询日志"></a>启动和设置慢查询日志</h2><h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><p>通过配置文件my.cnf中的log-slow-queries选项可以开启慢查询日志；形式如下：</p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/1589444455739.png" class title="慢查询日志路径">
+
+</div>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#修改配置文件my.cnf</span><br><span class="line">slow_query_log &#x3D;1</span><br><span class="line">slow_query_log_file&#x3D;&#x2F;var&#x2F;lib&#x2F;mysql&#x2F;mysql-slow-query-new.log</span><br></pre></td></tr></table></figure>
+<p>文件定义说明：log-slow-queries [=  DIR/[filename] ]  </p>
+<p>其中，DIR参数指定慢查询日志的存储路径；filename参数指定日志的文件名，生成日志文件的完成名称为filename-slow.log。如果不指定存储路径，慢查询日志默认存储到mysql数据库的数据文件下，如果不指定文件名，默认文件名为hostname-slow.log。</p>
+<h3 id="直接设置属性（通过登录mysql服务器直接定义）"><a href="#直接设置属性（通过登录mysql服务器直接定义）" class="headerlink" title="直接设置属性（通过登录mysql服务器直接定义）"></a>直接设置属性（通过登录mysql服务器直接定义）</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> global slow_query_log=0;</span><br><span class="line"><span class="built_in">set</span> global slow_query_log=1;</span><br><span class="line"><span class="built_in">set</span> global slow_query_log_file=<span class="string">&#x27;/var/lib/mysql/mysql-slow-query-new.log&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="超时配置"><a href="#超时配置" class="headerlink" title="超时配置"></a>超时配置</h3><p>一般都是通过long_query_time选项来设置这个时间值，时间以秒为单位，可以精确到微秒（可以精确到小数点后6位(微秒)）。如果查询时间超过了这个时间值（默认为10秒），这个查询语句将被记录到慢查询日志中。查看服务器默认时间值方式如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%long_query_time%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------+-----------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name   <span class="operator">|</span> <span class="keyword">Value</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------+-----------+</span></span><br><span class="line"><span class="operator">|</span> long_query_time <span class="operator">|</span> <span class="number">10.000000</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------+-----------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span>, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ol>
+<li>注意：其中这个慢查询时间并不是只表示语句自身执行超过10秒还包含由于其他资源被征用造成阻塞的查询执行时间或其他原因等都被记录到慢查询中。所以这个慢查的时长表示从查询开始到查询结束中间包含可能的任何原因所经历的所有时间。  </li>
+<li>从MySQL 5.1开始，long_query_time开始以微秒记录SQL语句运行时间，之前仅用秒为单位记录。如果记录到表里面，只会记录整数部分，不会记录微秒部分。  </li>
+<li>注意：使用命令 set global long_query_time=4修改后，需要重新连接或新开一个会话才能看到修改值。你用show variables like ‘long_query_time’查看是当前会话的变量值，你也可以不用重新连接会话，而是用show global variables like ‘long_query_time’;  </li>
+</ol>
+</blockquote>
+<h3 id="log-quries-not-using-indexes"><a href="#log-quries-not-using-indexes" class="headerlink" title="log_quries_not_using_indexes"></a>log_quries_not_using_indexes</h3><p>系统变量log-queries-not-using-indexes：未使用索引的查询也被记录到慢查询日志中（可选项）。如果调优的话，建议开启这个选项。另外，开启了这个参数，其实使用full index scan的sql也会被记录到慢查询日志。  </p>
+<p>This option does not necessarily mean that no index is used. For example, a query that uses a full index scan uses an index but would be logged because the index would not limit the number of rows.</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> @<span class="variable">@global</span>.log_queries_not_using_indexes<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;log_queries_not_using_indexes&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">-------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                 <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> log_queries_not_using_indexes <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------------------------+-------+</span></span><br></pre></td></tr></table></figure>
+<h3 id="log-slow-admin-statements"><a href="#log-slow-admin-statements" class="headerlink" title="log_slow_admin_statements"></a>log_slow_admin_statements</h3><p>系统变量log_slow_admin_statements表示是否将慢管理语句例如ANALYZE TABLE和ALTER TABLE等记入慢查询日志。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%log_slow_admin%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name             <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> log_slow_admin_statements <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span>, <span class="number">1</span> warning (<span class="number">0.02</span> sec)</span><br></pre></td></tr></table></figure>
+<h3 id="log-slow-slave-statements"><a href="#log-slow-slave-statements" class="headerlink" title="log_slow_slave_statements"></a>log_slow_slave_statements</h3><p>By default, a replication slave does not write replicated queries to the slow query log. To change this, use the log_slow_slave_statements system variable.  </p>
+<p>When the slow query log is enabled, this variable enables logging for queries that have taken more than long_query_time seconds to execute on the slave. This variable was added in MySQL 5.7.1. Setting this variable has no immediate effect. The state of the variable applies on all subsequent START SLAVE statements.  </p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%log_slow_slave%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name             <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> log_slow_slave_statements <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span>, <span class="number">1</span> warning (<span class="number">0.02</span> sec)</span><br></pre></td></tr></table></figure>
+<h3 id="参数–log-short-format"><a href="#参数–log-short-format" class="headerlink" title="参数–log-short-format"></a>参数–log-short-format</h3><p>The server writes less information to the slow query log if you use the –log-short-format option.  </p>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;Command-Line Format&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;--log-short-format&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;Permitted Values&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;Type&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;boolean&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;Default&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;FALSE&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+</tbody>
+</table>
+
+<h3 id="查询有多少条慢查询记录"><a href="#查询有多少条慢查询记录" class="headerlink" title="查询有多少条慢查询记录"></a>查询有多少条慢查询记录</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> <span class="keyword">global</span> status <span class="keyword">like</span> <span class="string">&#x27;%slow_queries%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Slow_queries  <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+<h3 id="日志记录方式"><a href="#日志记录方式" class="headerlink" title="日志记录方式"></a>日志记录方式</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%log_output%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+-------+</span></span><br><span class="line"><span class="operator">|</span> log_output    <span class="operator">|</span> FILE  <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span>, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br><span class="line">#设置存储方式</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> log_output<span class="operator">=</span><span class="string">&#x27;TABLE&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="分析慢查询日志"><a href="#分析慢查询日志" class="headerlink" title="分析慢查询日志"></a>分析慢查询日志</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">system</span> more <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysql<span class="operator">-</span>slow<span class="operator">-</span>query.log</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/1589444635250.png" class title="慢查询日志分析">
+
+</div>
+
+<h3 id="分析工具"><a href="#分析工具" class="headerlink" title="分析工具"></a>分析工具</h3><h4 id="表"><a href="#表" class="headerlink" title="表"></a>表</h4><p>log_output参数可以设置慢查询日志的输出形式。默认为FILE,可以设置为TABLE;</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">desc</span> mysql.slow_log;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------+---------------------+------+-----+----------------------+--------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Field          <span class="operator">|</span> Type                <span class="operator">|</span> <span class="keyword">Null</span> <span class="operator">|</span> Key <span class="operator">|</span> <span class="keyword">Default</span>              <span class="operator">|</span> Extra                          <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------+---------------------+------+-----+----------------------+--------------------------------+</span></span><br><span class="line"><span class="operator">|</span> start_time     <span class="operator">|</span> <span class="type">timestamp</span>(<span class="number">6</span>)        <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="built_in">CURRENT_TIMESTAMP</span>(<span class="number">6</span>) <span class="operator">|</span> <span class="keyword">on</span> <span class="keyword">update</span> <span class="built_in">CURRENT_TIMESTAMP</span>(<span class="number">6</span>) <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> user_host      <span class="operator">|</span> mediumtext          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> query_time     <span class="operator">|</span> <span class="type">time</span>(<span class="number">6</span>)             <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> lock_time      <span class="operator">|</span> <span class="type">time</span>(<span class="number">6</span>)             <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> rows_sent      <span class="operator">|</span> <span class="type">int</span>(<span class="number">11</span>)             <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> rows_examined  <span class="operator">|</span> <span class="type">int</span>(<span class="number">11</span>)             <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> db             <span class="operator">|</span> <span class="type">varchar</span>(<span class="number">512</span>)        <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> last_insert_id <span class="operator">|</span> <span class="type">int</span>(<span class="number">11</span>)             <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> insert_id      <span class="operator">|</span> <span class="type">int</span>(<span class="number">11</span>)             <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> server_id      <span class="operator">|</span> <span class="type">int</span>(<span class="number">10</span>) unsigned    <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> sql_text       <span class="operator">|</span> mediumblob          <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> thread_id      <span class="operator">|</span> <span class="type">bigint</span>(<span class="number">21</span>) unsigned <span class="operator">|</span> <span class="keyword">NO</span>   <span class="operator">|</span>     <span class="operator">|</span> <span class="keyword">NULL</span>                 <span class="operator">|</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------+---------------------+------+-----+----------------------+--------------------------------+</span></span><br><span class="line"><span class="number">12</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<p>lock_time表示该SQL执行时被锁阻塞的时间。<br>rows_send表示执行SQL后返回的内容行数。<br>rows_examined表示该SQL执行时实际扫描的记录条数。  </p>
+<h4 id="mysqldumpslow"><a href="#mysqldumpslow" class="headerlink" title="mysqldumpslow"></a>mysqldumpslow</h4><h5 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqldumpslow --<span class="built_in">help</span></span><br><span class="line">Usage: mysqldumpslow [ OPTS... ] [ LOGS... ]</span><br><span class="line">Parse and summarize the MySQL slow query <span class="built_in">log</span>. Options are</span><br><span class="line">  --verbose    verbose</span><br><span class="line">  --debug      debug</span><br><span class="line">  --<span class="built_in">help</span>       write this text to standard output</span><br><span class="line">  -v           verbose</span><br><span class="line">  -d           debug</span><br><span class="line">  -s ORDER     what to sort by (al, at, ar, c, l, r, t), <span class="string">&#x27;at&#x27;</span> is default</span><br><span class="line">                al: average lock time 平均锁定时间</span><br><span class="line">                ar: average rows sent 平均返回记录</span><br><span class="line">                at: average query time 平均查询时间</span><br><span class="line">                 c: count 访问次数</span><br><span class="line">                 l: lock time 锁定时间</span><br><span class="line">                 r: rows sent 返回记录</span><br><span class="line">                 t: query time  查询时间</span><br><span class="line">  -r           reverse the sort order (largest last instead of first)</span><br><span class="line">  -t NUM       just show the top n queries</span><br><span class="line">  -a           don<span class="string">&#x27;t abstract all numbers to N and strings to &#x27;</span>S<span class="string">&#x27;</span></span><br><span class="line"><span class="string">  -n NUM       abstract numbers with at least n digits within names</span></span><br><span class="line"><span class="string">  -g PATTERN   grep: only consider stmts that include this string</span></span><br><span class="line"><span class="string">  -h HOSTNAME  hostname of db server for *-slow.log filename (can be wildcard),</span></span><br><span class="line"><span class="string">               default is &#x27;</span>*<span class="string">&#x27;, i.e. match all</span></span><br><span class="line"><span class="string">  -i NAME      name of server instance (if using mysql.server startup script)</span></span><br><span class="line"><span class="string">  -l           don&#x27;</span>t subtract lock time from total time</span><br></pre></td></tr></table></figure>
+<h5 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#返回访问次数最多的20条SQL语句</span></span><br><span class="line">mysqldumpslow -s c -t 20 mysql-slow-query.log</span><br><span class="line"><span class="comment">#返回return记录数最多的20条SQL语句</span></span><br><span class="line">mysqldumpslow -s r -t 20 mysql-slow-query.log</span><br><span class="line"><span class="comment">#返回含有like的SQL语句</span></span><br><span class="line">mysqldumpslow -g <span class="string">&#x27;like&#x27;</span> -t 20 mysql-slow-query.log</span><br><span class="line">explain sql statements</span><br><span class="line">show profile <span class="keyword">for</span> query num 需要开启profiling</span><br><span class="line"><span class="comment">#得到返回记录集最多的10个SQL。</span></span><br><span class="line">mysqldumpslow -s r -t 10 /database/mysql/mysql06_slow.log</span><br><span class="line"><span class="comment">#得到访问次数最多的10个SQL</span></span><br><span class="line">mysqldumpslow -s c -t 10 /database/mysql/mysql06_slow.log</span><br><span class="line"><span class="comment">#得到按照时间排序的前10条里面含有左连接的查询语句。</span></span><br><span class="line">mysqldumpslow -s t -t 10 -g “left join” /database/mysql/mysql06_slow.log</span><br><span class="line"><span class="comment">#另外建议在使用这些命令时结合 | 和more 使用 ，否则有可能出现刷屏的情况。</span></span><br><span class="line">mysqldumpslow -s r -t 20 /mysqldata/mysql/mysql06-slow.log | more</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>慢查询日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之日志-概述</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%A6%82%E8%BF%B0/</url>
+    <content><![CDATA[<p>日志是mysql数据库的重要组成部分。日志文件中记录着mysql数据库运行期间发生的变化；也就是说用来记录mysql数据库的客户端连接状况、SQL语句的执行情况和错误信息等。当数据库遭到意外的损坏时，可以通过日志查看文件出错的原因，并且可以通过日志文件进行数据恢复。  </p>
+<p>默认情况下，所有日志创建于mysqld数据目录中。通过刷新日志，你可以强制 mysqld来关闭和重新打开日志文件（或者在某些情况下切换到一个新的日志）。当你执行一个FLUSH LOGS语句或执行mysqladmin flush-logs或mysqladmin refresh时，出现日志刷新  </p>
+<p>mysql日志分类：错误日志、查询日志、慢查询日志、事务日志、二进制日志；  </p>
+<p>官网：<a href="https://dev.mysql.com/doc/refman/5.7/en/server-logs.html">https://dev.mysql.com/doc/refman/5.7/en/server-logs.html</a></p>
+<a id="more"></a>
+
+<h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><h3 id="错误日志"><a href="#错误日志" class="headerlink" title="错误日志"></a>错误日志</h3><p>用–log-error[=file_name]选项来指定mysqld保存错误日志文件的位置。如果没有给定file_name值，mysqld使用错误日志名 host_name.err并在数据目录中写入日志文件。如果你执行FLUSH LOGS，错误日志用-old重新命名后缀并且mysqld创建一个新的空日志文件。(如果未给出–log-error选项，则不会重新命名）。<br>如果不指定–log-error，或者(在Windows中)如果你使用–console选项，错误被写入标准错误输出stderr。通常标准输出为你的终端。</p>
+<h3 id="通用查询日志"><a href="#通用查询日志" class="headerlink" title="通用查询日志"></a>通用查询日志</h3><p>用–log[=file_name]或-l [file_name]选项启动它。如果没有给定file_name的值，默认名是host_name.log。</p>
+<h3 id="慢速查询日志"><a href="#慢速查询日志" class="headerlink" title="慢速查询日志"></a>慢速查询日志</h3><p>用–log-slow-queries[=file_name]选项启动时，mysqld 写一个包含所有执行时间超过long_query_time秒的SQL语句的日志文件.如果没有给出file_name值，默认未主机名，后缀为 -slow.log。如果给出了文件名，但不是绝对路径名，文件则写入数据目录。或者没有使用缩影的语句。</p>
+<h3 id="更新日志"><a href="#更新日志" class="headerlink" title="更新日志"></a>更新日志</h3><p>用–log-update[=file_name]选项启动,不推荐使用</p>
+<h3 id="mysql日志缓存"><a href="#mysql日志缓存" class="headerlink" title="mysql日志缓存"></a>mysql日志缓存</h3><p>一个高速、稳定、可靠的系统，缓存在其中必定起着至关重要的作用。MySQL日志处理也使用了缓存机制。MySQL日志最初存放在MySQL服务器的内存中，若超过指定的存储容量，内存中的日志则写（或者刷新flush）到外存中，以数据库表或者以文件的方式永远的保存在硬盘中。</p>
+<h2 id="日志相关配置参数"><a href="#日志相关配置参数" class="headerlink" title="日志相关配置参数"></a>日志相关配置参数</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span>  variables <span class="keyword">like</span> <span class="string">&#x27;%log%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------------------+------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                           <span class="operator">|</span> <span class="keyword">Value</span>                                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------------------+------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> back_log                                <span class="operator">|</span> <span class="number">450</span>                                      <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 默认启动的时候二进制的大小</span><br><span class="line"># 默认值<span class="number">32768</span> Binlog Cache用于在打开了二进制日志（binlog）记录功能的环境，</span><br><span class="line"># 是MySQL用来提高binlog的记录效率而设计的一个用于短时间内临时缓存binlog数据的内存区域。</span><br><span class="line"># 一般来说，如果我们的数据库中没有什么大事务，写入也不是特别频繁，<span class="number">2</span>MB～<span class="number">4</span>MB是一个合适的选择</span><br><span class="line"># 但是如果我们的数据库大事务较多，写入量比较大，可与适当调高binlog_cache_size。</span><br><span class="line"># 同时，我们可以通过binlog_cache_use以及 binlog_cache_disk_use来分析设置的</span><br><span class="line"># binlog_cache_size是否足够，是否有大量的</span><br><span class="line"># binlog_cache由于内存大小不够而使用临时文件（binlog_cache_disk_use）来缓存了</span><br><span class="line"><span class="operator">|</span> binlog_cache_size                       <span class="operator">|</span> <span class="number">32768</span></span><br><span class="line"></span><br><span class="line"><span class="operator">|</span> binlog_checksum                         <span class="operator">|</span> CRC32                                    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> binlog_direct_non_transactional_updates <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> binlog_error_action                     <span class="operator">|</span> ABORT_SERVER                             <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 指定二进制日志的类型，默认为MIXED。如果设定了二进制日志的格式，却没有启用二进制日志，</span><br><span class="line"># 则MySQL启动时会产生警告日志信息并记录于错误日志中。</span><br><span class="line"><span class="operator">|</span> binlog_format                           <span class="operator">|</span> <span class="type">ROW</span></span><br><span class="line"></span><br><span class="line"><span class="operator">|</span> binlog_group_commit_sync_delay          <span class="operator">|</span> <span class="number">0</span>                                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> binlog_group_commit_sync_no_delay_count <span class="operator">|</span> <span class="number">0</span>                                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> binlog_gtid_simple_recovery             <span class="operator">|</span> <span class="keyword">ON</span>                                       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> binlog_max_flush_queue_time             <span class="operator">|</span> <span class="number">0</span>                                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> binlog_order_commits                    <span class="operator">|</span> <span class="keyword">ON</span>                                       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> binlog_row_image                        <span class="operator">|</span> <span class="keyword">FULL</span>                                     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> binlog_rows_query_log_events            <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 当非事务语句使用二进制日志缓存，但是超出binlog_stmt_cache_size时，</span><br><span class="line"># 使用一个临时文件来存放这些语句。基于语句格式的二进制日志缓存的大小</span><br><span class="line"><span class="operator">|</span> binlog_stmt_cache_size                  <span class="operator">|</span> <span class="number">32768</span></span><br><span class="line"></span><br><span class="line"># 设定二进制日志的过期天数，超出此天数的二进制日志文件将被自动删除。</span><br><span class="line"># 默认为<span class="number">0</span>，表示不启用过期自动删除功能。如果启用此功能，</span><br><span class="line">#自动删除工作通常发生在MySQL启动时或FLUSH日志时。建议别设置,还是自己手动purge最好</span><br><span class="line"><span class="operator">|</span> expire_logs_days                        <span class="operator">|</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"># 定义查询日志是否开启</span><br><span class="line"><span class="operator">|</span> general_log                             <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"># 定义查询日志的文件地址名称</span><br><span class="line"><span class="operator">|</span> general_log_file                        <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>incloudos.log             <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"><span class="operator">|</span> innodb_api_enable_binlog                <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_flush_log_at_timeout             <span class="operator">|</span> <span class="number">1</span>                                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_flush_log_at_trx_commit          <span class="operator">|</span> <span class="number">1</span>                                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_locks_unsafe_for_binlog          <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 定义内存空间的大小，万一都写在buffer里面，如果进程崩溃，也会丢失事物，</span><br><span class="line"># 因此避免这种情况，一旦事物提交了，那么需要立即同步到磁盘中，而不是间断同步</span><br><span class="line"><span class="operator">|</span> innodb_log_buffer_size                  <span class="operator">|</span> <span class="number">16777216</span></span><br><span class="line"><span class="operator">|</span> innodb_log_checksums                    <span class="operator">|</span> <span class="keyword">ON</span>                                       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_compressed_pages             <span class="operator">|</span> <span class="keyword">ON</span>                                       <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 每个日志的单位大小为<span class="number">5</span>MB，如果有些大数据的话，则需要将其调大，</span><br><span class="line"># 否则恢复起来会比较慢，但是太大了也会导致恢复比较慢</span><br><span class="line"><span class="operator">|</span> innodb_log_file_size                    <span class="operator">|</span> <span class="number">50331648</span></span><br><span class="line"># 设置了日志文件组中重做日志（redo）日志的数量</span><br><span class="line"><span class="operator">|</span> innodb_log_files_in_group               <span class="operator">|</span> <span class="number">2</span>                                        <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 定义事物日志组的位置，一般来讲会有<span class="number">2</span>个日志，一个写满后会重建文件（达到轮询功能，写满后会同</span><br><span class="line"># 步到磁盘并将其清空）一般来讲，日志文件大小是固定的，凡是mysql已启动日志空间会在磁盘上立即</span><br><span class="line"># 分配，因为他们的主要功能是将随机IO转为顺序IO ，默认大小是每个文件为<span class="number">5</span>MB，</span><br><span class="line"># 明确说明事物日志的路径保存在.<span class="operator">/</span> 表示在当前路径下</span><br><span class="line"><span class="operator">|</span> innodb_log_group_home_dir               <span class="operator">|</span> .<span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="operator">|</span> innodb_log_write_ahead_size             <span class="operator">|</span> <span class="number">8192</span>                                     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_max_undo_log_size                <span class="operator">|</span> <span class="number">1073741824</span>                               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_online_alter_log_max_size        <span class="operator">|</span> <span class="number">134217728</span>                                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_undo_log_truncate                <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"># 设置回滚日志的回滚段大小，默认为<span class="number">128</span>k</span><br><span class="line"><span class="operator">|</span> innodb_undo_logs                        <span class="operator">|</span> <span class="number">128</span>                                      <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 设置回滚日志存放的目录。</span><br><span class="line"><span class="operator">|</span> innodb_undo_directory    <span class="operator">|</span> .<span class="operator">/</span>         <span class="operator">|</span></span><br><span class="line"># 设置了回滚日志由多少个回滚日志文件组成，默认为<span class="number">0.</span></span><br><span class="line"># Warning 特别注意：安装MySQL后需要在my.cnf中设置回滚日志的参数，</span><br><span class="line"># 如果创建数据库以后再设置回滚日志的参数，MySQL就会报错，并且回滚日志建好后，就不能再次修改或者增加。</span><br><span class="line"><span class="operator">|</span> innodb_undo_tablespaces  <span class="operator">|</span> <span class="number">0</span>          <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># <span class="keyword">on</span><span class="operator">|</span>文件路径 是否启用二进制日志,<span class="keyword">on</span>表示开启,文件路径表示指定自定义日志路径,</span><br><span class="line"># 默认路径在datadir指定的路径下</span><br><span class="line"><span class="operator">|</span> log_bin                                 <span class="operator">|</span> OFF<span class="operator">|</span></span><br><span class="line"></span><br><span class="line"><span class="operator">|</span> log_bin_basename                        <span class="operator">|</span>                                          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_bin_index                           <span class="operator">|</span>                                          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_bin_trust_function_creators         <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_bin_use_v1_row_events               <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_builtin_as_identified_by_password   <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"># 定义错误日志</span><br><span class="line"><span class="operator">|</span> log_error                               <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysqld<span class="operator">-</span>error.log          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_error_verbosity                     <span class="operator">|</span> <span class="number">3</span>                                        <span class="operator">|</span></span><br><span class="line"># 日志的输出的位置，对慢查询和普通查询有效</span><br><span class="line"><span class="operator">|</span> log_output                              <span class="operator">|</span> FILE                                     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_queries_not_using_indexes           <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_slave_updates                       <span class="operator">|</span> <span class="keyword">ON</span>                                       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_slow_admin_statements               <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_slow_slave_statements               <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_statements_unsafe_for_binlog        <span class="operator">|</span> <span class="keyword">ON</span>                                       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_syslog                              <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_syslog_facility                     <span class="operator">|</span> daemon                                   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_syslog_include_pid                  <span class="operator">|</span> <span class="keyword">ON</span>                                       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_syslog_tag                          <span class="operator">|</span>                                          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_throttle_queries_not_using_indexes  <span class="operator">|</span> <span class="number">0</span>                                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> log_timestamps                          <span class="operator">|</span> UTC                                      <span class="operator">|</span></span><br><span class="line"># 是否把警告信息写入错误日志中</span><br><span class="line"><span class="operator">|</span> log_warnings                            <span class="operator">|</span> <span class="number">2</span>                                        <span class="operator">|</span></span><br><span class="line"># 二进定日志缓存空间大小，<span class="number">5.5</span><span class="number">.9</span>及以后的版本仅应用于事务缓存，</span><br><span class="line"># 其上限由max_binlog_stmt_cache_size决定。最大二进制缓存大小</span><br><span class="line"><span class="operator">|</span> max_binlog_cache_size                   <span class="operator">|</span> <span class="number">1844674407370954752</span>                      <span class="operator">|</span></span><br><span class="line"># 最大二进制日志大小,默认<span class="number">1</span>G,当达到这个值以后会自动滚动的</span><br><span class="line"><span class="operator">|</span> max_binlog_size                         <span class="operator">|</span> <span class="number">1073741824</span></span><br><span class="line"># 二进定日志缓存空间大小，<span class="number">5.5</span><span class="number">.9</span>及以后的版本仅应用于事务缓存</span><br><span class="line"># 最大基于语句二进制缓存大小</span><br><span class="line"><span class="operator">|</span> max_binlog_stmt_cache_size              <span class="operator">|</span> <span class="number">18446744073709547520</span></span><br><span class="line"># 最大中继日志大小</span><br><span class="line"><span class="operator">|</span> max_relay_log_size                      <span class="operator">|</span> <span class="number">0</span>                                        <span class="operator">|</span></span><br><span class="line"># 中继日志</span><br><span class="line"><span class="operator">|</span> relay_log                               <span class="operator">|</span>                                          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> relay_log_basename                      <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>incloudos<span class="operator">-</span>relay<span class="operator">-</span>bin       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> relay_log_index                         <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>incloudos<span class="operator">-</span>relay<span class="operator">-</span>bin.index <span class="operator">|</span></span><br><span class="line"># 中继日志存放的文件 </span><br><span class="line"><span class="operator">|</span> relay_log_info_file                     <span class="operator">|</span> relay<span class="operator">-</span>log.info                           <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> relay_log_info_repository               <span class="operator">|</span> FILE                                     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> relay_log_purge                         <span class="operator">|</span> <span class="keyword">ON</span>                                       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> relay_log_recovery                      <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> relay_log_space_limit                   <span class="operator">|</span> <span class="number">0</span>                                        <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 定义慢查询日志的</span><br><span class="line"><span class="operator">|</span> slow_query_log                          <span class="operator">|</span> <span class="keyword">ON</span>                                       <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 输出方式为file（文件）时定义慢查询日志的位置</span><br><span class="line"><span class="operator">|</span> slow_query_log_file                     <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysql<span class="operator">-</span>slow<span class="operator">-</span>query.log      <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 用于控制会话级别二进制日志功能的开启或关闭。默认为<span class="keyword">ON</span>，表示启用记录功能。</span><br><span class="line"># 用户可以在会话级别修改此变量的值，但其必须具有SUPER权限。</span><br><span class="line"><span class="operator">|</span> sql_log_bin                             <span class="operator">|</span> <span class="keyword">ON</span></span><br><span class="line"><span class="operator">|</span> sql_log_off                             <span class="operator">|</span> OFF                                      <span class="operator">|</span></span><br><span class="line"># 设定多久同步一次二进制日志至磁盘文件中，<span class="number">0</span>表示不同步，任何正数值都表示对二进制每多少次写操</span><br><span class="line"># 作之后同步一次。当autocommit的值为<span class="number">1</span>时，每条语句的执行都会引起二进制日志同步，</span><br><span class="line"># 否则，每个事务的提交会引起二进制日志同步</span><br><span class="line"><span class="operator">|</span> sync_binlog                             <span class="operator">|</span> <span class="number">1</span></span><br><span class="line"><span class="operator">|</span> sync_relay_log                          <span class="operator">|</span> <span class="number">10000</span>                                    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> sync_relay_log_info                     <span class="operator">|</span> <span class="number">10000</span>                                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------------------+------------------------------------------+</span></span><br><span class="line"><span class="number">72</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h2 id="配置文件my-cnf参考"><a href="#配置文件my-cnf参考" class="headerlink" title="配置文件my.cnf参考"></a>配置文件my.cnf参考</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># Example MySQL config file <span class="keyword">for</span> medium systems.</span><br><span class="line">#</span><br><span class="line"># This <span class="keyword">is</span> <span class="keyword">for</span> a <span class="keyword">system</span> <span class="keyword">with</span> little memory (<span class="number">32</span>M <span class="operator">-</span> <span class="number">64</span>M) <span class="keyword">where</span> MySQL plays</span><br><span class="line"># an important part, <span class="keyword">or</span> systems up <span class="keyword">to</span> <span class="number">128</span>M <span class="keyword">where</span> MySQL <span class="keyword">is</span> used together <span class="keyword">with</span></span><br><span class="line"># other programs (such <span class="keyword">as</span> a web server)</span><br><span class="line">#</span><br><span class="line"># You can <span class="keyword">copy</span> this file <span class="keyword">to</span></span><br><span class="line"># <span class="operator">/</span>etc<span class="operator">/</span>my.cnf <span class="keyword">to</span> <span class="keyword">set</span> <span class="keyword">global</span> options,</span><br><span class="line"># mysql<span class="operator">-</span>data<span class="operator">-</span>dir<span class="operator">/</span>my.cnf <span class="keyword">to</span> <span class="keyword">set</span> server<span class="operator">-</span><span class="keyword">specific</span> options (<span class="keyword">in</span> this</span><br><span class="line"># installation this directory <span class="keyword">is</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql) <span class="keyword">or</span></span><br><span class="line"># <span class="operator">~</span><span class="operator">/</span>.my.cnf <span class="keyword">to</span> <span class="keyword">set</span> <span class="keyword">user</span><span class="operator">-</span><span class="keyword">specific</span> options.</span><br><span class="line">#</span><br><span class="line"># <span class="keyword">In</span> this file, you can use <span class="keyword">all</span> long options that a program supports.</span><br><span class="line"># If you want <span class="keyword">to</span> know which options a program supports, run the program</span><br><span class="line"># <span class="keyword">with</span> the &quot;--help&quot; option.</span><br><span class="line"></span><br><span class="line"># The following options will be passed <span class="keyword">to</span> <span class="keyword">all</span> MySQL clients</span><br><span class="line">[client]</span><br><span class="line">port                <span class="operator">=</span> <span class="number">3306</span></span><br><span class="line">socket                <span class="operator">=</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysql.sock</span><br><span class="line"><span class="keyword">default</span><span class="operator">-</span><span class="type">character</span><span class="operator">-</span><span class="keyword">set</span> <span class="operator">=</span> utf8</span><br><span class="line"></span><br><span class="line"># Here follows entries <span class="keyword">for</span> <span class="keyword">some</span> <span class="keyword">specific</span> programs</span><br><span class="line"></span><br><span class="line"># The MySQL server</span><br><span class="line">[mysqld]</span><br><span class="line">event_scheduler<span class="operator">=</span><span class="keyword">ON</span></span><br><span class="line"><span class="keyword">skip</span><span class="operator">-</span>name<span class="operator">-</span>resolve</span><br><span class="line">port                <span class="operator">=</span> <span class="number">3306</span></span><br><span class="line"># explicit_defaults_for_timestamp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">socket                <span class="operator">=</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysql.sock</span><br><span class="line"><span class="keyword">default</span><span class="operator">-</span>storage<span class="operator">-</span>engine <span class="operator">=</span> INNODB</span><br><span class="line"></span><br><span class="line">sql_mode<span class="operator">=</span><span class="string">&#x27;STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION&#x27;</span></span><br><span class="line"></span><br><span class="line"># <span class="number">1</span><span class="operator">&gt;</span> interactive_timeout针对交互式连接，wait_timeout针对非交互式连接。</span><br><span class="line"># 所谓的交互式连接，即在mysql_real_connect()函数中使用了CLIENT_INTERACTIVE选项。</span><br><span class="line"># 说得直白一点，通过mysql客户端连接数据库是交互式连接，通过jdbc连接数据库是非交互式连接。</span><br><span class="line"></span><br><span class="line">#<span class="number">1.</span> 控制连接最大空闲时长是wait_timeout参数。</span><br><span class="line">#<span class="number">2.</span> 对于非交互式连接，类似于jdbc连接，wait_timeout的值继承自服务器端全局变量wait_timeout。</span><br><span class="line">#   对于交互式连接，类似于mysql客户单连接，wait_timeout的值继承自服务器端全局变量interactive_timeout。</span><br><span class="line">#<span class="number">3.</span> 判断一个连接的空闲时间，可通过<span class="keyword">show</span> processlist输出中Sleep状态的时间</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">wait_timeout<span class="operator">=</span><span class="number">1800</span></span><br><span class="line">interactive_timeout<span class="operator">=</span><span class="number">1800</span></span><br><span class="line"></span><br><span class="line">#数据文件单独存放</span><br><span class="line">innodb_file_per_table</span><br><span class="line">max_connections <span class="operator">=</span> <span class="number">2000</span></span><br><span class="line"></span><br><span class="line"># 这个是定义mysql服务器端和客户端在一次传送数据包的过程当中数据包的大小</span><br><span class="line"># 定义过大，<span class="number">8092</span>，有可能服务器端太忙，来不及接收，或者网络太差，会容易造成丢包</span><br><span class="line"># 定义过小，会因为客户端可能无法快速接收服务器端发过来的包，一般推荐是<span class="number">4096</span></span><br><span class="line"># 用来控制其通信缓冲区的最大长度。</span><br><span class="line">max_allowed_packet <span class="operator">=</span> <span class="number">4</span>M</span><br><span class="line"></span><br><span class="line">sort_buffer_size <span class="operator">=</span> <span class="number">512</span>K</span><br><span class="line">net_buffer_length <span class="operator">=</span> <span class="number">8</span>K</span><br><span class="line">read_buffer_size <span class="operator">=</span> <span class="number">256</span>K</span><br><span class="line">read_rnd_buffer_size <span class="operator">=</span> <span class="number">512</span>K</span><br><span class="line">character_set_server<span class="operator">=</span>utf8</span><br><span class="line">thread_cache_size<span class="operator">=</span><span class="number">300</span></span><br><span class="line">tmp_table_size<span class="operator">=</span><span class="number">500</span>M</span><br><span class="line">max_heap_table_size<span class="operator">=</span><span class="number">300</span>M</span><br><span class="line"></span><br><span class="line">#<span class="keyword">open</span> slow query</span><br><span class="line">slow<span class="operator">-</span>query<span class="operator">-</span>log<span class="operator">=</span><span class="number">1</span></span><br><span class="line">slow<span class="operator">-</span>query<span class="operator">-</span>log<span class="operator">-</span>file<span class="operator">=</span><span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysql<span class="operator">-</span>slow<span class="operator">-</span>query.log</span><br><span class="line">#<span class="keyword">set</span> slow <span class="type">time</span> <span class="keyword">to</span> <span class="number">1</span> <span class="keyword">second</span></span><br><span class="line">long_query_time <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line">log<span class="operator">-</span>error<span class="operator">=</span><span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysqld<span class="operator">-</span>error.log</span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span><span class="operator">-</span>infile<span class="operator">=</span><span class="number">0</span></span><br><span class="line"></span><br><span class="line"># <span class="type">binary</span> logging <span class="keyword">is</span> required <span class="keyword">for</span> replication</span><br><span class="line">####log<span class="operator">-</span>bin<span class="operator">=</span>mysql<span class="operator">-</span>bin</span><br><span class="line"></span><br><span class="line">#master <span class="operator">-</span> slave syncronized setting</span><br><span class="line">log_slave_updates<span class="operator">=</span><span class="number">1</span></span><br><span class="line"></span><br><span class="line"># required <span class="keyword">unique</span> id <span class="keyword">between</span> <span class="number">1</span> <span class="keyword">and</span> <span class="number">2</span><span class="operator">^</span><span class="number">32</span> <span class="operator">-</span> <span class="number">1</span></span><br><span class="line"># defaults <span class="keyword">to</span> <span class="number">1</span> if master<span class="operator">-</span>host <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">set</span></span><br><span class="line"># but will <span class="keyword">not</span> <span class="keyword">function</span> <span class="keyword">as</span> a master if omitted</span><br><span class="line">server<span class="operator">-</span>id        <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"># Replication Slave (comment <span class="keyword">out</span> master section <span class="keyword">to</span> use this)</span><br><span class="line">#</span><br><span class="line"># <span class="keyword">To</span> configure this host <span class="keyword">as</span> a replication slave, you can choose <span class="keyword">between</span></span><br><span class="line"># two methods :</span><br><span class="line">#</span><br><span class="line"># <span class="number">1</span>) Use the CHANGE MASTER <span class="keyword">TO</span> command (fully described <span class="keyword">in</span> our manual) <span class="operator">-</span></span><br><span class="line">#    the syntax <span class="keyword">is</span>:</span><br><span class="line">#</span><br><span class="line">#    CHANGE MASTER <span class="keyword">TO</span> MASTER_HOST<span class="operator">=</span><span class="operator">&lt;</span>host<span class="operator">&gt;</span>, MASTER_PORT<span class="operator">=</span><span class="operator">&lt;</span>port<span class="operator">&gt;</span>,</span><br><span class="line">#    MASTER_USER<span class="operator">=</span><span class="operator">&lt;</span><span class="keyword">user</span><span class="operator">&gt;</span>, MASTER_PASSWORD<span class="operator">=</span><span class="operator">&lt;</span>password<span class="operator">&gt;</span> ;</span><br><span class="line">#</span><br><span class="line">#    <span class="keyword">where</span> you replace <span class="operator">&lt;</span>host<span class="operator">&gt;</span>, <span class="operator">&lt;</span><span class="keyword">user</span><span class="operator">&gt;</span>, <span class="operator">&lt;</span>password<span class="operator">&gt;</span> <span class="keyword">by</span> quoted strings <span class="keyword">and</span></span><br><span class="line">#    <span class="operator">&lt;</span>port<span class="operator">&gt;</span> <span class="keyword">by</span> the master<span class="string">&#x27;s port number (3306 by default).</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string">#    Example:</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string">#    CHANGE MASTER TO MASTER_HOST=&#x27;</span><span class="number">125.564</span><span class="number">.12</span><span class="number">.1</span><span class="string">&#x27;, MASTER_PORT=3306,</span></span><br><span class="line"><span class="string">#    MASTER_USER=&#x27;</span>joe<span class="string">&#x27;, MASTER_PASSWORD=&#x27;</span>secret<span class="string">&#x27;;</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># OR</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># 2) Set the variables below. However, in case you choose this method, then</span></span><br><span class="line"><span class="string">#    start replication for the first time (even unsuccessfully, for example</span></span><br><span class="line"><span class="string">#    if you mistyped the password in master-password and the slave fails to</span></span><br><span class="line"><span class="string">#    connect), the slave will create a master.info file, and any later</span></span><br><span class="line"><span class="string">#    change in this file to the variables&#x27;</span> <span class="keyword">values</span> below will be ignored <span class="keyword">and</span></span><br><span class="line">#    overridden <span class="keyword">by</span> the content <span class="keyword">of</span> the master.info file, unless you shutdown</span><br><span class="line">#    the slave server, <span class="keyword">delete</span> master.info <span class="keyword">and</span> restart the slaver server.</span><br><span class="line">#    <span class="keyword">For</span> that reason, you may want <span class="keyword">to</span> leave the lines below untouched</span><br><span class="line">#    (commented) <span class="keyword">and</span> instead use CHANGE MASTER <span class="keyword">TO</span> (see above)</span><br><span class="line">#</span><br><span class="line"># required <span class="keyword">unique</span> id <span class="keyword">between</span> <span class="number">2</span> <span class="keyword">and</span> <span class="number">2</span><span class="operator">^</span><span class="number">32</span> <span class="operator">-</span> <span class="number">1</span></span><br><span class="line"># (<span class="keyword">and</span> different <span class="keyword">from</span> the master)</span><br><span class="line"># defaults <span class="keyword">to</span> <span class="number">2</span> if master<span class="operator">-</span>host <span class="keyword">is</span> <span class="keyword">set</span></span><br><span class="line"># but will <span class="keyword">not</span> <span class="keyword">function</span> <span class="keyword">as</span> a slave if omitted</span><br><span class="line">#server<span class="operator">-</span>id       <span class="operator">=</span> <span class="number">2</span></span><br><span class="line">#</span><br><span class="line"># The replication master <span class="keyword">for</span> this slave <span class="operator">-</span> required</span><br><span class="line">#master<span class="operator">-</span>host     <span class="operator">=</span>   <span class="operator">&lt;</span>hostname<span class="operator">&gt;</span></span><br><span class="line">#</span><br><span class="line"># The username the slave will use <span class="keyword">for</span> authentication <span class="keyword">when</span> connecting</span><br><span class="line"># <span class="keyword">to</span> the master <span class="operator">-</span> required</span><br><span class="line">#master<span class="operator">-</span><span class="keyword">user</span>     <span class="operator">=</span>   <span class="operator">&lt;</span>username<span class="operator">&gt;</span></span><br><span class="line">#</span><br><span class="line"># The password the slave will authenticate <span class="keyword">with</span> <span class="keyword">when</span> connecting <span class="keyword">to</span></span><br><span class="line"># the master <span class="operator">-</span> required</span><br><span class="line">#master<span class="operator">-</span>password <span class="operator">=</span>   <span class="operator">&lt;</span>password<span class="operator">&gt;</span></span><br><span class="line">#</span><br><span class="line"># The port the master <span class="keyword">is</span> listening on.</span><br><span class="line"># optional <span class="operator">-</span> defaults <span class="keyword">to</span> <span class="number">3306</span></span><br><span class="line">#master<span class="operator">-</span>port     <span class="operator">=</span>  <span class="operator">&lt;</span>port<span class="operator">&gt;</span></span><br><span class="line">#</span><br><span class="line"># <span class="type">binary</span> logging <span class="operator">-</span> <span class="keyword">not</span> required <span class="keyword">for</span> slaves, but recommended</span><br><span class="line">#log<span class="operator">-</span>bin<span class="operator">=</span>mysql<span class="operator">-</span>bin</span><br><span class="line"></span><br><span class="line"># Point the following paths <span class="keyword">to</span> different dedicated disks</span><br><span class="line">#tmpdir                <span class="operator">=</span> <span class="operator">/</span>tmp<span class="operator">/</span>                </span><br><span class="line">#log<span class="operator">-</span><span class="keyword">update</span>         <span class="operator">=</span> <span class="operator">/</span>path<span class="operator">-</span><span class="keyword">to</span><span class="operator">-</span>dedicated<span class="operator">-</span>directory<span class="operator">/</span>hostname</span><br><span class="line"></span><br><span class="line"># Uncomment the following if you <span class="keyword">are</span> <span class="keyword">using</span> BDB tables</span><br><span class="line">#bdb_cache_size <span class="operator">=</span> <span class="number">4</span>M</span><br><span class="line">#bdb_max_lock <span class="operator">=</span> <span class="number">10000</span></span><br><span class="line"></span><br><span class="line"># Uncomment the following if you <span class="keyword">are</span> <span class="keyword">using</span> InnoDB tables</span><br><span class="line">#innodb_data_home_dir <span class="operator">=</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span></span><br><span class="line">#innodb_data_file_path <span class="operator">=</span> ibdata1:<span class="number">10</span>M:autoextend</span><br><span class="line">#innodb_log_group_home_dir <span class="operator">=</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span></span><br><span class="line">#innodb_log_arch_dir <span class="operator">=</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span></span><br><span class="line"># You can <span class="keyword">set</span> .._buffer_pool_size up <span class="keyword">to</span> <span class="number">50</span> <span class="operator">-</span> <span class="number">80</span> <span class="operator">%</span></span><br><span class="line"># <span class="keyword">of</span> RAM but beware <span class="keyword">of</span> setting memory usage too high</span><br><span class="line">#innodb_buffer_pool_size <span class="operator">=</span> <span class="number">16</span>M</span><br><span class="line">#innodb_additional_mem_pool_size <span class="operator">=</span> <span class="number">2</span>M</span><br><span class="line"># <span class="keyword">Set</span> .._log_file_size <span class="keyword">to</span> <span class="number">25</span> <span class="operator">%</span> <span class="keyword">of</span> buffer pool size</span><br><span class="line">#innodb_log_file_size <span class="operator">=</span> <span class="number">5</span>M</span><br><span class="line">#innodb_log_buffer_size <span class="operator">=</span> <span class="number">8</span>M</span><br><span class="line">#innodb_flush_log_at_trx_commit <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">#innodb_lock_wait_timeout <span class="operator">=</span> <span class="number">50</span></span><br><span class="line"></span><br><span class="line">[mysqldump]</span><br><span class="line">quick</span><br><span class="line">max_allowed_packet <span class="operator">=</span> <span class="number">16</span>M</span><br><span class="line"></span><br><span class="line">[mysql]</span><br><span class="line"><span class="keyword">no</span><span class="operator">-</span>auto<span class="operator">-</span>rehash</span><br><span class="line"># Remove the next comment <span class="type">character</span> if you <span class="keyword">are</span> <span class="keyword">not</span> familiar <span class="keyword">with</span> <span class="keyword">SQL</span></span><br><span class="line">#safe<span class="operator">-</span>updates</span><br><span class="line"></span><br><span class="line">#[isamchk]</span><br><span class="line">#key_buffer <span class="operator">=</span> <span class="number">20</span>M</span><br><span class="line">#sort_buffer_size <span class="operator">=</span> <span class="number">20</span>M</span><br><span class="line">#read_buffer <span class="operator">=</span> <span class="number">2</span>M</span><br><span class="line">#write_buffer <span class="operator">=</span> <span class="number">2</span>M</span><br><span class="line"></span><br><span class="line">#[myisamchk]</span><br><span class="line">#key_buffer <span class="operator">=</span> <span class="number">20</span>M</span><br><span class="line">#sort_buffer_size <span class="operator">=</span> <span class="number">20</span>M</span><br><span class="line">#read_buffer <span class="operator">=</span> <span class="number">2</span>M</span><br><span class="line">#write_buffer <span class="operator">=</span> <span class="number">2</span>M</span><br><span class="line"></span><br><span class="line">[mysqlhotcopy]</span><br><span class="line">interactive<span class="operator">-</span>timeout</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>日志</tag>
       </tags>
   </entry>
   <entry>

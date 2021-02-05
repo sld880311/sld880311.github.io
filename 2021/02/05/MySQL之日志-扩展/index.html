@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="数据日志文件比对ib_logfile与log-bin区别 .tg  {border-collapse:collapse;border-spacing:0;} .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL之日志-扩展">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="数据日志文件比对ib_logfile与log-bin区别 .tg  {border-collapse:collapse;border-spacing:0;} .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/1587545996242.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/1589449237143.png">
+<meta property="article:published_time" content="2021-02-05T00:23:29.000Z">
+<meta property="article:modified_time" content="2021-02-05T00:56:35.974Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="日志">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/1587545996242.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL之日志-扩展 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">46</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">12</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">34</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL之日志-扩展
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-05 08:23:29 / 修改时间：08:56:35" itemprop="dateCreated datePublished" datetime="2021-02-05T08:23:29+08:00">2021-02-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="数据日志文件比对"><a href="#数据日志文件比对" class="headerlink" title="数据日志文件比对"></a>数据日志文件比对</h2><h3 id="ib-logfile与log-bin区别"><a href="#ib-logfile与log-bin区别" class="headerlink" title="ib_logfile与log-bin区别"></a>ib_logfile与log-bin区别</h3><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <td class="tg-0lax">ib_logfile</td>
+    <td class="tg-0lax">
+        记录系统的回滚，重做日志（在你修改数据之前，会先把 修改的操作 作为日志先记录下来）<br>
+        记录文件的物理更改<br>
+        记录的是redo log和undo log（应该记录在ibdata1中）的信息，这里记录的基本是commit之前的数据
+    </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">mysql-bin.******</td>
+    <td class="tg-0lax">
+        记录系统的所有更新记录，数据库的更细日志，记录的是逻辑更改<br>
+        主从：mysql会把日志发送到slave，salve会接收日志，然后解析日志，把里面的sql语句重新应用到数据库里，于是就能同步数据了<br>
+        记录的是已经执行完毕的对数据库的dml和ddl信息，这里记录的基本是commit之后的数据信息。
+    </td>
+  </tr>
+</table>
+
+<a id="more"></a>
+
+<h3 id="redo、undo、binlog的区别"><a href="#redo、undo、binlog的区别" class="headerlink" title="redo、undo、binlog的区别"></a>redo、undo、binlog的区别</h3><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-0lax"></th>
+    <th class="tg-0lax">redo</th>
+    <th class="tg-0lax">undo</th>
+    <th class="tg-0lax">binlog</th>
+  </tr>
+  <tr>
+    <td class="tg-0lax">作用</td>
+    <td class="tg-0lax">保持事务的持久性</td>
+    <td class="tg-0lax">帮助事务回滚及MVCC的功能</td>
+    <td class="tg-0lax">进行Point-In_Time的恢复及主从复制的建立</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">产生主体</td>
+    <td class="tg-0lax">InnoDB</td>
+    <td class="tg-0lax">MySql</td>
+    <td class="tg-0lax">MySql</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">类型</td>
+    <td class="tg-0lax">物理日志，只记录有关InnoDB引擎本身的事务日志。</td>
+    <td class="tg-0lax">逻辑日志</td>
+    <td class="tg-0lax">
+        记录的都是关于一个事务的具体操作内容,逻辑日志。<br>
+        记录所有与MySQL数据库有关的日志记录，包括InnoDB、MyISAM、Heap等其他存储引擎的日志。
+    </td>
+  </tr>
+
+  <tr>
+    <td class="tg-0lax">内容</td>
+    <td class="tg-0lax">每个页的修改，重做日志主要是记录已经全部完成的事务,即执行了commit的日志，在默认情况下重做日志的值记录在iblogfile0 以及iblogfile1重做日志中。</td>
+    <td class="tg-0lax">修改前的行数据，回滚日志主要记录已经部分完成并且写入硬盘的未完成事务，默认情况情况下，回滚日志的信息记录在表空间文件，共享表空间文件ibdata1或者独享表空间未见ibd中。</td>
+    <td class="tg-0lax">执行的SQL语句</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">每个事务的日志数量</td>
+    <td class="tg-0lax">事务执行中不断写入，多事务可并发写入</td>
+    <td class="tg-0lax">看修改的行数据量</td>
+    <td class="tg-0lax">事务提交后记录一条SQL语句,根据配置执行</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">幂等性</td>
+    <td class="tg-0lax">是</td>
+    <td class="tg-0lax"></td>
+    <td class="tg-0lax">否</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">日志文件</td>
+    <td class="tg-0lax">ib_logfile</td>
+    <td class="tg-0lax">Ibdata</td>
+    <td class="tg-0lax">mysql-bin.******</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">事务性</td>
+    <td class="tg-0lax">INNODB存储引擎的重做日志，由于其记录是物理操作日志，因此每个事务对应多个日志条目，并且事务的重做日志写入是并发的，并非在事务提交时写入，做其在文件中记录的顺序并非是事务开始的顺序。</td>
+    <td class="tg-0lax"></td>
+    <td class="tg-0lax">二进制日志仅在事务提交时记录，并且对于每一个事务，仅在事务提交时记录，并且对于每一个事务，仅包含对应事务的一个日志。</td>
+  </tr>
+</table>
+
+<ol>
+<li>redo log 是 InnoDB 引擎特有的；binlog 是 MySQL 的 Server 层实现的，所有引擎都可以使用。</li>
+<li>redo log 是物理日志，记录的是“在某个数据页上做了什么修改”；binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如“给 ID=2 这一行的 c 字段加 1 ”。</li>
+<li>redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志（但是可以设置清理策略）。</li>
+</ol>
+<h3 id="ibdata"><a href="#ibdata" class="headerlink" title="ibdata"></a>ibdata</h3><h4 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h4><p>ibdata1是一个用来构建innodb系统表空间的文件，这个文件包含了innodb表的元数据（数据字典）、<br>撤销记录（FIL_PAGE_UNDO_LOG）**<strong>**</strong>出现问题的可能性比较大、<br>修改buffer（innodb_ibuf_max_size 设置最大变更缓冲区<br>双写buffer（innodb_doublewrite_file 来将双写缓冲区存储到一个分离的文件）<br>如果file-per-table选项打开的话，该文件则不一定包含所有表的数据。当innodb_file_per_table选项打开的话，新创建表的数据和索引则不会存在系统表空间中，而是存放在各自表的.ibd文件中。<br>使用命令：<code>SHOW ENGINE INNODB STATUS \g;</code>查看当前二进制的状态。<br>显然这个文件会越来越大，<code>innodb_autoextend_increment</code>选项则指定了该文件每次自动增长的步进，默认是8M。  </p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/1587545996242.png" class>
+
+</div>
+
+<h4 id="导致该文件变大的原因"><a href="#导致该文件变大的原因" class="headerlink" title="导致该文件变大的原因"></a>导致该文件变大的原因</h4><p>显然ibdata文件存的是数据库的表数据，如缓存，索引等。所以随着数据库越来越大，表也会越大，这个无法避免的。</p>
+<h4 id="瘦身"><a href="#瘦身" class="headerlink" title="瘦身"></a>瘦身</h4><ol>
+<li>按照类型分类<ul>
+<li>数据文件与日志信息分文件保存，对于日志文件可以定期执行清理。</li>
+</ul>
+</li>
+<li>或者定期数据备份和恢复<ul>
+<li>先把数据库文件备份下来，然后直接删除ibdata文件，重新导入数据库文件即可。这样就可以把ibdata中的日志和缓存都删除掉了。</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 备份全部数据库，执行命令</span><br><span class="line">mysqldump <span class="operator">-</span>q <span class="operator">-</span>uroot <span class="operator">-</span>ppassword <span class="comment">--add-drop-table --all-databases &gt;/var/lib/mysql/backall.sql</span></span><br><span class="line"># 做完此步后，停止数据库服务。</span><br><span class="line">service mysqld stop</span><br><span class="line"># 在配置文件中设置如下参数</span><br><span class="line">innodb_file_per_table<span class="operator">=</span><span class="number">1</span></span><br><span class="line"># 验证配置是否生效，可以重启mysql后,执行</span><br><span class="line">service mysqld restart</span><br><span class="line"># 登陆之后使用命令查询 <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%per_table%&#x27;</span>;</span><br><span class="line"># 还原数据库</span><br><span class="line">mysql <span class="operator">-</span>uroot <span class="operator">-</span>p <span class="operator">&lt;</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>backall.sql</span><br></pre></td></tr></table></figure>
+<h5 id="删除原数据文件后"><a href="#删除原数据文件后" class="headerlink" title="删除原数据文件后"></a>删除原数据文件后</h5><div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/1589449237143.png" class>
+
+</div>
+
+<h4 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h4><p>为了添加一个数据文件到表空间中，首先要关闭 MySQL 数据库，编辑 my.cnf 文件，确认innodb ibdata文件的实际情况和my.cnf的配置是否一致，这里有两种情况：</p>
+<ol>
+<li>my.cnf的配置<br><code>innodb_data_file_path=ibdata1:10G;ibdata2:10G:autoextend</code><br>如果当前数据库正在使用ibdata1，或者使用ibdata2，但ibdata2没有超过10G，则对my.cnf配置直接改成：<br><code>innodb_data_file_path=ibdata1:10G;ibdata2:10G;ibdata3:10G:autoextend</code></li>
+<li>如果设置了最后一个ibdata自动扩展时，有可能最后一个ibdata的占用空间大于my.cnf的配置空间。例如：</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> mysql<span class="variable">@test</span>:<span class="operator">/</span>data1<span class="operator">/</span>mysqldata<span class="operator">/</span>innodb<span class="operator">/</span>data<span class="operator">&gt;</span> ls <span class="operator">-</span>lh</span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">---- 1 mysql mysql 10737418240 2010-01-26 16:34 ibdata1</span></span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">---- 1 mysql mysql 16106127360 2010-01-26 16:34 ibdata2</span></span><br></pre></td></tr></table></figure>
+<p>这时，需要精确的计算ibdata2的大小 15360M，修改：</p>
+<p><code>innodb_data_file_path=ibdata1:10G;ibdata2:15360M;ibdata3:10G:autoextend</code></p>
+<p>重启mysql。</p>
+<p>注意：<br>1、扩容前注意磁盘空间是否足够。<br>2、restart后关注是否生成了新的ibdata。</p>
+<h5 id="更多说明"><a href="#更多说明" class="headerlink" title="更多说明"></a>更多说明</h5><p>如果，最后一个文件以关键字 autoextend 来描述，那么编辑 my.cnf 的过程中，必须检查最后一个文件的尺寸，并使它向下接近于 1024 * 1024 bytes (= 1 MB) 的倍数（比方说现在autoextend 的/ibdata/ibdata1为18.5M，而在旧的my.ini中为10M，则需要修改为<code>innodb_data_file_path = /ibdata/ibdata1:19M;</code> 且必须是19M，如果指定20M，就会报错。），并在 innodb_data_file_path 中明确指定它的尺寸。然后你可以添加另一个数据文件。记住只有 innodb_data_file_path 中的最后一个文件可以被指定为 auto-extending。<br>一个例子：假设起先仅仅只有一个 auto-extending 数据文件 ibdata1 ，这个文件接近于 988 MB。下面是添加了另一个 auto-extending 数据文件后的可能示例 。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">innodb_data_home_dir <span class="operator">=</span></span><br><span class="line">innodb_data_file_path <span class="operator">=</span> <span class="operator">/</span>ibdata<span class="operator">/</span>ibdata1:<span class="number">988</span>M;<span class="operator">/</span>disk2<span class="operator">/</span>ibdata2:<span class="number">50</span>M:autoextend</span><br></pre></td></tr></table></figure>
+<h2 id="日志分析工具"><a href="#日志分析工具" class="headerlink" title="日志分析工具"></a>日志分析工具</h2><ol>
+<li>mysqldumpslowmysql：官方提供的慢查询日志分析工具</li>
+<li>mysqlsla：hackmysql.com 推出的一款日志分析工具(该网站还维护了 mysqlreport，mysqlidxchk 等比较实用的mysql 工具)。 整体来说，功能非常强大。输出的数据报表非常有利于分析慢查询的原因，包括执行频率、数据量、查询消耗等。</li>
+<li>myprofi：纯 php 写的一个开源分析工具.项目在 sourceforge 上。功能上，列出了总的慢查询次数和类型、去重后的 sql 语句、执行次数及其占总的 slow log 数量的百分比。从整体输出样式来看，比 mysql-log-filter 还要简洁，省去了很多不必要的内容。对于只想看 sql 语句及执行次数的用户来说，比较推荐。</li>
+<li>mysql-log-filter：google code 上找到的一个分析工具，提供了 python 和 php 两种可执行的脚本。 特色功能除了统计信息外，还针对输出内容做了排版和格式化，保证整体输出的简洁。喜欢简洁报表的朋友，推荐使用一下。</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="主从不一致"><a href="#主从不一致" class="headerlink" title="主从不一致"></a>主从不一致</h3><p>在m/s环境中,innodb写完ib_logfile后,服务异常关闭，会不会主库能用ib_logfile恢复数据，而<br>binlog没写导致从库同步时少少这个事务？从而导致主从不一致;</p>
+<h4 id="redo日志写入方式"><a href="#redo日志写入方式" class="headerlink" title="redo日志写入方式"></a>redo日志写入方式</h4><ol>
+<li>ib_logfile写入当前事务更新数据，并标上事务准备trx_prepare</li>
+<li>写入bin-log</li>
+<li>ib_logfile当前事务提交提交trx_commit</li>
+</ol>
+<h4 id="恢复方式"><a href="#恢复方式" class="headerlink" title="恢复方式"></a>恢复方式</h4><p>如果ib_logfile已经写入事务准备,那么在恢复过程中，会依据bin-log中该事务是否存在恢复数据。<br>假设:</p>
+<ol>
+<li>结束后异常,因没有写入bin-log，从库不会同步这个事务，主库上，重启时，在恢复日志中这个事务没有commit，即rollback这个事务.</li>
+<li>结束后异常，这会bin-log已经写入，从库会同步这个事务。主库依据恢复日志和bin-log，也正常恢复此事务</li>
+</ol>
+<p>综上描述:bin-log写入完成，主从会正常完成事务；bin-log没有写入，主从库rollback事务;不会出现主从库不一致问题.</p>
+<h3 id="日志文件备份"><a href="#日志文件备份" class="headerlink" title="日志文件备份"></a>日志文件备份</h3><p>备份的时候可以使用flush logs，关闭当前的所有日志文件，然后产生新的日志文件。关闭日志文件后，可以采用物理方式备份。 另外flush logs可以添加具体的日志类型：</p>
+<ol>
+<li>flush error logs</li>
+<li>flush general logs</li>
+<li>flush binary logs</li>
+<li>flush slow logs</li>
+</ol>
+<h3 id="Checkpoint机制"><a href="#Checkpoint机制" class="headerlink" title="Checkpoint机制"></a>Checkpoint机制</h3><p>MySQL服务器崩溃后，重新启动MySQL服务时，由于重做日志（redo）与回滚日志（undo）日志的存在，InnoDB通过回滚日志（undo）日志将所有已部分完成并写入硬盘的未完成事务进行回滚操作（rollback）。然后将重做日志（redo）日志中的事务全部重新执行一遍即可恢复所有的数据。但是数据量过大，为了缩短恢复的时间InnoDB引入了Checkpoint 机制。</p>
+<h4 id="Checkpoint-机制原理"><a href="#Checkpoint-机制原理" class="headerlink" title="Checkpoint 机制原理"></a>Checkpoint 机制原理</h4><p>假设在某个时间点，所有的脏页（dirty page）都被刷新到了硬盘上，这个时间点之前的所有重做日志（redo）就不需要重做了.系统就就下这个时间点重做日志的结尾位置作为Checkpoint,Checkpoint之前的重做日志也就不需要再重做了，可以放心的删除掉。为了更好的利用重做日志（redo）的空间,InnoDb采用轮循的策略使用重做日志空间，因此InnoDB的重做日志文件至少为2个。通过Checkpoint 机制，通过重做日志（redo）将数据库崩溃时已经完成但还没有来得及将缓存中已经修改但还未完全写入外存的事务进行重做（undo）操作，即可保证数据的一致性，也可以缩短恢复时间。</p>
+<h3 id="脏页（dirty-page）"><a href="#脏页（dirty-page）" class="headerlink" title="脏页（dirty page）"></a>脏页（dirty page）</h3><p>当事务需要修改某条记录是，InnoDB首先将该数据所在的数据块从外存中读取到硬盘中，事务提交后，InnoDB修改数据页中的记录，这时缓存的数据页已经和外存中的数据块已经不一样了，此时缓存中的数据页称为脏页（dirty page）,脏页刷新到外存中，变为干净页（clean page）。<br>备注：一个内存页默认为4K，或者4K的倍数。你可以把内存想象成一本可以擦洗的书，每次MySQL读数据的时候，向内存申请几张干净的书页，然后书写上去。当数据刷新到硬盘之后，这些数据页马上被擦除，供其他程序使用。</p>
+<h3 id="日志序列号（log-sequence-number）"><a href="#日志序列号（log-sequence-number）" class="headerlink" title="日志序列号（log sequence number）"></a>日志序列号（log sequence number）</h3><p>日志序列号（LSN）是日志空间中每条日志的结束点，用字节偏移量表示，在Checkpoin和恢复时使用。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag"></i> MySQL</a>
+              <a href="/tags/%E6%97%A5%E5%BF%97/" rel="tag"><i class="fa fa-tag"></i> 日志</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/" rel="prev" title="MySQL之日志-中继日志">
+      <i class="fa fa-chevron-left"></i> MySQL之日志-中继日志
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E6%AF%94%E5%AF%B9"><span class="nav-number">1.</span> <span class="nav-text">数据日志文件比对</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ib-logfile%E4%B8%8Elog-bin%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.</span> <span class="nav-text">ib_logfile与log-bin区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redo%E3%80%81undo%E3%80%81binlog%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.2.</span> <span class="nav-text">redo、undo、binlog的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ibdata"><span class="nav-number">1.3.</span> <span class="nav-text">ibdata</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%9C%E7%94%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E8%87%B4%E8%AF%A5%E6%96%87%E4%BB%B6%E5%8F%98%E5%A4%A7%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.3.2.</span> <span class="nav-text">导致该文件变大的原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%98%A6%E8%BA%AB"><span class="nav-number">1.3.3.</span> <span class="nav-text">瘦身</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%8E%9F%E6%95%B0%E6%8D%AE%E6%96%87%E4%BB%B6%E5%90%8E"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">删除原数据文件后</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A9%E5%AE%B9"><span class="nav-number">1.3.4.</span> <span class="nav-text">扩容</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A%E8%AF%B4%E6%98%8E"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">更多说明</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="nav-number">2.</span> <span class="nav-text">日志分析工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E4%B8%8D%E4%B8%80%E8%87%B4"><span class="nav-number">3.1.</span> <span class="nav-text">主从不一致</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#redo%E6%97%A5%E5%BF%97%E5%86%99%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">3.1.1.</span> <span class="nav-text">redo日志写入方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">3.1.2.</span> <span class="nav-text">恢复方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E5%A4%87%E4%BB%BD"><span class="nav-number">3.2.</span> <span class="nav-text">日志文件备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Checkpoint%E6%9C%BA%E5%88%B6"><span class="nav-number">3.3.</span> <span class="nav-text">Checkpoint机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Checkpoint-%E6%9C%BA%E5%88%B6%E5%8E%9F%E7%90%86"><span class="nav-number">3.3.1.</span> <span class="nav-text">Checkpoint 机制原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%84%8F%E9%A1%B5%EF%BC%88dirty-page%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">脏页（dirty page）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%BA%8F%E5%88%97%E5%8F%B7%EF%BC%88log-sequence-number%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">日志序列号（log sequence number）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">347k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">5:15</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '52b160d7f1dfb9e636be23320ace1a03',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
