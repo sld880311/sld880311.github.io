@@ -2659,6 +2659,79 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux timewait问题分析</title>
+    <url>/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h2 id="TCP协议说明"><a href="#TCP协议说明" class="headerlink" title="TCP协议说明"></a>TCP协议说明</h2><p>TCP协议规定，对于已经建立的连接，网络双方要进行四次握手才能成功断开连接，如果缺少了其中某个步骤，将会使连接处于假死状态，连接本身占用的资源不会被释放。网络服务器程序要同时管理大量连接，所以很有必要保证无用连接完全断开，否则大量僵死的连接会浪费许多服务器资源。在众多TCP状态中，最值得注意的状态有两个：<strong>CLOSE_WAIT和TIME_WAIT。</strong></p>
+<a id="more"></a>
+
+<h3 id="TCP建立连接的过程"><a href="#TCP建立连接的过程" class="headerlink" title="TCP建立连接的过程"></a>TCP建立连接的过程</h3><div align="center">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1602666879773.png" class title="TCP建立连接的过程">
+
+</div>
+
+<h3 id="TCP断开连接"><a href="#TCP断开连接" class="headerlink" title="TCP断开连接"></a>TCP断开连接</h3><div align="center">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1602667375240.png" class title="TCP断开连接过程">
+
+</div>
+
+<h3 id="常用配置参数"><a href="#常用配置参数" class="headerlink" title="常用配置参数"></a>常用配置参数</h3><div align="center">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1602667762547.png" class title="tcp常用配置">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1606352049779.png" class title="tcp优化点">
+
+</div>
+
+<h2 id="状态说明"><a href="#状态说明" class="headerlink" title="状态说明"></a>状态说明</h2><h3 id="LISTENING状态"><a href="#LISTENING状态" class="headerlink" title="LISTENING状态"></a>LISTENING状态</h3><p>FTP服务启动后首先处于侦听（LISTENING）状态。</p>
+<h3 id="ESTABLISHED状态"><a href="#ESTABLISHED状态" class="headerlink" title="ESTABLISHED状态"></a>ESTABLISHED状态</h3><p>ESTABLISHED的意思是建立连接。表示两台机器正在通信。</p>
+<h3 id="CLOSE-WAIT"><a href="#CLOSE-WAIT" class="headerlink" title="CLOSE_WAIT"></a>CLOSE_WAIT</h3><p>对方主动关闭连接或者网络异常导致连接中断，这时我方的状态会变成CLOSE_WAIT 此时我方要调用close()来使得连接正确关闭</p>
+<h3 id="TIME-WAIT"><a href="#TIME-WAIT" class="headerlink" title="TIME_WAIT"></a>TIME_WAIT</h3><p>我方主动调用close()断开连接，收到对方确认后状态变为TIME_WAIT。TCP协议规定TIME_WAIT状态会一直持续2MSL(Max Segment Lifetime，即两倍的分段最大生存期，Windows下默认为4分钟)，以此来确保旧的连接状态不会对新连接产生影响。<strong>处于TIME_WAIT状态的连接占用的资源不会被内核释放</strong>，所以作为服务器，在可能的情况下，尽量不要主动断开连接，以减少TIME_WAIT状态造成的资源浪费。  </p>
+<p>目前有一种避免TIME_WAIT资源浪费的方法，就是关闭socket的LINGER选项。但这种做法是TCP协议不推荐使用的，在某些情况下这个操作可能会带来错误。<br><strong>TIME_WAIT是TCP协议用以保证被重新分配的socket不会受到之前残留的延迟重发报文影响的机制,是必要的逻辑保证.</strong></p>
+<h3 id="SYN-SENT状态"><a href="#SYN-SENT状态" class="headerlink" title="SYN_SENT状态"></a>SYN_SENT状态</h3><p>SYN_SENT状态表示请求连接，当你要访问其它的计算机的服务时首先要发个同步信号给该端口，此时状态为SYN_SENT，如果连接成功了就变为 ESTABLISHED，此时SYN_SENT状态非常短暂。但如果发现SYN_SENT非常多且在向不同的机器发出，那你的机器可能中了冲击波或震荡波 之类的病毒了。这类病毒为了感染别的计算机，它就要扫描别的计算机，在扫描的过程中对每个要扫描的计算机都要发出了同步请求，这也是出现许多 SYN_SENT的原因。</p>
+<h2 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h2><div align="center">
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1588043788007.png" class title="TCP状态转换图">
+
+
+<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1594448316079.png" class title="TCP状态转换图">
+
+
+</div>
+
+<h2 id="TIME-WAIT配置"><a href="#TIME-WAIT配置" class="headerlink" title="TIME_WAIT配置"></a>TIME_WAIT配置</h2><h3 id="windows-机器设置"><a href="#windows-机器设置" class="headerlink" title="windows 机器设置"></a>windows 机器设置</h3><p>在HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters,右键添加名为TcpTimedWaitDelay的<br>DWORD键,设置为60,以缩短TIME_WAIT的等待时间</p>
+<h3 id="ubuntu机器设置"><a href="#ubuntu机器设置" class="headerlink" title="ubuntu机器设置"></a>ubuntu机器设置</h3><p><code>vi /etc/sysctl.conf</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1:表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击</span></span><br><span class="line"><span class="comment"># 默认为0，表示关闭；</span></span><br><span class="line">net.ipv4.tcp_syncookies = 1</span><br><span class="line"><span class="comment"># 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；</span></span><br><span class="line">net.ipv4.tcp_tw_reuse = 1</span><br><span class="line"><span class="comment"># 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。</span></span><br><span class="line">net.ipv4.tcp_tw_recycle = 1</span><br><span class="line"><span class="comment"># 修改系統默认的 TIMEOUT 时间</span></span><br><span class="line">net.ipv4.tcp_fin_timeout = 30</span><br><span class="line"></span><br><span class="line"><span class="comment"># 表示当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时，改为20分钟。</span></span><br><span class="line">net.ipv4.tcp_keepalive_time = 1200</span><br><span class="line"><span class="comment"># 表示用于向外连接的端口范围。缺省情况下很小：32768到61000，改为1024到65000。</span></span><br><span class="line">net.ipv4.ip_local_port_range = 1024 65000</span><br><span class="line"><span class="comment"># 表示SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数。</span></span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 8192</span><br><span class="line"><span class="comment"># 表示系统同时保持TIME_WAIT套接字的最大数量，如果超过这个数字，TIME_WAIT套接字将立刻被清除并打印警告信息。默认为180000，改为5000。</span></span><br><span class="line">net.ipv4.tcp_max_tw_buckets = 5000</span><br></pre></td></tr></table></figure>
+<h2 id="查看系统TCP连接资源命令"><a href="#查看系统TCP连接资源命令" class="headerlink" title="查看系统TCP连接资源命令"></a>查看系统TCP连接资源命令</h2><p><code>netstat -n | awk &#39;/^tcp/ &#123;++S[$NF]&#125; END &#123;for(a in S) print a, S[a]&#125;&#39;</code></p>
+<p>一般情况下，系统的socket资源默认5000个。（非官方）</p>
+<h2 id="TCP协议中有TIME-WAIT这个状态的原因"><a href="#TCP协议中有TIME-WAIT这个状态的原因" class="headerlink" title="TCP协议中有TIME_WAIT这个状态的原因"></a>TCP协议中有TIME_WAIT这个状态的原因</h2><ol>
+<li>防止上一次连接中的包，迷路后重新出现，影响新连接（经过2MSL，上一次连接中所有的重复包都会消失）</li>
+<li>可靠的关闭TCP连接。在主动关闭方发送的最后一个 ack(fin) ，有可能丢失，这时被动方会重新发<br>fin, 如果这时主动方处于 CLOSED 状态 ，就会响应 rst 而不是 ack。所以主动方要处于 TIME_WAIT 状态，而不能是 CLOSED 。</li>
+</ol>
+<h2 id="TIME-WAIT造成的影响"><a href="#TIME-WAIT造成的影响" class="headerlink" title="TIME_WAIT造成的影响"></a>TIME_WAIT造成的影响</h2><ol>
+<li>场景：在高并发短连接的TCP服务器上，当服务器处理完请求后立刻主动正常关闭连接，会出现大量socket处于TIME_WAIT状态<ol>
+<li>高并发可以让服务器在短时间范围内同时占用大量端口（0~65535）</li>
+<li>短连接表示“业务处理+传输数据的时间 远远小于 TIMEWAIT超时的时间”的连接。</li>
+</ol>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>命令参考《<a href="book/linux-netstat-ss.md">netstat/ss</a>》</li>
+<li><a href="https://www.cnblogs.com/dadonggg/p/8778318.html">解决TIME_WAIT过多造成的问题</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>timewait</tag>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux 性能分析思路与工具</title>
     <url>/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/</url>
     <content><![CDATA[<h2 id="关注点"><a href="#关注点" class="headerlink" title="关注点"></a>关注点</h2><div align="center">
@@ -2788,79 +2861,6 @@
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux timewait问题分析</title>
-    <url>/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<h2 id="TCP协议说明"><a href="#TCP协议说明" class="headerlink" title="TCP协议说明"></a>TCP协议说明</h2><p>TCP协议规定，对于已经建立的连接，网络双方要进行四次握手才能成功断开连接，如果缺少了其中某个步骤，将会使连接处于假死状态，连接本身占用的资源不会被释放。网络服务器程序要同时管理大量连接，所以很有必要保证无用连接完全断开，否则大量僵死的连接会浪费许多服务器资源。在众多TCP状态中，最值得注意的状态有两个：<strong>CLOSE_WAIT和TIME_WAIT。</strong></p>
-<a id="more"></a>
-
-<h3 id="TCP建立连接的过程"><a href="#TCP建立连接的过程" class="headerlink" title="TCP建立连接的过程"></a>TCP建立连接的过程</h3><div align="center">
-
-<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1602666879773.png" class title="TCP建立连接的过程">
-
-</div>
-
-<h3 id="TCP断开连接"><a href="#TCP断开连接" class="headerlink" title="TCP断开连接"></a>TCP断开连接</h3><div align="center">
-
-<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1602667375240.png" class title="TCP断开连接过程">
-
-</div>
-
-<h3 id="常用配置参数"><a href="#常用配置参数" class="headerlink" title="常用配置参数"></a>常用配置参数</h3><div align="center">
-
-<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1602667762547.png" class title="tcp常用配置">
-
-<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1606352049779.png" class title="tcp优化点">
-
-</div>
-
-<h2 id="状态说明"><a href="#状态说明" class="headerlink" title="状态说明"></a>状态说明</h2><h3 id="LISTENING状态"><a href="#LISTENING状态" class="headerlink" title="LISTENING状态"></a>LISTENING状态</h3><p>FTP服务启动后首先处于侦听（LISTENING）状态。</p>
-<h3 id="ESTABLISHED状态"><a href="#ESTABLISHED状态" class="headerlink" title="ESTABLISHED状态"></a>ESTABLISHED状态</h3><p>ESTABLISHED的意思是建立连接。表示两台机器正在通信。</p>
-<h3 id="CLOSE-WAIT"><a href="#CLOSE-WAIT" class="headerlink" title="CLOSE_WAIT"></a>CLOSE_WAIT</h3><p>对方主动关闭连接或者网络异常导致连接中断，这时我方的状态会变成CLOSE_WAIT 此时我方要调用close()来使得连接正确关闭</p>
-<h3 id="TIME-WAIT"><a href="#TIME-WAIT" class="headerlink" title="TIME_WAIT"></a>TIME_WAIT</h3><p>我方主动调用close()断开连接，收到对方确认后状态变为TIME_WAIT。TCP协议规定TIME_WAIT状态会一直持续2MSL(Max Segment Lifetime，即两倍的分段最大生存期，Windows下默认为4分钟)，以此来确保旧的连接状态不会对新连接产生影响。<strong>处于TIME_WAIT状态的连接占用的资源不会被内核释放</strong>，所以作为服务器，在可能的情况下，尽量不要主动断开连接，以减少TIME_WAIT状态造成的资源浪费。  </p>
-<p>目前有一种避免TIME_WAIT资源浪费的方法，就是关闭socket的LINGER选项。但这种做法是TCP协议不推荐使用的，在某些情况下这个操作可能会带来错误。<br><strong>TIME_WAIT是TCP协议用以保证被重新分配的socket不会受到之前残留的延迟重发报文影响的机制,是必要的逻辑保证.</strong></p>
-<h3 id="SYN-SENT状态"><a href="#SYN-SENT状态" class="headerlink" title="SYN_SENT状态"></a>SYN_SENT状态</h3><p>SYN_SENT状态表示请求连接，当你要访问其它的计算机的服务时首先要发个同步信号给该端口，此时状态为SYN_SENT，如果连接成功了就变为 ESTABLISHED，此时SYN_SENT状态非常短暂。但如果发现SYN_SENT非常多且在向不同的机器发出，那你的机器可能中了冲击波或震荡波 之类的病毒了。这类病毒为了感染别的计算机，它就要扫描别的计算机，在扫描的过程中对每个要扫描的计算机都要发出了同步请求，这也是出现许多 SYN_SENT的原因。</p>
-<h2 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h2><div align="center">
-
-<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1588043788007.png" class title="TCP状态转换图">
-
-
-<img src="/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/1594448316079.png" class title="TCP状态转换图">
-
-
-</div>
-
-<h2 id="TIME-WAIT配置"><a href="#TIME-WAIT配置" class="headerlink" title="TIME_WAIT配置"></a>TIME_WAIT配置</h2><h3 id="windows-机器设置"><a href="#windows-机器设置" class="headerlink" title="windows 机器设置"></a>windows 机器设置</h3><p>在HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters,右键添加名为TcpTimedWaitDelay的<br>DWORD键,设置为60,以缩短TIME_WAIT的等待时间</p>
-<h3 id="ubuntu机器设置"><a href="#ubuntu机器设置" class="headerlink" title="ubuntu机器设置"></a>ubuntu机器设置</h3><p><code>vi /etc/sysctl.conf</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1:表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击</span></span><br><span class="line"><span class="comment"># 默认为0，表示关闭；</span></span><br><span class="line">net.ipv4.tcp_syncookies = 1</span><br><span class="line"><span class="comment"># 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；</span></span><br><span class="line">net.ipv4.tcp_tw_reuse = 1</span><br><span class="line"><span class="comment"># 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。</span></span><br><span class="line">net.ipv4.tcp_tw_recycle = 1</span><br><span class="line"><span class="comment"># 修改系統默认的 TIMEOUT 时间</span></span><br><span class="line">net.ipv4.tcp_fin_timeout = 30</span><br><span class="line"></span><br><span class="line"><span class="comment"># 表示当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时，改为20分钟。</span></span><br><span class="line">net.ipv4.tcp_keepalive_time = 1200</span><br><span class="line"><span class="comment"># 表示用于向外连接的端口范围。缺省情况下很小：32768到61000，改为1024到65000。</span></span><br><span class="line">net.ipv4.ip_local_port_range = 1024 65000</span><br><span class="line"><span class="comment"># 表示SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数。</span></span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 8192</span><br><span class="line"><span class="comment"># 表示系统同时保持TIME_WAIT套接字的最大数量，如果超过这个数字，TIME_WAIT套接字将立刻被清除并打印警告信息。默认为180000，改为5000。</span></span><br><span class="line">net.ipv4.tcp_max_tw_buckets = 5000</span><br></pre></td></tr></table></figure>
-<h2 id="查看系统TCP连接资源命令"><a href="#查看系统TCP连接资源命令" class="headerlink" title="查看系统TCP连接资源命令"></a>查看系统TCP连接资源命令</h2><p><code>netstat -n | awk &#39;/^tcp/ &#123;++S[$NF]&#125; END &#123;for(a in S) print a, S[a]&#125;&#39;</code></p>
-<p>一般情况下，系统的socket资源默认5000个。（非官方）</p>
-<h2 id="TCP协议中有TIME-WAIT这个状态的原因"><a href="#TCP协议中有TIME-WAIT这个状态的原因" class="headerlink" title="TCP协议中有TIME_WAIT这个状态的原因"></a>TCP协议中有TIME_WAIT这个状态的原因</h2><ol>
-<li>防止上一次连接中的包，迷路后重新出现，影响新连接（经过2MSL，上一次连接中所有的重复包都会消失）</li>
-<li>可靠的关闭TCP连接。在主动关闭方发送的最后一个 ack(fin) ，有可能丢失，这时被动方会重新发<br>fin, 如果这时主动方处于 CLOSED 状态 ，就会响应 rst 而不是 ack。所以主动方要处于 TIME_WAIT 状态，而不能是 CLOSED 。</li>
-</ol>
-<h2 id="TIME-WAIT造成的影响"><a href="#TIME-WAIT造成的影响" class="headerlink" title="TIME_WAIT造成的影响"></a>TIME_WAIT造成的影响</h2><ol>
-<li>场景：在高并发短连接的TCP服务器上，当服务器处理完请求后立刻主动正常关闭连接，会出现大量socket处于TIME_WAIT状态<ol>
-<li>高并发可以让服务器在短时间范围内同时占用大量端口（0~65535）</li>
-<li>短连接表示“业务处理+传输数据的时间 远远小于 TIMEWAIT超时的时间”的连接。</li>
-</ol>
-</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li>命令参考《<a href="book/linux-netstat-ss.md">netstat/ss</a>》</li>
-<li><a href="https://www.cnblogs.com/dadonggg/p/8778318.html">解决TIME_WAIT过多造成的问题</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>timewait</tag>
-        <tag>网络</tag>
       </tags>
   </entry>
   <entry>
@@ -3358,6 +3358,85 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>MySQL</tag>
         <tag>调优</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之原理分析-Count</title>
+    <url>/2021/02/07/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-Count/</url>
+    <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>COUNT(expr) [over_clause]</p>
+<p>Returns a count of the number of non-NULL values of expr in the rows retrieved by a SELECT statement. The result is a BIGINT value.</p>
+<p>If there are no matching rows, COUNT() returns 0.</p>
+<p>This function executes as a window function if over_clause is present. over_clause is as described in Section 12.21.2, “Window Function Concepts and Syntax”.</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SELECT</span> student.student_name,<span class="built_in">COUNT</span>(<span class="operator">*</span>)</span><br><span class="line">       <span class="keyword">FROM</span> student,course</span><br><span class="line">       <span class="keyword">WHERE</span> student.student_id<span class="operator">=</span>course.student_id</span><br><span class="line">       <span class="keyword">GROUP</span> <span class="keyword">BY</span> student_name;</span><br></pre></td></tr></table></figure>
+<p>COUNT(*) is somewhat different in that it returns a count of the number of rows retrieved, whether or not they contain NULL values.</p>
+<a id="more"></a>
+
+<p>通过官方文档说明可以得出以下结论：  </p>
+<ol>
+<li>返回的是<code>select</code>中<code>expr</code>不为<code>null</code>的数据</li>
+<li>返回的数据类型是<code>bigint</code></li>
+<li>如果命中数据则返回0</li>
+<li>count(*)包含值为null的行数，count(column_name)返回的是该列非空的数据</li>
+<li>一种聚合方式，用于统计结果集</li>
+<li>用法：count(*)、count(pkid)、count(cloumn_name)、count(1)</li>
+</ol>
+<p>count() 是一个聚合函数，对于返回的结果集，一行行地判断，如果 count 函数的参数不是 NULL，累计值就加 1，否则不加。最后返回累计值。所以，count(*)、count(主键 id) 和 count(1) 都表示返回满足条件的结果集的总行数；而 count(字段），则表示返回满足条件的数据行里面，参数“字段”不为 NULL 的总个数。</p>
+<h2 id="具体分析"><a href="#具体分析" class="headerlink" title="具体分析"></a>具体分析</h2><h3 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `test_count` (</span><br><span class="line">  `a` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `b` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `c` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> test_count <span class="keyword">VALUES</span>(<span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line"><span class="keyword">insert</span> test_count <span class="keyword">VALUES</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="keyword">insert</span> test_count <span class="keyword">VALUES</span>(<span class="number">11</span>, <span class="number">112</span>, <span class="number">3</span>);</span><br><span class="line"><span class="keyword">insert</span> test_count <span class="keyword">VALUES</span>(<span class="number">1</span>, <span class="keyword">null</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="count-、count-常量）与count-column-name-的区别"><a href="#count-、count-常量）与count-column-name-的区别" class="headerlink" title="count(*)、count(常量）与count(column_name)的区别"></a>count(*)、count(常量）与count(column_name)的区别</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">MariaDB [test]<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test_count;</span><br><span class="line"><span class="operator">+</span><span class="comment">------+------+------+</span></span><br><span class="line"><span class="operator">|</span> a    <span class="operator">|</span> b    <span class="operator">|</span> c    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+------+------+</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="number">1</span>    <span class="operator">|</span> <span class="number">2</span>    <span class="operator">|</span> <span class="number">3</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="number">11</span>   <span class="operator">|</span> <span class="number">112</span>  <span class="operator">|</span> <span class="number">3</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="number">1</span>    <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="number">3</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+------+------+</span></span><br><span class="line"><span class="number">4</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test]<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>), <span class="built_in">count</span>(a),<span class="built_in">count</span>(<span class="number">1</span>) <span class="keyword">from</span> test_count;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------+----------+----------+</span></span><br><span class="line"><span class="operator">|</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="operator">|</span> <span class="built_in">count</span>(a) <span class="operator">|</span> <span class="built_in">count</span>(<span class="number">1</span>) <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+----------+----------+</span></span><br><span class="line"><span class="operator">|</span>        <span class="number">4</span> <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span>        <span class="number">4</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+----------+----------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<p>通过运行结果可知：<strong>COUNT(常量) 和 COUNT(<em>)表示的是直接查询符合条件的数据库表的行数（可为null）。而COUNT(column_name)表示的是查询符合条件的列的值不为NULL的行数。**<br>另外，COUNT(</em>)是 **SQL92</strong> 定义的标准统计行数的语法，因为他是标准语法，所以MySQL数据库对他进行过很多优化。</p>
+<blockquote>
+<p>SQL92，是数据库的一个ANSI/ISO标准。它定义了一种语言（SQL）以及数据库的行为（事务、隔离级别等）。</p>
+</blockquote>
+<h3 id="Count-优化"><a href="#Count-优化" class="headerlink" title="Count(*)优化"></a>Count(*)优化</h3><p>MySQL针对不同的存储引擎做了不同的优化，目前常用的存储引擎是InnoDB和MyISAM。这两种存储引擎关键的区别是<strong>MyISAM不支持事务，MyISAM中的锁是表级锁；而InnoDB支持事务，并且支持行级锁。</strong></p>
+<ol>
+<li>MyISAM优化：（前提：<strong>单表，无其他返回数据、无where</strong>），数据库会把表的总行单独记录（保障条件：表级锁，数据是顺序处理），COUNT(1) is only subject to the same optimization if the first column is defined as NOT NULL.</li>
+<li>InnoDB优化：由于事务性，所以数据变化的可能性会增大，导致看到的数据量是不准确的；SELECT COUNT(*) statements only count rows visible to the current transaction；InnoDB在数据扫描过程中做了优化<ul>
+<li>MySQL 5.7.18之前使用的是<code>clustered index</code>扫描</li>
+<li>MySQL 5.7.18之后会优先使用<code>secondary index</code>，如果索引没有完全在buffer pool可能会导致比较耗时，一种实现方式可以使用一种计数器来实现。（非主键索引的必要性）</li>
+</ul>
+</li>
+</ol>
+<h3 id="count-与count-1"><a href="#count-与count-1" class="headerlink" title="count(*)与count(1)"></a>count(*)与count(1)</h3><blockquote>
+<p>InnoDB handles SELECT COUNT(<em>) and SELECT COUNT(1) operations in the same way. There is no performance difference.<br>总结：官方说明count(</em>)与count(1)在性能上是没有差异，建议大家使用count(*)</p>
+</blockquote>
+<h3 id="执行统计原理"><a href="#执行统计原理" class="headerlink" title="执行统计原理"></a>执行统计原理</h3><h4 id="count-主键-id"><a href="#count-主键-id" class="headerlink" title="count(主键 id)"></a>count(主键 id)</h4><p>InnoDB 引擎会遍历整张表，把每一行的 id 值都取出来，返回给 server 层。server 层拿到 id 后，判断是不可能为空的，就按行累加。</p>
+<h4 id="count-1"><a href="#count-1" class="headerlink" title="count(1)"></a>count(1)</h4><p>InnoDB 引擎遍历整张表，但不取值。server 层对于返回的每一行，放一个数字“1”进去，判断是不可能为空的，按行累加。单看这两个用法的差别的话，count(1) 执行得要比 count(主键 id) 快。因为从引擎返回 id 会涉及到解析数据行，以及拷贝字段值的操作。</p>
+<h4 id="count-字段"><a href="#count-字段" class="headerlink" title="count(字段)"></a>count(字段)</h4><p>如果这个“字段”是定义为 not null 的话，一行行地从记录里面读出这个字段，判断不能为 null，按行累加；<br>如果这个“字段”定义允许为 null，那么执行的时候，判断到有可能是 null，还要把值取出来再判断一下，不是 null 才累加。</p>
+<h4 id="count"><a href="#count" class="headerlink" title="count(*)"></a>count(*)</h4><p>并不会把全部字段取出来，而是专门做了优化，不取值。count(<em>)按行累加。结论如下：<br>按照效率排序，count(字段)&lt;count(主键id)&lt;count(1)≈count(</em>)</p>
+<h3 id="COUNT-DISTINCT-expr-expr…-使用"><a href="#COUNT-DISTINCT-expr-expr…-使用" class="headerlink" title="COUNT(DISTINCT expr,[expr…])使用"></a>COUNT(DISTINCT expr,[expr…])使用</h3><p>COUNT(DISTINCT expr,[expr…])</p>
+<p>Returns a count of the number of rows with different non-NULL expr values.</p>
+<p>If there are no matching rows, COUNT(DISTINCT) returns 0.</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="keyword">DISTINCT</span> results) <span class="keyword">FROM</span> student;</span><br></pre></td></tr></table></figure>
+<p>In MySQL, you can obtain the number of distinct expression combinations that do not contain NULL by giving a list of expressions. In standard SQL, you would have to do a concatenation of all expressions inside COUNT(DISTINCT …).</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="阿里规范"><a href="#阿里规范" class="headerlink" title="阿里规范"></a>阿里规范</h3><ol>
+<li>【强制】不要使用count(列名)或count(常量)来替代count(<em>)，count(</em>)是SQL92定义的标准统计行数的语法，与数据库无关，与NULL和非NULL无关。<blockquote>
+<p>说明：count(*)会统计值为NULL的行，而count(列名)不会统计此列值为NULL的行。</p>
+</blockquote>
+</li>
+<li>【强制】count(distinct column) 计算该列除NULL外的不重复行数。<blockquote>
+<p>注意，count(distinct column1, column2)，如果其中一列全为NULL，那么即使另一列有不同的值，也返回为0。</p>
+</blockquote>
+</li>
+<li>【强制】当某一列的值全为NULL时，count(column)的返回结果为0，但sum(column)的返回结果为NULL，因此使用sum()时需注意避免NPE问题。<blockquote>
+<p>正例：可以使用如下方式避免sum的NPE问题：SELECT IFNULL(SUM(column), 0) FROM table;</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.toutiao.com/i6790650338174042632/">简简单单SELECT COUNT语句，竟被面试官吊起来锤</a></li>
+<li><a href="https://www.mysqlzh.com/">MySQL中文官方文档</a></li>
+<li><a href="https://dev.mysql.com/doc/">MySQL英文官方文档</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/group-by-functions.html#function_count">MySQL Count官方语法</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>Count</tag>
+        <tag>语法分析</tag>
       </tags>
   </entry>
   <entry>
