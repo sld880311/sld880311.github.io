@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-05T12:31:30.219Z</updated>
+  <updated>2021-02-07T02:45:21.978Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,92 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java并发编程之ThreadLocal</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/</id>
+    <published>2021-02-07T02:24:20.000Z</published>
+    <updated>2021-02-07T02:45:21.978Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;h3 id=&quot;API描述&quot;&gt;&lt;a href=&quot;#API描述&quot; class=&quot;headerlink&quot; title=&quot;API描述&quot;&gt;&lt;/a&gt;API描述&lt;/h3&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;* This &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;provides&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;thread&lt;/span&gt;-&lt;span class=&quot;title&quot;&gt;local&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;variables&lt;/span&gt;.  &lt;span class=&quot;title&quot;&gt;These&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;variables&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;differ&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;from&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;* &lt;span class=&quot;title&quot;&gt;their&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;normal&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;counterparts&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;that&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;thread&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;that&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;accesses&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;one&lt;/span&gt; (&lt;span class=&quot;title&quot;&gt;via&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;its&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;* &lt;/span&gt;&amp;#123;&lt;span class=&quot;meta&quot;&gt;@code&lt;/span&gt; get&amp;#125; or &amp;#123;&lt;span class=&quot;meta&quot;&gt;@code&lt;/span&gt; set&amp;#125; method) has its own, independently initialized&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;* copy of the variable.  &amp;#123;&lt;span class=&quot;meta&quot;&gt;@code&lt;/span&gt; ThreadLocal&amp;#125; instances are typically &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;* &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; fields in classes that wish to associate state with a &lt;span class=&quot;title&quot;&gt;thread&lt;/span&gt; &lt;span class=&quot;params&quot;&gt;(e.g.,&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;* a user ID or Transaction ID)&lt;/span&gt;.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;code&gt;ThreadLocal&lt;/code&gt;提供一种线程本地变量。这种变量是一种副本的概念，在多线程环境下访问（get、set）能够保证各个线程间的变量互相隔离。&lt;code&gt;ThreadLocal&lt;/code&gt;通常定义为了&lt;code&gt;private static&lt;/code&gt;，用来关联线程和线程上下文（比如userId或事物ID）。&lt;code&gt;ThreadLocal&lt;/code&gt; 的作用是提供线程内的局部变量，这种变量在线程的生命周期内起作用，减少同一个线程内多个函数或者组件之间一些公共变量的传递的复杂度。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程控制" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/"/>
+    
+    <category term="ThreadLocal" scheme="https://www.sunliaodong.cn/tags/ThreadLocal/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之LockSupport</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BLockSupport/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BLockSupport/</id>
+    <published>2021-02-07T02:21:46.000Z</published>
+    <updated>2021-02-07T02:23:57.254Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;类结构&quot;&gt;&lt;a href=&quot;#类结构&quot; class=&quot;headerlink&quot; title=&quot;类结构&quot;&gt;&lt;/a&gt;类结构&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BLockSupport/1590712088254.png&quot; class title=&quot;LocalSupport类图&quot;&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="LockSupport" scheme="https://www.sunliaodong.cn/tags/LockSupport/"/>
+    
+    <category term="线程控制" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之Condition</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/</id>
+    <published>2021-02-07T02:16:30.000Z</published>
+    <updated>2021-02-07T02:22:11.908Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;&amp;emsp;&amp;emsp;Condition在jdk1.5中开始出现，主要是用来替代传统Object对象中的wait和notify方法，Object的wait和notify/notify是与&lt;font color=&quot;red&quot;&gt;对象监视器&lt;/font&gt;配合完成线程间的等待/通知机制，而Condition与Lock配合完成等待通知机制，前者是java底层级别的（配合synchronized），后者是语言级别的（配合Lock），具有更高的可控制性和扩展性相比来说更加安全和  高效。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程控制" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/"/>
+    
+    <category term="Condition" scheme="https://www.sunliaodong.cn/tags/Condition/"/>
+    
+  </entry>
   
   <entry>
     <title>软件测试</title>
@@ -508,91 +594,6 @@
     <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
     
     <category term="CPU过高" scheme="https://www.sunliaodong.cn/tags/CPU%E8%BF%87%E9%AB%98/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Linux timewait问题分析</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</id>
-    <published>2021-02-05T08:23:00.000Z</published>
-    <updated>2021-02-05T08:28:34.869Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;TCP协议说明&quot;&gt;&lt;a href=&quot;#TCP协议说明&quot; class=&quot;headerlink&quot; title=&quot;TCP协议说明&quot;&gt;&lt;/a&gt;TCP协议说明&lt;/h2&gt;&lt;p&gt;TCP协议规定，对于已经建立的连接，网络双方要进行四次握手才能成功断开连接，如果缺少了其中某个步骤，将会使连接处于假死状态，连接本身占用的资源不会被释放。网络服务器程序要同时管理大量连接，所以很有必要保证无用连接完全断开，否则大量僵死的连接会浪费许多服务器资源。在众多TCP状态中，最值得注意的状态有两个：&lt;strong&gt;CLOSE_WAIT和TIME_WAIT。&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
-    
-    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
-    
-    <category term="timewait" scheme="https://www.sunliaodong.cn/tags/timewait/"/>
-    
-    <category term="网络" scheme="https://www.sunliaodong.cn/tags/%E7%BD%91%E7%BB%9C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Linux /proc/vmstat详解</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/</id>
-    <published>2021-02-05T07:50:20.000Z</published>
-    <updated>2021-02-05T08:02:37.987Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;说明&quot;&gt;&lt;a href=&quot;#说明&quot; class=&quot;headerlink&quot; title=&quot;说明&quot;&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;内核中虚拟内存的统计信息，对于性能分析有很大益处&lt;/p&gt;
-&lt;figure class=&quot;highlight</summary>
-        
-      
-    
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
-    
-    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
-    
-    <category term="proc" scheme="https://www.sunliaodong.cn/tags/proc/"/>
-    
-    <category term="vmstat" scheme="https://www.sunliaodong.cn/tags/vmstat/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Linux命令之netstat/ss</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Bnetstat-ss/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Bnetstat-ss/</id>
-    <published>2021-02-05T07:47:58.000Z</published>
-    <updated>2021-02-05T07:48:57.913Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;语法&quot;&gt;&lt;a href=&quot;#语法&quot; class=&quot;headerlink&quot; title=&quot;语法&quot;&gt;&lt;/a&gt;语法&lt;/h2&gt;&lt;p&gt;netstat命令用于显示与IP、TCP、UDP和ICMP协议相关的统计数据，一般用于检验本机各端口的网络连接情况。netstat是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。&lt;br&gt;在Linux下，如果连接数比较大，可以使用效率更高的ss来替代netstat。&lt;/p&gt;
-&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;usage: netstat [-vWeenNcCF] [&amp;lt;Af&amp;gt;] -r         netstat &amp;#123;-V|--version|-h|--&lt;span class=&quot;built_in&quot;&gt;help&lt;/span&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       netstat [-vWnNcaeol] [&amp;lt;Socket&amp;gt; ...]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       netstat &amp;#123; [-vWeenNac] -I[&amp;lt;Iface&amp;gt;] | [-veenNac] -i | [-cnNe] -M | -s [-6tuw] &amp;#125; [delay]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -r, --route              display routing table&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -I, --interfaces=&amp;lt;Iface&amp;gt; display interface table &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; &amp;lt;Iface&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -i, --interfaces         display interface table&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -g, --groups             display multicast group memberships&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -s, --statistics         display networking statistics (like SNMP)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -M, --masquerade         display masqueraded connections&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -v, --verbose            be verbose&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        -W, --wide               don&lt;span class=&quot;string&quot;&gt;&amp;#x27;t truncate IP addresses&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -n, --numeric            don&amp;#x27;&lt;/span&gt;t resolve names&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        --numeric-hosts          don&lt;span class=&quot;string&quot;&gt;&amp;#x27;t resolve host names&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        --numeric-ports          don&amp;#x27;&lt;/span&gt;t resolve port names&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        --numeric-users          don&lt;span class=&quot;string&quot;&gt;&amp;#x27;t resolve user names&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -N, --symbolic           resolve hardware names&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -e, --extend             display other/more information&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -p, --programs           display PID/Program name for sockets&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -o, --timers             display timers&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -c, --continuous         continuous listing&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -l, --listening          display listening server sockets&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -a, --all                display all sockets (default: connected)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -F, --fib                display Forwarding Information Base (default)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -C, --cache              display routing cache instead of FIB&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;        -Z, --context            display SELinux security context for sockets&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;  &amp;lt;Socket&amp;gt;=&amp;#123;-t|--tcp&amp;#125; &amp;#123;-u|--udp&amp;#125; &amp;#123;-U|--udplite&amp;#125; &amp;#123;-S|--sctp&amp;#125; &amp;#123;-w|--raw&amp;#125;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;           &amp;#123;-x|--unix&amp;#125; --ax25 --ipx --netrom&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;  &amp;lt;AF&amp;gt;=Use &amp;#x27;&lt;/span&gt;-6|-4&lt;span class=&quot;string&quot;&gt;&amp;#x27; or &amp;#x27;&lt;/span&gt;-A &amp;lt;af&amp;gt;&lt;span class=&quot;string&quot;&gt;&amp;#x27; or &amp;#x27;&lt;/span&gt;--&amp;lt;af&amp;gt;&lt;span class=&quot;string&quot;&gt;&amp;#x27;; default: inet&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;  List of possible address families (which support routing):&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;    inet (DARPA Internet) inet6 (IPv6) ax25 (AMPR AX.25) &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;    netrom (AMPR NET/ROM) ipx (Novell IPX) ddp (Appletalk DDP) &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;    x25 (CCITT X.25) &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
-    
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
-    
-    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
-    
-    <category term="netstat" scheme="https://www.sunliaodong.cn/tags/netstat/"/>
-    
-    <category term="ss" scheme="https://www.sunliaodong.cn/tags/ss/"/>
-    
-    <category term="网络分析" scheme="https://www.sunliaodong.cn/tags/%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90/"/>
     
   </entry>
   

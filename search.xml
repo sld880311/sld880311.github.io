@@ -171,6 +171,180 @@
       </tags>
   </entry>
   <entry>
+    <title>JVM内存区域</title>
+    <url>/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</url>
+    <content><![CDATA[<h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png" class title="JVM内存区域知识图谱">
+
+</div>
+
+<a id="more"></a>
+
+<h2 id="总体介绍"><a href="#总体介绍" class="headerlink" title="总体介绍"></a>总体介绍</h2><ol>
+<li>JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区域【JAVA 堆、方法区】、直接内存。</li>
+<li>线程私有数据区域生命周期与线程相同, 依赖用户线程的启动/结束而创建/销毁，线程共享区域随虚拟机的启动/关闭而创建/销毁。</li>
+<li>直接内存并不是 JVM 运行时数据区的一部分, 但也会被频繁的使用（NIO，DirectByteBuffer）</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103001540.png" class>
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456777274.png" class>
+
+</div>
+
+<h2 id="程序计数器-线程私有"><a href="#程序计数器-线程私有" class="headerlink" title="程序计数器(线程私有)"></a>程序计数器(线程私有)</h2><p> 由于JAVA的多线程是通过线程轮流切换分配处理时间的方式实现，为了保证能够恢复到线程的正确位置，每个线程再启动的时候都会创建<strong>一块较小的内存区域</strong>，这块区域是<strong>线程隔离</strong>的，生命周期同线程绑定，线程结束，则释放该内存区域，可以看作是当前线程所执行的字节码的行号子令器。  </p>
+<p><strong>字节码子令器的工作模式是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</strong>  </p>
+<p>计数器的大小是一个字长，因此既可以持有一个本地指针，又可以持有一个returnAddress。计数器中记录的内容根据方法类型就行划分，如果当前方法是java方法，这个计数器记录的是正在执行的虚拟机字节码指令的地址（可以是一个本地指针，也可以是在方法字节码中相对于该方法起始指令的偏移量）；如果方法是Native方法，这个计数器记录的内容则为Undefined。  </p>
+<blockquote>
+<p>Each thread of a running program has its own pc register, or program counter, which is created when the thread is started. The pc register is one word in size, so it can hold both a native pointer and a returnValue. As a thread executes a Java method, the pc register contains the address of the current instruction being executed by the thread. An “address” can be a native pointer or an offset from the beginning of a method’s bytecodes. If a thread is executing a native method, the value of the pc register is undefined.</p>
+</blockquote>
+<p><strong>此内存区域是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。</strong></p>
+<h2 id="虚拟机栈-线程私有"><a href="#虚拟机栈-线程私有" class="headerlink" title="虚拟机栈(线程私有)"></a>虚拟机栈(线程私有)</h2><p>用于描述java方法执行的线程内存模型，每个方法被执行的时候线程都会在栈中创建一个栈帧（Stack Frame），用于存储局部变量表、操作数栈、动态链接、返回值等信息的数据集。生命周期与线程同步，每个方法从调用到执行完成就是一个栈帧在VM Stack中入栈出栈的过程。</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589457383204.png" class>
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512623885.png" class>
+
+</div>
+栈帧的数据结构：  
+
+<ol>
+<li>局部变量表：输入参数和输出参数以及方法内的变量；</li>
+<li>操作数栈：记录出栈和入栈的操作；</li>
+<li>栈帧数据：包括类文件、方法等等。</li>
+</ol>
+<h3 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h3><p>可以理解为使用素组管理内存的方式，从0开始；存放编译期可知的Java基本类型（8种）、对象引用、入参信息以及出参信息（returnAddress）。</p>
+<h4 id="slot"><a href="#slot" class="headerlink" title="slot"></a>slot</h4><p>局部变量表中存储空间以局部变量槽（Slot，32位）表示，局部变量表所需要的内存在编译阶段完成分配。64位的long和double使用两个slot。</p>
+<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">runClassMethod</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">long</span> l,<span class="keyword">float</span> f,<span class="keyword">double</span> d,Object o,<span class="keyword">byte</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">runInstanceMethod</span><span class="params">(<span class="keyword">char</span> c,<span class="keyword">double</span> d,<span class="keyword">short</span> s,<span class="keyword">boolean</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512957352.png" class>
+
+</div>
+
+<p>runInstanceMethod的局部变量区第一项是个reference（引用），它指定的就是对象本身的引用，也就是我们常用的this,但是在runClassMethod方法中，没这个引用，那是因为runClassMethod是个静态方法。</p>
+<h3 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h3><p>与局部变量表类似，组织成一个以字长为单位的数组。但是是使用出栈入栈的方式进行访问；操作数栈是临时数据的存储区域。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a= <span class="number">100</span>;</span><br><span class="line"><span class="keyword">int</span> b =<span class="number">5</span>;</span><br><span class="line"><span class="keyword">int</span> c = a+b;</span><br></pre></td></tr></table></figure>
+<p>对应的操作数栈变化为：  </p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589513290674.png" class>
+
+</div>
+
+<blockquote>
+<p>JVM实现里，有一种基于栈的指令集(Hotspot，oracle JVM)，还有一种基于寄存器的指令集(DalvikVM，安卓 JVM)</p>
+</blockquote>
+<h3 id="帧数据区"><a href="#帧数据区" class="headerlink" title="帧数据区"></a>帧数据区</h3><p>帧数据区存放了指向常量池的指针地址，当某些指令需要获得常量池的数据时，通过帧数据区中的指针地址来访问常量池的数据。此外，帧数据区还存放方法正常返回和异常终止需要的一些数据。</p>
+<h3 id="异常情况"><a href="#异常情况" class="headerlink" title="异常情况"></a>异常情况</h3><ol>
+<li>如果线程请求的栈深度大于虚拟机所允许的深度，将抛出StackOverflowError异常。</li>
+<li>如果VM栈可以动态扩展，在初始化新线程时没有足够内存创建栈则抛出OutOfMemoryError异常。</li>
+</ol>
+<h2 id="本地方法栈-线程私有"><a href="#本地方法栈-线程私有" class="headerlink" title="本地方法栈(线程私有)"></a>本地方法栈(线程私有)</h2><p>与Java Stack类似，主要区别是，Java Stack用于执行Java方法服务，本地方法栈用于native方法服务。</p>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>当调用一个native方法时，jvm使用c-linkage模型支持native调用，并且创建一个C栈，由于《Java虚拟机规范》没有对该实现有具体要求，所以不同厂商的实现方式不同，比如HotSpot VM 直接就把本地方法栈和虚拟机栈合二为一。它的具体做法是在本地方法栈中登记native方法，在执行引擎执行时加载Native Liberies。</p>
+<h2 id="Java堆（Heap-线程共享）-运行时数据区"><a href="#Java堆（Heap-线程共享）-运行时数据区" class="headerlink" title="Java堆（Heap-线程共享）-运行时数据区"></a>Java堆（Heap-线程共享）-运行时数据区</h2><ol>
+<li>线程共享区域</li>
+<li>存储对象和数组数据</li>
+<li>垃圾回收重点关注区域（内存最大的一块区域）</li>
+<li>从 GC 的角度还可以细分为:<strong>新生代(Eden区、From Survivor区和To Survivor区)和老年代。</strong></li>
+<li>从分配内存的角度看，所有线程共享的Java堆中可以划分出多个线程私有的分配缓冲区（Thread LocalAllocation Buffer，TLAB），以提升对象分配时的效率。</li>
+<li>通过-Xmx和-Xms设置内存大小，内存溢出则出现OOM错误，最小默认为物理内存的1/64，最大为物理内存的1/4</li>
+<li>默认当空余堆内存小于40%时，JVM会增大Heap到-Xmx指定的大小，可通过-XX:MinHeapFreeRation=来指定这个比列；当空余堆内存大于70%时，JVM会减小heap的大小到-Xms指定的大小，可通过XX:MaxHeapFreeRation=来指定这个比列</li>
+<li>建议-Xmx和-Xms设置一致</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103176740.png" class>
+
+</div>
+
+<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><ol>
+<li>存放新创建的对象</li>
+<li>占用堆的1/3空间</li>
+<li>回收机制：MinorGC</li>
+<li>划分Eden 区、ServivorFrom、ServivorTo 三个区。</li>
+<li>可通过-Xmn参数来指定新生代的大小，也可以通过-XX:SurvivorRation来调整Eden Space及Survivor Space的大小。</li>
+</ol>
+<h4 id="Eden-区"><a href="#Eden-区" class="headerlink" title="Eden 区"></a>Eden 区</h4><p>Java新对象的出生地（如果新创建的对象占用内存很大，则直接分配到老代）。当Eden区内存不够的时候就会触发MinorGC，对新生代区进行一次垃圾回收。</p>
+<h4 id="ServivorFrom"><a href="#ServivorFrom" class="headerlink" title="ServivorFrom"></a>ServivorFrom</h4><p>上一次 GC 的幸存者，作为这一次 GC 的被扫描者。</p>
+<h4 id="ServivorTo"><a href="#ServivorTo" class="headerlink" title="ServivorTo"></a>ServivorTo</h4><p>保留了一次 MinorGC 过程中的幸存者。</p>
+<h4 id="MinorGC-的过程（复制-gt-清空-gt-互换）"><a href="#MinorGC-的过程（复制-gt-清空-gt-互换）" class="headerlink" title="MinorGC 的过程（复制-&gt;清空-&gt;互换）"></a>MinorGC 的过程（复制-&gt;清空-&gt;互换）</h4><ol>
+<li>MinorGC 采用复制算法。</li>
+<li>把Eden和ServivorFrom区域中存活的对象复制到ServicorTo区域（如果有对象的年龄以及达到了老年的标准，则赋值到老年代区），同时把这些对象的年龄+1（如果 ServicorTo 不够位置了就放到老年区）；</li>
+<li>清空 Eden 和 ServicorFrom 中的对象；</li>
+<li>ServicorTo 和 ServicorFrom 互换，原 ServicorTo 成为下一次 GC的ServicorFrom 区。</li>
+</ol>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><ol>
+<li>存放生命周期较长的对象</li>
+<li>该区域对象比较稳定，MajorGC不会频繁执行</li>
+<li>进行 MajorGC 前一般都先进行了一次 MinorGC，使得有新生代的对象晋身入老年代，导致空间不够用时才触发。</li>
+<li>当无法找到足够大的连续空间分配给新创建的较大对象时也会提前触发一次 MajorGC 进行垃圾回收腾出空间。</li>
+<li>MajorGC 采用标记清除算法：首先扫描一次所有老年代，标记出存活的对象，然后回收没有标记的对象。MajorGC 的耗时比较长，因为要扫描再回收。MajorGC 会产生内存碎片，为了减少内存损耗，我们一般需要进行合并或者标记出来方便下次直接分配。当老年代也满了装不下的时候，就会抛出 OOM（Out of Memory）异常。</li>
+<li>新建对象直接进入该区域的条件：①.大对象，可通过启动参数设置-XX:PretenureSizeThreshold=1024(单位为字节，默认为0)来代表超过多大时就不在新生代分配，而是直接在老年代分配。②.大的数组对象，切数组中无引用外部对象。</li>
+<li>内存大小为-Xmx对应的值减去-Xmn对应的值</li>
+</ol>
+<h3 id="内存展现图例"><a href="#内存展现图例" class="headerlink" title="内存展现图例"></a>内存展现图例</h3><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589511590668.png" class>
+
+</div>
+
+<h2 id="方法区-永久代（Permanent-Generation，线程共享）"><a href="#方法区-永久代（Permanent-Generation，线程共享）" class="headerlink" title="方法区/永久代（Permanent Generation，线程共享）"></a>方法区/永久代（Permanent Generation，线程共享）</h2><ol>
+<li>线程共享</li>
+<li>存储被jvm加载的类型信息、常量、静态变量、即时编译期编译后的代码缓存数据</li>
+<li>HotSpot VM也会针对该区域进行垃圾回收，主要是针对常量池回收和类型卸载，收益比较低</li>
+<li>内存不足出现OOM</li>
+<li>JDK8之后使用元空间替代了永久代</li>
+<li>默认最小16MB，最大64MB，可以通过-XX:PermSize 和 -XX:MaxPermSize 参数限制方法区的大小</li>
+</ol>
+<h3 id="JAVA8-与元数据"><a href="#JAVA8-与元数据" class="headerlink" title="JAVA8 与元数据"></a>JAVA8 与元数据</h3><p>在Java8中，永久代已经被移除，被一个称为“元数据区”（元空间）的区域所取代。元空间的本质和永久代类似，元空间与永久代之间最大的区别在于：<strong>元空间并不在虚拟机中，而是使用本地内存</strong>。因此，默认情况下，元空间的大小仅受本地内存限制。<strong>类的元数据放入native memory, 字符串池和类的静态变量放入 java 堆中</strong>，这样可以加载多少类的元数据就不再由<br>MaxPermSize 控制, 而由系统的实际可用空间来控制。</p>
+<h3 id="运行时常量池（Runtime-Constant-Pool）"><a href="#运行时常量池（Runtime-Constant-Pool）" class="headerlink" title="运行时常量池（Runtime Constant Pool）"></a>运行时常量池（Runtime Constant Pool）</h3><ol>
+<li>Class文件中的常量池表</li>
+<li>存放编译期生成的各种<strong>字面量和符号引用</strong>，这部分内容将在类加载后存放到方法区的运行时常量池中。</li>
+<li>相较于Class文件常量池，运行时常量池更具动态性，在运行期间也可以将新的变量放入常量池中，而不是一定要在编译时确定的常量才能放入。最主要的运用便是String类的intern()方法。</li>
+<li>内存不足会出现OOM</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103068348.png" class>
+
+</div>
+
+<h2 id="直接内存（Direct-Memory）"><a href="#直接内存（Direct-Memory）" class="headerlink" title="直接内存（Direct Memory）"></a>直接内存（Direct Memory）</h2><ol>
+<li>不属于JVM运行时的数据区域</li>
+<li>内存不足会出现OOM错误</li>
+<li>JDK中NIO使用通道和缓冲区的IO方式，使用native函数库直接在堆外分配内存，然后通过一个存储在Java堆里面的DirectByteBuffer对象作为这块内存的引用进行操作</li>
+<li>受限于本机内存</li>
+</ol>
+<h2 id="执行引擎-Execution-Engine"><a href="#执行引擎-Execution-Engine" class="headerlink" title="执行引擎(Execution Engine)"></a>执行引擎(Execution Engine)</h2><p>执行引擎执行包在装载类的方法中的指令，也就是方法。执行引擎以指令为单位读取Java字节码。它就像一个CPU一样，一条一条地执行机器指令。每个字节码指令都由一个1字节的操作码和附加的操作数组成。执行引擎取得一个操作码，然后根据操作数来执行任务，完成后就继续执行下一条操作码。</p>
+<p>执行引擎必须把字节码转换成可以直接被JVM执行的语言。字节码可以通过以下两种方式转换成合适的语言：</p>
+<ol>
+<li>解释器： 一条一条地读取，解释并执行字节码执行，所以它可以很快地解释字节码，但是执行起来会比较慢。</li>
+<li>即时编译器：用来弥补解释器的缺点，执行引擎首先按照解释执行的方式来执行，然后在合适的时候，即时编译器把整段字节码编译成本地代码。然后，执行引擎就没有必要再去解释执行方法了，它可以直接通过本地代码去执行。执行本地代码比一条一条进行解释执行的速度快很多，编译后的代码可以执行的很快，因为本地代码是保存在缓存里的。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103093701.png" class>
+
+</div>
+
+<h2 id="场景内存溢出分析"><a href="#场景内存溢出分析" class="headerlink" title="场景内存溢出分析"></a>场景内存溢出分析</h2><h2 id="对象分析"><a href="#对象分析" class="headerlink" title="对象分析"></a>对象分析</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《深入理解Java虚拟机》</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>JVM</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>JVM内存区域</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JVM HotSpot虚拟机对象探秘</title>
     <url>/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/</url>
     <content><![CDATA[<h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><h2 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h2><p>在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、实例数据（Instance Data）和对齐填充（Padding）。</p>
@@ -358,180 +532,6 @@
       </tags>
   </entry>
   <entry>
-    <title>JVM内存区域</title>
-    <url>/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</url>
-    <content><![CDATA[<h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png" class title="JVM内存区域知识图谱">
-
-</div>
-
-<a id="more"></a>
-
-<h2 id="总体介绍"><a href="#总体介绍" class="headerlink" title="总体介绍"></a>总体介绍</h2><ol>
-<li>JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区域【JAVA 堆、方法区】、直接内存。</li>
-<li>线程私有数据区域生命周期与线程相同, 依赖用户线程的启动/结束而创建/销毁，线程共享区域随虚拟机的启动/关闭而创建/销毁。</li>
-<li>直接内存并不是 JVM 运行时数据区的一部分, 但也会被频繁的使用（NIO，DirectByteBuffer）</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103001540.png" class>
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456777274.png" class>
-
-</div>
-
-<h2 id="程序计数器-线程私有"><a href="#程序计数器-线程私有" class="headerlink" title="程序计数器(线程私有)"></a>程序计数器(线程私有)</h2><p> 由于JAVA的多线程是通过线程轮流切换分配处理时间的方式实现，为了保证能够恢复到线程的正确位置，每个线程再启动的时候都会创建<strong>一块较小的内存区域</strong>，这块区域是<strong>线程隔离</strong>的，生命周期同线程绑定，线程结束，则释放该内存区域，可以看作是当前线程所执行的字节码的行号子令器。  </p>
-<p><strong>字节码子令器的工作模式是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</strong>  </p>
-<p>计数器的大小是一个字长，因此既可以持有一个本地指针，又可以持有一个returnAddress。计数器中记录的内容根据方法类型就行划分，如果当前方法是java方法，这个计数器记录的是正在执行的虚拟机字节码指令的地址（可以是一个本地指针，也可以是在方法字节码中相对于该方法起始指令的偏移量）；如果方法是Native方法，这个计数器记录的内容则为Undefined。  </p>
-<blockquote>
-<p>Each thread of a running program has its own pc register, or program counter, which is created when the thread is started. The pc register is one word in size, so it can hold both a native pointer and a returnValue. As a thread executes a Java method, the pc register contains the address of the current instruction being executed by the thread. An “address” can be a native pointer or an offset from the beginning of a method’s bytecodes. If a thread is executing a native method, the value of the pc register is undefined.</p>
-</blockquote>
-<p><strong>此内存区域是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。</strong></p>
-<h2 id="虚拟机栈-线程私有"><a href="#虚拟机栈-线程私有" class="headerlink" title="虚拟机栈(线程私有)"></a>虚拟机栈(线程私有)</h2><p>用于描述java方法执行的线程内存模型，每个方法被执行的时候线程都会在栈中创建一个栈帧（Stack Frame），用于存储局部变量表、操作数栈、动态链接、返回值等信息的数据集。生命周期与线程同步，每个方法从调用到执行完成就是一个栈帧在VM Stack中入栈出栈的过程。</p>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589457383204.png" class>
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512623885.png" class>
-
-</div>
-栈帧的数据结构：  
-
-<ol>
-<li>局部变量表：输入参数和输出参数以及方法内的变量；</li>
-<li>操作数栈：记录出栈和入栈的操作；</li>
-<li>栈帧数据：包括类文件、方法等等。</li>
-</ol>
-<h3 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h3><p>可以理解为使用素组管理内存的方式，从0开始；存放编译期可知的Java基本类型（8种）、对象引用、入参信息以及出参信息（returnAddress）。</p>
-<h4 id="slot"><a href="#slot" class="headerlink" title="slot"></a>slot</h4><p>局部变量表中存储空间以局部变量槽（Slot，32位）表示，局部变量表所需要的内存在编译阶段完成分配。64位的long和double使用两个slot。</p>
-<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">runClassMethod</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">long</span> l,<span class="keyword">float</span> f,<span class="keyword">double</span> d,Object o,<span class="keyword">byte</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">runInstanceMethod</span><span class="params">(<span class="keyword">char</span> c,<span class="keyword">double</span> d,<span class="keyword">short</span> s,<span class="keyword">boolean</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512957352.png" class>
-
-</div>
-
-<p>runInstanceMethod的局部变量区第一项是个reference（引用），它指定的就是对象本身的引用，也就是我们常用的this,但是在runClassMethod方法中，没这个引用，那是因为runClassMethod是个静态方法。</p>
-<h3 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h3><p>与局部变量表类似，组织成一个以字长为单位的数组。但是是使用出栈入栈的方式进行访问；操作数栈是临时数据的存储区域。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a= <span class="number">100</span>;</span><br><span class="line"><span class="keyword">int</span> b =<span class="number">5</span>;</span><br><span class="line"><span class="keyword">int</span> c = a+b;</span><br></pre></td></tr></table></figure>
-<p>对应的操作数栈变化为：  </p>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589513290674.png" class>
-
-</div>
-
-<blockquote>
-<p>JVM实现里，有一种基于栈的指令集(Hotspot，oracle JVM)，还有一种基于寄存器的指令集(DalvikVM，安卓 JVM)</p>
-</blockquote>
-<h3 id="帧数据区"><a href="#帧数据区" class="headerlink" title="帧数据区"></a>帧数据区</h3><p>帧数据区存放了指向常量池的指针地址，当某些指令需要获得常量池的数据时，通过帧数据区中的指针地址来访问常量池的数据。此外，帧数据区还存放方法正常返回和异常终止需要的一些数据。</p>
-<h3 id="异常情况"><a href="#异常情况" class="headerlink" title="异常情况"></a>异常情况</h3><ol>
-<li>如果线程请求的栈深度大于虚拟机所允许的深度，将抛出StackOverflowError异常。</li>
-<li>如果VM栈可以动态扩展，在初始化新线程时没有足够内存创建栈则抛出OutOfMemoryError异常。</li>
-</ol>
-<h2 id="本地方法栈-线程私有"><a href="#本地方法栈-线程私有" class="headerlink" title="本地方法栈(线程私有)"></a>本地方法栈(线程私有)</h2><p>与Java Stack类似，主要区别是，Java Stack用于执行Java方法服务，本地方法栈用于native方法服务。</p>
-<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>当调用一个native方法时，jvm使用c-linkage模型支持native调用，并且创建一个C栈，由于《Java虚拟机规范》没有对该实现有具体要求，所以不同厂商的实现方式不同，比如HotSpot VM 直接就把本地方法栈和虚拟机栈合二为一。它的具体做法是在本地方法栈中登记native方法，在执行引擎执行时加载Native Liberies。</p>
-<h2 id="Java堆（Heap-线程共享）-运行时数据区"><a href="#Java堆（Heap-线程共享）-运行时数据区" class="headerlink" title="Java堆（Heap-线程共享）-运行时数据区"></a>Java堆（Heap-线程共享）-运行时数据区</h2><ol>
-<li>线程共享区域</li>
-<li>存储对象和数组数据</li>
-<li>垃圾回收重点关注区域（内存最大的一块区域）</li>
-<li>从 GC 的角度还可以细分为:<strong>新生代(Eden区、From Survivor区和To Survivor区)和老年代。</strong></li>
-<li>从分配内存的角度看，所有线程共享的Java堆中可以划分出多个线程私有的分配缓冲区（Thread LocalAllocation Buffer，TLAB），以提升对象分配时的效率。</li>
-<li>通过-Xmx和-Xms设置内存大小，内存溢出则出现OOM错误，最小默认为物理内存的1/64，最大为物理内存的1/4</li>
-<li>默认当空余堆内存小于40%时，JVM会增大Heap到-Xmx指定的大小，可通过-XX:MinHeapFreeRation=来指定这个比列；当空余堆内存大于70%时，JVM会减小heap的大小到-Xms指定的大小，可通过XX:MaxHeapFreeRation=来指定这个比列</li>
-<li>建议-Xmx和-Xms设置一致</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103176740.png" class>
-
-</div>
-
-<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><ol>
-<li>存放新创建的对象</li>
-<li>占用堆的1/3空间</li>
-<li>回收机制：MinorGC</li>
-<li>划分Eden 区、ServivorFrom、ServivorTo 三个区。</li>
-<li>可通过-Xmn参数来指定新生代的大小，也可以通过-XX:SurvivorRation来调整Eden Space及Survivor Space的大小。</li>
-</ol>
-<h4 id="Eden-区"><a href="#Eden-区" class="headerlink" title="Eden 区"></a>Eden 区</h4><p>Java新对象的出生地（如果新创建的对象占用内存很大，则直接分配到老代）。当Eden区内存不够的时候就会触发MinorGC，对新生代区进行一次垃圾回收。</p>
-<h4 id="ServivorFrom"><a href="#ServivorFrom" class="headerlink" title="ServivorFrom"></a>ServivorFrom</h4><p>上一次 GC 的幸存者，作为这一次 GC 的被扫描者。</p>
-<h4 id="ServivorTo"><a href="#ServivorTo" class="headerlink" title="ServivorTo"></a>ServivorTo</h4><p>保留了一次 MinorGC 过程中的幸存者。</p>
-<h4 id="MinorGC-的过程（复制-gt-清空-gt-互换）"><a href="#MinorGC-的过程（复制-gt-清空-gt-互换）" class="headerlink" title="MinorGC 的过程（复制-&gt;清空-&gt;互换）"></a>MinorGC 的过程（复制-&gt;清空-&gt;互换）</h4><ol>
-<li>MinorGC 采用复制算法。</li>
-<li>把Eden和ServivorFrom区域中存活的对象复制到ServicorTo区域（如果有对象的年龄以及达到了老年的标准，则赋值到老年代区），同时把这些对象的年龄+1（如果 ServicorTo 不够位置了就放到老年区）；</li>
-<li>清空 Eden 和 ServicorFrom 中的对象；</li>
-<li>ServicorTo 和 ServicorFrom 互换，原 ServicorTo 成为下一次 GC的ServicorFrom 区。</li>
-</ol>
-<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><ol>
-<li>存放生命周期较长的对象</li>
-<li>该区域对象比较稳定，MajorGC不会频繁执行</li>
-<li>进行 MajorGC 前一般都先进行了一次 MinorGC，使得有新生代的对象晋身入老年代，导致空间不够用时才触发。</li>
-<li>当无法找到足够大的连续空间分配给新创建的较大对象时也会提前触发一次 MajorGC 进行垃圾回收腾出空间。</li>
-<li>MajorGC 采用标记清除算法：首先扫描一次所有老年代，标记出存活的对象，然后回收没有标记的对象。MajorGC 的耗时比较长，因为要扫描再回收。MajorGC 会产生内存碎片，为了减少内存损耗，我们一般需要进行合并或者标记出来方便下次直接分配。当老年代也满了装不下的时候，就会抛出 OOM（Out of Memory）异常。</li>
-<li>新建对象直接进入该区域的条件：①.大对象，可通过启动参数设置-XX:PretenureSizeThreshold=1024(单位为字节，默认为0)来代表超过多大时就不在新生代分配，而是直接在老年代分配。②.大的数组对象，切数组中无引用外部对象。</li>
-<li>内存大小为-Xmx对应的值减去-Xmn对应的值</li>
-</ol>
-<h3 id="内存展现图例"><a href="#内存展现图例" class="headerlink" title="内存展现图例"></a>内存展现图例</h3><div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589511590668.png" class>
-
-</div>
-
-<h2 id="方法区-永久代（Permanent-Generation，线程共享）"><a href="#方法区-永久代（Permanent-Generation，线程共享）" class="headerlink" title="方法区/永久代（Permanent Generation，线程共享）"></a>方法区/永久代（Permanent Generation，线程共享）</h2><ol>
-<li>线程共享</li>
-<li>存储被jvm加载的类型信息、常量、静态变量、即时编译期编译后的代码缓存数据</li>
-<li>HotSpot VM也会针对该区域进行垃圾回收，主要是针对常量池回收和类型卸载，收益比较低</li>
-<li>内存不足出现OOM</li>
-<li>JDK8之后使用元空间替代了永久代</li>
-<li>默认最小16MB，最大64MB，可以通过-XX:PermSize 和 -XX:MaxPermSize 参数限制方法区的大小</li>
-</ol>
-<h3 id="JAVA8-与元数据"><a href="#JAVA8-与元数据" class="headerlink" title="JAVA8 与元数据"></a>JAVA8 与元数据</h3><p>在Java8中，永久代已经被移除，被一个称为“元数据区”（元空间）的区域所取代。元空间的本质和永久代类似，元空间与永久代之间最大的区别在于：<strong>元空间并不在虚拟机中，而是使用本地内存</strong>。因此，默认情况下，元空间的大小仅受本地内存限制。<strong>类的元数据放入native memory, 字符串池和类的静态变量放入 java 堆中</strong>，这样可以加载多少类的元数据就不再由<br>MaxPermSize 控制, 而由系统的实际可用空间来控制。</p>
-<h3 id="运行时常量池（Runtime-Constant-Pool）"><a href="#运行时常量池（Runtime-Constant-Pool）" class="headerlink" title="运行时常量池（Runtime Constant Pool）"></a>运行时常量池（Runtime Constant Pool）</h3><ol>
-<li>Class文件中的常量池表</li>
-<li>存放编译期生成的各种<strong>字面量和符号引用</strong>，这部分内容将在类加载后存放到方法区的运行时常量池中。</li>
-<li>相较于Class文件常量池，运行时常量池更具动态性，在运行期间也可以将新的变量放入常量池中，而不是一定要在编译时确定的常量才能放入。最主要的运用便是String类的intern()方法。</li>
-<li>内存不足会出现OOM</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103068348.png" class>
-
-</div>
-
-<h2 id="直接内存（Direct-Memory）"><a href="#直接内存（Direct-Memory）" class="headerlink" title="直接内存（Direct Memory）"></a>直接内存（Direct Memory）</h2><ol>
-<li>不属于JVM运行时的数据区域</li>
-<li>内存不足会出现OOM错误</li>
-<li>JDK中NIO使用通道和缓冲区的IO方式，使用native函数库直接在堆外分配内存，然后通过一个存储在Java堆里面的DirectByteBuffer对象作为这块内存的引用进行操作</li>
-<li>受限于本机内存</li>
-</ol>
-<h2 id="执行引擎-Execution-Engine"><a href="#执行引擎-Execution-Engine" class="headerlink" title="执行引擎(Execution Engine)"></a>执行引擎(Execution Engine)</h2><p>执行引擎执行包在装载类的方法中的指令，也就是方法。执行引擎以指令为单位读取Java字节码。它就像一个CPU一样，一条一条地执行机器指令。每个字节码指令都由一个1字节的操作码和附加的操作数组成。执行引擎取得一个操作码，然后根据操作数来执行任务，完成后就继续执行下一条操作码。</p>
-<p>执行引擎必须把字节码转换成可以直接被JVM执行的语言。字节码可以通过以下两种方式转换成合适的语言：</p>
-<ol>
-<li>解释器： 一条一条地读取，解释并执行字节码执行，所以它可以很快地解释字节码，但是执行起来会比较慢。</li>
-<li>即时编译器：用来弥补解释器的缺点，执行引擎首先按照解释执行的方式来执行，然后在合适的时候，即时编译器把整段字节码编译成本地代码。然后，执行引擎就没有必要再去解释执行方法了，它可以直接通过本地代码去执行。执行本地代码比一条一条进行解释执行的速度快很多，编译后的代码可以执行的很快，因为本地代码是保存在缓存里的。</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103093701.png" class>
-
-</div>
-
-<h2 id="场景内存溢出分析"><a href="#场景内存溢出分析" class="headerlink" title="场景内存溢出分析"></a>场景内存溢出分析</h2><h2 id="对象分析"><a href="#对象分析" class="headerlink" title="对象分析"></a>对象分析</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li>《深入理解Java虚拟机》</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>JVM</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>JVM内存区域</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Javap详解</title>
     <url>/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>javap 命令用于解析类文件。其输出取决于所用的选项。若没有使用选项，javap 将输出传递给它的类的 public 域及方法。javap 将其输出到标准输出设备上。</p>
@@ -594,6 +594,27 @@
         <tag>Java</tag>
         <tag>JDK</tag>
         <tag>JRE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java并发编程之LockSupport</title>
+    <url>/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BLockSupport/</url>
+    <content><![CDATA[<h2 id="类结构"><a href="#类结构" class="headerlink" title="类结构"></a>类结构</h2><div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BLockSupport/1590712088254.png" class title="LocalSupport类图">
+
+</div>
+
+<a id="more"></a>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+        <category>源码分析</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>LockSupport</tag>
+        <tag>线程控制</tag>
       </tags>
   </entry>
   <entry>
@@ -1878,207 +1899,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux命令之iostat</title>
-    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
-<li>-c： 显示CPU使用情况</li>
-<li>-d： 显示磁盘使用情况</li>
-<li>-N： 显示磁盘阵列(LVM) 信息</li>
-<li>-n： 显示NFS 使用情况</li>
-<li>-k： 以 KB 为单位显示</li>
-<li>-m： 以 M 为单位显示</li>
-<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
-<li>-V： 显示版本信息</li>
-<li>-x： 显示详细信息</li>
-<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
-
-</li>
-</ul>
-<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>第一行</td>
-<td>最上面指示系统版本、主机名和当前日期</td>
-</tr>
-<tr>
-<td>avg-cpu</td>
-<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
-</tr>
-<tr>
-<td>Device</td>
-<td>各磁盘设备的IO统计信息</td>
-</tr>
-</tbody></table>
-<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>%user</td>
-<td>CPU在用户态执行进程的时间百分比。</td>
-</tr>
-<tr>
-<td>%nice</td>
-<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%system</td>
-<td>CPU处在内核态执行进程的时间百分比</td>
-</tr>
-<tr>
-<td>%iowait</td>
-<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%steal</td>
-<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
-</tr>
-<tr>
-<td>%idle</td>
-<td>CPU空闲时间百分比</td>
-</tr>
-</tbody></table>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
-<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Device</td>
-<td>设备名称</td>
-</tr>
-<tr>
-<td>tps</td>
-<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
-</tr>
-<tr>
-<td>Blk_read/s</td>
-<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
-</tr>
-<tr>
-<td>Blk_wrtn/s</td>
-<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
-</tr>
-<tr>
-<td>Blk_read</td>
-<td>取样时间间隔内读扇区总数量</td>
-</tr>
-<tr>
-<td>Blk_wrtn</td>
-<td>取样时间间隔内写扇区总数量</td>
-</tr>
-</tbody></table>
-<ul>
-<li>iostat 1 5：间隔1秒，总共显示5次</li>
-<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
-<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
-<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
-<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
-<li>iostat -m：以M为单位显示所有信息</li>
-<li>iostat -d sda：显示指定硬盘信息</li>
-<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
-<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
-<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
-<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
-</ul>
-<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>rrqm/s</td>
-<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
-</tr>
-<tr>
-<td>wrqm/s</td>
-<td>每秒对该设备的写请求被合并次数</td>
-</tr>
-<tr>
-<td>r/s</td>
-<td>每秒完成的读 I/O 设备次数</td>
-</tr>
-<tr>
-<td>w/s</td>
-<td>每秒完成的写 I/O 设备次数</td>
-</tr>
-<tr>
-<td>rkB/s</td>
-<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
-</tr>
-<tr>
-<td>wkB/s</td>
-<td>每秒写K字节数。是 wsect/s 的一半</td>
-</tr>
-<tr>
-<td>avgrq-sz</td>
-<td>平均每次IO操作的数据量(扇区数为单位)</td>
-</tr>
-<tr>
-<td>avgqu-sz</td>
-<td>平均等待处理的IO请求队列长度</td>
-</tr>
-<tr>
-<td>rsec/s</td>
-<td>每秒读扇区数。即 rsect/s</td>
-</tr>
-<tr>
-<td>wsec/s</td>
-<td>每秒写扇区数。即 wsect/s</td>
-</tr>
-<tr>
-<td>r_await</td>
-<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>w_await</td>
-<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>await</td>
-<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
-</tr>
-<tr>
-<td>svctm</td>
-<td>平均每次IO请求的处理时间(毫秒为单位)</td>
-</tr>
-<tr>
-<td>%util</td>
-<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
-</blockquote>
-<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>iostat</tag>
-        <tag>磁盘分析</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux命令之TOP</title>
     <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/</url>
     <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@incloudos logs]<span class="comment"># top -h</span></span><br><span class="line">  procps-ng version 3.3.10</span><br><span class="line">Usage:</span><br><span class="line">  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]</span><br><span class="line">s – 改变画面更新频率</span><br><span class="line">l – 关闭或开启第一部分第一行 top 信息的表示</span><br><span class="line">t – 关闭或开启第一部分第二行 Tasks 和第三行 Cpus 信息的表示</span><br><span class="line">m – 关闭或开启第一部分第四行 Mem 和 第五行 Swap 信息的表示</span><br><span class="line">N – 以 PID 的大小的顺序排列表示进程列表</span><br><span class="line">P – 以 CPU 占用率大小的顺序排列进程列表</span><br><span class="line">M – 以内存占用率大小的顺序排列进程列表</span><br><span class="line">h – 显示帮助</span><br><span class="line">n – 设置在进程列表所显示进程的数量</span><br><span class="line">q – 退出 top</span><br><span class="line">s – 改变画面更新周期</span><br><span class="line">请在top里面按下E，注意是大写。你会发现内存那一行的最左侧，</span><br><span class="line">也就是Mem前面，会有Kib、MiB、GiB等单位变化，</span><br><span class="line">但是数字后面不会直接写明单位。</span><br></pre></td></tr></table></figure>
@@ -2285,6 +2105,207 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>Linux</tag>
         <tag>TOP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux命令之iostat</title>
+    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
+<li>-c： 显示CPU使用情况</li>
+<li>-d： 显示磁盘使用情况</li>
+<li>-N： 显示磁盘阵列(LVM) 信息</li>
+<li>-n： 显示NFS 使用情况</li>
+<li>-k： 以 KB 为单位显示</li>
+<li>-m： 以 M 为单位显示</li>
+<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
+<li>-V： 显示版本信息</li>
+<li>-x： 显示详细信息</li>
+<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
+
+</li>
+</ul>
+<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第一行</td>
+<td>最上面指示系统版本、主机名和当前日期</td>
+</tr>
+<tr>
+<td>avg-cpu</td>
+<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
+</tr>
+<tr>
+<td>Device</td>
+<td>各磁盘设备的IO统计信息</td>
+</tr>
+</tbody></table>
+<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%user</td>
+<td>CPU在用户态执行进程的时间百分比。</td>
+</tr>
+<tr>
+<td>%nice</td>
+<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%system</td>
+<td>CPU处在内核态执行进程的时间百分比</td>
+</tr>
+<tr>
+<td>%iowait</td>
+<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%steal</td>
+<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
+</tr>
+<tr>
+<td>%idle</td>
+<td>CPU空闲时间百分比</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
+<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Device</td>
+<td>设备名称</td>
+</tr>
+<tr>
+<td>tps</td>
+<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
+</tr>
+<tr>
+<td>Blk_read/s</td>
+<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
+</tr>
+<tr>
+<td>Blk_wrtn/s</td>
+<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
+</tr>
+<tr>
+<td>Blk_read</td>
+<td>取样时间间隔内读扇区总数量</td>
+</tr>
+<tr>
+<td>Blk_wrtn</td>
+<td>取样时间间隔内写扇区总数量</td>
+</tr>
+</tbody></table>
+<ul>
+<li>iostat 1 5：间隔1秒，总共显示5次</li>
+<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
+<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
+<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
+<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
+<li>iostat -m：以M为单位显示所有信息</li>
+<li>iostat -d sda：显示指定硬盘信息</li>
+<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
+<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
+<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
+<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
+</ul>
+<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rrqm/s</td>
+<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
+</tr>
+<tr>
+<td>wrqm/s</td>
+<td>每秒对该设备的写请求被合并次数</td>
+</tr>
+<tr>
+<td>r/s</td>
+<td>每秒完成的读 I/O 设备次数</td>
+</tr>
+<tr>
+<td>w/s</td>
+<td>每秒完成的写 I/O 设备次数</td>
+</tr>
+<tr>
+<td>rkB/s</td>
+<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
+</tr>
+<tr>
+<td>wkB/s</td>
+<td>每秒写K字节数。是 wsect/s 的一半</td>
+</tr>
+<tr>
+<td>avgrq-sz</td>
+<td>平均每次IO操作的数据量(扇区数为单位)</td>
+</tr>
+<tr>
+<td>avgqu-sz</td>
+<td>平均等待处理的IO请求队列长度</td>
+</tr>
+<tr>
+<td>rsec/s</td>
+<td>每秒读扇区数。即 rsect/s</td>
+</tr>
+<tr>
+<td>wsec/s</td>
+<td>每秒写扇区数。即 wsect/s</td>
+</tr>
+<tr>
+<td>r_await</td>
+<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>w_await</td>
+<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>await</td>
+<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
+</tr>
+<tr>
+<td>svctm</td>
+<td>平均每次IO请求的处理时间(毫秒为单位)</td>
+</tr>
+<tr>
+<td>%util</td>
+<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
+</blockquote>
+<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>iostat</tag>
+        <tag>磁盘分析</tag>
       </tags>
   </entry>
   <entry>
@@ -2689,6 +2710,68 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>MySQL之日志-错误日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在mysql数据库中，错误日志功能是默认开启的。并且，错误日志无法被禁止。默认情况下，错误日志存储在mysql数据库的数据文件中。错误日志文件通常的名称为hostname.err。其中，hostname表示服务器主机名。<br>错误日志信息可以自己进行配置的，错误日志所记录的信息是可以通过log-error和log-warnings来定义的，其中log-err是定义是否启用错误日志的功能和错误日志的存储位置，log-warnings是定义是否将警告信息也定义至错误日志中。默认情况下错误日志大概记录以下几个方面的信息：服务器启动和关闭过程中的信息（未必是错误信息，如mysql如何启动InnoDB的表空间文件的、如何初始化自己的存储引擎的等等）、服务器运行过程中的错误信息、事件调度器运行一个事件时产生的信息、在从服务器上启动服务器进程时产生的信息。</p>
+<a id="more"></a>
+
+<h2 id="记录内容"><a href="#记录内容" class="headerlink" title="记录内容"></a>记录内容</h2><p>默认情况下错误日志也记录以下几个方面的消息：  </p>
+<ol>
+<li>服务器启动和关闭过程中的信息：未必是错误信息，比如mysql是如何去初始化存储引擎的过程记录在错误日志里等等</li>
+<li>服务器运行过程中的错误信息：如sock文件找不到，无法加载mysql数据库的数据文件，如果忘记初始化mysql或data dir路径找不到，或权限不正确等，都会记录在此。error 日志并不会记录所有的错误信息，只有MySQL服务实例运行过程中发声的关键错误（critical）才会被记录下来</li>
+<li>事件调度器运行一个事件时产生的信息：一旦mysql调度启动一个计划任务的时候，它也会将相关信息记录在错误日志中</li>
+<li>在从服务器上启动从服务器进程时产生的信息：在复制环境下，从服务器进程的信息也会被记录进错误日</li>
+</ol>
+<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><p>log_error可以直接定义为文件路径，也可以为ON|OFF；log_warings只能使用1|0来定义开关启动。<br>log_error = on|文件路径 是否启用错误日志,on表示开启,文件路径表示指定自定义日志路径<br>log_warnings = 1|0 是否记录warnings信息到错误日志中  </p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;log_error&#x27;</span>\G;</span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="number">1.</span> <span class="type">row</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">Variable_name: log_error</span><br><span class="line">        <span class="keyword">Value</span>: <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysqld<span class="operator">-</span>error.log</span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<p>更改错误日志位置可以使用log_error来设置形式如下：</p>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/1589443071013.png" class title="错误日志">
+
+</div>
+
+<p>log_error=DIR/[filename]</p>
+<blockquote>
+<p>说明：其中，DIR参数指定错误日志的路径filename参数是错误日志的名称，没有指定该参数时默认为主机名。重启mysql服务器即可生效。</p>
+</blockquote>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">58.691227</span>Z <span class="number">0</span> [Warning] <span class="type">TIMESTAMP</span> <span class="keyword">with</span> implicit <span class="keyword">DEFAULT</span> <span class="keyword">value</span> <span class="keyword">is</span> deprecated. Please use <span class="comment">--explicit_defaults_for_timestamp server option (see documentation for more details).</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">58.700431</span>Z <span class="number">0</span> [Warning] You need <span class="keyword">to</span> use <span class="comment">--log-bin to make --log-slave-updates work.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">59.357341</span>Z <span class="number">0</span> [Warning] InnoDB: <span class="keyword">New</span> log files created, LSN<span class="operator">=</span><span class="number">45790</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">59.462957</span>Z <span class="number">0</span> [Warning] InnoDB: Creating <span class="keyword">foreign</span> <span class="keyword">key</span> <span class="keyword">constraint</span> <span class="keyword">system</span> tables.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410778</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410831</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410860</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;db&#x27;</span> entry <span class="string">&#x27;sys mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410881</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;proxies_priv&#x27;</span> entry <span class="string">&#x27;@ root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410940</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;tables_priv&#x27;</span> entry <span class="string">&#x27;sys_config mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.222131</span>Z <span class="number">0</span> [Warning] Changed limits: max_open_files: <span class="number">5000</span> (requested <span class="number">10000</span>)</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.222594</span>Z <span class="number">0</span> [Warning] Changed limits: table_open_cache: <span class="number">1495</span> (requested <span class="number">2000</span>)</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.429941</span>Z <span class="number">0</span> [Warning] <span class="type">TIMESTAMP</span> <span class="keyword">with</span> implicit <span class="keyword">DEFAULT</span> <span class="keyword">value</span> <span class="keyword">is</span> deprecated. Please use <span class="comment">--explicit_defaults_for_timestamp server option (see documentation for more details).</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.431994</span>Z <span class="number">0</span> [Note] <span class="operator">/</span>usr<span class="operator">/</span>sbin<span class="operator">/</span>mysqld (mysqld <span class="number">5.7</span><span class="number">.17</span><span class="operator">-</span>log) starting <span class="keyword">as</span> process <span class="number">2255</span> ...</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.435711</span>Z <span class="number">0</span> [Warning] You need <span class="keyword">to</span> use <span class="comment">--log-bin to make --log-slave-updates work.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438402</span>Z <span class="number">0</span> [Note] InnoDB: PUNCH HOLE support available</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438441</span>Z <span class="number">0</span> [Note] InnoDB: Mutexes <span class="keyword">and</span> rw_locks use GCC <span class="keyword">atomic</span> builtins#Mutexes（互斥量）和rw_locks（行级锁）是GCC编译的是InnoDB内置的。</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438448</span>Z <span class="number">0</span> [Note] InnoDB: Uses event mutexes</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438454</span>Z <span class="number">0</span> [Note] InnoDB: GCC builtin __atomic_thread_fence() <span class="keyword">is</span> used <span class="keyword">for</span> memory barrier</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438460</span>Z <span class="number">0</span> [Note] InnoDB: Compressed tables use zlib <span class="number">1.2</span><span class="number">.3</span>#默认压缩工具是zlib</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438469</span>Z <span class="number">0</span> [Note] InnoDB: <span class="keyword">Using</span> Linux native AIO</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.440212</span>Z <span class="number">0</span> [Note] InnoDB: Number <span class="keyword">of</span> pools: <span class="number">1</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.440425</span>Z <span class="number">0</span> [Note] InnoDB: <span class="keyword">Using</span> CPU crc32 instructions</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.443133</span>Z <span class="number">0</span> [Note] InnoDB: Initializing buffer pool, total size <span class="operator">=</span> <span class="number">128</span>M, instances <span class="operator">=</span> <span class="number">1</span>, chunk size <span class="operator">=</span> <span class="number">128</span>M#InnoDB引擎的缓冲池（buffer pool）的值大小</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.457773</span>Z <span class="number">0</span> [Note] InnoDB: Completed initialization <span class="keyword">of</span> buffer pool</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.461218</span>Z <span class="number">0</span> [Note] InnoDB: If the mysqld execution <span class="keyword">user</span> <span class="keyword">is</span> authorized, page cleaner thread priority can be changed. See the man page <span class="keyword">of</span> setpriority().</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.474457</span>Z <span class="number">0</span> [Note] InnoDB: Highest supported file format <span class="keyword">is</span> Barracuda.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.490641</span>Z <span class="number">0</span> [Note] InnoDB: Creating shared tablespace <span class="keyword">for</span> temporary tables</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.490762</span>Z <span class="number">0</span> [Note] InnoDB: Setting file <span class="string">&#x27;./ibtmp1&#x27;</span> size <span class="keyword">to</span> <span class="number">12</span> MB. Physically writing the file <span class="keyword">full</span>; Please wait ...</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.548037</span>Z <span class="number">0</span> [Note] InnoDB: File <span class="string">&#x27;./ibtmp1&#x27;</span> size <span class="keyword">is</span> now <span class="number">12</span> MB.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.549679</span>Z <span class="number">0</span> [Note] InnoDB: <span class="number">96</span> redo <span class="keyword">rollback</span> segment(s) found. <span class="number">96</span> redo <span class="keyword">rollback</span> segment(s) <span class="keyword">are</span> active.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.549703</span>Z <span class="number">0</span> [Note] InnoDB: <span class="number">32</span> non<span class="operator">-</span>redo <span class="keyword">rollback</span> segment(s) <span class="keyword">are</span> active.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.551022</span>Z <span class="number">0</span> [Note] InnoDB: Waiting <span class="keyword">for</span> purge <span class="keyword">to</span> <span class="keyword">start</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.601254</span>Z <span class="number">0</span> [Note] InnoDB: <span class="number">5.7</span><span class="number">.17</span> started; log sequence number <span class="number">2534561</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.602149</span>Z <span class="number">0</span> [Note] InnoDB: Loading buffer pool(s) <span class="keyword">from</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>ib_buffer_pool</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.602726</span>Z <span class="number">0</span> [Note] Plugin <span class="string">&#x27;FEDERATED&#x27;</span> <span class="keyword">is</span> disabled.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.604540</span>Z <span class="number">0</span> [Note] InnoDB: Buffer pool(s) load completed <span class="keyword">at</span> <span class="number">171210</span> <span class="number">15</span>:<span class="number">28</span>:<span class="number">04</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.610872</span>Z <span class="number">0</span> [Warning] Failed <span class="keyword">to</span> <span class="keyword">set</span> up SSL because <span class="keyword">of</span> the following SSL library error: SSL context <span class="keyword">is</span> <span class="keyword">not</span> usable <span class="keyword">without</span> certificate <span class="keyword">and</span> private key</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.610909</span>Z <span class="number">0</span> [Note] Server hostname (bind<span class="operator">-</span>address): <span class="string">&#x27;*&#x27;</span>; port: <span class="number">3306</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.610980</span>Z <span class="number">0</span> [Note] IPv6 <span class="keyword">is</span> available.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.611001</span>Z <span class="number">0</span> [Note]   <span class="operator">-</span> <span class="string">&#x27;::&#x27;</span> resolves <span class="keyword">to</span> <span class="string">&#x27;::&#x27;</span>;#主机名解析</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.611025</span>Z <span class="number">0</span> [Note] Server socket created <span class="keyword">on</span> IP: <span class="string">&#x27;::&#x27;</span>.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623503</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623583</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623624</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;db&#x27;</span> entry <span class="string">&#x27;sys mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623645</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;proxies_priv&#x27;</span> entry <span class="string">&#x27;@ root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.625694</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;tables_priv&#x27;</span> entry <span class="string">&#x27;sys_config mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637286</span>Z <span class="number">0</span> [Note] Event Scheduler: Loaded <span class="number">0</span> events#事件调度器没有任何事件，因为没有装载。</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637536</span>Z <span class="number">1</span> [Note] Event Scheduler: scheduler thread started <span class="keyword">with</span> id <span class="number">1</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637618</span>Z <span class="number">0</span> [Note] Executing <span class="string">&#x27;SELECT * FROM INFORMATION_SCHEMA.TABLES;&#x27;</span> <span class="keyword">to</span> <span class="keyword">get</span> a list <span class="keyword">of</span> tables <span class="keyword">using</span> the deprecated <span class="keyword">partition</span> engine. You may use the startup option <span class="string">&#x27;--disable-partition-engine-check&#x27;</span> <span class="keyword">to</span> <span class="keyword">skip</span> this check.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637635</span>Z <span class="number">0</span> [Note] Beginning <span class="keyword">of</span> list <span class="keyword">of</span> non<span class="operator">-</span>natively partitioned tables</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.654416</span>Z <span class="number">0</span> [Note] <span class="keyword">End</span> <span class="keyword">of</span> list <span class="keyword">of</span> non<span class="operator">-</span>natively partitioned tables</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.654591</span>Z <span class="number">0</span> [Note] <span class="operator">/</span>usr<span class="operator">/</span>sbin<span class="operator">/</span>mysqld: ready <span class="keyword">for</span> connections.#mysql启动完成等待客户端的请求。</span><br><span class="line">Version: <span class="string">&#x27;5.7.17-log&#x27;</span>  socket: <span class="string">&#x27;/var/lib/mysql/mysql.sock&#x27;</span>  port: <span class="number">3306</span>  MySQL Community Server (GPL)#创建一个本地sock用于本地连接。</span><br></pre></td></tr></table></figure>
+<h2 id="删除日志"><a href="#删除日志" class="headerlink" title="删除日志"></a>删除日志</h2><p>在mysql5.5.7之前：数据库管理员可以删除很长时间之前的错误日志，以保证mysql服务器上的硬盘空间。mysql数据库中，可以使用mysqladmin命令开启新的错误日志。mysqladmin命令的语法如下：mysqladmin –u root –pflush-logs也可以使用登录mysql数据库中使用FLUSHLOGS语句来开启新的错误日志。<br>在mysql5.5.7之后：服务器将关闭此项功能。只能使用重命名原来的错误日志文件，手动冲洗日志创建一个新的：方式如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv host_name.err host_name.err-old</span><br><span class="line">mysqladmin flush-logs</span><br><span class="line">mv host_name.err-old backup-directory</span><br><span class="line"></span><br><span class="line">mysqladmin -uroot -p flush-logs</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/1589443206690.png" class>
+
+</div>
+
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/1589443228792.png" class>
+
+</div>
+
+<p>On Windows, use rename rather than mv.</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>错误日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL之索引</title>
     <url>/2021/02/05/MySQL%E4%B9%8B%E7%B4%A2%E5%BC%95/</url>
     <content><![CDATA[<ol>
@@ -2797,68 +2880,6 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>MySQL</tag>
         <tag>索引</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL之日志-错误日志</title>
-    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/</url>
-    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在mysql数据库中，错误日志功能是默认开启的。并且，错误日志无法被禁止。默认情况下，错误日志存储在mysql数据库的数据文件中。错误日志文件通常的名称为hostname.err。其中，hostname表示服务器主机名。<br>错误日志信息可以自己进行配置的，错误日志所记录的信息是可以通过log-error和log-warnings来定义的，其中log-err是定义是否启用错误日志的功能和错误日志的存储位置，log-warnings是定义是否将警告信息也定义至错误日志中。默认情况下错误日志大概记录以下几个方面的信息：服务器启动和关闭过程中的信息（未必是错误信息，如mysql如何启动InnoDB的表空间文件的、如何初始化自己的存储引擎的等等）、服务器运行过程中的错误信息、事件调度器运行一个事件时产生的信息、在从服务器上启动服务器进程时产生的信息。</p>
-<a id="more"></a>
-
-<h2 id="记录内容"><a href="#记录内容" class="headerlink" title="记录内容"></a>记录内容</h2><p>默认情况下错误日志也记录以下几个方面的消息：  </p>
-<ol>
-<li>服务器启动和关闭过程中的信息：未必是错误信息，比如mysql是如何去初始化存储引擎的过程记录在错误日志里等等</li>
-<li>服务器运行过程中的错误信息：如sock文件找不到，无法加载mysql数据库的数据文件，如果忘记初始化mysql或data dir路径找不到，或权限不正确等，都会记录在此。error 日志并不会记录所有的错误信息，只有MySQL服务实例运行过程中发声的关键错误（critical）才会被记录下来</li>
-<li>事件调度器运行一个事件时产生的信息：一旦mysql调度启动一个计划任务的时候，它也会将相关信息记录在错误日志中</li>
-<li>在从服务器上启动从服务器进程时产生的信息：在复制环境下，从服务器进程的信息也会被记录进错误日</li>
-</ol>
-<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><p>log_error可以直接定义为文件路径，也可以为ON|OFF；log_warings只能使用1|0来定义开关启动。<br>log_error = on|文件路径 是否启用错误日志,on表示开启,文件路径表示指定自定义日志路径<br>log_warnings = 1|0 是否记录warnings信息到错误日志中  </p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;log_error&#x27;</span>\G;</span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="number">1.</span> <span class="type">row</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">Variable_name: log_error</span><br><span class="line">        <span class="keyword">Value</span>: <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>mysqld<span class="operator">-</span>error.log</span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-<p>更改错误日志位置可以使用log_error来设置形式如下：</p>
-<div align="center">
-
-<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/1589443071013.png" class title="错误日志">
-
-</div>
-
-<p>log_error=DIR/[filename]</p>
-<blockquote>
-<p>说明：其中，DIR参数指定错误日志的路径filename参数是错误日志的名称，没有指定该参数时默认为主机名。重启mysql服务器即可生效。</p>
-</blockquote>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">58.691227</span>Z <span class="number">0</span> [Warning] <span class="type">TIMESTAMP</span> <span class="keyword">with</span> implicit <span class="keyword">DEFAULT</span> <span class="keyword">value</span> <span class="keyword">is</span> deprecated. Please use <span class="comment">--explicit_defaults_for_timestamp server option (see documentation for more details).</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">58.700431</span>Z <span class="number">0</span> [Warning] You need <span class="keyword">to</span> use <span class="comment">--log-bin to make --log-slave-updates work.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">59.357341</span>Z <span class="number">0</span> [Warning] InnoDB: <span class="keyword">New</span> log files created, LSN<span class="operator">=</span><span class="number">45790</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">27</span>:<span class="number">59.462957</span>Z <span class="number">0</span> [Warning] InnoDB: Creating <span class="keyword">foreign</span> <span class="keyword">key</span> <span class="keyword">constraint</span> <span class="keyword">system</span> tables.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410778</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410831</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410860</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;db&#x27;</span> entry <span class="string">&#x27;sys mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410881</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;proxies_priv&#x27;</span> entry <span class="string">&#x27;@ root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">00.410940</span>Z <span class="number">1</span> [Warning] <span class="string">&#x27;tables_priv&#x27;</span> entry <span class="string">&#x27;sys_config mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.222131</span>Z <span class="number">0</span> [Warning] Changed limits: max_open_files: <span class="number">5000</span> (requested <span class="number">10000</span>)</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.222594</span>Z <span class="number">0</span> [Warning] Changed limits: table_open_cache: <span class="number">1495</span> (requested <span class="number">2000</span>)</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.429941</span>Z <span class="number">0</span> [Warning] <span class="type">TIMESTAMP</span> <span class="keyword">with</span> implicit <span class="keyword">DEFAULT</span> <span class="keyword">value</span> <span class="keyword">is</span> deprecated. Please use <span class="comment">--explicit_defaults_for_timestamp server option (see documentation for more details).</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.431994</span>Z <span class="number">0</span> [Note] <span class="operator">/</span>usr<span class="operator">/</span>sbin<span class="operator">/</span>mysqld (mysqld <span class="number">5.7</span><span class="number">.17</span><span class="operator">-</span>log) starting <span class="keyword">as</span> process <span class="number">2255</span> ...</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.435711</span>Z <span class="number">0</span> [Warning] You need <span class="keyword">to</span> use <span class="comment">--log-bin to make --log-slave-updates work.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438402</span>Z <span class="number">0</span> [Note] InnoDB: PUNCH HOLE support available</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438441</span>Z <span class="number">0</span> [Note] InnoDB: Mutexes <span class="keyword">and</span> rw_locks use GCC <span class="keyword">atomic</span> builtins#Mutexes（互斥量）和rw_locks（行级锁）是GCC编译的是InnoDB内置的。</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438448</span>Z <span class="number">0</span> [Note] InnoDB: Uses event mutexes</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438454</span>Z <span class="number">0</span> [Note] InnoDB: GCC builtin __atomic_thread_fence() <span class="keyword">is</span> used <span class="keyword">for</span> memory barrier</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438460</span>Z <span class="number">0</span> [Note] InnoDB: Compressed tables use zlib <span class="number">1.2</span><span class="number">.3</span>#默认压缩工具是zlib</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.438469</span>Z <span class="number">0</span> [Note] InnoDB: <span class="keyword">Using</span> Linux native AIO</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.440212</span>Z <span class="number">0</span> [Note] InnoDB: Number <span class="keyword">of</span> pools: <span class="number">1</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.440425</span>Z <span class="number">0</span> [Note] InnoDB: <span class="keyword">Using</span> CPU crc32 instructions</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.443133</span>Z <span class="number">0</span> [Note] InnoDB: Initializing buffer pool, total size <span class="operator">=</span> <span class="number">128</span>M, instances <span class="operator">=</span> <span class="number">1</span>, chunk size <span class="operator">=</span> <span class="number">128</span>M#InnoDB引擎的缓冲池（buffer pool）的值大小</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.457773</span>Z <span class="number">0</span> [Note] InnoDB: Completed initialization <span class="keyword">of</span> buffer pool</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.461218</span>Z <span class="number">0</span> [Note] InnoDB: If the mysqld execution <span class="keyword">user</span> <span class="keyword">is</span> authorized, page cleaner thread priority can be changed. See the man page <span class="keyword">of</span> setpriority().</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.474457</span>Z <span class="number">0</span> [Note] InnoDB: Highest supported file format <span class="keyword">is</span> Barracuda.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.490641</span>Z <span class="number">0</span> [Note] InnoDB: Creating shared tablespace <span class="keyword">for</span> temporary tables</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.490762</span>Z <span class="number">0</span> [Note] InnoDB: Setting file <span class="string">&#x27;./ibtmp1&#x27;</span> size <span class="keyword">to</span> <span class="number">12</span> MB. Physically writing the file <span class="keyword">full</span>; Please wait ...</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.548037</span>Z <span class="number">0</span> [Note] InnoDB: File <span class="string">&#x27;./ibtmp1&#x27;</span> size <span class="keyword">is</span> now <span class="number">12</span> MB.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.549679</span>Z <span class="number">0</span> [Note] InnoDB: <span class="number">96</span> redo <span class="keyword">rollback</span> segment(s) found. <span class="number">96</span> redo <span class="keyword">rollback</span> segment(s) <span class="keyword">are</span> active.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.549703</span>Z <span class="number">0</span> [Note] InnoDB: <span class="number">32</span> non<span class="operator">-</span>redo <span class="keyword">rollback</span> segment(s) <span class="keyword">are</span> active.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.551022</span>Z <span class="number">0</span> [Note] InnoDB: Waiting <span class="keyword">for</span> purge <span class="keyword">to</span> <span class="keyword">start</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.601254</span>Z <span class="number">0</span> [Note] InnoDB: <span class="number">5.7</span><span class="number">.17</span> started; log sequence number <span class="number">2534561</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.602149</span>Z <span class="number">0</span> [Note] InnoDB: Loading buffer pool(s) <span class="keyword">from</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>ib_buffer_pool</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.602726</span>Z <span class="number">0</span> [Note] Plugin <span class="string">&#x27;FEDERATED&#x27;</span> <span class="keyword">is</span> disabled.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.604540</span>Z <span class="number">0</span> [Note] InnoDB: Buffer pool(s) load completed <span class="keyword">at</span> <span class="number">171210</span> <span class="number">15</span>:<span class="number">28</span>:<span class="number">04</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.610872</span>Z <span class="number">0</span> [Warning] Failed <span class="keyword">to</span> <span class="keyword">set</span> up SSL because <span class="keyword">of</span> the following SSL library error: SSL context <span class="keyword">is</span> <span class="keyword">not</span> usable <span class="keyword">without</span> certificate <span class="keyword">and</span> private key</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.610909</span>Z <span class="number">0</span> [Note] Server hostname (bind<span class="operator">-</span>address): <span class="string">&#x27;*&#x27;</span>; port: <span class="number">3306</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.610980</span>Z <span class="number">0</span> [Note] IPv6 <span class="keyword">is</span> available.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.611001</span>Z <span class="number">0</span> [Note]   <span class="operator">-</span> <span class="string">&#x27;::&#x27;</span> resolves <span class="keyword">to</span> <span class="string">&#x27;::&#x27;</span>;#主机名解析</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.611025</span>Z <span class="number">0</span> [Note] Server socket created <span class="keyword">on</span> IP: <span class="string">&#x27;::&#x27;</span>.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623503</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623583</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;user&#x27;</span> entry <span class="string">&#x27;mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623624</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;db&#x27;</span> entry <span class="string">&#x27;sys mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.623645</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;proxies_priv&#x27;</span> entry <span class="string">&#x27;@ root@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.625694</span>Z <span class="number">0</span> [Warning] <span class="string">&#x27;tables_priv&#x27;</span> entry <span class="string">&#x27;sys_config mysql.sys@localhost&#x27;</span> ignored <span class="keyword">in</span> <span class="comment">--skip-name-resolve mode.</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637286</span>Z <span class="number">0</span> [Note] Event Scheduler: Loaded <span class="number">0</span> events#事件调度器没有任何事件，因为没有装载。</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637536</span>Z <span class="number">1</span> [Note] Event Scheduler: scheduler thread started <span class="keyword">with</span> id <span class="number">1</span></span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637618</span>Z <span class="number">0</span> [Note] Executing <span class="string">&#x27;SELECT * FROM INFORMATION_SCHEMA.TABLES;&#x27;</span> <span class="keyword">to</span> <span class="keyword">get</span> a list <span class="keyword">of</span> tables <span class="keyword">using</span> the deprecated <span class="keyword">partition</span> engine. You may use the startup option <span class="string">&#x27;--disable-partition-engine-check&#x27;</span> <span class="keyword">to</span> <span class="keyword">skip</span> this check.</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.637635</span>Z <span class="number">0</span> [Note] Beginning <span class="keyword">of</span> list <span class="keyword">of</span> non<span class="operator">-</span>natively partitioned tables</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.654416</span>Z <span class="number">0</span> [Note] <span class="keyword">End</span> <span class="keyword">of</span> list <span class="keyword">of</span> non<span class="operator">-</span>natively partitioned tables</span><br><span class="line"><span class="number">2017</span><span class="number">-12</span><span class="number">-10</span>T07:<span class="number">28</span>:<span class="number">04.654591</span>Z <span class="number">0</span> [Note] <span class="operator">/</span>usr<span class="operator">/</span>sbin<span class="operator">/</span>mysqld: ready <span class="keyword">for</span> connections.#mysql启动完成等待客户端的请求。</span><br><span class="line">Version: <span class="string">&#x27;5.7.17-log&#x27;</span>  socket: <span class="string">&#x27;/var/lib/mysql/mysql.sock&#x27;</span>  port: <span class="number">3306</span>  MySQL Community Server (GPL)#创建一个本地sock用于本地连接。</span><br></pre></td></tr></table></figure>
-<h2 id="删除日志"><a href="#删除日志" class="headerlink" title="删除日志"></a>删除日志</h2><p>在mysql5.5.7之前：数据库管理员可以删除很长时间之前的错误日志，以保证mysql服务器上的硬盘空间。mysql数据库中，可以使用mysqladmin命令开启新的错误日志。mysqladmin命令的语法如下：mysqladmin –u root –pflush-logs也可以使用登录mysql数据库中使用FLUSHLOGS语句来开启新的错误日志。<br>在mysql5.5.7之后：服务器将关闭此项功能。只能使用重命名原来的错误日志文件，手动冲洗日志创建一个新的：方式如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv host_name.err host_name.err-old</span><br><span class="line">mysqladmin flush-logs</span><br><span class="line">mv host_name.err-old backup-directory</span><br><span class="line"></span><br><span class="line">mysqladmin -uroot -p flush-logs</span><br></pre></td></tr></table></figure>
-<div align="center">
-
-<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/1589443206690.png" class>
-
-</div>
-
-<div align="center">
-
-<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/1589443228792.png" class>
-
-</div>
-
-<p>On Windows, use rename rather than mv.</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
-<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
-<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
-<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
-<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
-<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
-<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
-<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>错误日志</tag>
       </tags>
   </entry>
   <entry>
@@ -3587,6 +3608,358 @@ SHR：shared memory 共享内存<br>
         <tag>Java</tag>
         <tag>JVM加载</tag>
         <tag>ClassLoader</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java并发编程之Condition</title>
+    <url>/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/</url>
+    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>&emsp;&emsp;Condition在jdk1.5中开始出现，主要是用来替代传统Object对象中的wait和notify方法，Object的wait和notify/notify是与<font color="red">对象监视器</font>配合完成线程间的等待/通知机制，而Condition与Lock配合完成等待通知机制，前者是java底层级别的（配合synchronized），后者是语言级别的（配合Lock），具有更高的可控制性和扩展性相比来说更加安全和  高效。</p>
+<a id="more"></a>
+
+<h2 id="Condition与Object的比对"><a href="#Condition与Object的比对" class="headerlink" title="Condition与Object的比对"></a>Condition与Object的比对</h2><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-amwm{font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+  <tr>
+    <th class="tg-amwm">比对项</th>
+    <th class="tg-amwm">Object Monitor Methods</th>
+    <th class="tg-amwm">Condition</th>
+  </tr>
+  <tr>
+    <td class="tg-0lax">前置条件</td>
+    <td class="tg-0lax">获取对象锁</td>
+    <td class="tg-0lax">使用Lock.lock()获取锁<br><span style="font-weight:400;font-style:normal">使用Lock.newCondition()获取Condition</span><br></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">调用方式</td>
+    <td class="tg-0lax">Object.wait()</td>
+    <td class="tg-0lax">Condition.await()</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">等待队列个数</td>
+    <td class="tg-0lax">1</td>
+    <td class="tg-0lax">多个</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">当前线程释放锁并进入等待状态</td>
+    <td class="tg-0lax">支持</td>
+    <td class="tg-0lax">支持</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">当前线程释放锁并进入等待状态，在等待状态中不响应中断</td>
+    <td class="tg-0lax">不支持</td>
+    <td class="tg-0lax">支持<br><span style="font-weight:400;font-style:normal">awaitUninterruptibly()</span><br></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">当前线程释放锁并进入超时等待状态</td>
+    <td class="tg-0lax">支持</td>
+    <td class="tg-0lax">支持</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">当前线程释放锁并进入等待状态到某个时刻</td>
+    <td class="tg-0lax">不支持</td>
+    <td class="tg-0lax">支持<br><span style="font-weight:400;font-style:normal">awaitUntil(Date deadline)</span><br></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">唤醒等待队列中的一个线程</td>
+    <td class="tg-0lax">支持notify</td>
+    <td class="tg-0lax">支持signal</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">唤醒等待队列中的所有线程</td>
+    <td class="tg-0lax">支持notifyAll</td>
+    <td class="tg-0lax">支持signalAll</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">随机性</td>
+    <td class="tg-0lax">唤醒随机</td>
+    <td class="tg-0lax">可以唤醒指定条件的线程</td>
+  </tr>
+</table>
+
+<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><p>一般使用的时候定义为成员变量，condition可以根据实际情况定义为多个，注意在使用过程中锁的释放、中断响应以及等待通知处理。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.Condition;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.Lock;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReentrantLock;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConditionExample1</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line"><span class="comment">//	以成员变量的方式定义锁</span></span><br><span class="line">	<span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"><span class="comment">//	获取condition</span></span><br><span class="line">	<span class="keyword">private</span> Condition condition = lock.newCondition();</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">await</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			lock.lockInterruptibly();</span><br><span class="line">			condition.await();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">			lock.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">signal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			lock.lockInterruptibly();</span><br><span class="line">			condition.signal();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">			lock.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="等待方法"><a href="#等待方法" class="headerlink" title="等待方法"></a>等待方法</h2><h3 id="await"><a href="#await" class="headerlink" title="await"></a>await</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 当前线程进入等待状态，如果其他线程调用condition的signal</span></span><br><span class="line"><span class="comment"> * 或者signalAll方法并且当前线程获取Lock从await方法返回，</span></span><br><span class="line"><span class="comment"> * 如果在等待状态中被中断会抛出被中断异常；</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">await</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 同awaitNanos，支持自定义时间</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">await</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="awaitUninterruptibly"><a href="#awaitUninterruptibly" class="headerlink" title="awaitUninterruptibly"></a>awaitUninterruptibly</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 同await，但是不响应中断</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">awaitUninterruptibly</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="awaitNanos"><a href="#awaitNanos" class="headerlink" title="awaitNanos"></a>awaitNanos</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 当前线程进入等待状态直到被通知，中断或者超时；返回剩余时间</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">awaitNanos</span><span class="params">(<span class="keyword">long</span> nanosTimeout)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="awaitUntil"><a href="#awaitUntil" class="headerlink" title="awaitUntil"></a>awaitUntil</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 当前线程进入等待状态直到被通知，中断或者到了某个时间</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">awaitUntil</span><span class="params">(Date deadline)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="唤醒方法"><a href="#唤醒方法" class="headerlink" title="唤醒方法"></a>唤醒方法</h2><h3 id="signal"><a href="#signal" class="headerlink" title="signal"></a>signal</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 唤醒一个等待在condition上的线程，将该线程从等待队列中转移到同步队列中，</span></span><br><span class="line"><span class="comment"> * 如果在同步队列中能够竞争到Lock则可以从等待方法中返回。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">signal</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="signalAll"><a href="#signalAll" class="headerlink" title="signalAll"></a>signalAll</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取所有等待在condition上的线程</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">signalAll</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><h3 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h3><div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/1587461246450.png" class title="condition类图">
+
+</div>
+
+<h3 id="队列实现原理"><a href="#队列实现原理" class="headerlink" title="队列实现原理"></a>队列实现原理</h3><p>Condition使用Lock的newCondition方法获取（Condition newCondition();）具体实现过程如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Condition <span class="title">newCondition</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sync.newCondition();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">final</span> ConditionObject <span class="title">newCondition</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ConditionObject();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回了AbstractQueuedSynchronizer中的内部类ConditionObject，Condition内部与lock（AQS思想）一样维护了一个等待队列（每个condition中都会维护一个队列）。所有调用condition.await方法的线程会加入到等待队列中，并且线程状态转换为等待状态。事实上，节点的定义复用了同步器中节点的定义，也就是说，同步队列和等待队列中节点类型都是同步器的静态内部类<font color="red">AbstractQueuedSynchronizer.Node</font></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/** First node of condition queue. */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> Node firstWaiter;</span><br><span class="line"><span class="comment">/** Last node of condition queue. */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> Node lastWaiter;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/1587458843343.png" class>
+
+</div>
+
+<ol>
+<li>调用condition.await方法后线程依次尾插入到等待队列中，如图队列中的线程引用依次为Thread-0,Thread-1,Thread-2….Thread-8；</li>
+<li>等待队列是一个单向队列。</li>
+<li>多次调用lock.newCondition()方法创建多个condition对象，也就是一个lock可以持有多个等待队列。而在之前利用Object的方式实际上是指在对象Object对象监视器上只能拥有一个同步队列和一个等待队列，而并发包中的Lock拥有一个同步队列和多个等待队列。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/1587458891983.png" class>
+
+</div>
+
+<h3 id="await原理"><a href="#await原理" class="headerlink" title="await原理"></a>await原理</h3><p>当前线程进入等待状态直到被唤醒或中断，则当前线程将进入运行状态且从await方法中返回运行情况，包括：</p>
+<ol>
+<li>其他线程调用该condition的signal或signalall方法，而当前线程被选中唤醒</li>
+<li>其他线程（调用interrupt）中断当前线程</li>
+<li>如果当前等待线程从await方法返回，则表明该线程已经获取了condition对象所对应的锁</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Implements interruptible condition wait.</span></span><br><span class="line"><span class="comment"> * &lt;ol&gt;</span></span><br><span class="line"><span class="comment"> * &lt;li&gt; If current thread is interrupted, throw InterruptedException.</span></span><br><span class="line"><span class="comment"> * &lt;li&gt; Save lock state returned by &#123;<span class="doctag">@link</span> #getState&#125;.</span></span><br><span class="line"><span class="comment"> * &lt;li&gt; Invoke &#123;<span class="doctag">@link</span> #release&#125; with saved state as argument,</span></span><br><span class="line"><span class="comment"> *      throwing IllegalMonitorStateException if it fails.</span></span><br><span class="line"><span class="comment"> * &lt;li&gt; Block until signalled or interrupted.</span></span><br><span class="line"><span class="comment"> * &lt;li&gt; Reacquire by invoking specialized version of</span></span><br><span class="line"><span class="comment"> *      &#123;<span class="doctag">@link</span> #acquire&#125; with saved state as argument.</span></span><br><span class="line"><span class="comment"> * &lt;li&gt; If interrupted while blocked in step 4, throw InterruptedException.</span></span><br><span class="line"><span class="comment"> * &lt;/ol&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调用该方法之后，使当前获取lock的线程进入等待队列，</span></span><br><span class="line"><span class="comment"> * 如果该线程能够从await()方法返回的话一定是该线程获取了与condition相关联的lock。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">await</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (Thread.interrupted())<span class="comment">//响应中断</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InterruptedException();</span><br><span class="line">    <span class="comment">// 1. 将当前线程包装成Node，插入到等待队列中尾部；</span></span><br><span class="line">    <span class="comment">// 只有被signal/signalAll后会使得当前线程从等待队列中移至到同步队列中去</span></span><br><span class="line">    Node node = addConditionWaiter();</span><br><span class="line">    <span class="comment">// 2. 释放当前线程所占用的lock，在释放的过程中会唤醒同步队列中的下一个节点</span></span><br><span class="line">    <span class="keyword">int</span> savedState = fullyRelease(node);</span><br><span class="line">    <span class="keyword">int</span> interruptMode = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (!isOnSyncQueue(node)) &#123;<span class="comment">//退出条件：条件为false或者执行到break</span></span><br><span class="line">    	<span class="comment">// 3. 当前线程进入到等待状态,直到获得lock后才会从await方法返回，或者在等待时被中断会做中断处理</span></span><br><span class="line">        LockSupport.park(<span class="keyword">this</span>);</span><br><span class="line">        <span class="keyword">if</span> ((interruptMode = checkInterruptWhileWaiting(node)) != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 4. 自旋等待获取到同步状态（即获取到lock）</span></span><br><span class="line">    <span class="comment">// 退出await方法必须是已经获得了condition引用（关联）的lock</span></span><br><span class="line">    <span class="keyword">if</span> (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)</span><br><span class="line">        interruptMode = REINTERRUPT;</span><br><span class="line">    <span class="keyword">if</span> (node.nextWaiter != <span class="keyword">null</span>) <span class="comment">// clean up if cancelled</span></span><br><span class="line">        unlinkCancelledWaiters();</span><br><span class="line">    <span class="comment">// 5. 处理被中断的情况</span></span><br><span class="line">    <span class="keyword">if</span> (interruptMode != <span class="number">0</span>)</span><br><span class="line">        reportInterruptAfterWait(interruptMode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Adds a new waiter to wait queue.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> its new wait node</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> Node <span class="title">addConditionWaiter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node t = lastWaiter;</span><br><span class="line">    <span class="comment">// If lastWaiter is cancelled, clean out.</span></span><br><span class="line">    <span class="keyword">if</span> (t != <span class="keyword">null</span> &amp;&amp; t.waitStatus != Node.CONDITION) &#123;</span><br><span class="line">        unlinkCancelledWaiters();</span><br><span class="line">        t = lastWaiter;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 将当前线程分装成Node，并且加入到队尾（该队列没有头的链式队列与AQS中的带头链式队列不同）</span></span><br><span class="line">    Node node = <span class="keyword">new</span> Node(Thread.currentThread(), Node.CONDITION);</span><br><span class="line">    <span class="keyword">if</span> (t == <span class="keyword">null</span>)</span><br><span class="line">        firstWaiter = node;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        t.nextWaiter = node;</span><br><span class="line">    lastWaiter = node;</span><br><span class="line">    <span class="keyword">return</span> node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Invokes release with current state value; returns saved state.</span></span><br><span class="line"><span class="comment"> * Cancels node and throws exception on failure.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> node the condition node for this wait</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> previous sync state</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">int</span> <span class="title">fullyRelease</span><span class="params">(Node node)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">boolean</span> failed = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> savedState = getState();</span><br><span class="line">        <span class="comment">// 调用AQS的模板方法release方法释放AQS的同步状态并且唤醒在同步队列中头结点的后继节点引用的线程</span></span><br><span class="line">        <span class="keyword">if</span> (release(savedState)) &#123;</span><br><span class="line">        	<span class="comment">// 成功释放，正常返回</span></span><br><span class="line">            failed = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">return</span> savedState;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        	<span class="comment">// 释放失败，抛出异常</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalMonitorStateException();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (failed)</span><br><span class="line">            node.waitStatus = Node.CANCELLED;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/1587459856757.png" class title="当前线程加入等待队列">
+
+</div>
+
+<blockquote>
+<p>调用Condition的await()方法（或者以await开头的方法），会使当前线程进入等待队列并释放锁，同时线程状态变为等待状态。当从await()方法返回时，当前线程一定获取了Condition相关联的锁。调用condition.await方法的线程必须是已经获得了lock，也就是当前线程是同步队列中的头结点。调用该方法后会使得当前线程所封装的Node尾插入到等待队列中</p>
+</blockquote>
+<h3 id="signal-signalall原理"><a href="#signal-signalall原理" class="headerlink" title="signal/signalall原理"></a>signal/signalall原理</h3><p>唤醒一个等待在condition上的线程，该线程从等待方法返回前必须获得与该condition相关的锁。<br>调用condition的signal或者signalAll方法可以将等待队列中等待时间最长的节点移动到同步队列中。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Moves the longest-waiting thread, if one exists, from the</span></span><br><span class="line"><span class="comment"> * wait queue for this condition to the wait queue for the</span></span><br><span class="line"><span class="comment"> * owning lock.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IllegalMonitorStateException if &#123;<span class="doctag">@link</span> #isHeldExclusively&#125;</span></span><br><span class="line"><span class="comment"> *         returns &#123;<span class="doctag">@code</span> false&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">signal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 先检测当前线程是否已经获取到了lock，否则抛出异常</span></span><br><span class="line">    <span class="keyword">if</span> (!isHeldExclusively())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalMonitorStateException();</span><br><span class="line">    <span class="comment">// 获取等待队列中的头节点进行处理,将其移动到同步队列并使用LockSupport唤醒节点中的线程</span></span><br><span class="line">    Node first = firstWaiter;</span><br><span class="line">    <span class="keyword">if</span> (first != <span class="keyword">null</span>)</span><br><span class="line">        doSignal(first);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Removes and transfers nodes until hit non-cancelled one or</span></span><br><span class="line"><span class="comment"> * null. Split out from signal in part to encourage compilers</span></span><br><span class="line"><span class="comment"> * to inline the case of no waiters.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> first (non-null) the first node on condition queue</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doSignal</span><span class="params">(Node first)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> ( (firstWaiter = first.nextWaiter) == <span class="keyword">null</span>)</span><br><span class="line">            lastWaiter = <span class="keyword">null</span>;</span><br><span class="line">        <span class="comment">// 将头节点从等待队列中移除</span></span><br><span class="line">        first.nextWaiter = <span class="keyword">null</span>;</span><br><span class="line">        <span class="comment">// while中transferForSignal方法对头结点做真正的处理</span></span><br><span class="line">    &#125; <span class="keyword">while</span> (!transferForSignal(first) &amp;&amp;</span><br><span class="line">             (first = firstWaiter) != <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用condition的signal的前提条件是当前线程已经获取了lock，该方法会使得等待队列中的头节点即等待时间最长的那个节点移入到同步队列，而<font color="red">移入到同步队列后才有机会使得等待线程被唤醒</font>，即从await方法中的LockSupport.park(this)方法中返回，从而才有机会使得调用await方法的线程成功退出。</p>
+<div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/1587460222343.png" class>
+
+</div>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Transfers a node from a condition queue onto sync queue.</span></span><br><span class="line"><span class="comment"> * Returns true if successful.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> node the node</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> true if successfully transferred (else the node was</span></span><br><span class="line"><span class="comment"> * cancelled before signal)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">transferForSignal</span><span class="params">(Node node)</span> </span>&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">      * If cannot change waitStatus, the node has been cancelled.</span></span><br><span class="line"><span class="comment">      * 更新头节点状态为0</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">    <span class="keyword">if</span> (!compareAndSetWaitStatus(node, Node.CONDITION, <span class="number">0</span>))</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">      * Splice onto queue and try to set waitStatus of predecessor to</span></span><br><span class="line"><span class="comment">      * indicate that thread is (probably) waiting. If cancelled or</span></span><br><span class="line"><span class="comment">      * attempt to set waitStatus fails, wake up to resync (in which</span></span><br><span class="line"><span class="comment">      * case the waitStatus can be transiently and harmlessly wrong).</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">    <span class="comment">//等待队列中的头节点安全的移动到同步队列中</span></span><br><span class="line">    Node p = enq(node);</span><br><span class="line">    <span class="keyword">int</span> ws = p.waitStatus;</span><br><span class="line">    <span class="keyword">if</span> (ws &gt; <span class="number">0</span> || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))</span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">       * 移动完成之后唤醒该节点的线程，唤醒后的线程，</span></span><br><span class="line"><span class="comment">       * 将从await方法中的while循环中退出，</span></span><br><span class="line"><span class="comment">       * 进而调用同步器的acquireQueued方法加入到获取同步状态的竞争者。</span></span><br><span class="line"><span class="comment">       * 成功获取同步状态（或者说锁）之后，被唤醒的线程将从先前调用的await()方法返回，</span></span><br><span class="line"><span class="comment">       * 此时该线程已经成功地获取了锁。</span></span><br><span class="line"><span class="comment">       */</span></span><br><span class="line">        LockSupport.unpark(node.thread);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Inserts node into queue, initializing if necessary. See picture above.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> node the node to insert</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> node&#x27;s predecessor</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> Node <span class="title">enq</span><span class="params">(<span class="keyword">final</span> Node node)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        Node t = tail;</span><br><span class="line">        <span class="keyword">if</span> (t == <span class="keyword">null</span>) &#123; <span class="comment">// Must initialize</span></span><br><span class="line">            <span class="keyword">if</span> (compareAndSetHead(<span class="keyword">new</span> Node()))</span><br><span class="line">                tail = head;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node.prev = t;</span><br><span class="line">            <span class="keyword">if</span> (compareAndSetTail(t, node)) &#123;</span><br><span class="line">                t.next = node;</span><br><span class="line">                <span class="keyword">return</span> t;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Condition的signalAll()方法，相当于对等待队列中的每个节点均执行一次signal()方法，效果就是将等待队列中所有节点全部移动到同步队列中，并唤醒每个节点的线程。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Moves all threads from the wait queue for this condition to</span></span><br><span class="line"><span class="comment"> * the wait queue for the owning lock.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IllegalMonitorStateException if &#123;<span class="doctag">@link</span> #isHeldExclusively&#125;</span></span><br><span class="line"><span class="comment"> *         returns &#123;<span class="doctag">@code</span> false&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">signalAll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!isHeldExclusively())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalMonitorStateException();</span><br><span class="line">    Node first = firstWaiter;</span><br><span class="line">    <span class="keyword">if</span> (first != <span class="keyword">null</span>)</span><br><span class="line">        doSignalAll(first);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Removes and transfers all nodes.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> first (non-null) the first node on condition queue</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doSignalAll</span><span class="params">(Node first)</span> </span>&#123;</span><br><span class="line">    lastWaiter = firstWaiter = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        Node next = first.nextWaiter;</span><br><span class="line">        first.nextWaiter = <span class="keyword">null</span>;</span><br><span class="line">        transferForSignal(first);</span><br><span class="line">        first = next;</span><br><span class="line">    &#125; <span class="keyword">while</span> (first != <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h3><div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/1587461964158.png" class>
+
+</div>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.jianshu.com/p/28387056eeb4">详解Condition的await和signal等待/通知机制</a></li>
+<li>《Java并发编程的艺术》</li>
+<li><a href="https://blog.csdn.net/bohu83/article/details/51098106">java condition使用及分析</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+        <category>源码分析</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>线程控制</tag>
+        <tag>Condition</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java并发编程之ThreadLocal</title>
+    <url>/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="API描述"><a href="#API描述" class="headerlink" title="API描述"></a>API描述</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">* This <span class="class"><span class="keyword">class</span> <span class="title">provides</span> <span class="title">thread</span>-<span class="title">local</span> <span class="title">variables</span>.  <span class="title">These</span> <span class="title">variables</span> <span class="title">differ</span> <span class="title">from</span></span></span><br><span class="line"><span class="class">* <span class="title">their</span> <span class="title">normal</span> <span class="title">counterparts</span> <span class="title">in</span> <span class="title">that</span> <span class="title">each</span> <span class="title">thread</span> <span class="title">that</span> <span class="title">accesses</span> <span class="title">one</span> (<span class="title">via</span> <span class="title">its</span></span></span><br><span class="line"><span class="class">* </span>&#123;<span class="meta">@code</span> get&#125; or &#123;<span class="meta">@code</span> set&#125; method) has its own, independently initialized</span><br><span class="line">* copy of the variable.  &#123;<span class="meta">@code</span> ThreadLocal&#125; instances are typically <span class="keyword">private</span></span><br><span class="line">* <span class="function"><span class="keyword">static</span> fields in classes that wish to associate state with a <span class="title">thread</span> <span class="params">(e.g.,</span></span></span><br><span class="line"><span class="function"><span class="params">* a user ID or Transaction ID)</span>.</span></span><br></pre></td></tr></table></figure>
+<p><code>ThreadLocal</code>提供一种线程本地变量。这种变量是一种副本的概念，在多线程环境下访问（get、set）能够保证各个线程间的变量互相隔离。<code>ThreadLocal</code>通常定义为了<code>private static</code>，用来关联线程和线程上下文（比如userId或事物ID）。<code>ThreadLocal</code> 的作用是提供线程内的局部变量，这种变量在线程的生命周期内起作用，减少同一个线程内多个函数或者组件之间一些公共变量的传递的复杂度。</p>
+<a id="more"></a>
+
+<div align="center">
+
+<img src="http://www.plantuml.com/plantuml/svg/NS_12i8m3CRnUvyYu4KHdq2HYHU57OltsCOjaBMZpOeWlhlTQSFhbnz_I9CLaqw362UOCzW-4VesEfIJFSF7761CN509NXnGW8E2BkY6kRz6JySLh4bb1nUD0xjxKEeeGQ2tBdXJSLHoIXviRR8ooWDbektEx66Sdb8B5ZhIzL0YUyXrir1c_7zADCGo9xwceU3hMpy0">
+
+</div>
+
+<h3 id="使用说明"><a href="#使用说明" class="headerlink" title="使用说明"></a>使用说明</h3><ol>
+<li>让某个需要用到的对象实现线程之间的隔离（每个线程都有自己独立的对象）</li>
+<li>可以在任何方法中轻松的获取到该对象</li>
+<li>根据共享对象生成的时机选择使用initialValue方法还是set方法</li>
+<li>对象初始化的时机由我们控制的时候使用initialValue 方式</li>
+<li>如果对象生成的时机不由我们控制的时候使用 set 方式</li>
+</ol>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>达到线程安全的目的</li>
+<li>不需要加锁，执行效率高</li>
+<li>更加节省内存，节省开销</li>
+<li>免去传参的繁琐，降低代码耦合度</li>
+</ol>
+<h3 id="ThreadLocal与锁的区别"><a href="#ThreadLocal与锁的区别" class="headerlink" title="ThreadLocal与锁的区别"></a>ThreadLocal与锁的区别</h3><ol>
+<li>lock 的资源是多个线程共享的，所以访问的时候需要加锁。</li>
+<li>ThreadLocal 是每个线程都有一个副本，是不需要加锁的。</li>
+<li>lock 是通过时间换空间的做法。</li>
+<li>ThreadLocal 是典型的通过空间换时间的做法。</li>
+</ol>
+<h3 id="结构解析"><a href="#结构解析" class="headerlink" title="结构解析"></a>结构解析</h3><h4 id="JDK早期设计"><a href="#JDK早期设计" class="headerlink" title="JDK早期设计"></a>JDK早期设计</h4><div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/1587690655937.png" class title="ThreadLocal早期设计">
+
+</div>
+
+<p>在早期的设计中每个 <code>ThreadLocal</code> 创建一个 <code>ThreadLocalMap</code>，然后用<strong>线程</strong>作为 Map 的 key，要存储的局部变量作为 Map 的 value，这样达到线程隔离的目的。<strong>由于该线程绑定的变量不能被自动的回收，因为变量存储在 ThreadLocal 里，必须显式的去回收。(容易出现内存泄露)</strong></p>
+<h4 id="JDK1-8设计"><a href="#JDK1-8设计" class="headerlink" title="JDK1.8设计"></a>JDK1.8设计</h4><p>在<code>Thread</code>类中维护了<code>ThreadLocalMap</code>；这个变量用于存储<code>ThreadLocal</code>，因为在同一个线程当中可以有多个<code>ThreadLocal</code>，并且多次调用<code>get()</code>所以需要在内部维护一个<code>ThreadLocalMap</code>用来存储多个<code>ThreadLocal</code>。<code>Thread</code>中的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* ThreadLocal values pertaining to this thread. This map is maintained</span></span><br><span class="line"><span class="comment">* by the ThreadLocal class.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">ThreadLocal.ThreadLocalMap threadLocals = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* InheritableThreadLocal values pertaining to this thread. This map is</span></span><br><span class="line"><span class="comment">* maintained by the InheritableThreadLocal class.</span></span><br><span class="line"><span class="comment">* 父线程难道子线程共享的数据</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">ThreadLocal.ThreadLocalMap inheritableThreadLocals = <span class="keyword">null</span>;</span><br></pre></td></tr></table></figure>
+<p>如下图所示：</p>
+<div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/1587690972564.png" class>
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/1587467884480.png" class title="ThreadLocal内部结构">
+
+</div>
+
+<p><strong>通过代码分析得出以下结论：</strong></p>
+<ol>
+<li>① 每个 <code>Thread</code> 内部都有一个 <code>ThreadLocalMap</code> <code>ThreadLocal.ThreadLocalMap threadLocals = null;</code>达到线程隔离</li>
+<li>② <code>ThreadLocalMap</code> 里面存储 <code>ThreadLocal</code> 对象（key） 和 线程的变量副本（value）<code>t.threadLocals = new ThreadLocalMap(this, firstValue);</code>；使用静态并<code>ThreadLocal</code>作为key，将不同对象的引用保存到不同线程的<code>ThreadLocalMap</code>中。</li>
+<li>③ <code>Thread</code> 内部的 <code>ThreadLocalMap</code> 是由 <code>ThreadLocal</code> 维护的，由 <code>ThreadLocal</code> 负责向 ThreadLocalMap 设置和获取变量值</li>
+<li>④ 对于不同的线程，每次获取副本值时，别的线程并不能获取当前线程的副本值，形成副本的隔离，互不干扰</li>
+</ol>
+<p>如下图所示：</p>
+<div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/1587468037170.png" class>
+
+</div>
+
+<p><strong>好处：</strong></p>
+<ol>
+<li>① 每个 ThreadLocalMap 存储的 Entry 数量变少</li>
+<li>② 当 Thread 销毁时，ThreadLocalMap 也随之销毁，减少内存的使用</li>
+</ol>
+<h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><h3 id="get"><a href="#get" class="headerlink" title="get"></a>get</h3><p>获取当前线程中绑定的局部两类。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	* Returns the value in the current thread&#x27;s copy of this</span></span><br><span class="line"><span class="comment">	* thread-local variable.  If the variable has no value for the</span></span><br><span class="line"><span class="comment">	* current thread, it is first initialized to the value returned</span></span><br><span class="line"><span class="comment">	* by an invocation of the &#123;<span class="doctag">@link</span> #initialValue&#125; method.</span></span><br><span class="line"><span class="comment">	*</span></span><br><span class="line"><span class="comment">	* <span class="doctag">@return</span> the current thread&#x27;s value of this thread-local</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 1.获取当前线程中的ThreadLocalMap</span></span><br><span class="line">	Thread t = Thread.currentThread();</span><br><span class="line">	ThreadLocalMap map = getMap(t);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	* 2.1 如果不为空：使用当前ThreadLocal获取map中的Entry，如果不为空则获取值</span></span><br><span class="line"><span class="comment">	* 2.2 map 为空 或者 e 为空，通过 initialValue ，也就是 NULL，</span></span><br><span class="line"><span class="comment">	*     然后用 TL 的引用和 value 作为 firstKey 和 firstValue 创建新的 map</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</span><br><span class="line">		ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</span><br><span class="line">		<span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">			T result = (T)e.value;</span><br><span class="line">			<span class="keyword">return</span> result;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> setInitialValue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="set"><a href="#set" class="headerlink" title="set"></a>set</h3><p>使用线程本地变量的方式存储数据，绑定到当前线程中。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Sets the current thread&#x27;s copy of this thread-local variable</span></span><br><span class="line"><span class="comment">* to the specified value.  Most subclasses will have no need to</span></span><br><span class="line"><span class="comment">* override this method, relying solely on the &#123;<span class="doctag">@link</span> #initialValue&#125;</span></span><br><span class="line"><span class="comment">* method to set the values of thread-locals.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> value the value to be stored in the current thread&#x27;s copy of</span></span><br><span class="line"><span class="comment">*        this thread-local.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">	Thread t = Thread.currentThread(); <span class="comment">// 1.获取当前线程</span></span><br><span class="line">	ThreadLocalMap map = getMap(t); <span class="comment">// 2.获取当前线程中的ThreadLocalMap</span></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	* 3.1 如果map不为空则设置数据，key为ThreadLocal</span></span><br><span class="line"><span class="comment">	* 3.2 如果为空，则给该线程创建 map ，并设置初始值</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">		map.set(<span class="keyword">this</span>, value);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		createMap(t, value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Create the map associated with a ThreadLocal. Overridden in</span></span><br><span class="line"><span class="comment">* InheritableThreadLocal.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> t the current thread</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> firstValue value for the initial entry of the map</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">createMap</span><span class="params">(Thread t, T firstValue)</span> </span>&#123;</span><br><span class="line">	t.threadLocals = <span class="keyword">new</span> ThreadLocalMap(<span class="keyword">this</span>, firstValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="reomove"><a href="#reomove" class="headerlink" title="reomove"></a>reomove</h3><p>清空数据，防止内存泄露</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Removes the current thread&#x27;s value for this thread-local</span></span><br><span class="line"><span class="comment"> * variable.  If this thread-local variable is subsequently</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@linkplain</span> #get read&#125; by the current thread, its value will be</span></span><br><span class="line"><span class="comment"> * reinitialized by invoking its &#123;<span class="doctag">@link</span> #initialValue&#125; method,</span></span><br><span class="line"><span class="comment"> * unless its value is &#123;<span class="doctag">@linkplain</span> #set set&#125; by the current thread</span></span><br><span class="line"><span class="comment"> * in the interim.  This may result in multiple invocations of the</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> initialValue&#125; method in the current thread.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ThreadLocalMap m = getMap(Thread.currentThread());</span><br><span class="line">        <span class="keyword">if</span> (m != <span class="keyword">null</span>)</span><br><span class="line">            m.remove(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="initialValue"><a href="#initialValue" class="headerlink" title="initialValue"></a>initialValue</h3><p>该方法用于设置初始值，并且在调用get()方法时才会被触发，所以是懒加载。但是如果在get()之前进行了set()操作，这样就不会调用initialValue()。通常每个线程只能调用一次本方法，但是调用了remove()后就能再次调用.</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the current thread&#x27;s &quot;initial value&quot; for this</span></span><br><span class="line"><span class="comment"> * thread-local variable.  This method will be invoked the first</span></span><br><span class="line"><span class="comment"> * time a thread accesses the variable with the &#123;<span class="doctag">@link</span> #get&#125;</span></span><br><span class="line"><span class="comment"> * method, unless the thread previously invoked the &#123;<span class="doctag">@link</span> #set&#125;</span></span><br><span class="line"><span class="comment"> * method, in which case the &#123;<span class="doctag">@code</span> initialValue&#125; method will not</span></span><br><span class="line"><span class="comment"> * be invoked for the thread.  Normally, this method is invoked at</span></span><br><span class="line"><span class="comment"> * most once per thread, but it may be invoked again in case of</span></span><br><span class="line"><span class="comment"> * subsequent invocations of &#123;<span class="doctag">@link</span> #remove&#125; followed by &#123;<span class="doctag">@link</span> #get&#125;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;This implementation simply returns &#123;<span class="doctag">@code</span> null&#125;; if the</span></span><br><span class="line"><span class="comment"> * programmer desires thread-local variables to have an initial</span></span><br><span class="line"><span class="comment"> * value other than &#123;<span class="doctag">@code</span> null&#125;, &#123;<span class="doctag">@code</span> ThreadLocal&#125; must be</span></span><br><span class="line"><span class="comment"> * subclassed, and this method overridden.  Typically, an</span></span><br><span class="line"><span class="comment"> * anonymous inner class will be used.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the initial value for this thread-local</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> T <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Variant of set() to establish initialValue. Used instead</span></span><br><span class="line"><span class="comment"> * of set() in case user has overridden the set() method.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the initial value</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> T <span class="title">setInitialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    T value = initialValue();</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">        map.set(<span class="keyword">this</span>, value);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        createMap(t, value);</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ThreadLocalMap"><a href="#ThreadLocalMap" class="headerlink" title="ThreadLocalMap"></a>ThreadLocalMap</h3><h4 id="ThreadLocalMap类图"><a href="#ThreadLocalMap类图" class="headerlink" title="ThreadLocalMap类图"></a>ThreadLocalMap类图</h4><div align="center">
+
+<img src="http://www.plantuml.com/plantuml/svg/2yaioKbLK0h9A4fDJF79JqxCyKqiUBvnzzFP-vIuk1AJYakA4fDB599p4ekB5O9IqrABKlEIKxaW_F3Kn6nqCTUyag9AA1lLL2uki9o2bgukkWoAGGesDK0L47FG154jn6fBDHUgySzdjRoSE_DPG-FJjjQNpIk0NkFILIWeoYnBB4bLAClFJ54eJYtHGD9WOs-da9rQgQFWdvIL2lHwMM9EQQeckgQYrDpyibGi-f1LGloRdbe2Pc1LZAuwEbQX934f9nL9F3ElHA4uimfTg0HeMd56VauALoqNSjWhe8S0A48n0w5E0RkZ4FxM1Af13WDhe4K0">
+
+</div>
+
+<h4 id="ThreadLocalMap源码"><a href="#ThreadLocalMap源码" class="headerlink" title="ThreadLocalMap源码"></a>ThreadLocalMap源码</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* The initial capacity -- MUST be a power of two.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> INITIAL_CAPACITY = <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* The table, resized as necessary.</span></span><br><span class="line"><span class="comment">* table.length MUST always be a power of two.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> Entry[] table;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* The number of entries in the table.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* The next size value at which to resize.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> threshold; <span class="comment">// Default to 0</span></span><br></pre></td></tr></table></figure>
+<p>通过源码分析ThreadLocalMap与HashMap的结构类似。</p>
+<h4 id="ThreadLocalMap保存数据"><a href="#ThreadLocalMap保存数据" class="headerlink" title="ThreadLocalMap保存数据"></a>ThreadLocalMap保存数据</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Set the value associated with key.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> key the thread local object</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> value the value to be set</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(ThreadLocal&lt;?&gt; key, Object value)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// We don&#x27;t use a fast path as with get() because it is at</span></span><br><span class="line">	<span class="comment">// least as common to use set() to create new entries as</span></span><br><span class="line">	<span class="comment">// it is to replace existing ones, in which case, a fast</span></span><br><span class="line">	<span class="comment">// path would fail more often than not.</span></span><br><span class="line"></span><br><span class="line">	Entry[] tab = table;</span><br><span class="line">	<span class="keyword">int</span> len = tab.length;</span><br><span class="line">	<span class="comment">// 计算hash索引位置</span></span><br><span class="line">	<span class="keyword">int</span> i = key.threadLocalHashCode &amp; (len-<span class="number">1</span>);</span><br><span class="line">	<span class="comment">// 使用线性探测法查找元素（顺序查找数据，找到则结束，并且在查找数据时必须比对key是否相等）</span></span><br><span class="line">	<span class="keyword">for</span> (Entry e = tab[i];</span><br><span class="line">			e != <span class="keyword">null</span>;</span><br><span class="line">			e = tab[i = nextIndex(i, len)]) &#123;</span><br><span class="line">		ThreadLocal&lt;?&gt; k = e.get();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (k == key) &#123;<span class="comment">// 如果key存在则直接覆盖</span></span><br><span class="line">			e.value = value;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (k == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="comment">// 如果key为空，但是value不为空则说明ThreadLocal作为key已经被回收，需要进行数据交换</span></span><br><span class="line">			replaceStaleEntry(key, value, i);</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	tab[i] = <span class="keyword">new</span> Entry(key, value);</span><br><span class="line">	<span class="keyword">int</span> sz = ++size;</span><br><span class="line">	<span class="keyword">if</span> (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)</span><br><span class="line">		rehash();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>通过源码分析如下：</strong></p>
+<ol>
+<li><p>每个<code>ThreadLocal</code>对象都有一个hash值 <code>threadLocalHashCode</code> ，每初始化一个<code>ThreadLocal</code>对象，hash值就增加一个固定的大小 <strong>0x61c88647</strong> 。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * ThreadLocals rely on per-thread linear-probe hash maps attached</span></span><br><span class="line"><span class="comment">    * to each thread (Thread.threadLocals and</span></span><br><span class="line"><span class="comment">    * inheritableThreadLocals).  The ThreadLocal objects act as keys,</span></span><br><span class="line"><span class="comment">    * searched via threadLocalHashCode.  This is a custom hash code</span></span><br><span class="line"><span class="comment">    * (useful only within ThreadLocalMaps) that eliminates collisions</span></span><br><span class="line"><span class="comment">    * in the common case where consecutively constructed ThreadLocals</span></span><br><span class="line"><span class="comment">    * are used by the same threads, while remaining well-behaved in</span></span><br><span class="line"><span class="comment">    * less common cases.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> threadLocalHashCode = nextHashCode();</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Returns the next hash code.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">nextHashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> nextHashCode.getAndAdd(HASH_INCREMENT);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>在set数据时首先根据<code>threadLocalHashCode</code>对key进行hash，如果当前位置没数据数据则初始化一个Entry放到该位置上。</p>
+</li>
+<li><p>如果有数据则继续判断当前位置的key是否与当前设置的key相同，如果是则替换当前Entry中的value</p>
+</li>
+<li><p>如果key不同则for循环继续查找。</p>
+</li>
+</ol>
+<h4 id="ThreadLocalMap与HashMap的区别"><a href="#ThreadLocalMap与HashMap的区别" class="headerlink" title="ThreadLocalMap与HashMap的区别"></a>ThreadLocalMap与HashMap的区别</h4><p>主要体现在hash冲突解决上。</p>
+<ol>
+<li>HashMap 的数据结构是数组+链表</li>
+<li>ThreadLocalMap的数据结构仅仅是数组</li>
+<li>HashMap 是通过链地址法解决hash 冲突的问题</li>
+<li>ThreadLocalMap 是通过开放地址法来解决hash 冲突的问题</li>
+<li>HashMap 里面的Entry 内部类的引用都是强引用</li>
+<li>ThreadLocalMap里面的Entry 内部类中的<strong>key 是弱引用，value 是强引用</strong></li>
+</ol>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h3><p>某个对象不会再被使用，但是该对象的内存却无法被收回。</p>
+<h4 id="Java引用的说明（后续会在JVM垃圾回收中详细说明）"><a href="#Java引用的说明（后续会在JVM垃圾回收中详细说明）" class="headerlink" title="Java引用的说明（后续会在JVM垃圾回收中详细说明）"></a>Java引用的说明（后续会在JVM垃圾回收中详细说明）</h4><p>Java中存在四种引用类型：<strong>强、弱、软、虚</strong>  </p>
+<ol>
+<li>强引用：最常见的是使用new创建的对象，只要存在对象引用，GC就不会回收</li>
+<li>软引用：<code>SoftReference</code>实现，当系统内存不足时才会被回收</li>
+<li>弱引用：<code>WeakReference</code>实现，GC 一旦发现弱引用的对象，不管当前内存空间足够与否，都会回收它的内存</li>
+<li>虚引用：<code>PhantomReference</code>实现，必须和引用队列联合使用，主要用于跟踪对象被垃圾回收的状态</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The entries in this hash map extend WeakReference, using</span></span><br><span class="line"><span class="comment"> * its main ref field as the key (which is always a</span></span><br><span class="line"><span class="comment"> * ThreadLocal object).  Note that null keys (i.e. entry.get()</span></span><br><span class="line"><span class="comment"> * == null) mean that the key is no longer referenced, so the</span></span><br><span class="line"><span class="comment"> * entry can be expunged from table.  Such entries are referred to</span></span><br><span class="line"><span class="comment"> * as &quot;stale entries&quot; in the code that follows.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span> <span class="keyword">extends</span> <span class="title">WeakReference</span>&lt;<span class="title">ThreadLocal</span>&lt;?&gt;&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/** The value associated with this ThreadLocal. */</span></span><br><span class="line">    Object value;</span><br><span class="line"></span><br><span class="line">    Entry(ThreadLocal&lt;?&gt; k, Object v) &#123;</span><br><span class="line">        <span class="keyword">super</span>(k);</span><br><span class="line">        value = v;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h4><ol>
+<li>正常情况: 当Thread运行结束后，ThreadLocal中的value会被回收，因为没有任何强引用了</li>
+<li>非正常情况<br>当Thread一直在运行始终不结束，强引用就不会被回收，存在以下调用链 Thread–&gt;ThreadLocalMap–&gt;Entry(key为null)–&gt;value因为调用链中的 value 和 Thread 存在强引用，所以value无法被回收，就有可能出现OOM。JDK的设计已经考虑到了这个问题，所以在set()、remove()、resize()方法中会扫描到key为null的Entry，并且把对应的value设置为null，这样value对象就可以被回收。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Double the capacity of the table.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">resize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Entry[] oldTab = table;</span><br><span class="line">    <span class="keyword">int</span> oldLen = oldTab.length;</span><br><span class="line">    <span class="keyword">int</span> newLen = oldLen * <span class="number">2</span>;</span><br><span class="line">    Entry[] newTab = <span class="keyword">new</span> Entry[newLen];</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; oldLen; ++j) &#123;</span><br><span class="line">        Entry e = oldTab[j];</span><br><span class="line">        <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ThreadLocal&lt;?&gt; k = e.get();</span><br><span class="line">            <span class="keyword">if</span> (k == <span class="keyword">null</span>) &#123;</span><br><span class="line">                e.value = <span class="keyword">null</span>; <span class="comment">// Help the GC</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">int</span> h = k.threadLocalHashCode &amp; (newLen - <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">while</span> (newTab[h] != <span class="keyword">null</span>)</span><br><span class="line">                    h = nextIndex(h, newLen);</span><br><span class="line">                newTab[h] = e;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    setThreshold(newLen);</span><br><span class="line">    size = count;</span><br><span class="line">    table = newTab;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>但是只有在调用set()、remove()、resize()这些方法时才会进行这些操作，如果没有调用这些方法并且线程不停止，那么调用链就会一直存在，所以可能会发生内存泄漏。</p>
+</blockquote>
+<h4 id="ThreadLocalMap-Entry被定义为弱引用的原因"><a href="#ThreadLocalMap-Entry被定义为弱引用的原因" class="headerlink" title="ThreadLocalMap.Entry被定义为弱引用的原因"></a>ThreadLocalMap.Entry被定义为弱引用的原因</h4><div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/1587696845088.png" class title="ThreadLocalMap.Entry">
+
+</div>
+
+<p><code>ThreadLocal</code>作为Map中的key，被定义为弱引用，当把<code>ThreadLocal</code>实例设置为<code>null</code>时，gc就可以顺利回收<code>ThreadLocal</code>。但是如果value正常被当前线程使用，只有在当前线程结束之后才能被回收，这也是JDK1.8之后的升级，降低内存泄露的概率。</p>
+<h4 id="避免方式"><a href="#避免方式" class="headerlink" title="避免方式"></a>避免方式</h4><p>调用remove()方法，就会删除对应的Entry对象，可以避免内存泄漏，所以使用完ThreadLocal后，要调用remove()方法。</p>
+<h3 id="空指针问题"><a href="#空指针问题" class="headerlink" title="空指针问题"></a>空指针问题</h3><p>调用get方法如果返回值为基本类型，则会出现空指针异常，如果是包装类则不会出现。</p>
+<h3 id="共享对象问题"><a href="#共享对象问题" class="headerlink" title="共享对象问题"></a>共享对象问题</h3><p>如果在每个线程中ThreadLocal.set()进去的东西本来就是多个线程共享的同一对象，比如static对象，那么多个线程调用ThreadLocal.get()获取的内容还是同一个对象，还是会发生线程安全问题。</p>
+<h3 id="可以不使用ThreadLocal就不要强行使用"><a href="#可以不使用ThreadLocal就不要强行使用" class="headerlink" title="可以不使用ThreadLocal就不要强行使用"></a>可以不使用ThreadLocal就不要强行使用</h3><p>如果在任务数很少的时候，在局部方法中创建对象就可以解决问题，这样就不需要使用ThreadLocal。</p>
+<h3 id="优先使用框架的支持，而不是自己创造"><a href="#优先使用框架的支持，而不是自己创造" class="headerlink" title="优先使用框架的支持，而不是自己创造"></a>优先使用框架的支持，而不是自己创造</h3><p>例如在Spring框架中，如果可以使用RequestContextHolder，那么就不需要自己维护ThreadLocal，因为自己可能会忘记调用remove()方法等，造成内存泄漏。</p>
+<h4 id="源码参考-RequestContextHolder"><a href="#源码参考-RequestContextHolder" class="headerlink" title="源码参考(RequestContextHolder)"></a>源码参考(RequestContextHolder)</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Copyright 2002-2016 the original author or authors.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></span><br><span class="line"><span class="comment"> * you may not use this file except in compliance with the License.</span></span><br><span class="line"><span class="comment"> * You may obtain a copy of the License at</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *      https://www.apache.org/licenses/LICENSE-2.0</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></span><br><span class="line"><span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></span><br><span class="line"><span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></span><br><span class="line"><span class="comment"> * See the License for the specific language governing permissions and</span></span><br><span class="line"><span class="comment"> * limitations under the License.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> org.springframework.web.context.request;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.faces.context.FacesContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.core.NamedInheritableThreadLocal;</span><br><span class="line"><span class="keyword">import</span> org.springframework.core.NamedThreadLocal;</span><br><span class="line"><span class="keyword">import</span> org.springframework.lang.Nullable;</span><br><span class="line"><span class="keyword">import</span> org.springframework.util.ClassUtils;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Holder class to expose the web request in the form of a thread-bound</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@link</span> RequestAttributes&#125; object. The request will be inherited</span></span><br><span class="line"><span class="comment"> * by any child threads spawned by the current thread if the</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> inheritable&#125; flag is set to &#123;<span class="doctag">@code</span> true&#125;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;Use &#123;<span class="doctag">@link</span> RequestContextListener&#125; or</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@link</span> org.springframework.web.filter.RequestContextFilter&#125; to expose</span></span><br><span class="line"><span class="comment"> * the current web request. Note that</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@link</span> org.springframework.web.servlet.DispatcherServlet&#125;</span></span><br><span class="line"><span class="comment"> * already exposes the current request by default.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Juergen Hoeller</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Rod Johnson</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> RequestContextListener</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> org.springframework.web.filter.RequestContextFilter</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> org.springframework.web.servlet.DispatcherServlet</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestContextHolder</span>  </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">boolean</span> jsfPresent =</span><br><span class="line">			ClassUtils.isPresent(<span class="string">&quot;javax.faces.context.FacesContext&quot;</span>, RequestContextHolder.class.getClassLoader());</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;RequestAttributes&gt; requestAttributesHolder =</span><br><span class="line">			<span class="keyword">new</span> NamedThreadLocal&lt;&gt;(<span class="string">&quot;Request attributes&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;RequestAttributes&gt; inheritableRequestAttributesHolder =</span><br><span class="line">			<span class="keyword">new</span> NamedInheritableThreadLocal&lt;&gt;(<span class="string">&quot;Request context&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Reset the RequestAttributes for the current thread.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">resetRequestAttributes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		requestAttributesHolder.remove();</span><br><span class="line">		inheritableRequestAttributesHolder.remove();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Bind the given RequestAttributes to the current thread,</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;not&lt;/i&gt; exposing it as inheritable for child threads.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> attributes the RequestAttributes to expose</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@see</span> #setRequestAttributes(RequestAttributes, boolean)</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setRequestAttributes</span><span class="params">(<span class="meta">@Nullable</span> RequestAttributes attributes)</span> </span>&#123;</span><br><span class="line">		setRequestAttributes(attributes, <span class="keyword">false</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Bind the given RequestAttributes to the current thread.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> attributes the RequestAttributes to expose,</span></span><br><span class="line"><span class="comment">	 * or &#123;<span class="doctag">@code</span> null&#125; to reset the thread-bound context</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> inheritable whether to expose the RequestAttributes as inheritable</span></span><br><span class="line"><span class="comment">	 * for child threads (using an &#123;<span class="doctag">@link</span> InheritableThreadLocal&#125;)</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setRequestAttributes</span><span class="params">(<span class="meta">@Nullable</span> RequestAttributes attributes, <span class="keyword">boolean</span> inheritable)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (attributes == <span class="keyword">null</span>) &#123;</span><br><span class="line">			resetRequestAttributes();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> (inheritable) &#123;</span><br><span class="line">				inheritableRequestAttributesHolder.set(attributes);</span><br><span class="line">				requestAttributesHolder.remove();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				requestAttributesHolder.set(attributes);</span><br><span class="line">				inheritableRequestAttributesHolder.remove();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Return the RequestAttributes currently bound to the thread.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> the RequestAttributes currently bound to the thread,</span></span><br><span class="line"><span class="comment">	 * or &#123;<span class="doctag">@code</span> null&#125; if none bound</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Nullable</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RequestAttributes <span class="title">getRequestAttributes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		RequestAttributes attributes = requestAttributesHolder.get();</span><br><span class="line">		<span class="keyword">if</span> (attributes == <span class="keyword">null</span>) &#123;</span><br><span class="line">			attributes = inheritableRequestAttributesHolder.get();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> attributes;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Return the RequestAttributes currently bound to the thread.</span></span><br><span class="line"><span class="comment">	 * &lt;p&gt;Exposes the previously bound RequestAttributes instance, if any.</span></span><br><span class="line"><span class="comment">	 * Falls back to the current JSF FacesContext, if any.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> the RequestAttributes currently bound to the thread</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@throws</span> IllegalStateException if no RequestAttributes object</span></span><br><span class="line"><span class="comment">	 * is bound to the current thread</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@see</span> #setRequestAttributes</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@see</span> ServletRequestAttributes</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@see</span> FacesRequestAttributes</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@see</span> javax.faces.context.FacesContext#getCurrentInstance()</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RequestAttributes <span class="title">currentRequestAttributes</span><span class="params">()</span> <span class="keyword">throws</span> IllegalStateException </span>&#123;</span><br><span class="line">		RequestAttributes attributes = getRequestAttributes();</span><br><span class="line">		<span class="keyword">if</span> (attributes == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span> (jsfPresent) &#123;</span><br><span class="line">				attributes = FacesRequestAttributesFactory.getFacesRequestAttributes();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (attributes == <span class="keyword">null</span>) &#123;</span><br><span class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">&quot;No thread-bound request found: &quot;</span> +</span><br><span class="line">						<span class="string">&quot;Are you referring to request attributes outside of an actual web request, &quot;</span> +</span><br><span class="line">						<span class="string">&quot;or processing a request outside of the originally receiving thread? &quot;</span> +</span><br><span class="line">						<span class="string">&quot;If you are actually operating within a web request and still receive this message, &quot;</span> +</span><br><span class="line">						<span class="string">&quot;your code is probably running outside of DispatcherServlet/DispatcherPortlet: &quot;</span> +</span><br><span class="line">						<span class="string">&quot;In this case, use RequestContextListener or RequestContextFilter to expose the current request.&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> attributes;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Inner class to avoid hard-coded JSF dependency.</span></span><br><span class="line"><span class="comment"> 	 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">FacesRequestAttributesFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Nullable</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RequestAttributes <span class="title">getFacesRequestAttributes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			FacesContext facesContext = FacesContext.getCurrentInstance();</span><br><span class="line">			<span class="keyword">return</span> (facesContext != <span class="keyword">null</span> ? <span class="keyword">new</span> FacesRequestAttributes(facesContext) : <span class="keyword">null</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li><p>To keep state with a thread (user-id, transaction-id, logging-id)</p>
+</li>
+<li><p>To cache objects which you need frequently</p>
+</li>
+<li><p>最常见的 ThreadLocal 使用场景为 用来解决 数据库连接、Session 管理等。</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestThreadLocal</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;Session&gt; threadSession = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Session <span class="title">getSession</span><span class="params">()</span> <span class="keyword">throws</span> InfrastructureException </span>&#123;</span><br><span class="line">        Session s = (Session) threadSession.get();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (s == <span class="keyword">null</span>) &#123;</span><br><span class="line">                s = getSessionFactory().openSession();</span><br><span class="line">                threadSession.set(s);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (HibernateException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> InfrastructureException(ex);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2></li>
+</ol>
+<h3 id="如果父子线程共享变量"><a href="#如果父子线程共享变量" class="headerlink" title="如果父子线程共享变量"></a>如果父子线程共享变量</h3><h4 id="InheritableThreadLocal"><a href="#InheritableThreadLocal" class="headerlink" title="InheritableThreadLocal"></a>InheritableThreadLocal</h4><h3 id="hash冲突解决"><a href="#hash冲突解决" class="headerlink" title="hash冲突解决"></a>hash冲突解决</h3><h4 id="链地址法"><a href="#链地址法" class="headerlink" title="链地址法"></a>链地址法</h4><p>hash(key)之后的地址i构成一个同义词单链表，并将单链表的头指针存在哈希表的第i个单元中，因而查找、插入和删除主要在同义词链中进行。</p>
+<div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/1587708395831.png" class>
+
+</div>
+
+<p><strong>链地址法特点</strong></p>
+<ol>
+<li>处理冲突简单，且无堆积现象，平均查找长度短。</li>
+<li>链表中的结点是动态申请的，适合构造表不能确定长度的情况。</li>
+<li>删除结点的操作易于实现。只要简单地删去链表上相应的结点即可。</li>
+<li>指针需要额外的空间，故当结点规模较小时，开放定址法较为节省空间。</li>
+</ol>
+<h4 id="开放地址法（线性探测法）"><a href="#开放地址法（线性探测法）" class="headerlink" title="开放地址法（线性探测法）"></a>开放地址法（线性探测法）</h4><p>hash(key)一旦发生了冲突，就去寻找下一个空的散列地址，只要散列表足够大，空的散列地址总能找到，并将记录存入。</p>
+<div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/1587708550090.png" class>
+
+</div>
+
+<p><strong>开放地址法特点</strong></p>
+<ol>
+<li>容易产生堆积问题，不适于大规模的数据存储。</li>
+<li>散列函数的设计对冲突会有很大的影响，插入时可能会出现多次冲突的现象。</li>
+<li>删除的元素是多个冲突元素中的一个，需要对后面的元素作处理，实现较复杂。</li>
+</ol>
+<h4 id="ThreadLocalMap采用开放地址法原因"><a href="#ThreadLocalMap采用开放地址法原因" class="headerlink" title="ThreadLocalMap采用开放地址法原因"></a>ThreadLocalMap采用开放地址法原因</h4><ol>
+<li>ThreadLocal 中看到一个属性 HASH_INCREMENT = 0x61c88647 ，0x61c88647 是一个神奇的数字，让哈希码能均匀的分布在2的N次方的数组里, 即 Entry[] table</li>
+<li>ThreadLocal 往往存放的数据量不会特别大（而且key 是弱引用又会被垃圾回收，及时让数据量更小），这个时候开放地址法简单的结构会显得更省空间，同时数组的查询效率也是非常高，加上第一点的保障，冲突概率也低</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《Java并发编程的艺术》</li>
+<li><a href="https://www.toutiao.com/i6750511984854172173/">吃透源码的每一个细节和设计原理–ThreadLocal</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+        <category>源码分析</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>线程控制</tag>
+        <tag>ThreadLocal</tag>
       </tags>
   </entry>
   <entry>
