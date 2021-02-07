@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-07T03:18:59.156Z</updated>
+  <updated>2021-02-07T08:03:33.559Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,222 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>常见面试题汇总</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/</id>
+    <published>2021-02-07T08:03:04.000Z</published>
+    <updated>2021-02-07T08:03:33.559Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;ol&gt;
+&lt;li&gt;&lt;a</summary>
+        
+      
+    
+    
+    
+    <category term="面试题" scheme="https://www.sunliaodong.cn/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
+    
+    
+    <category term="面试题" scheme="https://www.sunliaodong.cn/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>SpringBoot常用配置参考</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/SpringBoot%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/SpringBoot%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/</id>
+    <published>2021-02-07T08:02:54.000Z</published>
+    <updated>2021-02-07T08:18:30.599Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;通用配置&quot;&gt;&lt;a href=&quot;#通用配置&quot; class=&quot;headerlink&quot; title=&quot;通用配置&quot;&gt;&lt;/a&gt;通用配置&lt;/h2&gt;&lt;figure class=&quot;highlight xml&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;# ===================================================================&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# COMMON SPRING BOOT PROPERTIES&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;#&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# This sample file is provided as a guideline. Do NOT copy it in its&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# entirety to your own application.               ^^^&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# ===================================================================&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# ----------------------------------------&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# CORE PROPERTIES&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# ----------------------------------------&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# BANNER&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;banner.charset=UTF-8 # Banner file encoding.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;banner.location=classpath:banner.txt # Banner file location.&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="Springboot" scheme="https://www.sunliaodong.cn/categories/Springboot/"/>
+    
+    
+    <category term="Springboot" scheme="https://www.sunliaodong.cn/tags/Springboot/"/>
+    
+    <category term="常用配置" scheme="https://www.sunliaodong.cn/tags/%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Centos7.2离线安装mysql5.7.20</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Centos7-2%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85mysql5-7-20/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Centos7-2%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85mysql5-7-20/</id>
+    <published>2021-02-07T08:02:42.000Z</published>
+    <updated>2021-02-07T08:09:39.433Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;安装包下载&quot;&gt;&lt;a href=&quot;#安装包下载&quot; class=&quot;headerlink&quot; title=&quot;安装包下载&quot;&gt;&lt;/a&gt;安装包下载&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://dev.mysql.com/downloads/mysql/&quot;&gt;https://dev.mysql.com/downloads/mysql/&lt;/a&gt;&lt;br&gt;根据系统版本下载&lt;/p&gt;
+&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/07/Centos7-2%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85mysql5-7-20/1589454272587.png&quot; class&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hadoop1.X伪分布式安装</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/</id>
+    <published>2021-02-07T07:59:27.000Z</published>
+    <updated>2021-02-07T08:01:54.585Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;安装模式&quot;&gt;&lt;a href=&quot;#安装模式&quot; class=&quot;headerlink&quot; title=&quot;安装模式&quot;&gt;&lt;/a&gt;安装模式&lt;/h2&gt;&lt;h3 id=&quot;单机模式&quot;&gt;&lt;a href=&quot;#单机模式&quot; class=&quot;headerlink&quot; title=&quot;单机模式&quot;&gt;&lt;/a&gt;单机模式&lt;/h3&gt;&lt;p&gt;安装简单，几乎不用作任何配置，但仅限于调试用途；&lt;/p&gt;
+&lt;h3 id=&quot;伪分布模式&quot;&gt;&lt;a href=&quot;#伪分布模式&quot; class=&quot;headerlink&quot; title=&quot;伪分布模式&quot;&gt;&lt;/a&gt;伪分布模式&lt;/h3&gt;&lt;p&gt;在单节点上同时启动NameNode、DataNode、JobTracker、TaskTracker、Secondary Namenode等5个进程，模拟分布式运行的各个节点；&lt;/p&gt;
+&lt;h3 id=&quot;完全分布式模式&quot;&gt;&lt;a href=&quot;#完全分布式模式&quot; class=&quot;headerlink&quot; title=&quot;完全分布式模式&quot;&gt;&lt;/a&gt;完全分布式模式&lt;/h3&gt;&lt;p&gt;正常的Hadoop集群，由多个各司其职的节点构成&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
+    
+    
+    <category term="Hadoop" scheme="https://www.sunliaodong.cn/tags/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hadoop开发环境安装（Hadoop2.7.4）</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/</id>
+    <published>2021-02-07T07:49:37.000Z</published>
+    <updated>2021-02-07T07:58:42.081Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;虚拟机基本配置&quot;&gt;&lt;a href=&quot;#虚拟机基本配置&quot; class=&quot;headerlink&quot; title=&quot;虚拟机基本配置&quot;&gt;&lt;/a&gt;虚拟机基本配置&lt;/h2&gt;&lt;h3 id=&quot;设置机器名（重启后生效）–使用ubuntu&quot;&gt;&lt;a href=&quot;#设置机器名（重启后生效）–使用ubuntu&quot; class=&quot;headerlink&quot; title=&quot;设置机器名（重启后生效）–使用ubuntu&quot;&gt;&lt;/a&gt;设置机器名（重启后生效）–使用ubuntu&lt;/h3&gt;&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969553959.png&quot; class&gt;
+
+&lt;img src=&quot;/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969589813.png&quot; class&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
+    
+    
+    <category term="Hadoop" scheme="https://www.sunliaodong.cn/tags/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Centos7.2 安装zookeeper3.4.11</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Centos7-2-%E5%AE%89%E8%A3%85zookeeper3-4-11/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Centos7-2-%E5%AE%89%E8%A3%85zookeeper3-4-11/</id>
+    <published>2021-02-07T07:45:13.000Z</published>
+    <updated>2021-02-07T07:48:46.015Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;下载安装&quot;&gt;&lt;a href=&quot;#下载安装&quot; class=&quot;headerlink&quot; title=&quot;下载安装&quot;&gt;&lt;/a&gt;下载安装&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;a href=&quot;https://zookeeper.apache.org/releases.html&quot;&gt;https://zookeeper.apache.org/releases.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;tar -zxvf zookeeper-3.4.11.tar.gz&lt;/li&gt;
+&lt;li&gt;官方参考文档：&lt;a href=&quot;https://zookeeper.apache.org/doc/r3.4.11/zookeeperStarted.html&quot;&gt;https://zookeeper.apache.org/doc/r3.4.11/zookeeperStarted.html&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
+    
+    
+    <category term="zookeeper" scheme="https://www.sunliaodong.cn/tags/zookeeper/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Jdk1.6+mysql5.6+tomcat1.6安装</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Jdk1-6-mysql5-6-tomcat1-6%E5%AE%89%E8%A3%85/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Jdk1-6-mysql5-6-tomcat1-6%E5%AE%89%E8%A3%85/</id>
+    <published>2021-02-07T07:34:25.000Z</published>
+    <updated>2021-02-07T07:44:43.443Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Jdk&quot;&gt;&lt;a href=&quot;#Jdk&quot; class=&quot;headerlink&quot; title=&quot;Jdk&quot;&gt;&lt;/a&gt;Jdk&lt;/h2&gt;&lt;h3 id=&quot;查看java的相关信息-yum-y-list-java&quot;&gt;&lt;a href=&quot;#查看java的相关信息-yum-y-list-java&quot; class=&quot;headerlink&quot; title=&quot;查看java的相关信息 yum -y list java*&quot;&gt;&lt;/a&gt;查看java的相关信息 yum -y list java*&lt;/h3&gt;&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/07/Jdk1-6-mysql5-6-tomcat1-6%E5%AE%89%E8%A3%85/1590063041227.png&quot; class title=&quot;查看java的相关信息 yum -y list java*&quot;&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
+    
+    
+    <category term="安装部署" scheme="https://www.sunliaodong.cn/tags/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"/>
+    
+    <category term="jdk" scheme="https://www.sunliaodong.cn/tags/jdk/"/>
+    
+    <category term="mysql" scheme="https://www.sunliaodong.cn/tags/mysql/"/>
+    
+    <category term="tomcat" scheme="https://www.sunliaodong.cn/tags/tomcat/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>技术体系总结</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/%E6%8A%80%E6%9C%AF%E4%BD%93%E7%B3%BB%E6%80%BB%E7%BB%93/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/%E6%8A%80%E6%9C%AF%E4%BD%93%E7%B3%BB%E6%80%BB%E7%BB%93/</id>
+    <published>2021-02-07T07:32:13.000Z</published>
+    <updated>2021-02-07T07:33:24.311Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Java技术体系模块图&quot;&gt;&lt;a href=&quot;#Java技术体系模块图&quot; class=&quot;headerlink&quot; title=&quot;Java技术体系模块图&quot;&gt;&lt;/a&gt;Java技术体系模块图&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/07/%E6%8A%80%E6%9C%AF%E4%BD%93%E7%B3%BB%E6%80%BB%E7%BB%93/1589506462204.png&quot; class title=&quot;Java技术体系模块图&quot;&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JDK安装</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/JDK%E5%AE%89%E8%A3%85/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/JDK%E5%AE%89%E8%A3%85/</id>
+    <published>2021-02-07T07:29:37.000Z</published>
+    <updated>2021-02-07T07:31:35.602Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Windows版本&quot;&gt;&lt;a href=&quot;#Windows版本&quot; class=&quot;headerlink&quot; title=&quot;Windows版本&quot;&gt;&lt;/a&gt;Windows版本&lt;/h2&gt;&lt;h3 id=&quot;版本说明&quot;&gt;&lt;a href=&quot;#版本说明&quot; class=&quot;headerlink&quot; title=&quot;版本说明&quot;&gt;&lt;/a&gt;版本说明&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;操作系统版本：Window10 X64，其他操作系统类似&lt;/li&gt;
+&lt;li&gt;JDK版本：jdk1.8.0_192，安装后目录：&lt;code&gt;C:\Program Files\Java\jdk1.8.0_192&lt;/code&gt;&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="常用工具" scheme="https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="JDK" scheme="https://www.sunliaodong.cn/tags/JDK/"/>
+    
+    <category term="环境变量" scheme="https://www.sunliaodong.cn/tags/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/"/>
+    
+  </entry>
   
   <entry>
     <title>Java并发编程之Executors</title>
@@ -327,296 +543,6 @@
     <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
     
     <category term="线程调度" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E8%B0%83%E5%BA%A6/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之线程优先级</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7/</id>
-    <published>2021-02-05T11:31:54.000Z</published>
-    <updated>2021-02-05T12:02:08.746Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;现代操作系统基本采用时分的形式调度运行的线程，操作系统会分出一个个时间片，线程会分配到若干时间片，当线程的时间片用完了就会发生线程调度，并等待着下次分配。线程分配到的时间片多少也就决定了线程使用处理器资源的多少，而线程优先级就是决定线程需要多或者少分配一些处理器资源的线程属性。优先级高的线程分配时间片的数量要多于优先级低的线程。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="线程优先级" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之守护线程</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/</id>
-    <published>2021-02-05T11:31:42.000Z</published>
-    <updated>2021-02-05T12:01:07.188Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;java中线程的分类：用户线程 (User Thread)、守护线程 (Daemon Thread)。  &lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;守护线程&lt;/strong&gt;：在程序运行的时候在后台提供一种通用服务的线程，比如垃圾回收线程就是一个很称职的守护者，并且这种线程并不属于程序中不可或缺的部分。因此，当所有的非守护线程结束时，程序也就终止了，同时会杀死进程中的所有守护线程。反过来说，只要任何非守护线程还在运行，程序就不会终止。  &lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;区别&lt;/strong&gt;：用户线程和守护线程两者几乎没有区别，唯一的不同之处就在于虚拟机的离开：如果用户线程已经全部退出运行了，只剩下守护线程存在了，虚拟机也就退出了。 因为没有了被守护者，守护线程也就没有工作可做了，也就没有继续运行程序的必要了。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;Java中的定义&quot;&gt;&lt;a href=&quot;#Java中的定义&quot; class=&quot;headerlink&quot; title=&quot;Java中的定义&quot;&gt;&lt;/a&gt;Java中的定义&lt;/h2&gt;&lt;p&gt;通过Thread中的setDaemon方法完成设置。通过源码分析得知：&lt;strong&gt;当线程只剩下守护线程的时候，JVM就会退出.但是如果还有其他的任意一个用户线程还在，JVM就不会退出&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="守护线程" scheme="https://www.sunliaodong.cn/tags/%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之线程常用方法</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</id>
-    <published>2021-02-05T11:31:31.000Z</published>
-    <updated>2021-02-05T11:59:54.246Z</updated>
-    
-    
-    <summary type="html">&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/1590711795506.png&quot; class title=&quot;Runnable类图&quot;&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="线程常用方法" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/"/>
-    
-    <category term="sleep" scheme="https://www.sunliaodong.cn/tags/sleep/"/>
-    
-    <category term="wait" scheme="https://www.sunliaodong.cn/tags/wait/"/>
-    
-    <category term="join" scheme="https://www.sunliaodong.cn/tags/join/"/>
-    
-    <category term="yield" scheme="https://www.sunliaodong.cn/tags/yield/"/>
-    
-    <category term="start" scheme="https://www.sunliaodong.cn/tags/start/"/>
-    
-    <category term="run" scheme="https://www.sunliaodong.cn/tags/run/"/>
-    
-    <category term="park" scheme="https://www.sunliaodong.cn/tags/park/"/>
-    
-    <category term="unpark" scheme="https://www.sunliaodong.cn/tags/unpark/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之线程中断</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/</id>
-    <published>2021-02-05T11:31:20.000Z</published>
-    <updated>2021-02-05T11:55:59.325Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;正常结束-执行完成&quot;&gt;&lt;a href=&quot;#正常结束-执行完成&quot; class=&quot;headerlink&quot; title=&quot;正常结束(执行完成)&quot;&gt;&lt;/a&gt;正常结束(执行完成)&lt;/h2&gt;&lt;h2 id=&quot;使用退出标志退出线程&quot;&gt;&lt;a href=&quot;#使用退出标志退出线程&quot; class=&quot;headerlink&quot; title=&quot;使用退出标志退出线程&quot;&gt;&lt;/a&gt;使用退出标志退出线程&lt;/h2&gt;&lt;p&gt;一般 run()方法执行完，线程就会正常结束，然而，常常有些线程是&lt;strong&gt;伺服线程&lt;/strong&gt;。它们需要长时间的运行，只有在外部某些条件满足的情况下，才能关闭这些线程。使用一个变量来控制循环，例如：最直接的方法就是设一个boolean类型的标志，并通过设置这个标志为true或false 来控制while 循环是否退出，代码示例：&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="线程中断" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/"/>
-    
-    <category term="Interrupt" scheme="https://www.sunliaodong.cn/tags/Interrupt/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之线程创建</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/</id>
-    <published>2021-02-05T11:31:12.000Z</published>
-    <updated>2021-02-05T12:08:56.579Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;通过Thread构建&quot;&gt;&lt;a href=&quot;#通过Thread构建&quot; class=&quot;headerlink&quot; title=&quot;通过Thread构建&quot;&gt;&lt;/a&gt;通过Thread构建&lt;/h2&gt;&lt;p&gt;Thread 类本质上是实现了 Runnable 接口的一个实例，代表一个线程的实例。启动线程的唯一方法就是通过 Thread 类的 start()实例方法。start()方法是一个 native 方法，它将启动一个新线程。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="线程创建" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/"/>
-    
-    <category term="Thread" scheme="https://www.sunliaodong.cn/tags/Thread/"/>
-    
-    <category term="Runnable" scheme="https://www.sunliaodong.cn/tags/Runnable/"/>
-    
-    <category term="Callable" scheme="https://www.sunliaodong.cn/tags/Callable/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之线程状态</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/</id>
-    <published>2021-02-05T11:31:03.000Z</published>
-    <updated>2021-02-05T11:50:19.130Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;操作系统中的状态&quot;&gt;&lt;a href=&quot;#操作系统中的状态&quot; class=&quot;headerlink&quot; title=&quot;操作系统中的状态&quot;&gt;&lt;/a&gt;操作系统中的状态&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/1590649906474.png&quot; class title=&quot;操作系统中的状态&quot;&gt;
-
-&lt;/div&gt;
-
-&lt;ol&gt;
-&lt;li&gt;【初始状态】仅是在语言层面创建了线程对象，还未与操作系统线程关联&lt;/li&gt;
-&lt;li&gt;【可运行状态】（就绪状态）指该线程已经被创建（与操作系统线程关联），可以由 CPU 调度执行&lt;/li&gt;
-&lt;li&gt;【运行状态】指获取了 CPU 时间片运行中的状态&lt;ul&gt;
-&lt;li&gt;当 CPU 时间片用完，会从【运行状态】转换至【可运行状态】，会导致线程的上下文切换&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;【阻塞状态】&lt;ul&gt;
-&lt;li&gt;如果调用了阻塞 API，如 BIO 读写文件，这时该线程实际不会用到 CPU，会导致线程上下文切换，进入【阻塞状态】&lt;/li&gt;
-&lt;li&gt;等 BIO 操作完毕，会由操作系统唤醒阻塞的线程，转换至【可运行状态】&lt;/li&gt;
-&lt;li&gt;与【可运行状态】的区别是，对【阻塞状态】的线程来说只要它们一直不唤醒，调度器就一直不会考虑调度它们&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;【终止状态】表示线程已经执行完毕，生命周期已经结束，不会再转换为其它状态&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="线程状态" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之线程的概念</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5/</id>
-    <published>2021-02-05T11:30:55.000Z</published>
-    <updated>2021-02-05T11:47:01.993Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;基本概念&quot;&gt;&lt;a href=&quot;#基本概念&quot; class=&quot;headerlink&quot; title=&quot;基本概念&quot;&gt;&lt;/a&gt;基本概念&lt;/h2&gt;&lt;h3 id=&quot;线程与进程&quot;&gt;&lt;a href=&quot;#线程与进程&quot; class=&quot;headerlink&quot; title=&quot;线程与进程&quot;&gt;&lt;/a&gt;线程与进程&lt;/h3&gt;&lt;h4 id=&quot;进程&quot;&gt;&lt;a href=&quot;#进程&quot; class=&quot;headerlink&quot; title=&quot;进程&quot;&gt;&lt;/a&gt;进程&lt;/h4&gt;&lt;ol&gt;
-&lt;li&gt;用来加载指令、管理内存、管理IO、磁盘读写&lt;/li&gt;
-&lt;li&gt;当一个程序被运行，从磁盘加载这个程序的代码至内存，这时就开启了一个进程。&lt;/li&gt;
-&lt;li&gt;进程就可以视为程序的一个实例比如java.exe&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&quot;线程&quot;&gt;&lt;a href=&quot;#线程&quot; class=&quot;headerlink&quot; title=&quot;线程&quot;&gt;&lt;/a&gt;线程&lt;/h4&gt;&lt;ol&gt;
-&lt;li&gt;一个线程就是一个指令流，将指令流中的一条条指令以一定的顺序交给 CPU 执行&lt;/li&gt;
-&lt;li&gt;在一个进程里可以创建多个线程，一个标准的线程包括&lt;strong&gt;线程ID，当前指令指针(PC），寄存器集合和堆栈组成&lt;/strong&gt;，堆中的内容可共享。处理器在这些线程上高速切换（涉及到上下文切换），让使用者感觉到这些线程在同时执行。&lt;strong&gt;如果没有明确的协同机制&lt;/strong&gt;，线程将彼此独立执行。每一个程序都至少有一个线程，若程序只有一个线程，那就是程序本身。  &lt;/li&gt;
-&lt;li&gt;线程是进程的一个实体（一个进程包含多个进程），是被系统独立调度和分配的最小单元，，也叫轻量级线程（Light Weight Process），并且线程拥有独立的资源包括：栈、线程ID、寄存器和指令指针，其他堆中的资源在内存中共享。共享资源在并发编程中需要增加同步机制防止资源数据处理不对。  &lt;/li&gt;
-&lt;li&gt;一个线程可以创建和撤消另一个线程，同一进程中的多个线程之间可以并发执行。由于线程之间的相互制约，致使线程在运行中呈现出间断性。线程也有&lt;strong&gt;就绪、阻塞和运行&lt;/strong&gt;三种基本状态。就绪状态是指线程具备运行的所有条件，逻辑上可以运行，在等待处理机；运行状态是指线程占有处理机正在运行；阻塞状态是指线程在等待一个事件（如某个信号量），逻辑上不可执行。  &lt;/li&gt;
-&lt;li&gt;线程是程序中一个单一的顺序控制流程。进程内一个相对独立的、可调度的执行单元，是系统独立调度和分派CPU的基本单位指运行中的程序的调度单位。在单个程序中同时运行多个线程完成不同的工作，称为多线程。&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="线程" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B/"/>
-    
-    <category term="进程" scheme="https://www.sunliaodong.cn/tags/%E8%BF%9B%E7%A8%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之内存模型</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</id>
-    <published>2021-02-05T11:30:40.000Z</published>
-    <updated>2021-02-05T11:45:03.042Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;基本概念&quot;&gt;&lt;a href=&quot;#基本概念&quot; class=&quot;headerlink&quot; title=&quot;基本概念&quot;&gt;&lt;/a&gt;基本概念&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;作用：屏蔽各种硬件和操作系统内存的访问差异，以实现让Java程序在各种平台下都能达到一致的内存访问效果，定义了Java虚拟机与计算机内存是如何协同工作的，是一种主存与工作内存的抽象概念，并且底层对应CPU的寄存器、缓存、硬件内存以及CPU指令优化等&lt;/li&gt;
-&lt;li&gt;简称：Java Memory Model简称JMM&lt;/li&gt;
-&lt;li&gt;目的：定义程序中各个变量的访问规则，以及在必须时如何同步地访问共享变量，即在虚拟机中将变量存储到内存和从内存中取出变量这样的底层细节&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="JVM" scheme="https://www.sunliaodong.cn/categories/JVM/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="内存模型" scheme="https://www.sunliaodong.cn/tags/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之面临的问题</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%9D%A2%E4%B8%B4%E7%9A%84%E9%97%AE%E9%A2%98/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%9D%A2%E4%B8%B4%E7%9A%84%E9%97%AE%E9%A2%98/</id>
-    <published>2021-02-05T11:30:29.000Z</published>
-    <updated>2021-02-05T12:07:03.484Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;上线文切换&quot;&gt;&lt;a href=&quot;#上线文切换&quot; class=&quot;headerlink&quot; title=&quot;上线文切换&quot;&gt;&lt;/a&gt;上线文切换&lt;/h2&gt;&lt;p&gt;巧妙地利用了时间片轮转的方式, CPU 给每个任务都服务一定的时间，然后把当前任务的状态保存下来，在加载下一任务的状态后，继续服务下一任务，任务的状态保存及再加载, 这段过程就叫做&lt;strong&gt;上下文切换&lt;/strong&gt;。时间片轮转的方式使多个任务在同一颗 CPU 上执行变成了可能。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="上线文切换" scheme="https://www.sunliaodong.cn/tags/%E4%B8%8A%E7%BA%BF%E6%96%87%E5%88%87%E6%8D%A2/"/>
-    
-    <category term="死锁" scheme="https://www.sunliaodong.cn/tags/%E6%AD%BB%E9%94%81/"/>
     
   </entry>
   

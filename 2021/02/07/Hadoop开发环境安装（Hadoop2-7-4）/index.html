@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="虚拟机基本配置设置机器名（重启后生效）–使用ubuntu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hadoop开发环境安装（Hadoop2.7.4）">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="虚拟机基本配置设置机器名（重启后生效）–使用ubuntu">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969553959.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969589813.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969667963.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969827184.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969893571.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969908640.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969941859.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970098784.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970142470.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970305076.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970472693.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970480429.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970544921.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970692117.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970793295.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970955405.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970994958.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971047049.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971142145.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971248474.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971325940.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971406545.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971460120.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971563872.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971601483.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971615684.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971690763.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971742904.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971784740.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971819683.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971869797.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971947610.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971996895.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589972057584.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589972113482.png">
+<meta property="article:published_time" content="2021-02-07T07:49:37.000Z">
+<meta property="article:modified_time" content="2021-02-07T07:58:42.081Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="Hadoop">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969553959.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Hadoop开发环境安装（Hadoop2.7.4） | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">77</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hadoop开发环境安装（Hadoop2.7.4）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-07 15:49:37 / 修改时间：15:58:42" itemprop="dateCreated datePublished" datetime="2021-02-07T15:49:37+08:00">2021-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="虚拟机基本配置"><a href="#虚拟机基本配置" class="headerlink" title="虚拟机基本配置"></a>虚拟机基本配置</h2><h3 id="设置机器名（重启后生效）–使用ubuntu"><a href="#设置机器名（重启后生效）–使用ubuntu" class="headerlink" title="设置机器名（重启后生效）–使用ubuntu"></a>设置机器名（重启后生效）–使用ubuntu</h3><div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969553959.png" class>
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969589813.png" class>
+
+</div>
+<a id="more"></a>
+对于ubuntu修改文件是/etc/hostname
+
+<h3 id="设置host映射文件"><a href="#设置host映射文件" class="headerlink" title="设置host映射文件"></a>设置host映射文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/hosts</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969667963.png" class>
+
+</div>
+使用ping命令验证配置是否正确
+
+<h3 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo service iptables status（sudo ufw status）</span><br><span class="line">sudo chkconfig iptables off（sudo ufw <span class="built_in">enable</span>|<span class="built_in">disable</span> ）</span><br></pre></td></tr></table></figure>
+<h4 id="Centos7"><a href="#Centos7" class="headerlink" title="Centos7"></a>Centos7</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service <span class="comment">#停止firewall</span></span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld.service <span class="comment">#禁止firewall开机启动</span></span><br><span class="line">firewall-cmd --state <span class="comment">#查看默认防火墙状态（关闭后显示notrunning，开启后显示running）</span></span><br></pre></td></tr></table></figure>
+<h3 id="关闭Selinux（ubuntu不需要）"><a href="#关闭Selinux（ubuntu不需要）" class="headerlink" title="关闭Selinux（ubuntu不需要）"></a>关闭Selinux（ubuntu不需要）</h3><ol>
+<li>使用getenforce命令查看是否关闭</li>
+<li>修改/etc/selinux/config 文件</li>
+</ol>
+<p>将SELINUX=enforcing改为SELINUX=disabled，执行该命令后重启机器生效</p>
+<h2 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a>SSH</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ps -e | grep ssh</span><br><span class="line">sudo yum install openssh-server</span><br><span class="line">/etc/init.d/ssh start</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969827184.png" class>
+
+</div>
+
+<h3 id="无密钥SHH"><a href="#无密钥SHH" class="headerlink" title="无密钥SHH"></a>无密钥SHH</h3><p>在ROOT用户下执行：<code>ssh-keygen -t rsa</code></p>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969893571.png" class>
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969908640.png" class>
+
+</div>
+
+<p><code>cat id_rsa.pub &gt; authorized_keys</code></p>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969941859.png" class>
+
+</div>
+
+<h2 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h2><p>下载安装包，并且完成安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf jdk-8u111-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vi /etc/profile</span></span><br><span class="line"><span class="comment">#JAVA INFO START</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/app/jdk1.8.0_111</span><br><span class="line"><span class="built_in">export</span> JRE_HOME=/app/jdk1.8.0_111/jre</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$JRE_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/jre/lib/rt.jar:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</span><br><span class="line"><span class="comment">#JAVA INFO END</span></span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970098784.png" class>
+
+</div>
+
+<p>保存，退出！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell&gt; <span class="built_in">source</span> /etc/profile    <span class="comment">#使之立即生效</span></span><br></pre></td></tr></table></figure>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970142470.png" class>
+
+</div>
+
+<h3 id="【建议也设置默认启动】"><a href="#【建议也设置默认启动】" class="headerlink" title="【建议也设置默认启动】"></a>【建议也设置默认启动】</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vi /etc/rc.local</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#JAVA INFO START</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/app/jdk1.8.0_111</span><br><span class="line"><span class="built_in">export</span> JRE_HOME=/app/jdk1.8.0_111/jre</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$JRE_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/jre/lib/rt.jar:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</span><br><span class="line"><span class="comment">#JAVA INFO END</span></span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970305076.png" class>
+
+</div>
+
+<h3 id="设置全局环境变量"><a href="#设置全局环境变量" class="headerlink" title="设置全局环境变量"></a>设置全局环境变量</h3><h2 id="Mysql"><a href="#Mysql" class="headerlink" title="Mysql"></a>Mysql</h2><h2 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf apache-tomcat-8.0.23.tar.gz</span><br><span class="line">gedit startup.sh</span><br><span class="line">JAVA_HOME=/app/jdk1.8.0_111</span><br><span class="line">JRE_HOME=<span class="variable">$JAVA_HOME</span>/jre</span><br><span class="line">PATH=<span class="variable">$PATH</span>:<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$JRE_HOME</span></span><br><span class="line">CLASSPATH=.:<span class="variable">$JRE_HOME</span>/lib/rt.jar:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</span><br><span class="line">TOMCAT_HOME=/app/apache-tomcat-8.5.23</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970472693.png" class>
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970480429.png" class>
+
+</div>
+
+<h3 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gedit /etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970544921.png" class>
+
+</div>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/iptables restart</span><br></pre></td></tr></table></figure>
+<h3 id="vsftpd"><a href="#vsftpd" class="headerlink" title="vsftpd"></a>vsftpd</h3><ol>
+<li>查看是否安装：rpm –qa|grep vsftpd</li>
+<li>安装：yum -y install vsftpd</li>
+<li>启动：service vsftpd start</li>
+<li>重启：service vsftpd restart</li>
+<li>设置相关参数：setsebool -P ftp_home_dir 1</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970692117.png" class>
+
+</div>
+
+<h2 id="Mongodb"><a href="#Mongodb" class="headerlink" title="Mongodb"></a>Mongodb</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf mongodb-linux-x86_64-3.0.3.gz</span><br><span class="line">mkdir data</span><br><span class="line">mkdir data/mongodb</span><br><span class="line">touch logs</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#【代表端口号，如果不指定则默认为   27017   】</span><br><span class="line">port&#x3D;27017</span><br><span class="line">#数据库路径】</span><br><span class="line">dbpath&#x3D; &#x2F;usr&#x2F;mongodb&#x2F;mongodb-linux-x86_64-3.0.3&#x2F;data&#x2F;mongodb</span><br><span class="line">#【日志路径】</span><br><span class="line">logpath&#x3D; &#x2F;usr&#x2F;mongodb&#x2F;mongodb-linux-x86_64-3.0.3&#x2F;logs</span><br><span class="line">#【日志文件自动累加，而不是覆盖】</span><br><span class="line">logappend&#x3D;true</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970793295.png" class>
+
+</div>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/usr/mongodb/mongodb-linux-x86_64-3.0.3/bin/mongod -f /usr/mongodb/mongodb-linux-x86_64-3.0.3/mongodb.conf</span><br><span class="line">pkill mongod</span><br><span class="line">进入mongo shell ：运行 db.shutdownServer()</span><br><span class="line">/usr/mongodb/mongodb-linux-x86_64-3.0.3/bin/mongo</span><br></pre></td></tr></table></figure>
+<h2 id="Hadoop"><a href="#Hadoop" class="headerlink" title="Hadoop"></a>Hadoop</h2><h3 id="下载安装安装包"><a href="#下载安装安装包" class="headerlink" title="下载安装安装包"></a>下载安装安装包</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf hadoop-2.7.4.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="配置环境变量-1"><a href="#配置环境变量-1" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment">#hadoop info start</span></span><br><span class="line"><span class="built_in">export</span> HADOOP_HOME=/app/hadoop-2.7.4</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$HADOOP_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="comment">#hadoop info end</span></span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970955405.png" class>
+
+</div>
+
+<p><code>source /etc/profile</code>  </p>
+<p>加入rc.local  </p>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589970994958.png" class>
+
+</div>
+
+<h3 id="创建文件目录"><a href="#创建文件目录" class="headerlink" title="创建文件目录"></a>创建文件目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/app/hadoop-2.7.4<span class="comment"># mkdir hdfs</span></span><br><span class="line">root@ubuntu:/app/hadoop-2.7.4<span class="comment"># mkdir hdfs/name</span></span><br><span class="line">root@ubuntu:/app/hadoop-2.7.4<span class="comment"># mkdir hdfs/data</span></span><br><span class="line">root@ubuntu:/app/hadoop-2.7.4<span class="comment"># mkdir tmp</span></span><br><span class="line">root@ubuntu:/app/hadoop-2.7.4<span class="comment"># mkdir mapred</span></span><br><span class="line">root@ubuntu:/app/hadoop-2.7.4<span class="comment"># mkdir mapred/local</span></span><br><span class="line">root@ubuntu:/app/hadoop-2.7.4<span class="comment"># mkdir mapred/system</span></span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971047049.png" class>
+
+</div>
+
+<h3 id="编辑配置文件"><a href="#编辑配置文件" class="headerlink" title="编辑配置文件"></a>编辑配置文件</h3><p>配置文件目录位置：/app/hadoop-2.7.4/etc/hadoop，注意如果在配置文件中使用ip需要使用实际的ip比如192.168.209.132，不要使用127.0.0.1或者localhost</p>
+<h4 id="hadoop-env-sh（可以不修改）"><a href="#hadoop-env-sh（可以不修改）" class="headerlink" title="hadoop-env.sh（可以不修改）"></a>hadoop-env.sh（可以不修改）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim hadoop-env.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># The java implementation to use.</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/app/jdk1.8.0_111</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971142145.png" class>
+
+</div>
+
+<h4 id="core-site-xml"><a href="#core-site-xml" class="headerlink" title="core-site.xml"></a>core-site.xml</h4><p>vim core-site.xml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;fs.defaultFS&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;hdfs:&#x2F;&#x2F;192.168.209.132:9000&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;hadoop.tmp.dir&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;file:&#x2F;app&#x2F;hadoop-2.7.4&#x2F;tmp&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;dfs.namenode.name.dir&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;file:&#x2F;app&#x2F;hadoop-2.7.4&#x2F;hdfs&#x2F;name&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line"></span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;dfs.datanode.data.dir&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;file:&#x2F;app&#x2F;hadoop-2.7.4&#x2F;hdfs&#x2F;data&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971248474.png" class>
+
+</div>
+
+<h4 id="hdfs-site-xml"><a href="#hdfs-site-xml" class="headerlink" title="hdfs-site.xml"></a>hdfs-site.xml</h4><p>vim hdfs-site.xml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;dfs.replication&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;1&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line"></span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;dfs.permissions&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;false&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line"></span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;dfs.namenode.name.dir&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;file:&#x2F;app&#x2F;hadoop-2.7.4&#x2F;hdfs&#x2F;name&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line"></span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;dfs.datanode.data.dir&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;file:&#x2F;app&#x2F;hadoop-2.7.4&#x2F;hdfs&#x2F;data&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971325940.png" class>
+
+</div>
+
+<h4 id="mapred-site-xml"><a href="#mapred-site-xml" class="headerlink" title="mapred-site.xml"></a>mapred-site.xml</h4><p>修改mapred-site.xml(默认没有这个配置文件，可以拷贝改目录下的mapred-site.xml.template    :  cp mapred-site.xml.template mapred-site.xml)内容如下  </p>
+<p>cp mapred-site.xml.template mapred-site.xml  </p>
+<p>vim mapred-site.xml  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;mapreduce.jobtracker.address&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;192.168.209.132:9001&lt;&#x2F;value&gt;</span><br><span class="line">    &lt;final&gt;true&lt;&#x2F;final&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;mapred.system.dir&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;file:&#x2F;app&#x2F;hadoop-2.7.4&#x2F;mapred&#x2F;system&lt;&#x2F;value&gt;</span><br><span class="line">    &lt;final&gt;true&lt;&#x2F;final&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line"></span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;mapred.local.dir&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;file:&#x2F;app&#x2F;hadoop-2.7.4&#x2F;mapred&#x2F;local&lt;&#x2F;value&gt;</span><br><span class="line">    &lt;final&gt;true&lt;&#x2F;final&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971406545.png" class>
+
+</div>
+
+<h4 id="yarn-site-xml"><a href="#yarn-site-xml" class="headerlink" title="yarn-site.xml"></a>yarn-site.xml</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">&lt;!-- Site specific YARN configuration properties --&gt;</span><br><span class="line">  &lt;!--&lt;property&gt;</span><br><span class="line">    &lt;name&gt;mapreduce.framework.name&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;yarn&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;  --&gt;</span><br><span class="line"></span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;yarn.nodemanager.aux-services&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;mapreduce_shuffle&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971460120.png" class>
+
+</div>
+
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><h4 id="格式化"><a href="#格式化" class="headerlink" title="格式化"></a>格式化</h4><p>首次运行需要进行hdfs格式化：hdfs namenode -format  </p>
+<p>/app/hadoop-2.7.4/bin/hdfs namenode -format  </p>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971563872.png" class>
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971601483.png" class>
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971615684.png" class>
+
+</div>
+
+<h4 id="启动-1"><a href="#启动-1" class="headerlink" title="启动"></a>启动</h4><p>进入sbin文件夹，执行：./start-all.sh<br>/app/hadoop-2.7.4/sbin/start-all.sh  </p>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971690763.png" class>
+
+</div>
+
+<h4 id="验证-1"><a href="#验证-1" class="headerlink" title="验证"></a>验证</h4><p>运行启动后，使用jps命令查看是否将服务启动成功：  </p>
+<h5 id="输入命令：jps"><a href="#输入命令：jps" class="headerlink" title="输入命令：jps"></a>输入命令：jps</h5><p>包括NameNode,SecondaryNameNode, ResourceManager, DataNode, NodeManager和jps；</p>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971742904.png" class>
+
+</div>
+
+<h5 id="192-168-209-135-8088-cluster"><a href="#192-168-209-135-8088-cluster" class="headerlink" title="192.168.209.135:8088/cluster"></a>192.168.209.135:8088/cluster</h5><div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971784740.png" class>
+
+</div>
+
+<h5 id="192-168-209-135-50070"><a href="#192-168-209-135-50070" class="headerlink" title="192.168.209.135:50070"></a>192.168.209.135:50070</h5><div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971819683.png" class>
+
+</div>
+
+<h5 id="ps-ef-grep-hadoop"><a href="#ps-ef-grep-hadoop" class="headerlink" title="ps -ef|grep hadoop"></a>ps -ef|grep hadoop</h5><div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971869797.png" class>
+
+</div>
+
+<h5 id="使用测试用例测试"><a href="#使用测试用例测试" class="headerlink" title="使用测试用例测试"></a>使用测试用例测试</h5><h6 id="创建测试目录"><a href="#创建测试目录" class="headerlink" title="创建测试目录"></a>创建测试目录</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/app/hadoop-2.7.4/bin/hadoop fs -mkdir -p /class3/input</span><br><span class="line">/app/hadoop-2.7.4/bin/hadoop fs -ls /class3/</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971947610.png" class>
+
+</div>
+
+<h6 id="准备数据"><a href="#准备数据" class="headerlink" title="准备数据"></a>准备数据</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/app/hadoop-2.7.4/bin/hadoop fs -copyFromLocal /app/hadoop-2.7.4/etc/hadoop/* /class3/input</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589971996895.png" class>
+
+</div>
+
+<p>该异常处理：（hadoop的本身bug,不用处理，使用centos7安装没问题）<br>重新复制文件(可以不使用)  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/app/hadoop-2.7.4/bin/hadoop fs -rm -r -f /class3/</span><br><span class="line">/app/hadoop-2.7.4/bin/hadoop fs -mkdir -p /class3/input</span><br><span class="line">/app/hadoop-2.7.4/bin/hadoop fs -ls /class3/</span><br><span class="line">/app/hadoop-2.7.4/bin/hadoop fs -copyFromLocal /app/hadoop-2.7.4/etc/hadoop/* /class3/input</span><br></pre></td></tr></table></figure>
+<p>/app/hadoop-2.7.4/bin/hadoop fs -ls /class3/input  </p>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589972057584.png" class>
+
+</div>
+
+<h6 id="运行wordcount例子"><a href="#运行wordcount例子" class="headerlink" title="运行wordcount例子"></a>运行wordcount例子</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /app/hadoop-2.7.4/</span><br><span class="line">bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.4.jar wordcount /class3/input /class3/output</span><br></pre></td></tr></table></figure>
+<p>任务卡住，解决方案：</p>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589972113482.png" class>
+
+</div>
+
+<p>修改yarn-site.xml配置文件，增加如下信息  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;property&gt;  </span><br><span class="line">    &lt;name&gt;yarn.nodemanager.resource.memory-mb&lt;&#x2F;name&gt;  </span><br><span class="line">    &lt;value&gt;2048&lt;&#x2F;value&gt;  </span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;  </span><br><span class="line">    &lt;name&gt;yarn.scheduler.minimum-allocation-mb&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;2048&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;yarn.nodemanager.vmem-pmem-ratio&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;2.1&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;  </span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;yarn.log-aggregation-enable&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;true&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">    &lt;name&gt;yarn.log-aggregation.retain-seconds&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;604800&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;!--&lt;property&gt;</span><br><span class="line">    &lt;name&gt;yarn.resourcemanager.hostname&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;ubuntu&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;--&gt;</span><br></pre></td></tr></table></figure>
+<h6 id="查看结果"><a href="#查看结果" class="headerlink" title="查看结果"></a>查看结果</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bin/hadoop fs -ls /class3/output/  </span><br><span class="line">bin/hadoop fs -cat /class3/output/part-r-00000 | less</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Hadoop/" rel="tag"><i class="fa fa-tag"></i> Hadoop</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/07/Centos7-2-%E5%AE%89%E8%A3%85zookeeper3-4-11/" rel="prev" title="Centos7.2 安装zookeeper3.4.11">
+      <i class="fa fa-chevron-left"></i> Centos7.2 安装zookeeper3.4.11
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/" rel="next" title="Hadoop1.X伪分布式安装">
+      Hadoop1.X伪分布式安装 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">虚拟机基本配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E6%9C%BA%E5%99%A8%E5%90%8D%EF%BC%88%E9%87%8D%E5%90%AF%E5%90%8E%E7%94%9F%E6%95%88%EF%BC%89%E2%80%93%E4%BD%BF%E7%94%A8ubuntu"><span class="nav-number">1.1.</span> <span class="nav-text">设置机器名（重启后生效）–使用ubuntu</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEhost%E6%98%A0%E5%B0%84%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">设置host映射文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">1.3.</span> <span class="nav-text">关闭防火墙</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Centos7"><span class="nav-number">1.3.1.</span> <span class="nav-text">Centos7</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%ADSelinux%EF%BC%88ubuntu%E4%B8%8D%E9%9C%80%E8%A6%81%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">关闭Selinux（ubuntu不需要）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSH"><span class="nav-number">2.</span> <span class="nav-text">SSH</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E5%AF%86%E9%92%A5SHH"><span class="nav-number">2.1.</span> <span class="nav-text">无密钥SHH</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDK"><span class="nav-number">3.</span> <span class="nav-text">JDK</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.</span> <span class="nav-text">配置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">3.2.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%BB%BA%E8%AE%AE%E4%B9%9F%E8%AE%BE%E7%BD%AE%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E3%80%91"><span class="nav-number">3.3.</span> <span class="nav-text">【建议也设置默认启动】</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%85%A8%E5%B1%80%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">3.4.</span> <span class="nav-text">设置全局环境变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mysql"><span class="nav-number">4.</span> <span class="nav-text">Mysql</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tomcat"><span class="nav-number">5.</span> <span class="nav-text">Tomcat</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">5.1.</span> <span class="nav-text">防火墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vsftpd"><span class="nav-number">5.2.</span> <span class="nav-text">vsftpd</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mongodb"><span class="nav-number">6.</span> <span class="nav-text">Mongodb</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hadoop"><span class="nav-number">7.</span> <span class="nav-text">Hadoop</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E5%AE%89%E8%A3%85%E5%8C%85"><span class="nav-number">7.1.</span> <span class="nav-text">下载安装安装包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F-1"><span class="nav-number">7.2.</span> <span class="nav-text">配置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95"><span class="nav-number">7.3.</span> <span class="nav-text">创建文件目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%BE%91%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">7.4.</span> <span class="nav-text">编辑配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hadoop-env-sh%EF%BC%88%E5%8F%AF%E4%BB%A5%E4%B8%8D%E4%BF%AE%E6%94%B9%EF%BC%89"><span class="nav-number">7.4.1.</span> <span class="nav-text">hadoop-env.sh（可以不修改）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#core-site-xml"><span class="nav-number">7.4.2.</span> <span class="nav-text">core-site.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hdfs-site-xml"><span class="nav-number">7.4.3.</span> <span class="nav-text">hdfs-site.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mapred-site-xml"><span class="nav-number">7.4.4.</span> <span class="nav-text">mapred-site.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#yarn-site-xml"><span class="nav-number">7.4.5.</span> <span class="nav-text">yarn-site.xml</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8"><span class="nav-number">7.5.</span> <span class="nav-text">启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="nav-number">7.5.1.</span> <span class="nav-text">格式化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-1"><span class="nav-number">7.5.2.</span> <span class="nav-text">启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81-1"><span class="nav-number">7.5.3.</span> <span class="nav-text">验证</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E5%91%BD%E4%BB%A4%EF%BC%9Ajps"><span class="nav-number">7.5.3.1.</span> <span class="nav-text">输入命令：jps</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#192-168-209-135-8088-cluster"><span class="nav-number">7.5.3.2.</span> <span class="nav-text">192.168.209.135:8088&#x2F;cluster</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#192-168-209-135-50070"><span class="nav-number">7.5.3.3.</span> <span class="nav-text">192.168.209.135:50070</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ps-ef-grep-hadoop"><span class="nav-number">7.5.3.4.</span> <span class="nav-text">ps -ef|grep hadoop</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E6%B5%8B%E8%AF%95"><span class="nav-number">7.5.3.5.</span> <span class="nav-text">使用测试用例测试</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%B5%8B%E8%AF%95%E7%9B%AE%E5%BD%95"><span class="nav-number">7.5.3.5.1.</span> <span class="nav-text">创建测试目录</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E6%95%B0%E6%8D%AE"><span class="nav-number">7.5.3.5.2.</span> <span class="nav-text">准备数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%90%E8%A1%8Cwordcount%E4%BE%8B%E5%AD%90"><span class="nav-number">7.5.3.5.3.</span> <span class="nav-text">运行wordcount例子</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%BB%93%E6%9E%9C"><span class="nav-number">7.5.3.5.4.</span> <span class="nav-text">查看结果</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">115</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">642k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:44</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '6bd2cd0f290c4541fa5e28a2e7487ca0',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
