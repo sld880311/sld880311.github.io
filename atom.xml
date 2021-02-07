@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-07T02:45:21.978Z</updated>
+  <updated>2021-02-07T03:18:59.156Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,153 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java并发编程之Executors</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/</id>
+    <published>2021-02-07T03:16:17.000Z</published>
+    <updated>2021-02-07T03:18:59.156Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;newCachedThreadPool&quot;&gt;&lt;a href=&quot;#newCachedThreadPool&quot; class=&quot;headerlink&quot; title=&quot;newCachedThreadPool&quot;&gt;&lt;/a&gt;newCachedThreadPool&lt;/h2&gt;&lt;p&gt;创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。对于执行&lt;strong&gt;很多短期异步任务&lt;/strong&gt;的程序而言，这些线程池通常可提高程序性能。调用 execute 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。因此，长时间保持空闲的线程池不会使用任何资源。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    <category term="Java线程池" scheme="https://www.sunliaodong.cn/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程池" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+    <category term="Executors" scheme="https://www.sunliaodong.cn/tags/Executors/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之ScheduledThreadPoolExecutor</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BScheduledThreadPoolExecutor/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BScheduledThreadPoolExecutor/</id>
+    <published>2021-02-07T03:09:00.000Z</published>
+    <updated>2021-02-07T03:15:33.627Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;任务执行&quot;&gt;&lt;a href=&quot;#任务执行&quot; class=&quot;headerlink&quot; title=&quot;任务执行&quot;&gt;&lt;/a&gt;任务执行&lt;/h2&gt;&lt;p&gt;当调用ScheduledThreadPoolExecutor的scheduleAtFixedRate()方法或者scheduleWith-FixedDelay()方法时，会向ScheduledThreadPoolExecutor的DelayQueue添加一个实现了RunnableScheduledFuture接口的ScheduledFutureTask。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    <category term="Java线程池" scheme="https://www.sunliaodong.cn/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="ScheduledThreadPoolExecutor" scheme="https://www.sunliaodong.cn/tags/ScheduledThreadPoolExecutor/"/>
+    
+    <category term="线程池" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之线程池总体架构</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/</id>
+    <published>2021-02-07T03:03:43.000Z</published>
+    <updated>2021-02-07T03:07:13.999Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Executor&quot;&gt;&lt;a href=&quot;#Executor&quot; class=&quot;headerlink&quot; title=&quot;Executor&quot;&gt;&lt;/a&gt;Executor&lt;/h2&gt;&lt;p&gt;为了方便并发执行任务，出现了一种专门用来执行任务的实现，也就是&lt;code&gt;Executor&lt;/code&gt;。&lt;br&gt;由此，任务提交者不需要再创建管理线程，使用更方便，也减少了开销。Java 里面线程池的顶级接口是 Executor，但是严格意义上讲 Executor 并不是一个线程池，而只是一个执行线程的工具。真正的线程池接口是 &lt;code&gt;ExecutorService&lt;/code&gt;。Executor定义规范。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    <category term="Java线程池" scheme="https://www.sunliaodong.cn/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程池" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+    <category term="Executor" scheme="https://www.sunliaodong.cn/tags/Executor/"/>
+    
+    <category term="ExecutorService" scheme="https://www.sunliaodong.cn/tags/ExecutorService/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之线程池概述</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%A6%82%E8%BF%B0/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%A6%82%E8%BF%B0/</id>
+    <published>2021-02-07T03:02:16.000Z</published>
+    <updated>2021-02-07T03:03:05.421Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;使用线程池可以有以下优点：  &lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;降低资源消耗。通过重复利用已创建的线程降低线程创建和销毁造成的消耗。&lt;/li&gt;
+&lt;li&gt;提高响应速度。当任务到达时，任务可以不需要等到线程创建就能立即执行。&lt;/li&gt;
+&lt;li&gt;提高线程的可管理性。线程是稀缺资源，如果无限制地创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一分配、调优和监控。&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="Java线程池" scheme="https://www.sunliaodong.cn/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程池" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之ThreadPoolExecutor</title>
+    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadPoolExecutor/"/>
+    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadPoolExecutor/</id>
+    <published>2021-02-07T02:58:07.000Z</published>
+    <updated>2021-02-07T03:01:53.046Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;构建函数&quot;&gt;&lt;a href=&quot;#构建函数&quot; class=&quot;headerlink&quot; title=&quot;构建函数&quot;&gt;&lt;/a&gt;构建函数&lt;/h2&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;43&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;44&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;45&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;46&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;47&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;48&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;49&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;50&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;51&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;52&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;53&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;54&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;55&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;56&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;57&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;58&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;59&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;60&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;61&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;62&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;63&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;64&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;65&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;66&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;67&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;68&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;69&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;70&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;71&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;72&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;73&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;74&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;75&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;76&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;77&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;78&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;79&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;80&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/**&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * Creates a new &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; ThreadPoolExecutor&amp;#125; with the given initial&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * parameters.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * &lt;span class=&quot;doctag&quot;&gt;@param&lt;/span&gt; corePoolSize the number of threads to keep in the pool, even&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        if they are idle, unless &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; allowCoreThreadTimeOut&amp;#125; is set&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 当提交一个任务到线程池时，线程池会创建一个线程来执行任务，&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 即使其他空闲的基本线程能够执行新任务也会创建线程，&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 等到需要执行的任务数大于线程池基本大小时就不再创建。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 调用prestartAllCoreThreads()后，线程池会提前创建并启动所有基本线程。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * &lt;span class=&quot;doctag&quot;&gt;@param&lt;/span&gt; maximumPoolSize the maximum number of threads to allow in the&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        pool&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 允许创建的最大线程数。如果队列满了，并且已创建的线程数小于最大线程数，&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 则线程池会再创建新的线程执行任务（无线队列会使该参数失效）。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * &lt;span class=&quot;doctag&quot;&gt;@param&lt;/span&gt; keepAliveTime when the number of threads is greater than&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        the core, this is the maximum time that excess idle threads&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        will wait for new tasks before terminating.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 线程池的工作线程空闲后，保持存活的时间。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 如果任务很多，并且每个任务执行的时间比较短，可以调大时间，提高线程的利用率。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * &lt;span class=&quot;doctag&quot;&gt;@param&lt;/span&gt; unit the time unit for the &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; keepAliveTime&amp;#125; argument&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * 		  -- 天（DAYS）、小时（HOURS）、分钟（MINUTES）、毫秒（MILLISECONDS）、&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 微秒（MICROSECONDS，千分之一毫秒）和纳秒（NANOSECONDS，千分之一微秒）&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * &lt;span class=&quot;doctag&quot;&gt;@param&lt;/span&gt; workQueue the queue to use for holding tasks before they are&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        executed.  This queue will hold only the &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; Runnable&amp;#125;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        tasks submitted by the &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; execute&amp;#125; method.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 用于保存等待执行的任务的阻塞队列&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- ❑ ArrayBlockingQueue：基于数组结构的有界阻塞队列，排序规则：FIFO&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- ❑ LinkedBlockingQueue：基于链表结构的阻塞队列，排序规则：FIFO，&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;                                    吞吐量通常要高于ArrayBlockingQueue。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;                                    Executors.newFixedThreadPool()使用了这个队列。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- ❑ SynchronousQueue：一个不存储元素的阻塞队列（读写交换执行，否则会阻塞。）&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;                                  吞吐量通常要高于Linked-BlockingQueue，&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;                                  Executors.newCachedThreadPool使用了这个队列。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- ❑ PriorityBlockingQueue：一个具有优先级的无限阻塞队列。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * &lt;span class=&quot;doctag&quot;&gt;@param&lt;/span&gt; threadFactory the factory to use when the executor&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        creates a new thread&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 设置创建线程的工厂，可以通过线程工厂给每个创建出来的线程设置更有意义的名字。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 使用开源框架guava提供的ThreadFactoryBuilder&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;             可以快速给线程池里的线程设置有意义的名字&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * &lt;span class=&quot;doctag&quot;&gt;@param&lt;/span&gt; handler the handler to use when execution is blocked&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        because the thread bounds and queue capacities are reached&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 当队列和线程池都满了（饱和状态），那么必须采取一种策略处理提交的新任务。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 这个策略默认情况下是AbortPolicy，表示无法处理新任务时抛出异常&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- ❑ AbortPolicy：直接抛出异常。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- ❑ CallerRunsPolicy：只用调用者所在线程来运行任务。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- ❑ DiscardOldestPolicy：丢弃队列里最近的一个任务，并执行当前任务。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- ❑ DiscardPolicy：不处理，丢弃掉。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *        -- 实现RejectedExecutionHandler接口自定义策略&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * &lt;span class=&quot;doctag&quot;&gt;@throws&lt;/span&gt; IllegalArgumentException if one of the following holds:&amp;lt;br&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *         &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; corePoolSize &amp;lt; 0&amp;#125;&amp;lt;br&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *         &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; keepAliveTime &amp;lt; 0&amp;#125;&amp;lt;br&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *         &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; maximumPoolSize &amp;lt;= 0&amp;#125;&amp;lt;br&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *         &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; maximumPoolSize &amp;lt; corePoolSize&amp;#125;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; * &lt;span class=&quot;doctag&quot;&gt;@throws&lt;/span&gt; NullPointerException if &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; workQueue&amp;#125;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; *         or &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; threadFactory&amp;#125; or &amp;#123;&lt;span class=&quot;doctag&quot;&gt;@code&lt;/span&gt; handler&amp;#125; is null&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt; */&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;ThreadPoolExecutor&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; corePoolSize,&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;                          &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; maximumPoolSize,&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;                          &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; keepAliveTime,&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;                          TimeUnit unit,&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;                          BlockingQueue&amp;lt;Runnable&amp;gt; workQueue,&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;                          ThreadFactory threadFactory,&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;                          RejectedExecutionHandler handler)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (corePoolSize &amp;lt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; ||&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        maximumPoolSize &amp;lt;= &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; ||&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        maximumPoolSize &amp;lt; corePoolSize ||&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        keepAliveTime &amp;lt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; IllegalArgumentException();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (workQueue == &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt; || threadFactory == &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt; || handler == &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; NullPointerException();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.acc = System.getSecurityManager() == &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt; ?&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt; :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            AccessController.getContext();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.corePoolSize = corePoolSize;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.maximumPoolSize = maximumPoolSize;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.workQueue = workQueue;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.keepAliveTime = unit.toNanos(keepAliveTime);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.threadFactory = threadFactory;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.handler = handler;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    <category term="Java线程池" scheme="https://www.sunliaodong.cn/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程池" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+    <category term="ThreadPoolExecutor" scheme="https://www.sunliaodong.cn/tags/ThreadPoolExecutor/"/>
+    
+  </entry>
   
   <entry>
     <title>Java并发编程之ThreadLocal</title>
@@ -470,130 +617,6 @@
     <category term="上线文切换" scheme="https://www.sunliaodong.cn/tags/%E4%B8%8A%E7%BA%BF%E6%96%87%E5%88%87%E6%8D%A2/"/>
     
     <category term="死锁" scheme="https://www.sunliaodong.cn/tags/%E6%AD%BB%E9%94%81/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之知识图谱</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</id>
-    <published>2021-02-05T11:30:18.000Z</published>
-    <updated>2021-02-05T11:33:51.714Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;div align=&quot;center&quot;&gt;
-
-&lt;img</summary>
-        
-      
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Zookeeper系统化学习</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Zookeeper%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Zookeeper%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0/</id>
-    <published>2021-02-05T11:16:32.000Z</published>
-    <updated>2021-02-05T11:25:33.115Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;开源分布式协调框架&lt;/li&gt;
-&lt;li&gt;为分布式应用提供一致性服务，作为整个大数据体系的管理员，包括服务发现、分布式锁、分布式领导选举、配置管理等&lt;/li&gt;
-&lt;li&gt;Zookeeper = 文件系统（类似于Linux文件系统的树形结构） + 监听通知机制&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Zookeeper" scheme="https://www.sunliaodong.cn/categories/Zookeeper/"/>
-    
-    
-    <category term="Zookeeper" scheme="https://www.sunliaodong.cn/tags/Zookeeper/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MyBatis系统化学习之缓存</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/</id>
-    <published>2021-02-05T11:11:17.000Z</published>
-    <updated>2021-02-05T11:15:13.026Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Mybatis中有一级缓存和二级缓存，默认情况下一级缓存是开启的，而且是不能关闭的。一级缓存是指 SqlSession 级别的缓存，当在同一个 SqlSession 中进行相同的 SQL 语句查询时，第二次以后的查询不会从数据库查询，而是直接从缓存中获取，一级缓存最多缓存 1024 条 SQL。二级缓存是指可以跨 SqlSession 的缓存。是 mapper 级别的缓存，对于 mapper 级别的缓存不同的 sqlsession 是可以共享的。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="开源框架" scheme="https://www.sunliaodong.cn/categories/%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6/"/>
-    
-    <category term="MyBatis" scheme="https://www.sunliaodong.cn/categories/MyBatis/"/>
-    
-    
-    <category term="缓存" scheme="https://www.sunliaodong.cn/tags/%E7%BC%93%E5%AD%98/"/>
-    
-    <category term="MyBatis" scheme="https://www.sunliaodong.cn/tags/MyBatis/"/>
-    
-    <category term="ORM" scheme="https://www.sunliaodong.cn/tags/ORM/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Linux 性能分析思路与工具</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/</id>
-    <published>2021-02-05T08:33:53.000Z</published>
-    <updated>2021-02-05T08:46:42.389Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;关注点&quot;&gt;&lt;a href=&quot;#关注点&quot; class=&quot;headerlink&quot; title=&quot;关注点&quot;&gt;&lt;/a&gt;关注点&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133930457.png&quot; class&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
-    
-    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Linux cpu过高分析</title>
-    <link href="https://www.sunliaodong.cn/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/"/>
-    <id>https://www.sunliaodong.cn/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/</id>
-    <published>2021-02-05T08:23:17.000Z</published>
-    <updated>2021-02-05T08:30:52.906Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;CPU使用率过高&quot;&gt;&lt;a href=&quot;#CPU使用率过高&quot; class=&quot;headerlink&quot; title=&quot;CPU使用率过高&quot;&gt;&lt;/a&gt;CPU使用率过高&lt;/h2&gt;&lt;p&gt;在高负载情况下CPU持续使用率高一般没有问题，但是导致任务无法正常调度或者load持续增加就需要重点关注，并且定位具体原因。（&lt;strong&gt;一般计算密集型应用 CPU 使用率偏高 load 偏低，IO 密集型相反。&lt;/strong&gt;）&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
-    
-    <category term="性能分析" scheme="https://www.sunliaodong.cn/categories/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
-    
-    <category term="CPU过高" scheme="https://www.sunliaodong.cn/tags/CPU%E8%BF%87%E9%AB%98/"/>
     
   </entry>
   
