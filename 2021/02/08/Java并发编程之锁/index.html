@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="背景在多线程同时访问同一个资源时，如果需要考虑对共享资源的竞争问题以及数据的正确性，这需要引入锁的概念，这就是所谓的线程安全。最常见的场景就是i–操作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程之锁">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="背景在多线程同时访问同一个资源时，如果需要考虑对共享资源的竞争问题以及数据的正确性，这需要引入锁的概念，这就是所谓的线程安全。最常见的场景就是i–操作。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1590651451164.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109028095.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1590754383821.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109071755.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109098671.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109123275.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589108702724.png">
+<meta property="article:published_time" content="2021-02-08T00:24:05.000Z">
+<meta property="article:modified_time" content="2021-02-08T00:27:26.069Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="锁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1590651451164.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java并发编程之锁 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">129</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">23</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">86</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java并发编程之锁
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-08 08:24:05 / 修改时间：08:27:26" itemprop="dateCreated datePublished" datetime="2021-02-08T08:24:05+08:00">2021-02-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在多线程同时访问同一个资源时，如果需要考虑对共享资源的竞争问题以及数据的正确性，这需要引入锁的概念，这就是所谓的线程安全。最常见的场景就是i–操作。</p>
+<a id="more"></a>
+
+<h3 id="i–-分析"><a href="#i–-分析" class="headerlink" title="i–/++分析"></a>i–/++分析</h3><h4 id="字节码指令"><a href="#字节码指令" class="headerlink" title="字节码指令"></a>字节码指令</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">getstatic i <span class="comment">// 获取静态变量i的值</span></span><br><span class="line">iconst_1    <span class="comment">// 准备常量1</span></span><br><span class="line">isub        <span class="comment">// 自减</span></span><br><span class="line">putstatic i <span class="comment">// 将修改后的值存入静态变量i</span></span><br><span class="line"></span><br><span class="line">getstatic i <span class="comment">// 获取静态变量i的值</span></span><br><span class="line">iconst_1    <span class="comment">// 准备常量1</span></span><br><span class="line">iadd        <span class="comment">// 自增</span></span><br><span class="line">putstatic i <span class="comment">// 将修改后的值存入静态变量i</span></span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1590651451164.png" class>
+
+</div>
+
+<h3 id="临界区-Critical-Section"><a href="#临界区-Critical-Section" class="headerlink" title="临界区 Critical Section"></a>临界区 Critical Section</h3><ol>
+<li>一个程序运行多个线程本身是没有问题的</li>
+<li>问题出在多个线程访问共享资源<ul>
+<li>多个线程读共享资源其实也没有问题</li>
+<li>在多个线程对共享资源读写操作时发生指令交错，就会出现问题</li>
+</ul>
+</li>
+<li>一段代码块内如果存在对共享资源的多线程读写操作，称这段代码块为临界区</li>
+</ol>
+<h3 id="竞态条件-Race-Condition"><a href="#竞态条件-Race-Condition" class="headerlink" title="竞态条件 Race Condition"></a>竞态条件 Race Condition</h3><p>多个线程在临界区内执行，由于代码的执行序列不同而导致结果无法预测，称之为发生了竞态条件</p>
+<h3 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h3><ol>
+<li>阻塞：锁（synchronized、lock）</li>
+<li>非阻塞：原子化、cas</li>
+</ol>
+<h2 id="锁分类"><a href="#锁分类" class="headerlink" title="锁分类"></a>锁分类</h2><h3 id="宏观分类"><a href="#宏观分类" class="headerlink" title="宏观分类"></a>宏观分类</h3><h4 id="乐观锁-（宏观分类）"><a href="#乐观锁-（宏观分类）" class="headerlink" title="乐观锁 （宏观分类）"></a>乐观锁 （宏观分类）</h4><ol>
+<li>场景：多读少写</li>
+<li>思想：读数据时认为数据不会被修改，不加锁；写数据时需要判断数据是否被修改过</li>
+<li>Java实现：版本控制和CAS</li>
+<li>CAS说明：一种更新的原子操作，比较当前值跟传入值是否一样，一样则更新，否则失败）</li>
+</ol>
+<h4 id="悲观锁（宏观分类）"><a href="#悲观锁（宏观分类）" class="headerlink" title="悲观锁（宏观分类）"></a>悲观锁（宏观分类）</h4><ol>
+<li>场景：写多读少</li>
+<li>每次获取数据时都需要加锁，防止被别人修改</li>
+<li>Java实现：Synchronized,AQS框架下的锁则是先尝试cas乐观锁去获取锁，获取不到，才会转换为悲观锁，如 RetreenLock。 </li>
+</ol>
+<h3 id="公平分类"><a href="#公平分类" class="headerlink" title="公平分类"></a>公平分类</h3><h4 id="非公平锁-（Nonfair）"><a href="#非公平锁-（Nonfair）" class="headerlink" title="非公平锁 （Nonfair）"></a>非公平锁 （Nonfair）</h4><ol>
+<li>原理：JVM 按随机、就近原则分配锁</li>
+<li>ReentrantLock：默认非公平，可以配置为公平</li>
+<li>常用：非公平执行效率高于公平锁</li>
+<li>加锁时不考虑排队等待问题，直接尝试获取锁，获取不到自动到队尾等待 <ul>
+<li>非公平锁性能比公平锁高 5~10 倍，因为公平锁需要在多核的情况下维护一个队列 </li>
+</ul>
+</li>
+<li>Java 中的 synchronized 是非公平锁，ReentrantLock 默认的 lock()方法采用的是非公平锁。 </li>
+</ol>
+<h4 id="公平锁-（Fair）"><a href="#公平锁-（Fair）" class="headerlink" title="公平锁 （Fair）"></a>公平锁 （Fair）</h4><ol>
+<li>先对锁提出获取请求的线程会先被分配到锁</li>
+<li>ReentrantLock 在构造函数中提供了是否公平锁的初始化方式来定义公平锁</li>
+<li>加锁前检查是否有排队等待的线程，优先排队等待的线程，先来先得</li>
+</ol>
+<h3 id="共享锁和独占锁"><a href="#共享锁和独占锁" class="headerlink" title="共享锁和独占锁"></a>共享锁和独占锁</h3><p>java 并发包提供的加锁模式分为独占锁和共享锁。 </p>
+<h4 id="独占锁"><a href="#独占锁" class="headerlink" title="独占锁"></a>独占锁</h4><p>独占锁模式下，每次只能有一个线程能持有锁，ReentrantLock 就是以独占方式实现的互斥锁。独占锁是一种悲观保守的加锁策略，它避免了读/读冲突，如果某个只读线程获取锁，则其他读线程都只能等待，这种情况下就限制了不必要的并发性，因为读操作并不会影响数据的一致性。 </p>
+<h4 id="共享锁"><a href="#共享锁" class="headerlink" title="共享锁"></a>共享锁</h4><p>共享锁则允许多个线程同时获取锁，并发访问 共享资源，如：ReadWriteLock。共享锁则是一种乐观锁，它放宽了加锁策略，允许多个执行读操作的线程同时访问共享资源。 </p>
+<ol>
+<li>   AQS 的内部类 Node 定义了两个常量 SHARED 和 EXCLUSIVE，他们分别标识 AQS 队列中等待线程的锁获取模式。 </li>
+<li>   java 的并发包中提供了 ReadWriteLock，读-写锁。它允许一个资源可以被多个读操作访问，或者被一个 写操作访问，但两者不能同时进行。 </li>
+</ol>
+<h3 id="可重入锁（递归锁）"><a href="#可重入锁（递归锁）" class="headerlink" title="可重入锁（递归锁）"></a>可重入锁（递归锁）</h3><p>重入锁，也叫做递归锁，指的是同一线程 外层函数获得锁之后 ，内层递归函数仍然有获取该锁的代码，但不受影响。在 JAVA 环境下 ReentrantLock 和 synchronized 都是 可重入锁。</p>
+<h2 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h2><p><strong>对象头相关知识点，参考<a href="book/jvm-hotspot-object.md">HotSpot虚拟机对象探秘</a></strong></p>
+<p>高效并发是从JDK 5升级到JDK 6后一项重要的改进项，HotSpot虚拟机开发团队在这个版本上花费了大量的资源去实现各种锁优化技术，如<strong>适应性自旋（Adaptive Spinning）、锁消除（Lock Elimination）、锁膨胀（LockCoarsening）、轻量级锁（Lightweight Locking）、偏向锁（Biased Locking）</strong> 等，这些技术都是为了在线程之间更高效地共享数据及解决竞争问题，从而提高程序的执行效率。<br><strong>锁的状态总共有四种：无锁状态、偏向锁、轻量级锁和重量级锁。</strong> </p>
+<ol>
+<li>锁升级：随着锁的竞争，锁可以从偏向锁升级到轻量级锁，再升级的重量级锁（但是锁的升级是单向的，也就是说只能从低到高升级，不会出现锁的降级）。 </li>
+<li>优化方式<ul>
+<li>减少锁的持有时间：只用在有线程安全要求的线程上加锁</li>
+<li>减小锁粒度 ：偏向锁、分段锁</li>
+<li>将大对象（这个对象可能会被很多线程访问），拆成小对象，大大增加并行度，降低锁竞争。</li>
+<li>降低了锁的竞争，偏向锁，轻量级锁成功率才会提高。最最典型的减小锁粒度的案例就是ConcurrentHashMap。 </li>
+</ul>
+</li>
+<li>锁分离<ul>
+<li>读写锁分离，根据功能进行分离成读锁和写锁，这样读读不互斥，读写互斥，写写互斥，即保证了线程安全，又提高了性能</li>
+</ul>
+</li>
+<li>锁粗化 <ul>
+<li>使用锁的时间尽量短，即时进行释放</li>
+<li>防止锁的多次请求、同步和释放</li>
+</ul>
+</li>
+<li>锁消除 锁消除是在编译器级别的事情。在即时编译器时，如果发现不可能被共享的对象，则可以消除这些对象的锁操作，多数是因为程序员编码不规范引起。 </li>
+</ol>
+<h3 id="锁升级"><a href="#锁升级" class="headerlink" title="锁升级"></a>锁升级</h3><h4 id="偏向锁（偏向第一个获取它的线程，优化锁机制）"><a href="#偏向锁（偏向第一个获取它的线程，优化锁机制）" class="headerlink" title="偏向锁（偏向第一个获取它的线程，优化锁机制）"></a>偏向锁（偏向第一个获取它的线程，优化锁机制）</h4><ol>
+<li>背景：锁在大部分情况下不仅不存在多线程竞争，并且可能会被同一个线程访问多次</li>
+<li>目的：消除这个线程锁冲入的开销</li>
+<li>优点：减少不必要轻量级锁执行路径（轻量级锁的获取及释放依赖多次 CAS 原子指令，而偏向锁只需要在置换 ThreadID的时候依赖一次 CAS 原子指令（由于一旦出现多线程竞争的情况就必须撤销偏向锁，所以偏向锁的撤销操作的性能损耗必须小于节省下来的 CAS 原子指令的性能消耗））</li>
+<li>轻量级锁是为了在线程交替执行同步块时提高性能，而偏向锁则是在只有一个线程执行同步块时进一步提高性能</li>
+<li>偏向锁也是JDK 6中引入的一项锁优化措施，它的目的是消除数据在无竞争情况下的同步原语，进一步提高程序的运行性能。如果说轻量级锁是在无竞争的情况下使用CAS操作去消除同步使用的互斥量，那偏向锁就是在无竞争的情况下把整个同步都消除掉，连CAS操作都不去做了</li>
+<li>启动方式：启用参数-XX：+UseBiased Locking，这是自JDK 6起HotSpot虚拟机的默认值</li>
+</ol>
+<h5 id="偏向锁获取过程"><a href="#偏向锁获取过程" class="headerlink" title="偏向锁获取过程"></a>偏向锁获取过程</h5><div align="center">
+
+<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109028095.png" class title="偏向锁的获取过程">
+
+<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1590754383821.png" class>
+
+</div>
+
+<ol>
+<li>初始化创建对象时（上图1：<strong>未锁定，不偏向</strong>）</li>
+<li>第一次调用（上图2：<strong>未锁定，已偏向</strong>），进入偏向模式。同时使用CAS操作把获取到这个锁的线程的ID记录在对象的Mark Word之中</li>
+<li>第二次调用：通过Markword判断是否可偏向（偏向锁标识为1且锁标志为01）<ol>
+<li>相同：可偏向，判断线程ID是否与当前线程相同，相同则执行代码块</li>
+<li>不相同，通过CAS操作竞争锁，成功则设置Markword中threadID为当前线程，并执行代码块</li>
+</ol>
+</li>
+<li>竞争失败（锁升级为轻量级锁，上图3：），当到达全局安全点（safepoint）时获得偏向锁的线程被挂起，偏向锁升级为轻量级锁，然后被阻塞在安全点的线程继续往下执行同步代码。（撤销偏向锁的时候会导致stop the word，时间很短</li>
+</ol>
+<h5 id="偏向锁的撤销"><a href="#偏向锁的撤销" class="headerlink" title="偏向锁的撤销"></a>偏向锁的撤销</h5><p><strong>一旦出现另外一个线程去尝试获取这个锁的情况，偏向模式就马上宣告结束。</strong><br>根据锁对象目前是否处于被锁定的状态决定是否撤销偏向（偏向模式设置为“0”），撤销后标志位恢复到未锁定（标志位为“01”）或轻量级锁定（标志位为“00”）的状态</p>
+<h5 id="HashCode"><a href="#HashCode" class="headerlink" title="HashCode"></a>HashCode</h5><ol>
+<li>当一个对象已经计算过一致性哈希码后，它就再也无法进入偏向锁状态了</li>
+<li>而当一个对象当前正处于偏向锁状态，又收到需要计算其一致性哈希码请求时，它的偏向状态会被立即撤销，并且锁会膨胀为重量级锁。</li>
+<li>在重量级锁的实现中，对象头指向了重量级锁的位置，代表重量级锁的ObjectMonitor类里有字段可以记录非加锁状态（标志位为“01”）下的Mark Word，其中自然可以存储原来的哈希码。</li>
+</ol>
+<h5 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h5><p>始终只有一个线程在执行同步块，在它没有执行完释放锁之前，没有其它线程去执行同步块，在锁无竞争的情况下使用，一旦有了竞争就升级为轻量级锁，升级为轻量级锁的时候需要撤销偏向锁，撤销偏向锁的时候会导致stop the word操作；在有锁的竞争时，偏向锁会多做很多额外操作，尤其是撤销偏向所的时候会导致进入安全点，安全点会导致stw，导致性能下降，这种情况下应当禁用；</p>
+<h5 id="查看停顿–安全点停顿日志"><a href="#查看停顿–安全点停顿日志" class="headerlink" title="查看停顿–安全点停顿日志"></a>查看停顿–安全点停顿日志</h5><ol>
+<li>打开安全点日志（不能这一会打开）<ul>
+<li>-XX:+PrintGCApplicationStoppedTime 会打出系统停止的时间，</li>
+<li>-XX:+PrintSafepointStatistics -XX:PrintSafepointStatisticsCount=1 这两个参数会打印出详细信息，可以查看到使用偏向锁导致的停顿，时间非常短暂，但是争用严重的情况下，停顿次数也会非常多</li>
+</ul>
+</li>
+<li>安全点日志的缺点<ul>
+<li>安全点日志默认输出到stdout，一是stdout日志的整洁性，二是stdout所重定向的文件如果不在/dev/shm，可能被锁。 </li>
+<li>对于一些很短的停顿，比如取消偏向锁，打印的消耗比停顿本身还大。 </li>
+<li>安全点日志是在安全点内打印的，本身加大了安全点的停顿时间。</li>
+</ul>
+</li>
+<li>如果在生产系统上要打开，再增加下面四个参数： <ul>
+<li>-XX:+UnlockDiagnosticVMOptions </li>
+<li>-XX: -DisplayVMOutput </li>
+<li>-XX:+LogVMOutput </li>
+<li>-XX:LogFile=/dev/shm/vm.log </li>
+</ul>
+</li>
+<li>打开Diagnostic（只是开放了更多的flag可选，不会主动激活某个flag），关掉输出VM日志到stdout，输出到独立文件,/dev/shm目录（内存文件系统）。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109071755.png" class>
+
+</div>
+
+<h6 id="安全点日志分析"><a href="#安全点日志分析" class="headerlink" title="安全点日志分析"></a>安全点日志分析</h6><ol>
+<li>第一部分是时间戳，VM Operation的类型 </li>
+<li>第二部分是线程概况，被中括号括起来 <ul>
+<li>total: 安全点里的总线程数 </li>
+<li>initially_running: 安全点开始时正在运行状态的线程数 </li>
+<li>wait_to_block: 在VM Operation开始前需要等待其暂停的线程数</li>
+</ul>
+</li>
+<li>第三部分是到达安全点时的各个阶段以及执行操作所花的时间，其中最重要的是vmop<ul>
+<li>spin: 等待线程响应safepoint号召的时间；</li>
+<li>block: 暂停所有线程所用的时间；</li>
+<li>sync: 等于 spin+block，这是从开始到进入安全点所耗的时间，可用于判断进入安全点耗时；</li>
+<li>cleanup: 清理所用时间；</li>
+<li>vmop: 真正执行VM Operation的时间。</li>
+</ul>
+</li>
+</ol>
+<p><strong>可见，那些很多但又很短的安全点，全都是RevokeBias， 高并发的应用会禁用掉偏向锁。</strong></p>
+<h4 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h4><ol>
+<li>目的：轻量级锁并不是用来代替重量级锁的，轻量级锁的初衷是在没有多线程竞争的前提下，减少传统的重量级锁使用操作系统互斥量产生的性能消耗</li>
+<li>限制：依赖于Java对象的头信息</li>
+<li>场景：线程交替执行同步块的情况，如果存在同一时间访问同一锁的情况，就会导致轻量级锁膨胀为重量级锁。 </li>
+<li>由来：轻量级锁是由偏向所升级来的，偏向锁运行在一个线程进入同步块的情况下，当第二个线程加入锁争用的时候，偏向锁就会升级为轻量级锁； </li>
+</ol>
+<h5 id="轻量级锁加锁过程"><a href="#轻量级锁加锁过程" class="headerlink" title="轻量级锁加锁过程"></a>轻量级锁加锁过程</h5><p>当对象锁状态为无锁状态（锁标志位为“01”状态，是否为偏向锁为“0”），虚拟机首先将在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，用于存储锁对象目前的Mark Word的拷贝，官方称之为 Displaced Mark Word。这时候线程堆栈与对象头的状态如图所示： </p>
+<div align="center">
+
+<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109098671.png" class>
+
+</div>
+
+
+<ol>
+<li><p>拷贝对象头中的Mark Word复制到锁记录中；</p>
+</li>
+<li><p>拷贝成功后，虚拟机将使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针，并将Lock record里的owner指针指向object mark word</p>
+<ul>
+<li><p>如果成功，那么这个线程就拥有了该对象的锁，并且对象Mark Word的锁标志位设置为“00”，即表示此对象处于轻量级锁定状态，如图所示：</p>
+ <div align="center">
+
+ <img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109123275.png" class>
+
+ </div></li>
+<li><p>如果失败</p>
+<ul>
+<li>会检查对象的Mark Word是否指向当前线程的栈帧，如果是就说明当前线程已经拥有了这个对象的锁，那就可以直接进入同步块继续执行</li>
+<li>否则说明多个线程竞争锁，轻量级锁就要膨胀为重量级锁，锁标志的状态值变为“10”，Mark Word中存储的就是指向重量级锁（互斥量）的指针，后面等待锁的线程也要进入阻塞状态。 而当前线程便尝试使用自旋来获取锁，自旋就是为了不让线程阻塞，而采用循环去获取锁的过程。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h5 id="轻量级锁的释放"><a href="#轻量级锁的释放" class="headerlink" title="轻量级锁的释放"></a>轻量级锁的释放</h5><h6 id="释放锁线程视角"><a href="#释放锁线程视角" class="headerlink" title="释放锁线程视角"></a>释放锁线程视角</h6><ol>
+<li>轻量锁切换重量锁是发生在轻量锁释放锁的期间，</li>
+<li>比对：在释放锁的时候使用复制的Markword与对象中的Markword的比对，如果不一致则切换到重量级锁（说明在这期间有线程修改了Markword）</li>
+<li>无需mutex的场景：确认该markword是否被其他线程持有，如果否说明线程已经释放了markword，通过CAS后就可以直接进入线程，无需进入mutex</li>
+</ol>
+<h6 id="尝试获取锁线程视角"><a href="#尝试获取锁线程视角" class="headerlink" title="尝试获取锁线程视角"></a>尝试获取锁线程视角</h6><ol>
+<li>线程尝试获取锁，如果轻量锁正在被其他线程占有，则修改markwod为重量级锁</li>
+<li>等待轻量锁的线程不会阻塞，它会一直自旋等待锁，并如上所说修改markword。这就是自旋锁，尝试获取锁的线程，在没有获得锁的时候，不被挂起，而转而去执行一个空循环，即自旋。在若干个自旋后，如果还没有获得锁，则才被挂起，获得锁，则执行代码。</li>
+</ol>
+<h4 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h4><ol>
+<li>原理：消耗CPU自旋，用来获取锁</li>
+<li>目的：减少内核态和用户态之间的切换，防止进入阻塞挂起状态</li>
+<li>退出：获取到了锁，或者超过了自旋最大时间</li>
+</ol>
+<h5 id="自旋锁的优缺点"><a href="#自旋锁的优缺点" class="headerlink" title="自旋锁的优缺点"></a>自旋锁的优缺点</h5><ol>
+<li>减少线程的阻塞，</li>
+<li>锁竞争不激烈：可以提高性能</li>
+<li>锁竞争激烈：浪费资源</li>
+<li>持有锁的线程长时间不释放锁：浪费资源</li>
+</ol>
+<h5 id="自旋锁时间阈值（1-6引入了适应性自旋锁）"><a href="#自旋锁时间阈值（1-6引入了适应性自旋锁）" class="headerlink" title="自旋锁时间阈值（1.6引入了适应性自旋锁）"></a>自旋锁时间阈值（1.6引入了适应性自旋锁）</h5><p>JVM 对于自旋周期的选择，jdk1.5 这个限度是写死的，在 1.6 引入了适应性自旋锁，适应性自旋锁意味着自旋的时间不在是固定的了，而是由前一次在同一个锁上的自旋时间以及锁的拥有者的状态来决定，基本认为一个线程上下文切换的时间是最佳的一个时间，同时 JVM 还针对当前 CPU 的负荷情况做了较多的优化：</p>
+<ol>
+<li>如果平均负载小于 CPUs 则一直自旋，</li>
+<li>如果有超过(CPUs/2) 个线程正在自旋，则后来线程直接阻塞，</li>
+<li>如果正在自旋的线程发现 Owner 发生了变化则延迟自旋时间（自旋计数）或进入阻塞，</li>
+<li>如果 CPU 处于节电模式则停止自旋，自旋时间的最坏情况是 CPU 的存储延迟（CPU A 存储了一个数据，到 CPU B 得知这个数据直接的时间差），</li>
+<li>自旋时会适当放弃线程优先级之间的差异。 </li>
+</ol>
+<h5 id="自旋锁的开启"><a href="#自旋锁的开启" class="headerlink" title="自旋锁的开启"></a>自旋锁的开启</h5><p>JDK1.6 中-XX:+UseSpinning 开启；<br>-XX:PreBlockSpin=10 为自旋次数；<br>JDK1.7 后，去掉此参数，由 jvm 控制； </p>
+<h4 id="重量级锁（Mutex-Lock）"><a href="#重量级锁（Mutex-Lock）" class="headerlink" title="重量级锁（Mutex Lock）"></a>重量级锁（Mutex Lock）</h4><ol>
+<li>定义：依赖于操作系统 Mutex Lock 所实现的锁（线程之间的切换需要从用户态转换成核心态，成本非常高）</li>
+<li>Synchronized 是通过对象内部的一个叫做监视器锁（monitor）来实现的</li>
+<li>监视器锁本质又是依赖于底层的操作系统的 Mutex Lock 来实现的</li>
+</ol>
+<h3 id="锁分离"><a href="#锁分离" class="headerlink" title="锁分离"></a>锁分离</h3><h4 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h4><p>为了提高性能，Java 提供了读写锁，在读的地方使用读锁，在写的地方使用写锁，灵活控制，如果没有写锁的情况下，读是无阻塞的,在一定程度上提高了程序的执行效率。读写锁分为读锁和写锁，多个读锁不互斥，读锁与写锁互斥，这是由 jvm 自己控制的，你只要上好相应的锁即可。 </p>
+<h5 id="读锁（并发读）"><a href="#读锁（并发读）" class="headerlink" title="读锁（并发读）"></a>读锁（并发读）</h5><p>如果你的代码只读数据，可以很多人同时读，但不能同时写，那就上读锁 </p>
+<h5 id="写锁（单独写）"><a href="#写锁（单独写）" class="headerlink" title="写锁（单独写）"></a>写锁（单独写）</h5><p>如果你的代码修改数据，只能有一个人在写，且不能同时读取，那就上写锁。总之，读的时候上读锁，写的时候上写锁！ </p>
+<h5 id="Java中的实现"><a href="#Java中的实现" class="headerlink" title="Java中的实现"></a>Java中的实现</h5><ol>
+<li>Java中读写锁有个接口ReadWriteLock实现类ReentrantReadWriteLock；可以用来实现TreeMap的线程安全使用。</li>
+<li>CopyOnWriteArrayList 、CopyOnWriteArraySet</li>
+<li>CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。CopyOnWrite并发容器用于读多写少的并发场景，因为，读的时候没有锁，但是对其进行更改的时候是会加锁的，否则会导致多个线程同时复制出多个副本，各自修改各自的；</li>
+</ol>
+<h3 id="锁粗化（减小锁的粒度）"><a href="#锁粗化（减小锁的粒度）" class="headerlink" title="锁粗化（减小锁的粒度）"></a>锁粗化（减小锁的粒度）</h3><p>减小锁粒度是指缩小锁定对象的范围，从而减小锁冲突的可能性，从而提高系统的并发能力。减小锁粒度是一种削弱多线程锁竞争的有效手段。</p>
+<h4 id="分段锁-ConcurrentHashMap"><a href="#分段锁-ConcurrentHashMap" class="headerlink" title="分段锁-ConcurrentHashMap"></a>分段锁-ConcurrentHashMap</h4><p>java中的ConcurrentHashMap在jdk1.8之前的版本，使用一个Segment 数组</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Segment&lt; K,V &gt;[] segments</span><br></pre></td></tr></table></figure>
+<p>Segment继承自ReenTrantLock，所以每个Segment就是个可重入锁，每个Segment 有一个HashEntry&lt; K,V &gt;数组用来存放数据，put操作时，先确定往哪个Segment放数据，只需要锁定这个Segment，执行put，其它的Segment不会被锁定；所以数组中有多少个Segment就允许同一时刻多少个线程存放数据，这样增加了并发能力。</p>
+<p>ConcurrentHashMap，它内部细分了若干个小的 HashMap，称之为段(Segment)。默认情况下一个 ConcurrentHashMap 被进一步细分为 16 个段，既就是锁的并发度。<br>如果需要在 ConcurrentHashMap 中添加一个新的表项，并不是将整个 HashMap 加锁，而是首先根据hashcode得到该表项应该存放在哪个段中，然后对该段加锁，并完成put操作。在多线程环境中，如果多个线程同时进行put操作，只要被加入的表项不存放在同一个段中，则线程间可以做到真正的并行。<br>ConcurrentHashMap 是由Segment 数组结构和HashEntry 数组结构组成<br>ConcurrentHashMap 是由 Segment 数组结构和 HashEntry 数组结构组成。Segment 是一种可重入锁 ReentrantLock，在 ConcurrentHashMap 里扮演锁的角色，HashEntry 则用于存储键值对数据。一个 ConcurrentHashMap 里包含一个 Segment 数组，Segment 的结构和 HashMap 类似，是一种数组和链表结构， 一个 Segment 里包含一个 HashEntry 数组，每个 HashEntry 是一个链表结构的元素， 每个 Segment 守护一个 HashEntry 数组里的元素,当对 HashEntry 数组的数据进行修改时，必须首先获得它对应的 Segment 锁。 </p>
+<div align="center">
+
+<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589108702724.png" class>
+
+</div>
+
+<h4 id="LongAdder"><a href="#LongAdder" class="headerlink" title="LongAdder"></a>LongAdder</h4><p>LongAdder 实现思路也类似ConcurrentHashMap，LongAdder有一个根据当前并发状况动态改变的Cell数组，Cell对象里面有一个long类型的value用来存储值;<br>开始没有并发争用的时候或者是cells数组正在初始化的时候，会使用cas来将值累加到成员变量的base上，在并发争用的情况下，LongAdder会初始化cells数组，在Cell数组中选定一个Cell加锁，数组有多少个cell，就允许同时有多少线程进行修改，最后将数组中每个Cell中的value相加，在加上base的值，就是最终的值；cell数组还能根据当前线程争用情况进行扩容，初始长度为2，每次扩容会增长一倍，直到扩容到大于等于cpu数量就不再扩容，这也就是为什么LongAdder比cas和AtomicInteger效率要高的原因，后面两者都是volatile+cas实现的，他们的竞争维度是1，LongAdder的竞争维度为“Cell个数+1”为什么要+1？因为它还有一个base，如果竞争不到锁还会尝试将数值加到base上；</p>
+<h4 id="LinkedBlockingQueue"><a href="#LinkedBlockingQueue" class="headerlink" title="LinkedBlockingQueue"></a>LinkedBlockingQueue</h4><p>LinkedBlockingQueue也体现了这样的思想，在队列头入队，在队列尾出队，入队和出队使用不同的锁，相对于LinkedBlockingArray只有一个锁效率要高；<br>拆锁的粒度不能无限拆，最多可以将一个锁拆为当前cup数量个锁即可；</p>
+<h3 id="无锁编程"><a href="#无锁编程" class="headerlink" title="无锁编程"></a>无锁编程</h3><ol>
+<li>一写一读的无锁队列：内存屏障</li>
+<li>一写多读的无锁队列：volatile关键字</li>
+<li>多写多读的无锁队列：CAS</li>
+<li>无锁栈</li>
+<li>无锁链表</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="同步锁与死锁"><a href="#同步锁与死锁" class="headerlink" title="同步锁与死锁"></a>同步锁与死锁</h3><h4 id="同步锁"><a href="#同步锁" class="headerlink" title="同步锁"></a>同步锁</h4><p>当多个线程同时访问同一个数据时，很容易出现问题。为了避免这种情况出现，我们要保证线程同步互斥，就是指并发执行的多个线程，在同一时间内只允许一个线程访问共享数据。 Java 中可以使用 synchronized 关键字来取得一个对象的同步锁。 </p>
+<h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>何为死锁，就是多个线程同时被阻塞，它们中的一个或者全部都在等待某个资源被释放。  </p>
+<h3 id="互斥同步"><a href="#互斥同步" class="headerlink" title="互斥同步"></a>互斥同步</h3><p>互斥同步（Mutual Exclusion &amp; Synchronization）是一种最常见也是最主要的并发正确性保障手段。同步是指在多个线程并发访问共享数据时，保证共享数据在同一个时刻只被一条（或者是一些，当使用信号量的时候）线程使用。而互斥是实现同步的一种手段，临界区（CriticalSection）、互斥量（Mutex）和信号量（Semaphore）都是常见的互斥实现方式。因此在“互斥同步”这四个字里面，互斥是因，同步是果；互斥是方法，同步是目的。</p>
+<h3 id="锁的基本实现原理"><a href="#锁的基本实现原理" class="headerlink" title="锁的基本实现原理"></a>锁的基本实现原理</h3><ol>
+<li>对象内部得有一个标志位（state变量），记录自己有没有被某个线程占用，最简单的情况是这个state有0、1两个取值，0表示没有线程占用这个锁，1表示有某个线程占用了这个锁。</li>
+<li>如果这个对象被某个线程占用，它得记录这个线程的thread ID，知道自己是被哪个线程占用了</li>
+<li>这个对象还得维护一个thread id list，记录其他所有阻塞的、等待拿这个锁的线程（也就是记录所有在外边等待的游客）。在当前线程释放锁之后（也就是把state从1改回0），从这个thread id list里面取一个线程唤醒。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/39628e1180a9">Java锁 - 导读</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zqz_zqz/article/details/70233767">java 中的锁 – 偏向锁、轻量级锁、自旋锁、重量级锁</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/%E9%94%81/" rel="tag"><i class="fa fa-tag"></i> 锁</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/07/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-Count/" rel="prev" title="MySQL之原理分析-Count">
+      <i class="fa fa-chevron-left"></i> MySQL之原理分析-Count
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/" rel="next" title="Java并发编程之Synchronized">
+      Java并发编程之Synchronized <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#i%E2%80%93-%E5%88%86%E6%9E%90"><span class="nav-number">1.1.</span> <span class="nav-text">i–&#x2F;++分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4"><span class="nav-number">1.1.1.</span> <span class="nav-text">字节码指令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B4%E7%95%8C%E5%8C%BA-Critical-Section"><span class="nav-number">1.2.</span> <span class="nav-text">临界区 Critical Section</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%9E%E6%80%81%E6%9D%A1%E4%BB%B6-Race-Condition"><span class="nav-number">1.3.</span> <span class="nav-text">竞态条件 Race Condition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">解决方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E5%88%86%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">锁分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8F%E8%A7%82%E5%88%86%E7%B1%BB"><span class="nav-number">2.1.</span> <span class="nav-text">宏观分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81-%EF%BC%88%E5%AE%8F%E8%A7%82%E5%88%86%E7%B1%BB%EF%BC%89"><span class="nav-number">2.1.1.</span> <span class="nav-text">乐观锁 （宏观分类）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%82%B2%E8%A7%82%E9%94%81%EF%BC%88%E5%AE%8F%E8%A7%82%E5%88%86%E7%B1%BB%EF%BC%89"><span class="nav-number">2.1.2.</span> <span class="nav-text">悲观锁（宏观分类）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E5%B9%B3%E5%88%86%E7%B1%BB"><span class="nav-number">2.2.</span> <span class="nav-text">公平分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E5%85%AC%E5%B9%B3%E9%94%81-%EF%BC%88Nonfair%EF%BC%89"><span class="nav-number">2.2.1.</span> <span class="nav-text">非公平锁 （Nonfair）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AC%E5%B9%B3%E9%94%81-%EF%BC%88Fair%EF%BC%89"><span class="nav-number">2.2.2.</span> <span class="nav-text">公平锁 （Fair）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E9%94%81%E5%92%8C%E7%8B%AC%E5%8D%A0%E9%94%81"><span class="nav-number">2.3.</span> <span class="nav-text">共享锁和独占锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8B%AC%E5%8D%A0%E9%94%81"><span class="nav-number">2.3.1.</span> <span class="nav-text">独占锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E9%94%81"><span class="nav-number">2.3.2.</span> <span class="nav-text">共享锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%EF%BC%88%E9%80%92%E5%BD%92%E9%94%81%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">可重入锁（递归锁）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">锁优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E5%8D%87%E7%BA%A7"><span class="nav-number">3.1.</span> <span class="nav-text">锁升级</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%8F%E5%90%91%E9%94%81%EF%BC%88%E5%81%8F%E5%90%91%E7%AC%AC%E4%B8%80%E4%B8%AA%E8%8E%B7%E5%8F%96%E5%AE%83%E7%9A%84%E7%BA%BF%E7%A8%8B%EF%BC%8C%E4%BC%98%E5%8C%96%E9%94%81%E6%9C%BA%E5%88%B6%EF%BC%89"><span class="nav-number">3.1.1.</span> <span class="nav-text">偏向锁（偏向第一个获取它的线程，优化锁机制）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%81%8F%E5%90%91%E9%94%81%E8%8E%B7%E5%8F%96%E8%BF%87%E7%A8%8B"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">偏向锁获取过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%81%8F%E5%90%91%E9%94%81%E7%9A%84%E6%92%A4%E9%94%80"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">偏向锁的撤销</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HashCode"><span class="nav-number">3.1.1.3.</span> <span class="nav-text">HashCode</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">3.1.1.4.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%81%9C%E9%A1%BF%E2%80%93%E5%AE%89%E5%85%A8%E7%82%B9%E5%81%9C%E9%A1%BF%E6%97%A5%E5%BF%97"><span class="nav-number">3.1.1.5.</span> <span class="nav-text">查看停顿–安全点停顿日志</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E7%82%B9%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="nav-number">3.1.1.5.1.</span> <span class="nav-text">安全点日志分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81"><span class="nav-number">3.1.2.</span> <span class="nav-text">轻量级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81%E5%8A%A0%E9%94%81%E8%BF%87%E7%A8%8B"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">轻量级锁加锁过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81%E7%9A%84%E9%87%8A%E6%94%BE"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">轻量级锁的释放</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%87%8A%E6%94%BE%E9%94%81%E7%BA%BF%E7%A8%8B%E8%A7%86%E8%A7%92"><span class="nav-number">3.1.2.2.1.</span> <span class="nav-text">释放锁线程视角</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E8%8E%B7%E5%8F%96%E9%94%81%E7%BA%BF%E7%A8%8B%E8%A7%86%E8%A7%92"><span class="nav-number">3.1.2.2.2.</span> <span class="nav-text">尝试获取锁线程视角</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">3.1.3.</span> <span class="nav-text">自旋锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E6%97%8B%E9%94%81%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">3.1.3.1.</span> <span class="nav-text">自旋锁的优缺点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E6%97%8B%E9%94%81%E6%97%B6%E9%97%B4%E9%98%88%E5%80%BC%EF%BC%881-6%E5%BC%95%E5%85%A5%E4%BA%86%E9%80%82%E5%BA%94%E6%80%A7%E8%87%AA%E6%97%8B%E9%94%81%EF%BC%89"><span class="nav-number">3.1.3.2.</span> <span class="nav-text">自旋锁时间阈值（1.6引入了适应性自旋锁）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E6%97%8B%E9%94%81%E7%9A%84%E5%BC%80%E5%90%AF"><span class="nav-number">3.1.3.3.</span> <span class="nav-text">自旋锁的开启</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E9%87%8F%E7%BA%A7%E9%94%81%EF%BC%88Mutex-Lock%EF%BC%89"><span class="nav-number">3.1.4.</span> <span class="nav-text">重量级锁（Mutex Lock）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E5%88%86%E7%A6%BB"><span class="nav-number">3.2.</span> <span class="nav-text">锁分离</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E9%94%81"><span class="nav-number">3.2.1.</span> <span class="nav-text">读写锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%BB%E9%94%81%EF%BC%88%E5%B9%B6%E5%8F%91%E8%AF%BB%EF%BC%89"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">读锁（并发读）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%86%99%E9%94%81%EF%BC%88%E5%8D%95%E7%8B%AC%E5%86%99%EF%BC%89"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">写锁（单独写）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Java%E4%B8%AD%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.2.1.3.</span> <span class="nav-text">Java中的实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E7%B2%97%E5%8C%96%EF%BC%88%E5%87%8F%E5%B0%8F%E9%94%81%E7%9A%84%E7%B2%92%E5%BA%A6%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">锁粗化（减小锁的粒度）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E6%AE%B5%E9%94%81-ConcurrentHashMap"><span class="nav-number">3.3.1.</span> <span class="nav-text">分段锁-ConcurrentHashMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LongAdder"><span class="nav-number">3.3.2.</span> <span class="nav-text">LongAdder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedBlockingQueue"><span class="nav-number">3.3.3.</span> <span class="nav-text">LinkedBlockingQueue</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B"><span class="nav-number">3.4.</span> <span class="nav-text">无锁编程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E9%94%81%E4%B8%8E%E6%AD%BB%E9%94%81"><span class="nav-number">4.1.</span> <span class="nav-text">同步锁与死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E9%94%81"><span class="nav-number">4.1.1.</span> <span class="nav-text">同步锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">4.1.2.</span> <span class="nav-text">死锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E5%90%8C%E6%AD%A5"><span class="nav-number">4.2.</span> <span class="nav-text">互斥同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">4.3.</span> <span class="nav-text">锁的基本实现原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">129</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">719k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">10:54</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : 'f350bf714b61080b4f551de55cd777f4',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
