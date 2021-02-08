@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-08T00:47:34.192Z</updated>
+  <updated>2021-02-08T06:44:30.130Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,114 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java并发编程之应用-设备升级</title>
+    <link href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%BA%94%E7%94%A8-%E8%AE%BE%E5%A4%87%E5%8D%87%E7%BA%A7/"/>
+    <id>https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%BA%94%E7%94%A8-%E8%AE%BE%E5%A4%87%E5%8D%87%E7%BA%A7/</id>
+    <published>2021-02-08T06:42:59.000Z</published>
+    <updated>2021-02-08T06:44:30.130Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;功能需求：设备策略升级  &lt;/p&gt;
+&lt;p&gt;详细描述：用户可以不定期的创建1条策略来升级选择的多个设备从a版本到b版本  &lt;/p&gt;
+&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%BA%94%E7%94%A8-%E8%AE%BE%E5%A4%87%E5%8D%87%E7%BA%A7/1588229421629.png&quot; class&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="Java线程池" scheme="https://www.sunliaodong.cn/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="线程池" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java并发编程之阻塞队列</title>
+    <link href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/"/>
+    <id>https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/</id>
+    <published>2021-02-08T06:38:55.000Z</published>
+    <updated>2021-02-08T06:42:10.836Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;阻塞队列，关键字是阻塞，先理解阻塞的含义，在阻塞队列中，线程阻塞有这样的两种情况：&lt;br&gt;    当队列中没有数据的情况下，消费者端的所有线程都会被自动阻塞（挂起），直到有数据放入队列。 &lt;/p&gt;
+&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/1589104874399.png&quot; class&gt;
+
+&lt;/div&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="阻塞队列" scheme="https://www.sunliaodong.cn/tags/%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/"/>
+    
+    <category term="ArrayBlockingQueue" scheme="https://www.sunliaodong.cn/tags/ArrayBlockingQueue/"/>
+    
+    <category term="LinkedBlockingQueue" scheme="https://www.sunliaodong.cn/tags/LinkedBlockingQueue/"/>
+    
+    <category term="PriorityBlockingQueue" scheme="https://www.sunliaodong.cn/tags/PriorityBlockingQueue/"/>
+    
+    <category term="DelayQueue" scheme="https://www.sunliaodong.cn/tags/DelayQueue/"/>
+    
+    <category term="SynchronousQueue" scheme="https://www.sunliaodong.cn/tags/SynchronousQueue/"/>
+    
+    <category term="LinkedTransferQueue" scheme="https://www.sunliaodong.cn/tags/LinkedTransferQueue/"/>
+    
+    <category term="LinkedBlockingDeque" scheme="https://www.sunliaodong.cn/tags/LinkedBlockingDeque/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MYSQL之数据类型与Schema</title>
+    <link href="https://www.sunliaodong.cn/2021/02/08/MYSQL%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8ESchema/"/>
+    <id>https://www.sunliaodong.cn/2021/02/08/MYSQL%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8ESchema/</id>
+    <published>2021-02-08T05:52:44.000Z</published>
+    <updated>2021-02-08T05:56:41.378Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;选择优化的数据类型&quot;&gt;&lt;a href=&quot;#选择优化的数据类型&quot; class=&quot;headerlink&quot; title=&quot;选择优化的数据类型&quot;&gt;&lt;/a&gt;选择优化的数据类型&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;更小的通常更好&lt;/li&gt;
+&lt;li&gt;简单就好&lt;/li&gt;
+&lt;li&gt;尽量避免使用NULL&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;数值类型&quot;&gt;&lt;a href=&quot;#数值类型&quot; class=&quot;headerlink&quot; title=&quot;数值类型&quot;&gt;&lt;/a&gt;数值类型&lt;/h3&gt;&lt;p&gt;在mysql中的数值类型主要包括：整数和实数。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在mysql中可以指定整数类型的宽度，但是该宽度只是用来显示可展示的长度，不能作为限制类型的实际长度&lt;/li&gt;
+&lt;li&gt;mysql中支持精确类型的实数和非精确类型的实数，需要根据实际场景进行选择，也可以根据业务场景转换成BIGINT进行存储&lt;br&gt;具体类型如下表所示：&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="数据类型" scheme="https://www.sunliaodong.cn/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
+    
+  </entry>
   
   <entry>
     <title>Java并发编程之线程控制手段</title>
@@ -501,89 +609,6 @@
     
     
     <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>JDK安装</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/JDK%E5%AE%89%E8%A3%85/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/JDK%E5%AE%89%E8%A3%85/</id>
-    <published>2021-02-07T07:29:37.000Z</published>
-    <updated>2021-02-07T07:31:35.602Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;Windows版本&quot;&gt;&lt;a href=&quot;#Windows版本&quot; class=&quot;headerlink&quot; title=&quot;Windows版本&quot;&gt;&lt;/a&gt;Windows版本&lt;/h2&gt;&lt;h3 id=&quot;版本说明&quot;&gt;&lt;a href=&quot;#版本说明&quot; class=&quot;headerlink&quot; title=&quot;版本说明&quot;&gt;&lt;/a&gt;版本说明&lt;/h3&gt;&lt;ol&gt;
-&lt;li&gt;操作系统版本：Window10 X64，其他操作系统类似&lt;/li&gt;
-&lt;li&gt;JDK版本：jdk1.8.0_192，安装后目录：&lt;code&gt;C:\Program Files\Java\jdk1.8.0_192&lt;/code&gt;&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="常用工具" scheme="https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="JDK" scheme="https://www.sunliaodong.cn/tags/JDK/"/>
-    
-    <category term="环境变量" scheme="https://www.sunliaodong.cn/tags/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之Executors</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/</id>
-    <published>2021-02-07T03:16:17.000Z</published>
-    <updated>2021-02-07T03:18:59.156Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;newCachedThreadPool&quot;&gt;&lt;a href=&quot;#newCachedThreadPool&quot; class=&quot;headerlink&quot; title=&quot;newCachedThreadPool&quot;&gt;&lt;/a&gt;newCachedThreadPool&lt;/h2&gt;&lt;p&gt;创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。对于执行&lt;strong&gt;很多短期异步任务&lt;/strong&gt;的程序而言，这些线程池通常可提高程序性能。调用 execute 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。因此，长时间保持空闲的线程池不会使用任何资源。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    <category term="Java线程池" scheme="https://www.sunliaodong.cn/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="线程池" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
-    
-    <category term="Executors" scheme="https://www.sunliaodong.cn/tags/Executors/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之ScheduledThreadPoolExecutor</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BScheduledThreadPoolExecutor/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BScheduledThreadPoolExecutor/</id>
-    <published>2021-02-07T03:09:00.000Z</published>
-    <updated>2021-02-07T03:15:33.627Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;任务执行&quot;&gt;&lt;a href=&quot;#任务执行&quot; class=&quot;headerlink&quot; title=&quot;任务执行&quot;&gt;&lt;/a&gt;任务执行&lt;/h2&gt;&lt;p&gt;当调用ScheduledThreadPoolExecutor的scheduleAtFixedRate()方法或者scheduleWith-FixedDelay()方法时，会向ScheduledThreadPoolExecutor的DelayQueue添加一个实现了RunnableScheduledFuture接口的ScheduledFutureTask。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    <category term="Java线程池" scheme="https://www.sunliaodong.cn/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="ScheduledThreadPoolExecutor" scheme="https://www.sunliaodong.cn/tags/ScheduledThreadPoolExecutor/"/>
-    
-    <category term="线程池" scheme="https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
     
   </entry>
   
