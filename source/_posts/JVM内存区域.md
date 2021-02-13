@@ -27,9 +27,7 @@ date: 2021-02-05 11:22:34
 
 <div align=center>
 
-![](JVM内存区域/1589103001540.png)
-
-![](JVM内存区域/1589456777274.png)
+![](JVM内存区域/JVM内存区域.png)
 
 </div>
 
@@ -44,6 +42,12 @@ date: 2021-02-05 11:22:34
 > Each thread of a running program has its own pc register, or program counter, which is created when the thread is started. The pc register is one word in size, so it can hold both a native pointer and a returnValue. As a thread executes a Java method, the pc register contains the address of the current instruction being executed by the thread. An “address” can be a native pointer or an offset from the beginning of a method’s bytecodes. If a thread is executing a native method, the value of the pc register is undefined.
 
 **此内存区域是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。**
+
+### 程序计数器总结
+
+1. 占用的 JVM 内存空间较小
+2. 每个线程生命周期内独享自己的程序计数器（内部存放的是字节码指令的地址引用）
+3. 不会发生 OOM
 
 ## 虚拟机栈(线程私有)
 
@@ -118,9 +122,34 @@ int c = a+b;
 1. 如果线程请求的栈深度大于虚拟机所允许的深度，将抛出StackOverflowError异常。
 2. 如果VM栈可以动态扩展，在初始化新线程时没有足够内存创建栈则抛出OutOfMemoryError异常。
 
+### 虚拟机栈图解
+
+<div align=center>
+
+![虚拟机栈图解](JVM内存区域/虚拟机栈图解.png)
+
+</div>
+
+### 内存设置
+
+```java
+# -Xss ：用于设置栈的大小，栈的大小决定了方法调用的深度。
+# 设置线程栈大小为 512k（以字节为单位）
+-Xss 512k
+```
+
+### 虚拟机栈总结
+
+1. 内部结构是栈帧，每个方法在执行的时候都会创建一个栈帧，用于存储局部变量表，操作数栈，动态链接，方法返回地址等信息
+2. 某方法在调用另一个方法是通过动态链接在常量池中查询方法的引用，进而完成方法调用
+3. 某方法在调用另一个方法的过程，即是一个栈帧在虚拟机中的入栈到出栈的过程
+4. 虚拟机中的方法入栈的顺序和方法的调用顺序是一致的
+
 ## 本地方法栈(线程私有)
 
 与Java Stack类似，主要区别是，Java Stack用于执行Java方法服务，本地方法栈用于native方法服务。
+1. 和虚拟机栈类似，内部结构是栈帧，每个 Native 方法执行时创建一个栈帧
+2. 该部分没有规定内存大小
 
 ### 实现方式
 
@@ -188,6 +217,21 @@ Java新对象的出生地（如果新创建的对象占用内存很大，则直�
 
 </div>
 
+### 内存参数设置
+
+```java
+# 设置堆区的初始大小
+-Xms1024m
+# 设置堆区的存储空间最大值，一般与堆区的初始大小相等
+-Xmx1024m
+# 设置年轻代堆的大小
+-Xmn512m
+# 设置如下参数，在出现OOM时进行堆转储
+-XX:+HeapDumpOnOutOfMemoryError
+# 设置以上设置时，需配置以下参数，堆转储文件输出的位置
+-XX:HeapDumpPath=/usr/log/java_dump.hprof
+```
+
 ## 方法区/永久代（Permanent Generation，线程共享）
 
 1. 线程共享
@@ -196,6 +240,27 @@ Java新对象的出生地（如果新创建的对象占用内存很大，则直�
 4. 内存不足出现OOM
 5. JDK8之后使用元空间替代了永久代
 6. 默认最小16MB，最大64MB，可以通过-XX:PermSize 和 -XX:MaxPermSize 参数限制方法区的大小
+
+<div align=center>
+
+![方法区与永久代](JVM内存区域/方法区与永久代.png)
+![方法区在不同JDK版本比较](JVM内存区域/方法区在不同JDK版本比较.png)
+![方法区和元空间的区别](JVM内存区域/方法区和元空间的区别.png)
+
+</div>
+
+### 内存参数设置
+
+```java
+# jdk1.7 设置永久代内存初始大小
+-XX:PermSize=512m
+# jdk1.7 设置永久代内存最大值
+-XX:MaxPermSize=512m
+# jdk1.8 设置元空间内存初始大小
+-XX:MetaspaceSize=1024m
+# jdk1.8 设置元空间内存最大值
+-XX:MaxMetaspaceSize=1024m
+```
 
 ### JAVA8 与元数据
 
@@ -239,8 +304,117 @@ MaxPermSize 控制, 而由系统的实际可用空间来控制。
 
 ## 场景内存溢出分析
 
-## 对象分析
+## 对象分析(ObjectA a = new ObjectA())
+
+### 对象创建
+
+<div align=center>
+
+![对象创建过程](JVM内存区域/对象创建过程.png)
+
+</div>
+
+1. 在虚拟机栈创建栈帧
+2. 栈帧内创建对象的引用
+3. 方法区进行类的加载
+4. Java 堆区进行分配内存并内存初始化
+5. 回到栈帧中初始化对象的数据
+
+### 内存分配过程
+
+#### 指针碰撞
+
+1. 支持**压缩功能**的垃圾收集器Serial、ParNew 等（Compact 过程），
+2. 分开已使用和未使用的内存，两者之间使用一个指针作为分界点指示器
+3. 分配内存只需移动指针，分界点指示器向未使用的内存一侧移动一段与对象大小相等的空间
+
+<div align=center>
+
+![指针碰撞分配内存](JVM内存区域/指针碰撞分配内存.png)
+
+</div>
+
+#### 空闲列表
+
+1. 使用**标记清除（Mark-Sweep）算法**的 CMS 垃圾回收器
+2. 内存划分成网格区（Region），内存分配不规整，即已使用的和未使用的内存随机分布
+3. JVM 维护一个记录表，用于记录那些内存可用于分配
+4. 需要给对象分配内存区域时，寻找一块足够大的内存空间分配给对象，并更新记录表
+
+<div align=center>
+
+![空闲列表分配内存](JVM内存区域/空闲列表分配内存.png)
+
+</div>
+
+### 并发控制
+
+#### 同步处理
+
+内存分配的动作采用同步机制，JVM 为了增加效率采用了 CAS 方式。
+
+#### TLAB 
+
+1. 全称：Thread Local Allocation Buffer
+2. 原理：每个线程在 Java 堆中预先分配一小块内存，叫做本地线程分配缓冲区。类似于ThreadLocal
+3. 哪个线程需要分配内存先去各自的 TLAB 中分配，但是这个缓冲区比较小，是为了加速对象的分配。只有在线程的 TLAB 用完才会去堆中进行内存分配，此时才需要同步机制。
+
+<div align=center>
+
+![TLAB缓冲区](JVM内存区域/TLAB缓冲区.png)
+
+</div>
+
+### 对象访问
+
+#### 直接访问（HotSpot使用）
+
+<div align=center>
+
+![对象访问方式-直接访问](JVM内存区域/对象访问方式-直接访问.png)
+
+</div>
+
+**优点**：相对于句柄访问定位的方式，减少了一次指针定位的开销（也减少了句柄池的存储空间），HotSpot JVM 实现采用的是直接访问的方式进行对象访问定位。
+
+#### 句柄访问
+
+<div align=center>
+
+![对象访问方式-句柄访问](JVM内存区域/对象访问方式-句柄访问.png)
+
+</div>
+
+**优点**：在垃圾回收的时候对象要经常转移，这时候只需改变句柄中指向对象实例数据的指针即可（不用修改 reference）
+
+### 对象内存布局
+
+参考《<a href="https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/" target="_blank">JVM HotSpot虚拟机对象探秘</a>》。
+
+<div align=center>
+
+![对象内存布局](JVM内存区域/对象内存布局.png)
+
+</div>
+
+## 其他
+
+### JVM 中 GC 参数的设置
+
+```java
+# 在控制台输出GC情况
+-verbose:gc 
+# GC日志输出
+-XX:+PrintGC
+# GC日志详细输出
+-XX:+PrintGCDetails
+# GC输出时间戳
+-XX:+PrintGCDateStamps
+# GC日志输出指定文件中
+-Xloggc:/log/gc.log
+```
 
 ## 参考
 
 1. 《深入理解Java虚拟机》
+2. [从Java代码运行聊到JVM及对象创建-分配-定位-布局-垃圾回收](https://www.toutiao.com/i6797907413220459019)
