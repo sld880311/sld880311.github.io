@@ -22,19 +22,162 @@ date: 2021-02-08 13:52:44
 具体类型如下表所示：
 <!--more-->
 
-<div align=center>
-
-![](MYSQL之数据类型与Schema/1597752726982.png)
-
-</div>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg" style="undefined;table-layout: fixed; width: 800px">
+<colgroup>
+<col style="width: 106px">
+<col style="width: 134px">
+<col style="width: 261px">
+<col style="width: 215px">
+<col style="width: 84px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-0lax"> 类型 </th>
+    <th class="tg-0lax"> 大小 </th>
+    <th class="tg-0lax"> 范围（有符号） </th>
+    <th class="tg-0lax"> 范围（无符号） </th>
+    <th class="tg-0lax"> 用途 </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax"> TINYINT </td>
+    <td class="tg-0lax"> 1 byte </td>
+    <td class="tg-0lax"> (-128，127) </td>
+    <td class="tg-0lax"> (0，255) </td>
+    <td class="tg-0lax"> 小整数值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> SMALLINT </td>
+    <td class="tg-0lax"> 2 bytes </td>
+    <td class="tg-0lax"> (-32 768，32 767) </td>
+    <td class="tg-0lax"> (0，65 535) </td>
+    <td class="tg-0lax"> 大整数值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> MEDIUMINT </td>
+    <td class="tg-0lax"> 3  bytes </td>
+    <td class="tg-0lax"> (-8 388 608，8 388 607) </td>
+    <td class="tg-0lax"> (0，16 777 215) </td>
+    <td class="tg-0lax"> 大整数值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> INT或INTEGER </td>
+    <td class="tg-0lax"> 4  bytes </td>
+    <td class="tg-0lax"> (-2 147 483 648，2 147 483 647) </td>
+    <td class="tg-0lax"> (0，4 294 967 295) </td>
+    <td class="tg-0lax"> 大整数值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> BIGINT </td>
+    <td class="tg-0lax"> 8  bytes </td>
+    <td class="tg-0lax"> (-9,223,372,036,854,775,808，9 223 372 036 854 775 807) </td>
+    <td class="tg-0lax"> (0，18 446 744 073 709 551 615) </td>
+    <td class="tg-0lax"> 极大整数值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> FLOAT </td>
+    <td class="tg-0lax"> 4  bytes </td>
+    <td class="tg-0lax"> (-3.402 823 466 E+38，-1.175 494 351 E-38)，<br>0，<br>(1.175 494 351 E-38，3.402 823 466 351 E+38)  </td>
+    <td class="tg-0lax"> 0，<br>(1.175 494 351 E-38，3.402 823 466 E+38) </td>
+    <td class="tg-0lax"> 单精度<br>浮点数值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> DOUBLE </td>
+    <td class="tg-0lax"> 8  bytes </td>
+    <td class="tg-0lax"> (-1.797 693 134 862 315 7 E+308，-2.225 073 858 507 201 4 E-308)，<br>0，<br>(2.225 073 858 507 201 4 E-308，1.797 693 134 862 315 7 E+308) </td>
+    <td class="tg-0lax"> 0，<br>(2.225 073 858 507 201 4 E-308，1.797 693 134 862 315 7 E+308) </td>
+    <td class="tg-0lax"> 双精度<br>浮点数值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> DECIMAL </td>
+    <td class="tg-0lax"> 对DECIMAL(M,D) ，如果M&gt;D，M+2<br>否则为D+2 </td>
+    <td class="tg-0lax"> 依赖于M和D的值 </td>
+    <td class="tg-0lax"> 依赖于M和D的值 </td>
+    <td class="tg-0lax"> 小数值 </td>
+  </tr>
+</tbody>
+</table>
 
 ### 字符类型
 
-<div align=center>
-
-![](MYSQL之数据类型与Schema/1597753037747.png)
-
-</div>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax"> 类型 </th>
+    <th class="tg-0lax"> 大小 </th>
+    <th class="tg-0lax"> 用途 </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax"> CHAR </td>
+    <td class="tg-0lax"> 0-255 bytes </td>
+    <td class="tg-0lax"> 定长字符串 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> VARCHAR </td>
+    <td class="tg-0lax"> 0-65535 bytes </td>
+    <td class="tg-0lax"> 变长字符串 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> TINYBLOB </td>
+    <td class="tg-0lax"> 0-255 bytes </td>
+    <td class="tg-0lax"> 不超过 255 个字符的二进制字符串 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> TINYTEXT </td>
+    <td class="tg-0lax"> 0-255 bytes </td>
+    <td class="tg-0lax"> 短文本字符串 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> BLOB </td>
+    <td class="tg-0lax"> 0-65 535 bytes </td>
+    <td class="tg-0lax"> 二进制形式的长文本数据 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> TEXT </td>
+    <td class="tg-0lax"> 0-65 535 bytes </td>
+    <td class="tg-0lax"> 长文本数据 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> MEDIUMBLOB </td>
+    <td class="tg-0lax"> 0-16 777 215 bytes </td>
+    <td class="tg-0lax"> 二进制形式的中等长度文本数据 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> MEDIUMTEXT </td>
+    <td class="tg-0lax"> 0-16 777 215 bytes </td>
+    <td class="tg-0lax"> 中等长度文本数据 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> LONGBLOB </td>
+    <td class="tg-0lax"> 0-4 294 967 295 bytes </td>
+    <td class="tg-0lax"> 二进制形式的极大文本数据 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> LONGTEXT </td>
+    <td class="tg-0lax"> 0-4 294 967 295 bytes </td>
+    <td class="tg-0lax"> 极大文本数据 </td>
+  </tr>
+</tbody>
+</table>
 
 #### varchar
 
@@ -68,11 +211,69 @@ date: 2021-02-08 13:52:44
 
 ### 时间类型
 
-<div align=center>
-
-![](MYSQL之数据类型与Schema/1597755046939.png)
-
-</div>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg" style="undefined;table-layout: fixed; width: 784px">
+<colgroup>
+<col style="width: 99px">
+<col style="width: 62px">
+<col style="width: 301px">
+<col style="width: 182px">
+<col style="width: 140px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-0lax"> 类型 </th>
+    <th class="tg-0lax"> 大小<br>( bytes) </th>
+    <th class="tg-0lax"> 范围 </th>
+    <th class="tg-0lax"> 格式 </th>
+    <th class="tg-0lax"> 用途 </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax"> DATE </td>
+    <td class="tg-0lax"> 3 </td>
+    <td class="tg-0lax"> 1000-01-01/9999-12-31 </td>
+    <td class="tg-0lax"> YYYY-MM-DD </td>
+    <td class="tg-0lax"> 日期值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> TIME </td>
+    <td class="tg-0lax"> 3 </td>
+    <td class="tg-0lax"> '-838:59:59'/'838:59:59' </td>
+    <td class="tg-0lax"> HH:MM:SS </td>
+    <td class="tg-0lax"> 时间值或持续时间 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> YEAR </td>
+    <td class="tg-0lax"> 1 </td>
+    <td class="tg-0lax"> 1901/2155 </td>
+    <td class="tg-0lax"> YYYY </td>
+    <td class="tg-0lax"> 年份值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> DATETIME </td>
+    <td class="tg-0lax"> 8 </td>
+    <td class="tg-0lax"> 1000-01-01 00:00:00/9999-12-31 23:59:59 </td>
+    <td class="tg-0lax"> YYYY-MM-DD HH:MM:SS </td>
+    <td class="tg-0lax"> 混合日期和时间值 </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax"> TIMESTAMP </td>
+    <td class="tg-0lax"> 4 </td>
+    <td class="tg-0lax"> <br>1970-01-01 00:00:00/2038<br>结束时间是第 2147483647 秒，北京时间 2038-1-19 11:14:07，格林尼治时间 2038年1月19日 凌晨 03:14:07 </td>
+    <td class="tg-0lax"> YYYYMMDD HHMMSS </td>
+    <td class="tg-0lax"> 混合日期和时间值，时间戳 </td>
+  </tr>
+</tbody>
+</table>
 
 1. 表示时间值的日期和时间类型为DATETIME、DATE、TIMESTAMP、TIME和YEAR。
 2. 每个时间类型有一个有效值范围和一个"零"值，当指定不合法的MySQL不能表示的值时使用"零"值。

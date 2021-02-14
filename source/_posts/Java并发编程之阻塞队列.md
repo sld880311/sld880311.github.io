@@ -41,16 +41,54 @@ date: 2021-02-08 14:38:55
 
 ## 阻塞队列的主要方法
 
-<div align=center>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#aaa;border-spacing:0;}
+.tg td{background-color:#fff;border-color:#aaa;border-style:solid;border-width:1px;color:#333;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#f38630;border-color:#aaa;border-style:solid;border-width:1px;color:#fff;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+</style>
+<table class="tg" >
+<thead>
+  <tr>
+    <th class="tg-0pky">方法类型</th>
+    <th class="tg-0pky">抛出异常</th>
+    <th class="tg-0pky">特殊值</th>
+    <th class="tg-0pky">阻塞</th>
+    <th class="tg-0pky">超时</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0pky">插入</td>
+    <td class="tg-0pky">add(e)</td>
+    <td class="tg-0pky">offer(e)</td>
+    <td class="tg-0pky">put(e)</td>
+    <td class="tg-0pky">offer(e,time,unit)</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky">移除</td>
+    <td class="tg-0pky">remove()</td>
+    <td class="tg-0pky">poll()</td>
+    <td class="tg-0pky">take()</td>
+    <td class="tg-0pky">poll(time,unit)</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky">检查</td>
+    <td class="tg-0pky">element()</td>
+    <td class="tg-0pky">peek()</td>
+    <td class="tg-0pky">不可用</td>
+    <td class="tg-0pky">不可用</td>
+  </tr>
+</tbody>
+</table>
 
-![](Java并发编程之阻塞队列/1589104934306.png)
+1. 抛出异常：抛出一个异常； 
+2. 特殊值：返回一个特殊值（null 或 false） 
+3. 阻塞：在成功操作之前，一直阻塞线程 
+4. 超时：放弃前只在最大的时间内阻塞 
 
-</div>
-
-	抛出异常：抛出一个异常； 
-	特殊值：返回一个特殊值（null 或 false） 
-	则塞：在成功操作之前，一直阻塞线程 
-	超时：放弃前只在最大的时间内阻塞 
 <div align=center>
 
 ![](Java并发编程之阻塞队列/1589104955872.png)
