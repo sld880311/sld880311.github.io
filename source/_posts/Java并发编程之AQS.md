@@ -240,7 +240,11 @@ date: 2021-02-08 08:29:38
         enq(node);
         return node;
     }
+```
 
+#### enq
+
+```java
     /**
      * Inserts node into queue, initializing if necessary. See picture above.
      * 这里进行了循环，如果此时存在了tail就执行同上一步骤的添加队尾操作，如果依然不存在，
@@ -1109,7 +1113,7 @@ ReentrantLock中的实现：
    ```
 
 2. [addWaiter(Node.EXCLUSIVE,arg)](#addWaiter-Node-EXCLUSIVE)：如果尝试获取同步状态失败的话,则构造同步节点（独占式的Node.EXCLUSIVE），通过addWaiter(Node node,int args)方法将该节点加入到同步队列的队尾
-3. [enq](#addWaiter-Node-EXCLUSIVE)：自旋enq 方法将并发添加节点的请求通过CAS跟自旋将尾节点的添加变得串行化起来。说白了就是让节点放到正确的队尾位置。
+3. [enq](#enq)：自旋enq 方法将并发添加节点的请求通过CAS跟自旋将尾节点的添加变得串行化起来。说白了就是让节点放到正确的队尾位置。
 4. [acquireQueued](#acquireQueued-addWaiter-Node-EXCLUSIVE-arg)： 是当前Node节点线程在死循环中获取同步状态，而只有前驱节点是头节点才能尝试获取锁，原因是：头结点是成功获取同步状态（锁）的节点，而头节点的线程释放了同步状态以后，将会唤醒其后继节点，后继节点的线程被唤醒后要检查自己的前驱节点是否为头结点。维护同步队列的FIFO原则，节点进入同步队列之后，会尝试自旋几次。
 5. shouldParkAfterFailedAcquire
    

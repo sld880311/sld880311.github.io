@@ -163,6 +163,14 @@ protected boolean tryReleaseShared(int releases) {
 
 </div>
 
+### CountDownLatch锁获取释放流程图
+
+<div align=center>
+
+![CountDownLatch锁获取释放流程图](Java并发编程之线程控制手段/CountDownLatch实现原理.png)
+
+</div>
+
 ### 配合线程池使用
 
 ExecutorService作为一个线程池，然后利用CountDownLatch可以让指定数量的线程都执行完再执行主线程的特性。就可以实现多线程提速了。  
