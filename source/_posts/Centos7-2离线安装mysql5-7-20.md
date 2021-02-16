@@ -27,12 +27,6 @@ mariadb-libs-5.5.52-1.el7.x86_64
 [root@hadoop ~]# rpm -qa|grep mariadb
 ```
 
-<div align=center>
-
-![](Centos7-2离线安装mysql5-7-20/1589454331277.png)
-
-</div>
-
 ## 解压安装包
 
 ```bash

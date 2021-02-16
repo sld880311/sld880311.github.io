@@ -110,12 +110,6 @@ export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/li
 #JAVA INFO END
 ```
 
-<div align=center>
-
-![](Hadoop开发环境安装（Hadoop2-7-4）/1589970098784.png)
-
-</div>
-
 保存，退出！
 
 ```bash
@@ -142,12 +136,6 @@ export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
 export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 #JAVA INFO END
 ```
-
-<div align=center>
-
-![](Hadoop开发环境安装（Hadoop2-7-4）/1589970305076.png)
-
-</div>
 
 ### 设置全局环境变量
 
@@ -255,21 +243,18 @@ export PATH=$HADOOP_HOME/bin:$PATH
 #hadoop info end
 ```
 
-<div align=center>
-
-![](Hadoop开发环境安装（Hadoop2-7-4）/1589970955405.png)
-
-</div>
-
 `source /etc/profile`  
 
 加入rc.local  
 
-<div align=center>
+```bash
+# vi /etc/rc.local
 
-![](Hadoop开发环境安装（Hadoop2-7-4）/1589970994958.png)
-
-</div>
+#hadoop info start
+export HADOOP_HOME=/app/hadoop-2.7.4
+export PATH=$HADOOP_HOME/bin:$PATH
+#hadoop info end
+```
 
 ### 创建文件目录
 
@@ -302,12 +287,6 @@ vim hadoop-env.sh
 export JAVA_HOME=/app/jdk1.8.0_111
 ```
 
-<div align=center>
-
-![](Hadoop开发环境安装（Hadoop2-7-4）/1589971142145.png)
-
-</div>
-
 #### core-site.xml
 
 vim core-site.xml
@@ -333,12 +312,6 @@ vim core-site.xml
   </property>
 </configuration>
 ```
-
-<div align=center>
-
-![](Hadoop开发环境安装（Hadoop2-7-4）/1589971248474.png)
-
-</div>
 
 #### hdfs-site.xml
 
@@ -367,12 +340,6 @@ vim hdfs-site.xml
   </property>
 </configuration>
 ```
-
-<div align=center>
-
-![](Hadoop开发环境安装（Hadoop2-7-4）/1589971325940.png)
-
-</div>
 
 #### mapred-site.xml
 
@@ -403,12 +370,6 @@ vim mapred-site.xml
 </configuration>
 ```
 
-<div align=center>
-
-![](Hadoop开发环境安装（Hadoop2-7-4）/1589971406545.png)
-
-</div>
-
 #### yarn-site.xml
 
 ```conf
@@ -425,12 +386,6 @@ vim mapred-site.xml
   </property>
 </configuration>
 ```
-
-<div align=center>
-
-![](Hadoop开发环境安装（Hadoop2-7-4）/1589971460120.png)
-
-</div>
 
 ### 启动
 

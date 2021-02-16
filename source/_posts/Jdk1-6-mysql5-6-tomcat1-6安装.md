@@ -57,12 +57,6 @@ export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/li
 #JAVA INFO END
 ```
 
-<div align=center>
-
-![](Jdk1-6-mysql5-6-tomcat1-6安装/1590063158770.png)
-
-</div>
-
 保存，退出！  
 
 ```bash
