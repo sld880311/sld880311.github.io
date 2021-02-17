@@ -39,12 +39,6 @@ mysql> show  variables like '%general_log%';
 2 rows in set (0.00 sec)
 ```
 
-<div align=center>
-
-![查询日志](MySQL之日志-查询日志/1589443754829.png)
-
-</div>
-
 ## 分析
 
 拓展解析：日志的输出位置一般有三种方式：file(文件)，table(表)，none(不保存)；其中前两个输出位置可以同时定义，none表示是开启日志功能但是不记录日志信息。file就是通过general_log_file  等方式定义的，而输出位置定义为表时查看日志的内容方式为：

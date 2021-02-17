@@ -242,11 +242,72 @@ Field、Method和Constructor类，它们都有一个共同的父类AccessibleObj
 
 ##### Java中的作用域（访问控制）
 
-<div align=center>
-
-![Java中的作用域](Java系统化学习之反射/1587540118382.png)
-
-</div>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-mnhx{background-color:#fe0000;text-align:left;vertical-align:top}
+.tg .tg-2pvn{background-color:#fcff2f;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+.tg .tg-s7ni{background-color:#f8ff00;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax"></th>
+    <th class="tg-0lax">public</th>
+    <th class="tg-0lax">protected</th>
+    <th class="tg-0lax">friendly</th>
+    <th class="tg-0lax">private</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">在类中</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">同源文件下的不同类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-s7ni">不可见</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">同包的不同类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-2pvn">不可见</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">同包的子类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-mnhx">不能继承</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">不同包的不同类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-2pvn">不可见</td>
+    <td class="tg-2pvn">不可见</td>
+    <td class="tg-2pvn">不可见</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">不同包的子类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-2pvn">不可见</td>
+    <td class="tg-mnhx">不能继承</td>
+  </tr>
+</tbody>
+</table>
 
 ### ClassUtils
 

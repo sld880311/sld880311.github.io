@@ -207,13 +207,58 @@ Constant pool:
 SourceFile: "TestStatic.java"
 ```
 
-**零值参考表**：  
+#### 零值参考表
 
-<div align=center>
-
-![基本类型零值](JVM加载机制/1589021066885.png)
-
-</div>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">数据类型</th>
+    <th class="tg-0lax">零值</th>
+    <th class="tg-0lax">数据类型</th>
+    <th class="tg-0lax">零值</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">int</td>
+    <td class="tg-0lax">0</td>
+    <td class="tg-0lax">boolean</td>
+    <td class="tg-0lax">false</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">long</td>
+    <td class="tg-0lax">0L</td>
+    <td class="tg-0lax">float</td>
+    <td class="tg-0lax">0.0f</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">short</td>
+    <td class="tg-0lax">(short)0</td>
+    <td class="tg-0lax">double</td>
+    <td class="tg-0lax">0.0d</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">char</td>
+    <td class="tg-0lax">'\u0000'</td>
+    <td class="tg-0lax">reference</td>
+    <td class="tg-0lax">null</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">byte</td>
+    <td class="tg-0lax">(byte)0</td>
+    <td class="tg-0lax"></td>
+    <td class="tg-0lax"></td>
+  </tr>
+</tbody>
+</table>
 
 ## 解析
 

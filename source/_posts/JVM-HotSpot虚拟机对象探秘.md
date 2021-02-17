@@ -74,12 +74,72 @@ markword数据的长度在32位和64位的虚拟机（未开启压缩指针）�
 </tbody>
 </table>
 
-32位虚拟机在不同状态下markword结构如下图所示：
-<div align=center>
+32位虚拟机在不同状态下markword结构如下所示：
 
-![Java对象头](JVM-HotSpot虚拟机对象探秘/1589103945089.png)
-
-</div>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-f8dz{background-color:#96fffb;color:#000000;text-align:left;vertical-align:top}
+.tg .tg-baqh{text-align:center;vertical-align:top}
+.tg .tg-7geq{background-color:#ffffc7;text-align:center;vertical-align:top}
+.tg .tg-m9r4{background-color:#ffffc7;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-f8dz" rowspan="3">锁状态</th>
+    <th class="tg-7geq" colspan="5">32bit</th>
+  </tr>
+  <tr>
+    <td class="tg-7geq" colspan="2">25bit</td>
+    <td class="tg-m9r4" rowspan="2">4bit</td>
+    <td class="tg-m9r4">1bit</td>
+    <td class="tg-m9r4">2bit</td>
+  </tr>
+  <tr>
+    <td class="tg-m9r4">23bit</td>
+    <td class="tg-m9r4">2bit</td>
+    <td class="tg-m9r4">偏向模式</td>
+    <td class="tg-m9r4">标志位</td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-f8dz">未锁定</td>
+    <td class="tg-baqh" colspan="2">对象哈希码</td>
+    <td class="tg-0lax">分代年龄</td>
+    <td class="tg-0lax">0</td>
+    <td class="tg-0lax">01</td>
+  </tr>
+  <tr>
+    <td class="tg-f8dz">轻量级锁定</td>
+    <td class="tg-baqh" colspan="4">指向调用栈中锁记录指针</td>
+    <td class="tg-0lax">00</td>
+  </tr>
+  <tr>
+    <td class="tg-f8dz">重量级锁定<br>（锁碰撞）</td>
+    <td class="tg-baqh" colspan="4">指向重量级锁的指针</td>
+    <td class="tg-0lax">10</td>
+  </tr>
+  <tr>
+    <td class="tg-f8dz">GC标记</td>
+    <td class="tg-baqh" colspan="4">空</td>
+    <td class="tg-0lax">11</td>
+  </tr>
+  <tr>
+    <td class="tg-f8dz">可偏向</td>
+    <td class="tg-0lax">线程ID</td>
+    <td class="tg-0lax">Epoch</td>
+    <td class="tg-0lax">分代年龄</td>
+    <td class="tg-0lax">1</td>
+    <td class="tg-0lax">01</td>
+  </tr>
+</tbody>
+</table>
 
 <div align=center>
 
