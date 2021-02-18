@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-02-08T06:44:30.130Z</updated>
+  <updated>2021-02-18T11:07:11.861Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,134 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>JVM垃圾收集器与内存分配策略</title>
+    <link href="https://www.sunliaodong.cn/2021/02/18/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/"/>
+    <id>https://www.sunliaodong.cn/2021/02/18/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/</id>
+    <published>2021-02-18T03:19:49.000Z</published>
+    <updated>2021-02-18T11:07:11.861Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;对象已死&quot;&gt;&lt;a href=&quot;#对象已死&quot; class=&quot;headerlink&quot; title=&quot;对象已死&quot;&gt;&lt;/a&gt;对象已死&lt;/h2&gt;&lt;h3 id=&quot;引用计数算法（reference-counting）&quot;&gt;&lt;a href=&quot;#引用计数算法（reference-counting）&quot; class=&quot;headerlink&quot; title=&quot;引用计数算法（reference-counting）&quot;&gt;&lt;/a&gt;引用计数算法（reference-counting）&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;定义&lt;/strong&gt;：在对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加一；当引用失效时，计数器值就减一；任何时刻计数器为零的对象就是不可能再被使用的。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;缺点&lt;/strong&gt;：无法简单的处理对象循环引用&lt;/p&gt;
+&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/18/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/%E5%BC%95%E7%94%A8%E8%AE%A1%E7%AE%97%E7%AE%97%E6%B3%95.png&quot; class title=&quot;引用计算算法&quot;&gt;
+
+&lt;/div&gt;
+
+&lt;h3 id=&quot;可达性算法（GC-Roots-Tracing）&quot;&gt;&lt;a href=&quot;#可达性算法（GC-Roots-Tracing）&quot; class=&quot;headerlink&quot; title=&quot;可达性算法（GC Roots Tracing）&quot;&gt;&lt;/a&gt;可达性算法（GC Roots Tracing）&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;定义&lt;/strong&gt;：通过一系列称为“GC Roots”的根对象作为起始节点集，从这些节点开始，根据引用关系向下搜索，搜索过程所走过的路径称为“引用链”（Reference Chain），如果某个对象到GC Roots间没有任何引用链相连，或者用图论的话来说就是从GC Roots到这个对象不可达时，则证明此对象是不可能再被使用的。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
+    
+    <category term="JVM" scheme="https://www.sunliaodong.cn/categories/JVM/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+    <category term="垃圾收集器" scheme="https://www.sunliaodong.cn/tags/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/"/>
+    
+    <category term="内存分配策略" scheme="https://www.sunliaodong.cn/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之查询性能优化</title>
+    <link href="https://www.sunliaodong.cn/2021/02/17/MySQL%E4%B9%8B%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
+    <id>https://www.sunliaodong.cn/2021/02/17/MySQL%E4%B9%8B%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</id>
+    <published>2021-02-17T03:05:51.000Z</published>
+    <updated>2021-02-18T00:19:33.296Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;查询速度慢的原因&quot;&gt;&lt;a href=&quot;#查询速度慢的原因&quot; class=&quot;headerlink&quot; title=&quot;查询速度慢的原因&quot;&gt;&lt;/a&gt;查询速度慢的原因&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;生命周期太长：从客户端到服务端，然后在服务端进行解析、生成执行计划、执行（包括数据的分组聚合处理等）、并返回结果&lt;/li&gt;
+&lt;li&gt;资源消耗：网络资源、CPU资源、锁等待、IO资源&lt;/li&gt;
+&lt;li&gt;访问的数据太多，大多数是行数据，也包括列数据&lt;ul&gt;
+&lt;li&gt;是否向数据库请求了不需要的数据&lt;ul&gt;
+&lt;li&gt;查询不需要的数据，比如&lt;code&gt;LIMIT 1000000,10&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;是否返回了全部列，比如&lt;code&gt;select * from &lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;重复查询相同的数据，可以使用缓存解决&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;MySQL是否在扫描额外的记录，可以使用&lt;code&gt;explain&lt;/code&gt;分析，关注以下三个指标&lt;ul&gt;
+&lt;li&gt;响应时间&lt;ul&gt;
+&lt;li&gt; 服务时间：数据库处理这个查询实际消耗的时间&lt;/li&gt;
+&lt;li&gt; 排队时间：等待时间，比如IO操作、锁等待等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;扫描的行数&lt;ul&gt;
+&lt;li&gt; 通过&lt;code&gt;explain&lt;/code&gt;中的&lt;code&gt;type&lt;/code&gt;列获取访问类型（全表扫描、范围扫描、唯一索引查询、常数引用等）&lt;/li&gt;
+&lt;li&gt;使用where条件的方式&lt;ul&gt;
+&lt;li&gt; 在索引中使用where过滤数据，存储引擎层完成&lt;/li&gt;
+&lt;li&gt; 索引覆盖扫描（Extra中出现Using index），服务层直接在索引中处理，不需要回表&lt;/li&gt;
+&lt;li&gt; 冲数据表中返回数据（Extra中出现Using index），服务层完成（先从数据库中获取数据，然后在过滤数据）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;返回的行数&lt;ul&gt;
+&lt;li&gt;优化技巧（扫描比返回的数据多）&lt;ul&gt;
+&lt;li&gt; 使用索引覆盖扫描&lt;/li&gt;
+&lt;li&gt; 修改表结构&lt;/li&gt;
+&lt;li&gt; 重新SQL&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    <category term="调优" scheme="https://www.sunliaodong.cn/categories/%E8%B0%83%E4%BC%98/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="查询性能优化" scheme="https://www.sunliaodong.cn/tags/%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL之原理分析-排序</title>
+    <link href="https://www.sunliaodong.cn/2021/02/14/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-%E6%8E%92%E5%BA%8F/"/>
+    <id>https://www.sunliaodong.cn/2021/02/14/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-%E6%8E%92%E5%BA%8F/</id>
+    <published>2021-02-14T14:47:57.000Z</published>
+    <updated>2021-02-18T00:19:33.292Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;排序算法&quot;&gt;&lt;a href=&quot;#排序算法&quot; class=&quot;headerlink&quot; title=&quot;排序算法&quot;&gt;&lt;/a&gt;排序算法&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
+
+&lt;img src=&quot;/2021/02/14/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-%E6%8E%92%E5%BA%8F/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95.jpg&quot; class title=&quot;常用排序算法&quot;&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&quot;sort-buffer-size&quot;&gt;&lt;a href=&quot;#sort-buffer-size&quot; class=&quot;headerlink&quot; title=&quot;sort_buffer_size&quot;&gt;&lt;/a&gt;sort_buffer_size&lt;/h2&gt;&lt;h3 id=&quot;sort-buffer-size的特点&quot;&gt;&lt;a href=&quot;#sort-buffer-size的特点&quot; class=&quot;headerlink&quot; title=&quot;sort_buffer_size的特点&quot;&gt;&lt;/a&gt;sort_buffer_size的特点&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;每个线程都会分配一个固定的大小，作为排序的buffer&lt;/li&gt;
+&lt;li&gt;默认256KB，线程独有&lt;/li&gt;
+&lt;li&gt;使用场景：排序比较大，且内存充足、并发不大时，可以适当增加该值，如果太大会耗尽内存（例如：500个连接将会消耗 500*sort_buffer_size(8M)=4G内存）&lt;/li&gt;
+&lt;li&gt;connection级别的参数，在每个connection（session）第一次需要使用这个buffer的时候，一次性分配设置的内存&lt;/li&gt;
+&lt;li&gt;内存分配方式：超过2KB的时候，就会使用mmap() 而不是 malloc() 来进行内存分配，导致效率降低&lt;/li&gt;
+&lt;li&gt;调优检查：explain select*from table where order limit；出现filesort（外部排序）&lt;/li&gt;
+&lt;/ol&gt;</summary>
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
+    
+    <category term="语法分析" scheme="https://www.sunliaodong.cn/tags/%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90/"/>
+    
+    <category term="排序" scheme="https://www.sunliaodong.cn/tags/%E6%8E%92%E5%BA%8F/"/>
+    
+    <category term="order by" scheme="https://www.sunliaodong.cn/tags/order-by/"/>
+    
+  </entry>
   
   <entry>
     <title>Java并发编程之应用-设备升级</title>
@@ -54,7 +182,7 @@
     <link href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/"/>
     <id>https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/</id>
     <published>2021-02-08T06:38:55.000Z</published>
-    <updated>2021-02-08T06:42:10.836Z</updated>
+    <updated>2021-02-18T00:19:33.281Z</updated>
     
     
     <summary type="html">&lt;p&gt;阻塞队列，关键字是阻塞，先理解阻塞的含义，在阻塞队列中，线程阻塞有这样的两种情况：&lt;br&gt;    当队列中没有数据的情况下，消费者端的所有线程都会被自动阻塞（挂起），直到有数据放入队列。 &lt;/p&gt;
@@ -98,7 +226,7 @@
     <link href="https://www.sunliaodong.cn/2021/02/08/MYSQL%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8ESchema/"/>
     <id>https://www.sunliaodong.cn/2021/02/08/MYSQL%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8ESchema/</id>
     <published>2021-02-08T05:52:44.000Z</published>
-    <updated>2021-02-08T05:56:41.378Z</updated>
+    <updated>2021-02-18T00:19:33.292Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;选择优化的数据类型&quot;&gt;&lt;a href=&quot;#选择优化的数据类型&quot; class=&quot;headerlink&quot; title=&quot;选择优化的数据类型&quot;&gt;&lt;/a&gt;选择优化的数据类型&lt;/h2&gt;&lt;ol&gt;
@@ -129,7 +257,7 @@
     <link href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6%E6%89%8B%E6%AE%B5/"/>
     <id>https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6%E6%89%8B%E6%AE%B5/</id>
     <published>2021-02-08T00:43:55.000Z</published>
-    <updated>2021-02-08T00:47:34.192Z</updated>
+    <updated>2021-02-18T00:19:33.253Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;CountDownLatch&quot;&gt;&lt;a href=&quot;#CountDownLatch&quot; class=&quot;headerlink&quot; title=&quot;CountDownLatch&quot;&gt;&lt;/a&gt;CountDownLatch&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
@@ -278,7 +406,7 @@
     <link href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS/"/>
     <id>https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS/</id>
     <published>2021-02-08T00:29:38.000Z</published>
-    <updated>2021-02-08T00:37:44.260Z</updated>
+    <updated>2021-02-18T00:19:33.248Z</updated>
     
     
     <summary type="html">&lt;p&gt;&lt;font color=&quot;red&quot;&gt;AQS是实现同步器的基础组件，并发包中锁的底层实现就是使用AQS来完成的&lt;/font&gt;&lt;/p&gt;
@@ -302,6 +430,8 @@
     <category term="AbstractQueuedSynchronizer" scheme="https://www.sunliaodong.cn/tags/AbstractQueuedSynchronizer/"/>
     
     <category term="AQS" scheme="https://www.sunliaodong.cn/tags/AQS/"/>
+    
+    <category term="模板模式" scheme="https://www.sunliaodong.cn/tags/%E6%A8%A1%E6%9D%BF%E6%A8%A1%E5%BC%8F/"/>
     
   </entry>
   
@@ -473,7 +603,7 @@
     <link href="https://www.sunliaodong.cn/2021/02/07/Centos7-2%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85mysql5-7-20/"/>
     <id>https://www.sunliaodong.cn/2021/02/07/Centos7-2%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85mysql5-7-20/</id>
     <published>2021-02-07T08:02:42.000Z</published>
-    <updated>2021-02-07T08:09:39.433Z</updated>
+    <updated>2021-02-18T00:19:33.217Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;安装包下载&quot;&gt;&lt;a href=&quot;#安装包下载&quot; class=&quot;headerlink&quot; title=&quot;安装包下载&quot;&gt;&lt;/a&gt;安装包下载&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://dev.mysql.com/downloads/mysql/&quot;&gt;https://dev.mysql.com/downloads/mysql/&lt;/a&gt;&lt;br&gt;根据系统版本下载&lt;/p&gt;
@@ -518,7 +648,7 @@
     <link href="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/"/>
     <id>https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/</id>
     <published>2021-02-07T07:49:37.000Z</published>
-    <updated>2021-02-07T07:58:42.081Z</updated>
+    <updated>2021-02-18T00:19:33.217Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;虚拟机基本配置&quot;&gt;&lt;a href=&quot;#虚拟机基本配置&quot; class=&quot;headerlink&quot; title=&quot;虚拟机基本配置&quot;&gt;&lt;/a&gt;虚拟机基本配置&lt;/h2&gt;&lt;h3 id=&quot;设置机器名（重启后生效）–使用ubuntu&quot;&gt;&lt;a href=&quot;#设置机器名（重启后生效）–使用ubuntu&quot; class=&quot;headerlink&quot; title=&quot;设置机器名（重启后生效）–使用ubuntu&quot;&gt;&lt;/a&gt;设置机器名（重启后生效）–使用ubuntu&lt;/h3&gt;&lt;div align=&quot;center&quot;&gt;
@@ -535,80 +665,6 @@
     
     
     <category term="Hadoop" scheme="https://www.sunliaodong.cn/tags/Hadoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Centos7.2 安装zookeeper3.4.11</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/Centos7-2-%E5%AE%89%E8%A3%85zookeeper3-4-11/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/Centos7-2-%E5%AE%89%E8%A3%85zookeeper3-4-11/</id>
-    <published>2021-02-07T07:45:13.000Z</published>
-    <updated>2021-02-07T07:48:46.015Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;下载安装&quot;&gt;&lt;a href=&quot;#下载安装&quot; class=&quot;headerlink&quot; title=&quot;下载安装&quot;&gt;&lt;/a&gt;下载安装&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;&lt;a href=&quot;https://zookeeper.apache.org/releases.html&quot;&gt;https://zookeeper.apache.org/releases.html&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;tar -zxvf zookeeper-3.4.11.tar.gz&lt;/li&gt;
-&lt;li&gt;官方参考文档：&lt;a href=&quot;https://zookeeper.apache.org/doc/r3.4.11/zookeeperStarted.html&quot;&gt;https://zookeeper.apache.org/doc/r3.4.11/zookeeperStarted.html&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
-    
-    
-    <category term="zookeeper" scheme="https://www.sunliaodong.cn/tags/zookeeper/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Jdk1.6+mysql5.6+tomcat1.6安装</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/Jdk1-6-mysql5-6-tomcat1-6%E5%AE%89%E8%A3%85/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/Jdk1-6-mysql5-6-tomcat1-6%E5%AE%89%E8%A3%85/</id>
-    <published>2021-02-07T07:34:25.000Z</published>
-    <updated>2021-02-07T07:44:43.443Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;Jdk&quot;&gt;&lt;a href=&quot;#Jdk&quot; class=&quot;headerlink&quot; title=&quot;Jdk&quot;&gt;&lt;/a&gt;Jdk&lt;/h2&gt;&lt;h3 id=&quot;查看java的相关信息-yum-y-list-java&quot;&gt;&lt;a href=&quot;#查看java的相关信息-yum-y-list-java&quot; class=&quot;headerlink&quot; title=&quot;查看java的相关信息 yum -y list java*&quot;&gt;&lt;/a&gt;查看java的相关信息 yum -y list java*&lt;/h3&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/07/Jdk1-6-mysql5-6-tomcat1-6%E5%AE%89%E8%A3%85/1590063041227.png&quot; class title=&quot;查看java的相关信息 yum -y list java*&quot;&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
-    
-    
-    <category term="安装部署" scheme="https://www.sunliaodong.cn/tags/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"/>
-    
-    <category term="jdk" scheme="https://www.sunliaodong.cn/tags/jdk/"/>
-    
-    <category term="mysql" scheme="https://www.sunliaodong.cn/tags/mysql/"/>
-    
-    <category term="tomcat" scheme="https://www.sunliaodong.cn/tags/tomcat/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>技术体系总结</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/%E6%8A%80%E6%9C%AF%E4%BD%93%E7%B3%BB%E6%80%BB%E7%BB%93/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/%E6%8A%80%E6%9C%AF%E4%BD%93%E7%B3%BB%E6%80%BB%E7%BB%93/</id>
-    <published>2021-02-07T07:32:13.000Z</published>
-    <updated>2021-02-07T07:33:24.311Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;Java技术体系模块图&quot;&gt;&lt;a href=&quot;#Java技术体系模块图&quot; class=&quot;headerlink&quot; title=&quot;Java技术体系模块图&quot;&gt;&lt;/a&gt;Java技术体系模块图&lt;/h2&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/07/%E6%8A%80%E6%9C%AF%E4%BD%93%E7%B3%BB%E6%80%BB%E7%BB%93/1589506462204.png&quot; class title=&quot;Java技术体系模块图&quot;&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
     
   </entry>
   

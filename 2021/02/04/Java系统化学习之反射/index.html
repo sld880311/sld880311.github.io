@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 5.3.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
-  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/avatar.png" color="#222">
 
 <link rel="stylesheet" href="/css/main.css">
 
@@ -30,10 +30,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/1587523711269.png">
 <meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/1587536833908.png">
-<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/1587540118382.png">
 <meta property="og:image" content="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/1589936907736.png">
 <meta property="article:published_time" content="2021-02-04T09:18:34.000Z">
-<meta property="article:modified_time" content="2021-02-04T09:35:26.046Z">
+<meta property="article:modified_time" content="2021-02-18T00:19:33.282Z">
 <meta property="article:author" content="Theodore Sun">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="反射">
@@ -135,7 +134,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">138</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">144</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -145,7 +144,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">89</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">92</span></a>
 
   </li>
         <li class="menu-item menu-item-schedule">
@@ -221,7 +220,7 @@
     <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="Theodore Sun">
       <meta itemprop="description" content="心之所向，素履以往">
     </span>
@@ -240,10 +239,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-02-04 17:18:34 / 修改时间：17:35:26" itemprop="dateCreated datePublished" datetime="2021-02-04T17:18:34+08:00">2021-02-04</time>
+              <time title="创建时间：2021-02-04 17:18:34" itemprop="dateCreated datePublished" datetime="2021-02-04T17:18:34+08:00">2021-02-04</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-18 08:19:33" itemprop="dateModified" datetime="2021-02-18T08:19:33+08:00">2021-02-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -267,7 +272,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>14k</span>
+              <span>15k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -626,11 +631,72 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; clazz=Class.forName(<span class="string">&quot;com.sunld.Man&quot;</span>);  </span><br><span class="line"><span class="comment">//获取构造方法并创建对象</span></span><br><span class="line">Constructor c=clazz.getDeclaredConstructor(String.class);</span><br><span class="line"><span class="comment">//创建对象并设置属性</span></span><br><span class="line">Man m=(Man) c.newInstance(<span class="string">&quot;男人&quot;</span>);</span><br></pre></td></tr></table></figure>
 <h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h3><h5 id="Java的安全模型"><a href="#Java的安全模型" class="headerlink" title="Java的安全模型"></a>Java的安全模型</h5><p>java运行在jvm中，不与外部直接联系，java的安全模型包括：字节码验证器、类加载器、安全管理器、访问控制器等一系列的组件。java通过反射可以处理private方法和属性，说明它绕过了访问控制器。它其实是Java本身为了某种目的而留下的类似于“后门”的东西，它的原理其实是关闭访问安全检查。</p>
 <h5 id="Java中访问控制的实现"><a href="#Java中访问控制的实现" class="headerlink" title="Java中访问控制的实现"></a>Java中访问控制的实现</h5><p>Field、Method和Constructor类，它们都有一个共同的父类AccessibleObject 。AccessibleObject 有一个公共方法：void setAccessible(boolean flag)。正是这个方法，让我们可以改变动态的打开或者关闭访问安全检查，从而访问到原本是private的方法或域。另外，访问安全检查是一件比较耗时的操作，关闭它反射的性能也会有较大提升。</p>
-<h5 id="Java中的作用域（访问控制）"><a href="#Java中的作用域（访问控制）" class="headerlink" title="Java中的作用域（访问控制）"></a>Java中的作用域（访问控制）</h5><div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/1587540118382.png" class title="Java中的作用域">
-
-</div>
+<h5 id="Java中的作用域（访问控制）"><a href="#Java中的作用域（访问控制）" class="headerlink" title="Java中的作用域（访问控制）"></a>Java中的作用域（访问控制）</h5><style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-mnhx{background-color:#fe0000;text-align:left;vertical-align:top}
+.tg .tg-2pvn{background-color:#fcff2f;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+.tg .tg-s7ni{background-color:#f8ff00;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax"></th>
+    <th class="tg-0lax">public</th>
+    <th class="tg-0lax">protected</th>
+    <th class="tg-0lax">friendly</th>
+    <th class="tg-0lax">private</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">在类中</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">同源文件下的不同类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-s7ni">不可见</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">同包的不同类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-2pvn">不可见</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">同包的子类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-mnhx">不能继承</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">不同包的不同类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-2pvn">不可见</td>
+    <td class="tg-2pvn">不可见</td>
+    <td class="tg-2pvn">不可见</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">不同包的子类</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-0lax">可见</td>
+    <td class="tg-2pvn">不可见</td>
+    <td class="tg-mnhx">不能继承</td>
+  </tr>
+</tbody>
+</table>
 
 <h3 id="ClassUtils"><a href="#ClassUtils" class="headerlink" title="ClassUtils"></a>ClassUtils</h3><p>在spring的源码中提供了Class反射使用到的常用封装，可以参考修改或者直接使用。</p>
 <h3 id="自定义ClassUtils"><a href="#自定义ClassUtils" class="headerlink" title="自定义ClassUtils"></a>自定义ClassUtils</h3><p><a target="_blank" rel="noopener" href="https://github.com/sld880311/Architect-Growth-Manual/tree/master/docs/book/source/ClassUtils.java">ClassUtils代码地址</a></p>
@@ -800,7 +866,7 @@
     <div class="sidebar-inner">
       <!--网易云插件-->
       <iframe frameborder="no" border="0" marginwidth="0" 
-          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=1&height=66">
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=0&height=66">
       </iframe>
 
       <ul class="sidebar-nav motion-element">
@@ -821,7 +887,7 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="Theodore Sun"
-      src="/images/avatar.jpg">
+      src="/images/avatar.png">
   <p class="site-author-name" itemprop="name">Theodore Sun</p>
   <div class="site-description" itemprop="description">心之所向，素履以往</div>
 </div>
@@ -830,7 +896,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -843,7 +909,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">138</span>
+        <span class="site-state-item-count">144</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -916,13 +982,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">732k</span>
+    <span title="站点总字数">784k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">11:05</span>
+    <span title="站点阅读时长">11:53</span>
 </div>
 
         
