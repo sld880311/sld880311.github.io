@@ -17,7 +17,7 @@ date: 2021-02-05 13:56:10
 在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、实例数据（Instance Data）和对齐填充（Padding）。
 <div align=center>
 
-![对象的内存布局](JVM-HotSpot虚拟机对象探秘/1589103879536.png)
+![对象的内存布局](JVM-HotSpot虚拟机对象探秘/对象内存布局.png)
 
 </div>
 
@@ -25,7 +25,18 @@ date: 2021-02-05 13:56:10
 
 ### 对象头
 
+Object Header（64或96bit）,包括：Mark Word（32bit）、Klass World（32bits）、array length（32bits，存在数据组对象时）
+
 #### Markword
+
+在HotSpot中，GC堆上的对象需要维持一些状态信息，具体如下：
+1. 身份哈希码（identity hash code）
+2. 当前是否已被GC标记（只在GC过程中需要）
+3. 当前对象年龄（经历GC的次数，最大15）
+4. 当前是否被当做锁同步
+5. 最近持有该对象锁的线程ID（用于偏向锁）
+
+以上信息根据对象状态有选择的记录（参考后续Markword在32和64位VM中的说明）。
 
 markword数据的长度在32位和64位的虚拟机（未开启压缩指针）中分别为32bit和64bit，它的最后2bit是锁状态标志位，用来标记当前对象的状态，对象的所处的状态，决定了markword存储的内容，如下表所示:
 <style type="text/css">
@@ -74,7 +85,7 @@ markword数据的长度在32位和64位的虚拟机（未开启压缩指针）�
 </tbody>
 </table>
 
-32位虚拟机在不同状态下markword结构如下所示：
+##### 32位虚拟机markword
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
@@ -82,138 +93,177 @@ markword数据的长度在32位和64位的虚拟机（未开启压缩指针）�
   overflow:hidden;padding:10px 5px;word-break:normal;}
 .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-f8dz{background-color:#96fffb;color:#000000;text-align:left;vertical-align:top}
 .tg .tg-baqh{text-align:center;vertical-align:top}
-.tg .tg-7geq{background-color:#ffffc7;text-align:center;vertical-align:top}
-.tg .tg-m9r4{background-color:#ffffc7;text-align:left;vertical-align:top}
-.tg .tg-0lax{text-align:left;vertical-align:top}
+.tg .tg-29iq{background-color:#FFFFC7;text-align:center;vertical-align:top}
+.tg .tg-fw9x{background-color:#96FFFB;text-align:left;vertical-align:top}
 </style>
 <table class="tg">
 <thead>
   <tr>
-    <th class="tg-f8dz" rowspan="3">锁状态</th>
-    <th class="tg-7geq" colspan="5">32bit</th>
+    <th class="tg-fw9x" rowspan="3">锁状态</th>
+    <th class="tg-29iq" colspan="5">32bit</th>
   </tr>
   <tr>
-    <td class="tg-7geq" colspan="2">25bit</td>
-    <td class="tg-m9r4" rowspan="2">4bit</td>
-    <td class="tg-m9r4">1bit</td>
-    <td class="tg-m9r4">2bit</td>
+    <td class="tg-29iq" colspan="2">25bit</td>
+    <td class="tg-29iq">4bit</td>
+    <td class="tg-29iq">1bit</td>
+    <td class="tg-29iq">2bit</td>
   </tr>
   <tr>
-    <td class="tg-m9r4">23bit</td>
-    <td class="tg-m9r4">2bit</td>
-    <td class="tg-m9r4">偏向模式</td>
-    <td class="tg-m9r4">标志位</td>
+    <td class="tg-29iq">23bit</td>
+    <td class="tg-29iq">2bit</td>
+    <td class="tg-29iq">age</td>
+    <td class="tg-29iq">偏向模式</td>
+    <td class="tg-29iq">标志位</td>
   </tr>
 </thead>
 <tbody>
   <tr>
-    <td class="tg-f8dz">未锁定</td>
-    <td class="tg-baqh" colspan="2">对象哈希码</td>
-    <td class="tg-0lax">分代年龄</td>
-    <td class="tg-0lax">0</td>
-    <td class="tg-0lax">01</td>
+    <td class="tg-fw9x">未锁定</td>
+    <td class="tg-baqh" colspan="2">对象哈希码（25）</td>
+    <td class="tg-baqh">分代年龄</td>
+    <td class="tg-baqh">0</td>
+    <td class="tg-baqh">01</td>
   </tr>
   <tr>
-    <td class="tg-f8dz">轻量级锁定</td>
-    <td class="tg-baqh" colspan="4">指向调用栈中锁记录指针</td>
-    <td class="tg-0lax">00</td>
+    <td class="tg-fw9x">轻量级锁<br>自旋锁<br>无锁</td>
+    <td class="tg-baqh" colspan="4">指向调用栈中锁记录指针（Lock Record）<br>ptr_to_lock_record(30)</td>
+    <td class="tg-baqh">00</td>
   </tr>
   <tr>
-    <td class="tg-f8dz">重量级锁定<br>（锁碰撞）</td>
-    <td class="tg-baqh" colspan="4">指向重量级锁的指针</td>
-    <td class="tg-0lax">10</td>
+    <td class="tg-fw9x">重量级锁定<br>（锁碰撞）</td>
+    <td class="tg-baqh" colspan="4">指向互斥量（重量级锁）的指针<br>ptr_to_heavyweigth_monitor(30)</td>
+    <td class="tg-baqh">10</td>
   </tr>
   <tr>
-    <td class="tg-f8dz">GC标记</td>
-    <td class="tg-baqh" colspan="4">空</td>
-    <td class="tg-0lax">11</td>
+    <td class="tg-fw9x">GC标记</td>
+    <td class="tg-baqh" colspan="4">空（30，CMS过程中用到的标记信息）</td>
+    <td class="tg-baqh">11</td>
   </tr>
   <tr>
-    <td class="tg-f8dz">可偏向</td>
-    <td class="tg-0lax">线程ID</td>
-    <td class="tg-0lax">Epoch</td>
-    <td class="tg-0lax">分代年龄</td>
-    <td class="tg-0lax">1</td>
-    <td class="tg-0lax">01</td>
+    <td class="tg-fw9x">可偏向</td>
+    <td class="tg-baqh">当前线程指针JavaThread*（23）</td>
+    <td class="tg-baqh">Epoch</td>
+    <td class="tg-baqh">分代年龄</td>
+    <td class="tg-baqh">1</td>
+    <td class="tg-baqh">01</td>
   </tr>
 </tbody>
 </table>
 
-<div align=center>
+##### 64位虚拟机markword
 
-![Java对象实例-状态信息](JVM-HotSpot虚拟机对象探秘/1589103960151.png)
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-mukq{background-color:#96FFFB;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-hafo{background-color:#fffc9e;border-color:inherit;text-align:center;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-mukq" rowspan="3">锁状态</th>
+    <th class="tg-hafo" colspan="7">64bit</th>
+  </tr>
+  <tr>
+    <td class="tg-hafo" colspan="3">56bit</td>
+    <td class="tg-hafo">1bit</td>
+    <td class="tg-hafo">4bit</td>
+    <td class="tg-hafo">1bit</td>
+    <td class="tg-hafo">2bit</td>
+  </tr>
+  <tr>
+    <td class="tg-hafo">25bit</td>
+    <td class="tg-hafo">29bit</td>
+    <td class="tg-hafo">2bit</td>
+    <td class="tg-hafo">1bit</td>
+    <td class="tg-hafo">age</td>
+    <td class="tg-hafo">偏向模式</td>
+    <td class="tg-hafo">标志位</td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-mukq">未锁定</td>
+    <td class="tg-c3ow">unused</td>
+    <td class="tg-c3ow" colspan="2">对象哈希码（31）</td>
+    <td class="tg-c3ow">unused</td>
+    <td class="tg-c3ow">分代年龄</td>
+    <td class="tg-c3ow">0</td>
+    <td class="tg-c3ow">01</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">轻量级锁<br>自旋锁<br>无锁</td>
+    <td class="tg-c3ow" colspan="6">指向调用栈中锁记录指针（Lock Record）<br>ptr_to_lock_record(62)</td>
+    <td class="tg-c3ow">00</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">重量级锁定<br>（锁碰撞）</td>
+    <td class="tg-c3ow" colspan="6">指向互斥量（重量级锁）的指针<br>ptr_to_heavyweigth_monitor(62)</td>
+    <td class="tg-c3ow">10</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">GC标记</td>
+    <td class="tg-c3ow" colspan="6">空（CMS过程中用到的标记信息）</td>
+    <td class="tg-c3ow">11</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">可偏向</td>
+    <td class="tg-c3ow" colspan="2">当前线程指针JavaThread*（54）</td>
+    <td class="tg-c3ow">Epoch（2）</td>
+    <td class="tg-c3ow">unused</td>
+    <td class="tg-c3ow">分代年龄</td>
+    <td class="tg-c3ow">1</td>
+    <td class="tg-c3ow">01</td>
+  </tr>
+</tbody>
+</table>
 
-</div>
+##### 特殊字段说明
+
+```conf
+hash： 保存对象的哈希码
+age： 保存对象的分代年龄
+biased_lock： 偏向锁标识位
+lock： 锁状态标识位
+JavaThread*： 保存持有偏向锁的线程ID
+epoch： 保存偏向时间戳
+```
 
 #### klass
 
 对象头的另外一部分是klass类型指针，即对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例.
-<div align=center>
-
-![Java对象实例-kclass](JVM-HotSpot虚拟机对象探秘/1589103982486.png)
-
-</div>
-
+1. 在Hotspot中，所有存储在由GC管理的堆（Java堆和PermGen）的子类的实例都有一个_klass字段，用于指向一个描述自身的元数据的对象
+2. Java对象和数组对象的klass并不是Java中的Class。klass用于运行而Class只用于Java中的反射；klass中有_java_mirror字段执行java中的class
 
 #### 数组长度（只有数组对象有）
 
 如果对象是一个数组, 那在对象头中还必须有一块数据用于记录数组长度.
 
-#### 常用对象头结构
-
-##### 普通对象
-
-<div align=center>
-
-![普通对象头](JVM-HotSpot虚拟机对象探秘/1590667814291.png)
-
-</div>
-
-##### 数组对象
-
-<div align=center>
-
-![数据对象头](JVM-HotSpot虚拟机对象探秘/1590667874263.png)
-
-</div>
-
-##### 其中 Mark Word 结构为
-
-<div align=center>
-
-![mark word结构](JVM-HotSpot虚拟机对象探秘/1590667902242.png)
-
-</div>
-
-##### 64 位虚拟机 Mark Word
-
-<div align=center>
-
-![64位mark word](JVM-HotSpot虚拟机对象探秘/1590667923591.png)
-
-</div>
-
 ### 实例数据
 
-实例数据部分是对象真正存储的有效信息，也是在程序代码中所定义的各种类型的字段内容。无论是从父类继承下来的，还是在子类中定义的，都需要记录起来。
+1. 实例数据部分是对象真正存储的有效信息，也是在程序代码中所定义的各种类型的字段内容。无论是从父类继承下来的，还是在子类中定义的，都需要记录起来。
+2. 在Hotspot中对象实例数据紧跟在对象头后面分配空间
+3. 字段的分配顺序与代码中的顺序和Hotspot的分配策略相关
+4. 无论哪种策略都必须满足
+   - 宽度相同的字段总是相邻分配
+   - 不同宽度的字段可能存在对象填充（padding）
+5. 一般是基类声明的实例字段会出现在派生类声明字段之前，但是如果开启压缩模式时派生类较短的字段可能会插入到基类的实例字段之间的对齐填充部分
+6. 相关参数，参考FieldsAllocationStyle、CompactFields
 
-<div align=center>
-
-![实例数据填充](JVM-HotSpot虚拟机对象探秘/1589104023579.png)
-
-</div>
 
 ###	对齐填充
 
-第三部分对齐填充并不是必然存在的，也没有特别的含义，它仅仅起着占位符的作用。由于HotSpot VM的自动内存管理系统要求对象起始地址必须是8字节的整数倍，换句话说，就是对象的大小必须是8字节的整数倍。而对象头部分正好是8字节的倍数（1倍或者2倍），因此，当对象实例数据部分没有对齐时，就需要通过对齐填充来补全。
-<div align=center>
-
-![实例数据对齐填充](JVM-HotSpot虚拟机对象探秘/1589104045582.png)
-
-</div>
-
+1. 对齐填充并不是必然存在的，也没有特别的含义，它仅仅起着占位符的作用。
+2. 在Hotspot中，GC堆上的对象要求**起始地址是8的倍数，占用的空间也必须是8的倍数**，如果不足则用0补齐
+3. 对齐可能出现不同宽度的字段之间，也可能出现在对象的末尾
+4. 不存在为对齐数据时则不会对齐填充
+5. **对象头部分正好是8字节的倍数**（1倍或者2倍）
+6. 对象实例数据部分没有对齐时，就需要通过对齐填充来补全
 
 ## 对象大小计算
 
@@ -234,63 +284,100 @@ markword数据的长度在32位和64位的虚拟机（未开启压缩指针）�
 
 </div>
 
+## 对象头分析工具JOL
+
+### maven
+
+```xml
+    <dependency>
+      <groupId>org.openjdk.jol</groupId>
+      <artifactId>jol-core</artifactId>
+      <version>0.9</version>
+    </dependency>
+```
+
+### 测试代码
+
+```java
+package com.sunld.jvm;
+
+import org.openjdk.jol.info.ClassLayout;
+
+public class Test {
+    public static void main(String[] args) {
+        Test t = new Test();
+        System.out.println(ClassLayout.parseInstance(t).toPrintable());
+    }
+}
+
+```
+
+#### 输出结果
+
+```java
+com.sunld.jvm.Test object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           05 c1 00 f8 (00000101 11000001 00000000 11111000) (-134168315)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+```
+
 ## 对象的定位
+
+参考：<a href="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" target="_blank">JVM内存区域</a>
 
 ### HotSpot对象模型
 
-HotSpot中采用了OOP-Klass模型，它是描述Java对象实例的模型，它分为两部分：
+HotSpot中采用了**OOP-Klass**模型，它是描述Java对象实例的模型，它分为两部分：
 
-1. 类被加载到内存时，就被封装成了klass，klass包含类的元数据信息，像类的方法、常量池这些信息都是存在klass里的，你可以认为它是java里面的java.lang.Class对象，记录了类的全部信息；
-2. OOP（Ordinary Object Pointer）指的是普通对象指针，它包含MarkWord 和元数据指针，MarkWord用来存储当前指针指向的对象运行时的一些状态数据；元数据指针则指向klass,用来告诉你当前指针指向的对象是什么类型，也就是使用哪个类来创建出来的；
-3. HotSopt JVM的设计者不想让每个对象中都含有一个vtable（虚函数表），所以就把对象模型拆成klass和oop，其中oop中不含有任何虚函数，而klass就含有虚函数表，可以进行method dispatch。
-4. HotSpot中，OOP-Klass实现的代码都在/hotspot/src/share/vm/oops/路径下，oop的实现为instanceOop 和 arrayOop，他们来描述对象头，其中arrayOop对象用于描述数组类型。
+1. 类加载到内存时封装为**klass**，klass包含类的元数据信息（比如类的方法、常量池等信息，类似于java.lang.Class对象）
+2. **OOP（Ordinary Object Pointer）** ：普通对象指针，包含MarkWord（存储当前指针指向的对象运行时的一些状态数据） 和元数据指针（指向klass，表示使用的对象类型）
+
+> HotSopt JVM的设计者把对象模型拆成**klass和oop**，其中oop中不含有任何虚函数，而klass就含有虚函数表，可以进行method dispatch。
+> HotSpot中，OOP-Klass实现的代码都在/hotspot/src/share/vm/oops/路径下，oop的实现为**instanceOop 和 arrayOop**，他们来描述对象头，其中arrayOop对象用于描述数组类型。
 
 以下就是oop.hhp文件中oopDesc的源码，可以看到两个变量_mark就是MarkWord，_metadata就是元数据指针，指向klass对象，这个指针压缩的是32位，未压缩的是64位；
-<div align=center>
 
-![](JVM-HotSpot虚拟机对象探秘/1589104116231.png)
+```c
+volatile markOop _mark; // 标识运行时数据
+union _metadata {
+  Klass* _klass;
+  narrowKlass _compressed_klass;
+} _metadata; //klass指针
+```
 
-</div>
-
-一个Java对象在内存中的布局可以连续分成两部分：instanceOop（继承自oop.hpp）和实例数据；
-
-<div align=center>
-
-![](JVM-HotSpot虚拟机对象探秘/1589104144970.png)
-
-</div>
-
-
-上图可以看到，通过栈帧中的对象引用reference找到Java堆中的对象，再通过对象的instanceOop中的元数据指针klass来找到方法区中的instanceKlass，从而确定该对象的类型。
-
-执行new A()的时候，JVM 做了什么工作。首先，如果这个类没有被加载过，JVM就会进行类的加载，并在JVM内部创建一个instanceKlass对象表示这个类的运行时元数据（相当于Java层的Class对象）。初始化对象的时候（执行invokespecial A::），JVM就会创建一个instanceOopDesc对象表示这个对象的实例，然后进行Mark Word的填充，将元数据指针指向Klass对象，并填充实例变量。
-
-元数据—— instanceKlass 对象会存在元空间（方法区），而对象实例—— instanceOopDesc 会存在Java堆。Java虚拟机栈中会存有这个对象实例的引用。
+一个Java对象在内存中的布局可以连续分成两部分：instanceOop（继承自oop.hpp）和实例数据；通过栈帧中的对象引用reference找到Java堆中的对象，再通过对象的**instanceOop中的元数据指针klass来找到方法区中的instanceKlass**，从而确定该对象的类型。执行过程：
+1. **类加载**：在JVM内部创建一个instanceKlass对象表示这个类的运行时元数据（类似Class对象）
+2. **初始化对象的时候**（执行invokespecial ***::），JVM就会创建一个instanceOopDesc对象表示这个对象的实例，然后进行Mark Word的填充，将元数据指针指向Klass对象，并填充实例变量。
+3. 元数据—— instanceKlass 对象会存在元空间（方法区）
+4. 对象实例—— instanceOopDesc 会存在Java堆。Java虚拟机栈中会存有这个对象实例的引用。
 
 ###	成员变量重排序
 
 为了提高性能，每个对象的起始地址都对齐于8字节，当封装对象的时候为了高效率，对象字段声明的顺序会被重排序成下列基于字节大小的顺序：
 
-	double (8字节) 和 long (8字节)
-	int (4字节) 和 float (4字节)
-	short (2字节) 和 char (2字节)：char在java中是2个字节。java采用unicode，2个字节（16位）来表示一个字符。
-	boolean (1字节) 和 byte (1字节)
-	reference引用 (4/8 字节)
-	<子类字段重复上述顺序>
-子类字段重复上述顺序。
+1. double (8字节) 和 long (8字节)
+2. int (4字节) 和 float (4字节)
+3. short (2字节) 和 char (2字节)：char在java中是2个字节。java采用unicode，2个字节（16位）来表示一个字符。
+4. boolean (1字节) 和 byte (1字节)
+5. reference引用 (4/8 字节)
+6. <子类字段重复上述顺序>
+
 我们可以测试一下java对不同类型的重排序，使用jdk1.8，采用反射的方式先获取到unsafe类，然后获取到每个field在类里面的偏移地址，就能看出来了
 测试代码如下：
 
 ```java
-package com.sunld.class1;
-
-import java.lang.reflect.Field;
+package com.sunld.jvm;
 
 import sun.misc.Contended;
 import sun.misc.Unsafe;
 
-public class TypeSequence {
+import java.lang.reflect.Field;
 
+public class TypeSequence {
 
     @Contended
     private boolean contended_boolean;
@@ -321,14 +408,14 @@ public class TypeSequence {
     public static  Unsafe UNSAFE;
 
     static {
-            try {
-                @SuppressWarnings("ALL")
-                Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-                theUnsafe.setAccessible(true);
-                UNSAFE = (Unsafe) theUnsafe.get(null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            @SuppressWarnings("ALL")
+            Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+            theUnsafe.setAccessible(true);
+            UNSAFE = (Unsafe) theUnsafe.get(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws NoSuchFieldException, SecurityException{
@@ -347,16 +434,26 @@ public class TypeSequence {
         System.out.println("contended_int:int\t"+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField("contended_int")));
         System.out.println("contended_double:double\t"+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField("contended_double")));
     }
-
 }
 ```
 
-以上代码运行结果如下
-<div align=center>
+以上代码运行结果如下:
 
-![](JVM-HotSpot虚拟机对象探秘/1589104179460.png)
+```java
+e:int    	40
+g:double 	24
+h:long   	32
+f:float  	44
+c:short  	54
+d:char   	52
+a:byte   	57
+b:boolean	58
+contended_boolean:boolean	56
+contended_short:short	12
+contended_int:int	48
+contended_double:double	16
 
-</div>
+```
 
 除了int字段跑到了前面来了，还有两个添加了contended注解的字段外，其它字段都是按照重排序的顺序，类型由最长到最短的顺序排序的；
 
@@ -366,8 +463,36 @@ public class TypeSequence {
 
 #### 扩展contended对成员变量排序的影响
 
-那么contended注解呢？这个注解是为了解决cpu缓存行伪共享问题的，cpu缓存伪共享是并发编程性能杀手，不知道什么是伪共享的可以查看我前面写的LongAdder类的源码解读 或者《java 中的锁 – 偏向锁、轻量级锁、自旋锁、重量级锁》这篇文章都有讲到，加了contended注解的字段会按照声明的顺序放到末尾，contended注解如果是用在类的field上会在该field前面插入128字节的padding，如果是用在类上则会在类所有field的前后都加上128字节的padding。
+1. 解决cpu缓存行伪共享问题的
+2. 加了contended注解的字段会按照声明的顺序放到末尾，contended注解如果是用在类的field上会在该field前面插入128字节的padding，如果是用在类上则会在类所有field的前后都加上128字节的padding
+
+### ObjectMonitor对象（每个对象都具备jdk1.8）
+
+objectMonitor.hpp
+
+```c
+ObjectMonitor() {
+    _header       = NULL;
+    _count        = 0;     // 重入次数
+    _waiters      = 0,     // 等待线程数
+    _recursions   = 0;
+    _object       = NULL;
+    _owner        = NULL;  // 当前持有锁的线程
+    _WaitSet      = NULL;  // 调用wait方法的线程被阻塞放置在这里
+    _WaitSetLock  = 0 ;
+    _Responsible  = NULL ;
+    _succ         = NULL ;
+    _cxq          = NULL ;
+    FreeNext      = NULL ;
+    _EntryList    = NULL ; // 等待锁处于block的线程，才有资格成为候选资源的线程
+    _SpinFreq     = 0 ;
+    _SpinClock    = 0 ;
+    OwnerIsThread = 0 ;
+    _previous_owner_tid = 0;
+  }
+```
 
 ## 参考
 
 1. [记一次生产频繁出现 Full GC 的 GC日志图文详解](https://www.toutiao.com/i6799522958990639628)
+2. [openjdk](http://openjdk.java.net/)

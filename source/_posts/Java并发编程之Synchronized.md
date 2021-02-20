@@ -39,6 +39,28 @@ date: 2021-02-08 08:28:49
 5. Owner：当前已经获取到所资源的线程被称为 Owner； 
 6. !Owner：当前释放锁的线程。 
 
+```c
+ObjectMonitor() {
+    _header       = NULL;
+    _count        = 0;     // 重入次数
+    _waiters      = 0,     // 等待线程数
+    _recursions   = 0;
+    _object       = NULL;
+    _owner        = NULL;  // 当前持有锁的线程
+    _WaitSet      = NULL;  // 调用wait方法的线程被阻塞放置在这里
+    _WaitSetLock  = 0 ;
+    _Responsible  = NULL ;
+    _succ         = NULL ;
+    _cxq          = NULL ;
+    FreeNext      = NULL ;
+    _EntryList    = NULL ; // 等待锁处于block的线程，才有资格成为候选资源的线程
+    _SpinFreq     = 0 ;
+    _SpinClock    = 0 ;
+    OwnerIsThread = 0 ;
+    _previous_owner_tid = 0;
+  }
+```
+
 ## Synchronized 实现 
 
 <div align=center>

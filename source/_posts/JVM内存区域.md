@@ -57,9 +57,8 @@ date: 2021-02-05 11:22:34
 
 ![](JVM内存区域/1589457383204.png)
 
-![](JVM内存区域/1589512623885.png)
-
 </div>
+
 栈帧的数据结构：  
 
 1. 局部变量表：输入参数和输出参数以及方法内的变量；
@@ -165,12 +164,6 @@ int c = a+b;
 6. 通过-Xmx和-Xms设置内存大小，内存溢出则出现OOM错误，最小默认为物理内存的1/64，最大为物理内存的1/4
 7. 默认当空余堆内存小于40%时，JVM会增大Heap到-Xmx指定的大小，可通过-XX:MinHeapFreeRation=来指定这个比列；当空余堆内存大于70%时，JVM会减小heap的大小到-Xms指定的大小，可通过XX:MaxHeapFreeRation=来指定这个比列
 8. 建议-Xmx和-Xms设置一致
-
-<div align=center>
-
-![](JVM内存区域/1589103176740.png)
-
-</div>
 
 ### 新生代
 
@@ -390,12 +383,6 @@ MaxPermSize 控制, 而由系统的实际可用空间来控制。
 ### 对象内存布局
 
 参考《<a href="https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/" target="_blank">JVM HotSpot虚拟机对象探秘</a>》。
-
-<div align=center>
-
-![对象内存布局](JVM内存区域/对象内存布局.png)
-
-</div>
 
 ## 其他
 

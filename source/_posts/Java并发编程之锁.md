@@ -30,9 +30,11 @@ iadd        // 自增
 putstatic i // 将修改后的值存入静态变量i
 ```
 
+#### i--/++流程图
+
 <div align=center>
 
-![](Java并发编程之锁/1590651451164.png)
+![i--/++流程图](Java并发编程之锁/1590651451164.png)
 
 </div>
 
@@ -107,7 +109,7 @@ java 并发包提供的加锁模式分为独占锁和共享锁。
 
 ## 锁优化
 
-**对象头相关知识点，参考[HotSpot虚拟机对象探秘](book/jvm-hotspot-object.md)**
+**对象头相关知识点，参考<a href="https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/" target="_blank">HotSpot虚拟机对象探秘</a>**
 
 高效并发是从JDK 5升级到JDK 6后一项重要的改进项，HotSpot虚拟机开发团队在这个版本上花费了大量的资源去实现各种锁优化技术，如**适应性自旋（Adaptive Spinning）、锁消除（Lock Elimination）、锁膨胀（LockCoarsening）、轻量级锁（Lightweight Locking）、偏向锁（Biased Locking）** 等，这些技术都是为了在线程之间更高效地共享数据及解决竞争问题，从而提高程序的执行效率。
 **锁的状态总共有四种：无锁状态、偏向锁、轻量级锁和重量级锁。** 
