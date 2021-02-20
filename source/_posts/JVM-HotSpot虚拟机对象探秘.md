@@ -30,15 +30,13 @@ Object Header（64或96bit）,包括：Mark Word（32bit）、Klass World（32bi
 #### Markword
 
 在HotSpot中，GC堆上的对象需要维持一些状态信息，具体如下：
-1. 身份哈希码（identity hash code）
-2. 当前是否已被GC标记（只在GC过程中需要）
-3. 当前对象年龄（经历GC的次数，最大15）
-4. 当前是否被当做锁同步
-5. 最近持有该对象锁的线程ID（用于偏向锁）
+1. unused：表示未使用
+2. 身份哈希码（identity hash code），采用延迟加载技术。调用`System.identityHashCode()`计算后会写入对象头中。当对象加锁后（偏向、轻量级、重量级），MarkWord的字节没有足够的空间保存hashCode，因此该值会移动到管程Monitor中。
+3. 当前是否已被GC标记（只在GC过程中需要）
+4. 当前对象年龄（经历GC的次数，最大15）这就是-XX:MaxTenuringThreshold选项最大值为15的原因
+5. biased_lock：对象是否启用偏向锁标记，只占1个二进制位
+6. lock：2位的锁状态标记位
 
-以上信息根据对象状态有选择的记录（参考后续Markword在32和64位VM中的说明）。
-
-markword数据的长度在32位和64位的虚拟机（未开启压缩指针）中分别为32bit和64bit，它的最后2bit是锁状态标志位，用来标记当前对象的状态，对象的所处的状态，决定了markword存储的内容，如下表所示:
 <style type="text/css">
 .tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
 .tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
@@ -84,6 +82,11 @@ markword数据的长度在32位和64位的虚拟机（未开启压缩指针）�
   </tr>
 </tbody>
 </table>
+
+7. 最近持有该对象锁的线程ID（用于偏向锁）
+8. epoch：偏向锁的时间戳
+9. ptr_to_lock_record：轻量级锁状态下，指向栈中锁记录的指针。
+10. ptr_to_heavyweight_monitor：重量级锁状态下，指向对象监视器Monitor的指针。
 
 ##### 32位虚拟机markword
 
@@ -223,22 +226,13 @@ markword数据的长度在32位和64位的虚拟机（未开启压缩指针）�
 </tbody>
 </table>
 
-##### 特殊字段说明
-
-```conf
-hash： 保存对象的哈希码
-age： 保存对象的分代年龄
-biased_lock： 偏向锁标识位
-lock： 锁状态标识位
-JavaThread*： 保存持有偏向锁的线程ID
-epoch： 保存偏向时间戳
-```
-
 #### klass
 
 对象头的另外一部分是klass类型指针，即对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例.
 1. 在Hotspot中，所有存储在由GC管理的堆（Java堆和PermGen）的子类的实例都有一个_klass字段，用于指向一个描述自身的元数据的对象
 2. Java对象和数组对象的klass并不是Java中的Class。klass用于运行而Class只用于Java中的反射；klass中有_java_mirror字段执行java中的class
+3. 可压缩：每个Class的属性指针（即静态变量）、每个对象的属性指针（即对象变量）、普通对象数组的每个元素指针
+4. 不可压缩：比如指向Metaspace的Class对象指针(JDK8中指向元空间的Class对象指针)、本地变量、堆栈元素、入参、返回值和NULL指针等
 
 #### 数组长度（只有数组对象有）
 
@@ -269,7 +263,9 @@ epoch： 保存偏向时间戳
 
 1. 在32位系统下，存放Class指针的空间大小是4字节,MarkWord是4字节，对象头为8字节。
 2. 在64位系统下，存放Class指针的空间大小是8字节,MarkWord是8字节，对象头为16字节。
-3. 64位开启指针压缩的情况下，存放Class指针的空间大小是4字节，MarkWord是8字节，对象头为12字节。 数组长度4字节+数组对象头8字节(对象引用4字节（未开启指针压缩的64位为8字节）+数组markword为4字节（64位未开启指针压缩的为8字节）)+对齐4=16字节。
+3. 64位压缩，
+   - 对象：存放Class指针的空间大小是4字节，MarkWord是8字节，对象头为12字节+对齐4=16字节。 
+   - 数组：MarkWord是8字节+存放Class指针的空间大小是4字节+数组长度4字节=16字节。
 4. 静态属性不算在对象大小内。
 
 <div align=center>
@@ -284,7 +280,7 @@ epoch： 保存偏向时间戳
 
 </div>
 
-## 对象头分析工具JOL
+## 对象分析工具JOL
 
 ### maven
 
@@ -296,7 +292,53 @@ epoch： 保存偏向时间戳
     </dependency>
 ```
 
-### 测试代码
+### 虚拟机信息
+
+```java
+package com.sunld.jvm;
+
+import org.openjdk.jol.info.ClassLayout;
+import org.openjdk.jol.vm.VM;
+
+public class Test {
+
+    public static void main(String[] args) {
+        //返回有关当前 VM 模式的信息详细信息
+        //ClassLayout:class的内存内存布局
+        //parseInstance:表示解析传入的对象
+        //toPrintable:表示转换为一种可输出的格式打印
+        System.out.println(VM.current().details());
+    }
+}
+
+```
+
+结果输出：
+
+```java
+# WARNING: Unable to attach Serviceability Agent. You can try again with escalated privileges. Two options: a) use -Djol.tryWithSudo=true to try with sudo; b) echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+# Running 64-bit HotSpot VM.
+# Using compressed oop with 3-bit shift.
+# Using compressed klass with 3-bit shift.
+# WARNING | Compressed references base/shifts are guessed by the experiment!
+# WARNING | Therefore, computed addresses are just guesses, and ARE NOT RELIABLE.
+# WARNING | Make sure to attach Serviceability Agent to get the reliable addresses.
+# Objects are 8 bytes aligned.
+# Field sizes by type: 4, 1, 1, 2, 2, 4, 4, 8, 8 [bytes]
+# Array element sizes: 4, 1, 1, 2, 2, 4, 4, 8, 8 [bytes]
+```
+
+1. 第一行表示警告信息，可以忽略
+2. 第二行表示使用的虚拟机是64位
+3. 第三行表示启用普通对象指针压缩，即-XX:+UseCompressedOops
+4. 第四行表示启用类型指针压缩，即-XX:+UseCompressedClassPointers开启参数
+5. 第八行：对象的大小必须8bytes对齐。
+6. 第九行：表示字段类型的指针长度（bytes），依次为引用句柄（对象指针），byte, boolean, char, short, int, float, double, long类型。
+7. 第十行：表示数组类型的指针长度（bytes），依次为引用句柄（对象指针），byte, boolean, char, short, int, float, double, long类型。
+
+### 普通对象信息
+
+#### 参考代码
 
 ```java
 package com.sunld.jvm;
@@ -304,10 +346,75 @@ package com.sunld.jvm;
 import org.openjdk.jol.info.ClassLayout;
 
 public class Test {
+
     public static void main(String[] args) {
-        Test t = new Test();
-        System.out.println(ClassLayout.parseInstance(t).toPrintable());
+        System.out.println("----------- obj1 details ------------");
+        JoLObj  obj1 = new JoLObj();
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
     }
+}
+class JoLObj{
+    private boolean flag = false;
+    private int number = 256;
+    static int number_1 = 10;
+    final int number_2 = 11;
+    final static int number_3 = 12;
+}
+
+
+```
+
+#### 输出结果
+
+```java
+com.sunld.jvm.JoLObj object internals:
+ OFFSET  SIZE      TYPE DESCRIPTION                               VALUE
+      0     4           (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+      4     4           (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4           (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4       int JoLObj.number                             256
+     16     4       int JoLObj.number_2                           11
+     20     1   boolean JoLObj.flag                               false
+     21     3           (loss due to the next object alignment)
+Instance size: 24 bytes
+Space losses: 0 bytes internal + 3 bytes external = 3 bytes total
+```
+
+#### 结果分析
+
+1. 使用了64位vm，且进行了压缩
+2. 对象头占用12个Byte。 （8个Byte的markword，和被压缩后的klasss point为4个Byte）
+3. 对象实例9个Byte（int：4 + int：4 + boolean：1）
+4. 对齐占用了3个字节（因为在64位虚拟机上对象的大小必须是Word字长的倍数，既8字节的倍数）
+5. 静态变量不在对象头中
+
+### hashcode分析
+
+#### 参考代码
+
+```java
+package com.sunld.jvm;
+
+import org.openjdk.jol.info.ClassLayout;
+
+public class Test {
+
+    public static void main(String[] args) {
+        JoLObj  obj1 = new JoLObj();
+        System.out.println("----------- before hash ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+        System.out.println("obj1 hashcode is: " + Integer.toBinaryString(obj1.hashCode()));
+        System.out.println("obj1 hashcode is: " + Integer.toHexString(obj1.hashCode()));
+        System.out.println("----------- after hash ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+    }
+}
+class JoLObj{
+    private boolean flag = false;
+    private int number = 256;
+    static int number_1 = 10;
+    final int number_2 = 11;
+    final static int number_3 = 12;
 }
 
 ```
@@ -315,15 +422,166 @@ public class Test {
 #### 输出结果
 
 ```java
-com.sunld.jvm.Test object internals:
- OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
-      0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
-      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
-      8     4        (object header)                           05 c1 00 f8 (00000101 11000001 00000000 11111000) (-134168315)
-     12     4        (loss due to the next object alignment)
-Instance size: 16 bytes
-Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+com.sunld.jvm.JoLObj object internals:
+ OFFSET  SIZE      TYPE DESCRIPTION                               VALUE
+      0     4           (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+      4     4           (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4           (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4       int JoLObj.number                             256
+     16     4       int JoLObj.number_2                           11
+     20     1   boolean JoLObj.flag                               false
+     21     3           (loss due to the next object alignment)
+Instance size: 24 bytes
+Space losses: 0 bytes internal + 3 bytes external = 3 bytes total
+
+obj1 hashcode is: 100100001101111100011011011100
+obj1 hashcode is: 2437c6dc
+----------- after hash ------------
+com.sunld.jvm.JoLObj object internals:
+ OFFSET  SIZE      TYPE DESCRIPTION                               VALUE
+      0     4           (object header)                           01 dc c6 37 (00000001 11011100 11000110 00110111) (935779329)
+      4     4           (object header)                           24 00 00 00 (00100100 00000000 00000000 00000000) (36)
+      8     4           (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4       int JoLObj.number                             256
+     16     4       int JoLObj.number_2                           11
+     20     1   boolean JoLObj.flag                               false
+     21     3           (loss due to the next object alignment)
+Instance size: 24 bytes
+Space losses: 0 bytes internal + 3 bytes external = 3 bytes total
 ```
+
+#### 结果分析
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax"></th>
+    <th class="tg-0lax">对象markword（小端）</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">计算hashcode前</td>
+    <td class="tg-0lax">00000001 00000000 00000000 00000000 00000000 00000000 00000000 00000000</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">计算hashcode后</td>
+    <td class="tg-0lax">00000001 11011100 11000110 00110111 00100100 00000000 00000000 00000000</td>
+  </tr>
+</tbody>
+</table>
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax"></th>
+    <th class="tg-0lax">对象markword（大端）</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">计算hashcode前</td>
+    <td class="tg-0lax">00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">计算hashcode后</td>
+    <td class="tg-0lax">00000000 00000000 00000000 00100100 00110111 11000110 11011100 00000001</td>
+  </tr>
+</tbody>
+</table>
+
+1. 在未计算hashcode之前，markword中默认都是0，计算之后保存到对象头的markword中
+2. 25bit表示unused
+3. 31bit表示hashcode：0100100 00110111 11000110 11011100
+4. 4bit（0000）表示age， GC中分代年龄。由于age只有4位，所以最大值为15
+5. 1个bit为：biased_lock，值为0，表示无偏向锁（计算hashcode后不在使用偏向锁）
+6. 2个bit为：lock状态，值为01，表示未锁定
+
+### age变化
+
+#### 参考代码
+
+```java
+package com.sunld.jvm;
+
+import org.openjdk.jol.info.ClassLayout;
+
+import java.nio.ByteOrder;
+
+public class Test {
+
+    public static void main(String[] args) {
+        System.out.println("nativeOrder:" + ByteOrder.nativeOrder()); //查看当前JVM使用字节序是大端、小端。
+        JoLObj  obj1 = new JoLObj();
+        System.out.println("----------- before gc ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+        System.gc(); // 人工发起GC
+        System.out.println("----------- after GC ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+    }
+}
+class JoLObj{
+    private boolean flag = false;
+    private int number = 256;
+    static int number_1 = 10;
+    final int number_2 = 11;
+    final static int number_3 = 12;
+}
+
+```
+
+#### 输出结果
+
+```java
+com.sunld.jvm.JoLObj object internals:
+ OFFSET  SIZE      TYPE DESCRIPTION                               VALUE
+      0     4           (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+      4     4           (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4           (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4       int JoLObj.number                             256
+     16     4       int JoLObj.number_2                           11
+     20     1   boolean JoLObj.flag                               false
+     21     3           (loss due to the next object alignment)
+Instance size: 24 bytes
+Space losses: 0 bytes internal + 3 bytes external = 3 bytes total
+
+----------- after GC ------------
+com.sunld.jvm.JoLObj object internals:
+ OFFSET  SIZE      TYPE DESCRIPTION                               VALUE
+      0     4           (object header)                           09 00 00 00 (00001001 00000000 00000000 00000000) (9)
+      4     4           (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4           (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4       int JoLObj.number                             256
+     16     4       int JoLObj.number_2                           11
+     20     1   boolean JoLObj.flag                               false
+     21     3           (loss due to the next object alignment)
+Instance size: 24 bytes
+Space losses: 0 bytes internal + 3 bytes external = 3 bytes total
+```
+
+#### 结果分析
+
+可以看到大端的最后一个字节数据：从00000001变成了00001001，既age增加了1
+
+### 其他
+
+关于锁的对象头分析请参考<a href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/" target="_blank">java并发编程之锁</a>
 
 ## 对象的定位
 
@@ -496,3 +754,5 @@ ObjectMonitor() {
 
 1. [记一次生产频繁出现 Full GC 的 GC日志图文详解](https://www.toutiao.com/i6799522958990639628)
 2. [openjdk](http://openjdk.java.net/)
+3. [jol](https://github.com/openjdk/jol)
+4. [Java对象头Object Header、偏向锁、轻量锁、重量锁研究](https://blog.csdn.net/zyplanke/article/details/106893992)
