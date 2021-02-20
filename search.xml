@@ -1188,22 +1188,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Java并发编程之知识图谱</title>
-    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</url>
-    <content><![CDATA[<div align="center">
-
-<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/1588238047655.png" class title="并发编程知识图谱">
-
-</div>]]></content>
-      <categories>
-        <category>Java</category>
-        <category>并发编程</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java并发编程之应用-设备升级</title>
     <url>/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%BA%94%E7%94%A8-%E8%AE%BE%E5%A4%87%E5%8D%87%E7%BA%A7/</url>
     <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>功能需求：设备策略升级  </p>
@@ -1234,6 +1218,22 @@
       <tags>
         <tag>Java</tag>
         <tag>线程池</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java并发编程之知识图谱</title>
+    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</url>
+    <content><![CDATA[<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/1588238047655.png" class title="并发编程知识图谱">
+
+</div>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -2572,138 +2572,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux 性能分析思路与工具</title>
-    <url>/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/</url>
-    <content><![CDATA[<h2 id="关注点"><a href="#关注点" class="headerlink" title="关注点"></a>关注点</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133930457.png" class>
-
-</div>
-<a id="more"></a>
-
-<h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133995578.png" class>
-
-</div>
-
-<h2 id="CPU时间量级"><a href="#CPU时间量级" class="headerlink" title="CPU时间量级"></a>CPU时间量级</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134065698.png" class>
-
-</div>
-
-<h2 id="三部曲"><a href="#三部曲" class="headerlink" title="三部曲"></a>三部曲</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134095303.png" class>
-
-</div>
-
-<h2 id="分析视角"><a href="#分析视角" class="headerlink" title="分析视角"></a>分析视角</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134132100.png" class>
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134149886.png" class>
-
-</div>
-
-<h2 id="常用性能分析工具"><a href="#常用性能分析工具" class="headerlink" title="常用性能分析工具"></a>常用性能分析工具</h2><h3 id="CPU性能工具"><a href="#CPU性能工具" class="headerlink" title="CPU性能工具"></a>CPU性能工具</h3><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448604003.png" class>
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448790369.png" class>
-
-
-</div>
-
-<h3 id="内存分析工具"><a href="#内存分析工具" class="headerlink" title="内存分析工具"></a>内存分析工具</h3><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448638953.png" class>
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448740381.png" class>
-
-
-</div>
-
-<h3 id="文件磁盘性能分析工具"><a href="#文件磁盘性能分析工具" class="headerlink" title="文件磁盘性能分析工具"></a>文件磁盘性能分析工具</h3><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448675711.png" class>
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448755937.png" class>
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448777177.png" class>
-
-
-</div>
-
-<h3 id="网络性能分析工具"><a href="#网络性能分析工具" class="headerlink" title="网络性能分析工具"></a>网络性能分析工具</h3><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448706341.png" class>
-
-</div>
-
-<h3 id="Analysis-and-Tools"><a href="#Analysis-and-Tools" class="headerlink" title="Analysis and Tools"></a>Analysis and Tools</h3><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133105522.png" class>
-
-</div>
-
-<h3 id="perf"><a href="#perf" class="headerlink" title="perf"></a>perf</h3><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134224092.png" class>
-
-</div>
-
-<h2 id="定位CPU瓶颈"><a href="#定位CPU瓶颈" class="headerlink" title="定位CPU瓶颈"></a>定位CPU瓶颈</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134201912.png" class>
-
-</div>
-
-<h2 id="定位IO瓶颈"><a href="#定位IO瓶颈" class="headerlink" title="定位IO瓶颈"></a>定位IO瓶颈</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134256935.png" class>
-
-</div>
-
-<h2 id="定位锁瓶颈"><a href="#定位锁瓶颈" class="headerlink" title="定位锁瓶颈"></a>定位锁瓶颈</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134286008.png" class>
-
-</div>
-
-<h3 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h3><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134314979.png" class>
-
-</div>
-
-<h2 id="内存和对象管理"><a href="#内存和对象管理" class="headerlink" title="内存和对象管理"></a>内存和对象管理</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134340771.png" class>
-
-</div>
-
-<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><div align="center">
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134379518.png" class>
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134384936.png" class>
-
-<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134398412.png" class>
-
-</div>
-
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux命令之TOP</title>
     <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/</url>
     <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@incloudos logs]<span class="comment"># top -h</span></span><br><span class="line">  procps-ng version 3.3.10</span><br><span class="line">Usage:</span><br><span class="line">  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]</span><br><span class="line">s – 改变画面更新频率</span><br><span class="line">l – 关闭或开启第一部分第一行 top 信息的表示</span><br><span class="line">t – 关闭或开启第一部分第二行 Tasks 和第三行 Cpus 信息的表示</span><br><span class="line">m – 关闭或开启第一部分第四行 Mem 和 第五行 Swap 信息的表示</span><br><span class="line">N – 以 PID 的大小的顺序排列表示进程列表</span><br><span class="line">P – 以 CPU 占用率大小的顺序排列进程列表</span><br><span class="line">M – 以内存占用率大小的顺序排列进程列表</span><br><span class="line">h – 显示帮助</span><br><span class="line">n – 设置在进程列表所显示进程的数量</span><br><span class="line">q – 退出 top</span><br><span class="line">s – 改变画面更新周期</span><br><span class="line">请在top里面按下E，注意是大写。你会发现内存那一行的最左侧，</span><br><span class="line">也就是Mem前面，会有Kib、MiB、GiB等单位变化，</span><br><span class="line">但是数字后面不会直接写明单位。</span><br></pre></td></tr></table></figure>
@@ -3111,6 +2979,138 @@ SHR：shared memory 共享内存<br>
         <tag>Linux</tag>
         <tag>iostat</tag>
         <tag>磁盘分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 性能分析思路与工具</title>
+    <url>/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<h2 id="关注点"><a href="#关注点" class="headerlink" title="关注点"></a>关注点</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133930457.png" class>
+
+</div>
+<a id="more"></a>
+
+<h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133995578.png" class>
+
+</div>
+
+<h2 id="CPU时间量级"><a href="#CPU时间量级" class="headerlink" title="CPU时间量级"></a>CPU时间量级</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134065698.png" class>
+
+</div>
+
+<h2 id="三部曲"><a href="#三部曲" class="headerlink" title="三部曲"></a>三部曲</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134095303.png" class>
+
+</div>
+
+<h2 id="分析视角"><a href="#分析视角" class="headerlink" title="分析视角"></a>分析视角</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134132100.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134149886.png" class>
+
+</div>
+
+<h2 id="常用性能分析工具"><a href="#常用性能分析工具" class="headerlink" title="常用性能分析工具"></a>常用性能分析工具</h2><h3 id="CPU性能工具"><a href="#CPU性能工具" class="headerlink" title="CPU性能工具"></a>CPU性能工具</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448604003.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448790369.png" class>
+
+
+</div>
+
+<h3 id="内存分析工具"><a href="#内存分析工具" class="headerlink" title="内存分析工具"></a>内存分析工具</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448638953.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448740381.png" class>
+
+
+</div>
+
+<h3 id="文件磁盘性能分析工具"><a href="#文件磁盘性能分析工具" class="headerlink" title="文件磁盘性能分析工具"></a>文件磁盘性能分析工具</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448675711.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448755937.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448777177.png" class>
+
+
+</div>
+
+<h3 id="网络性能分析工具"><a href="#网络性能分析工具" class="headerlink" title="网络性能分析工具"></a>网络性能分析工具</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1594448706341.png" class>
+
+</div>
+
+<h3 id="Analysis-and-Tools"><a href="#Analysis-and-Tools" class="headerlink" title="Analysis and Tools"></a>Analysis and Tools</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611133105522.png" class>
+
+</div>
+
+<h3 id="perf"><a href="#perf" class="headerlink" title="perf"></a>perf</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134224092.png" class>
+
+</div>
+
+<h2 id="定位CPU瓶颈"><a href="#定位CPU瓶颈" class="headerlink" title="定位CPU瓶颈"></a>定位CPU瓶颈</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134201912.png" class>
+
+</div>
+
+<h2 id="定位IO瓶颈"><a href="#定位IO瓶颈" class="headerlink" title="定位IO瓶颈"></a>定位IO瓶颈</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134256935.png" class>
+
+</div>
+
+<h2 id="定位锁瓶颈"><a href="#定位锁瓶颈" class="headerlink" title="定位锁瓶颈"></a>定位锁瓶颈</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134286008.png" class>
+
+</div>
+
+<h3 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h3><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134314979.png" class>
+
+</div>
+
+<h2 id="内存和对象管理"><a href="#内存和对象管理" class="headerlink" title="内存和对象管理"></a>内存和对象管理</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134340771.png" class>
+
+</div>
+
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><div align="center">
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134379518.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134384936.png" class>
+
+<img src="/2021/02/05/Linux-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%B7%A5%E5%85%B7/1611134398412.png" class>
+
+</div>
+
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -3981,6 +3981,45 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>使用hexo+github+next部署个人博客</title>
+    <url>/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="依赖环境"><a href="#依赖环境" class="headerlink" title="依赖环境"></a>依赖环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line"><span class="comment"># 修改原</span></span><br><span class="line">npm config <span class="built_in">set</span> registry http://registry.npm.taobao.org/</span><br><span class="line"><span class="comment"># 改回去</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmjs.org/</span><br></pre></td></tr></table></figure>
+<h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><p>使用npm安装hexo(<a href="https://hexo.io/zh-cn/">详细文档</a>)，命令是<code>npm install -g hexo-cli</code>,安装完成之后初始化博客,命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir sld880311.github.io</span><br><span class="line"><span class="built_in">cd</span> sld880311.github.io</span><br><span class="line">hexo init </span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+<p>初始化完成之后目录结构如下：<a id="more"></a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml <span class="comment"># 网站的配置信息，您可以在此配置大部分的参数。 </span></span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds <span class="comment"># 模版文件夹</span></span><br><span class="line">├── <span class="built_in">source</span>  <span class="comment"># 资源文件夹，除 _posts 文件，其他以下划线_开头的文件或者文件夹不会被编译打包到public文件夹</span></span><br><span class="line">|   ├── _drafts <span class="comment"># 草稿文件</span></span><br><span class="line">|   └── _posts <span class="comment"># 文章Markdowm文件 </span></span><br><span class="line">└── themes  <span class="comment"># 主题文件夹</span></span><br></pre></td></tr></table></figure>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo s         <span class="comment"># 启动服务，然后可以使用 http://localhost:4000访问</span></span><br><span class="line">hexo init      <span class="comment">#生成文档</span></span><br><span class="line">hexo g         <span class="comment">#生成网页</span></span><br><span class="line">hexo clean     <span class="comment">#清除网页</span></span><br><span class="line">hexo d         <span class="comment">#部署博客</span></span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure>
+<h2 id="特殊配置"><a href="#特殊配置" class="headerlink" title="特殊配置"></a>特殊配置</h2><h3 id="配置SSH-Key"><a href="#配置SSH-Key" class="headerlink" title="配置SSH Key"></a>配置SSH Key</h3><p>获取<code>cat ~/.ssh/id_rsa.pub</code>中的数据，如果没有数据需要按照以下命令配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;sunliaodong&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;sld880311@hotmail.com&quot;</span></span><br><span class="line">ssh-keygen -t rsa -C <span class="string">&#x27;sld880311@hotmail.com&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>然后把生成的key添加中自己的github中即可。</p>
+<h3 id="部署到github"><a href="#部署到github" class="headerlink" title="部署到github"></a>部署到github</h3><h4 id="修改根目录下的-config-yml"><a href="#修改根目录下的-config-yml" class="headerlink" title="修改根目录下的_config.yml"></a>修改根目录下的_config.yml</h4><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/one-command-deployment</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&#x27;git&#x27;</span></span><br><span class="line">  <span class="attr">repo:</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">https://github.com/sld880311/sld880311.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<h4 id="安装部署插件hexo-deployer-git"><a href="#安装部署插件hexo-deployer-git" class="headerlink" title="安装部署插件hexo-deployer-git"></a>安装部署插件hexo-deployer-git</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<h4 id="部署命令"><a href="#部署命令" class="headerlink" title="部署命令"></a>部署命令</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
+<h3 id="添加字数统计和阅读时长"><a href="#添加字数统计和阅读时长" class="headerlink" title="添加字数统计和阅读时长"></a>添加字数统计和阅读时长</h3><h4 id="添加插件"><a href="#添加插件" class="headerlink" title="添加插件"></a>添加插件</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-symbols-count-time --save</span><br></pre></td></tr></table></figure>
+<h4 id="修改根目录的-config-yml"><a href="#修改根目录的-config-yml" class="headerlink" title="修改根目录的_config.yml"></a>修改根目录的_config.yml</h4><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 文章字数统计</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">time:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h4 id="修改主题-config-yml"><a href="#修改主题-config-yml" class="headerlink" title="修改主题_config.yml"></a>修改主题_config.yml</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/theme-next/hexo-symbols-count-time</span></span><br><span class="line">symbols_count_time:</span><br><span class="line">  separated_meta: <span class="literal">true</span></span><br><span class="line">  item_text_post: <span class="literal">true</span></span><br><span class="line">  item_text_total: <span class="literal">true</span></span><br><span class="line">  awl: 4</span><br><span class="line">  wpm: 275</span><br></pre></td></tr></table></figure>
+<h2 id="开始写作"><a href="#开始写作" class="headerlink" title="开始写作"></a>开始写作</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new <span class="string">&quot;文章名称&quot;</span>      <span class="comment"># 使用命令创建文章</span></span><br><span class="line">hexo new page categories  <span class="comment"># 定义分类</span></span><br><span class="line">hexo new page tags        <span class="comment"># 定义标签</span></span><br><span class="line">hexo new page about       <span class="comment"># 定义关于</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol>
+<li><a href="http://theme-next.iissnan.com/">theme-next.iissnan</a></li>
+<li><a href="https://theme-next.js.org/docs/">theme-next.js</a></li>
+<li><a href="https://www.jianshu.com/p/446ec02bb0a8">Hexo+Next搭建个人博客</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/185015237">hexo之主题优化篇</a></li>
+<li><a href="https://segmentfault.com/a/1190000017986794">超详细Hexo+Github Page搭建技术博客教程【持续更新】</a></li>
+<li><a href="https://blog.csdn.net/u014786530/article/details/103548737">Hexo+NexT搭建个人博客</a></li>
+<li><a href="https://blog.csdn.net/qq_40930491/article/details/87902310">从头开始搭建hexo+github+hexo-theme-next主题博客（高级设置）</a></li>
+<li></li>
+</ol>
+]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+        <tag>github</tag>
+        <tag>Next</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>git详解</title>
     <url>/2021/02/04/git%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h2 id="提交本地工程到github"><a href="#提交本地工程到github" class="headerlink" title="提交本地工程到github"></a>提交本地工程到github</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;注释&quot;</span></span><br><span class="line">git remote add origin https://github.com/sld880311/parkspaceagent</span><br><span class="line"></span><br><span class="line">git pull origin master</span><br><span class="line"><span class="comment">#如果出现fatal: refusing to merge unrelated histories</span></span><br><span class="line">使用如下命令 git pull origin master --allow-unrelated-histories</span><br><span class="line"></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
@@ -4027,45 +4066,6 @@ SHR：shared memory 共享内存<br>
       </categories>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用hexo+github+next部署个人博客</title>
-    <url>/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="依赖环境"><a href="#依赖环境" class="headerlink" title="依赖环境"></a>依赖环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line"><span class="comment"># 修改原</span></span><br><span class="line">npm config <span class="built_in">set</span> registry http://registry.npm.taobao.org/</span><br><span class="line"><span class="comment"># 改回去</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmjs.org/</span><br></pre></td></tr></table></figure>
-<h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><p>使用npm安装hexo(<a href="https://hexo.io/zh-cn/">详细文档</a>)，命令是<code>npm install -g hexo-cli</code>,安装完成之后初始化博客,命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir sld880311.github.io</span><br><span class="line"><span class="built_in">cd</span> sld880311.github.io</span><br><span class="line">hexo init </span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
-<p>初始化完成之后目录结构如下：<a id="more"></a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml <span class="comment"># 网站的配置信息，您可以在此配置大部分的参数。 </span></span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds <span class="comment"># 模版文件夹</span></span><br><span class="line">├── <span class="built_in">source</span>  <span class="comment"># 资源文件夹，除 _posts 文件，其他以下划线_开头的文件或者文件夹不会被编译打包到public文件夹</span></span><br><span class="line">|   ├── _drafts <span class="comment"># 草稿文件</span></span><br><span class="line">|   └── _posts <span class="comment"># 文章Markdowm文件 </span></span><br><span class="line">└── themes  <span class="comment"># 主题文件夹</span></span><br></pre></td></tr></table></figure>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo s         <span class="comment"># 启动服务，然后可以使用 http://localhost:4000访问</span></span><br><span class="line">hexo init      <span class="comment">#生成文档</span></span><br><span class="line">hexo g         <span class="comment">#生成网页</span></span><br><span class="line">hexo clean     <span class="comment">#清除网页</span></span><br><span class="line">hexo d         <span class="comment">#部署博客</span></span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure>
-<h2 id="特殊配置"><a href="#特殊配置" class="headerlink" title="特殊配置"></a>特殊配置</h2><h3 id="配置SSH-Key"><a href="#配置SSH-Key" class="headerlink" title="配置SSH Key"></a>配置SSH Key</h3><p>获取<code>cat ~/.ssh/id_rsa.pub</code>中的数据，如果没有数据需要按照以下命令配置：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;sunliaodong&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;sld880311@hotmail.com&quot;</span></span><br><span class="line">ssh-keygen -t rsa -C <span class="string">&#x27;sld880311@hotmail.com&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>然后把生成的key添加中自己的github中即可。</p>
-<h3 id="部署到github"><a href="#部署到github" class="headerlink" title="部署到github"></a>部署到github</h3><h4 id="修改根目录下的-config-yml"><a href="#修改根目录下的-config-yml" class="headerlink" title="修改根目录下的_config.yml"></a>修改根目录下的_config.yml</h4><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/one-command-deployment</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&#x27;git&#x27;</span></span><br><span class="line">  <span class="attr">repo:</span></span><br><span class="line">    <span class="attr">github:</span> <span class="string">https://github.com/sld880311/sld880311.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<h4 id="安装部署插件hexo-deployer-git"><a href="#安装部署插件hexo-deployer-git" class="headerlink" title="安装部署插件hexo-deployer-git"></a>安装部署插件hexo-deployer-git</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<h4 id="部署命令"><a href="#部署命令" class="headerlink" title="部署命令"></a>部署命令</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
-<h3 id="添加字数统计和阅读时长"><a href="#添加字数统计和阅读时长" class="headerlink" title="添加字数统计和阅读时长"></a>添加字数统计和阅读时长</h3><h4 id="添加插件"><a href="#添加插件" class="headerlink" title="添加插件"></a>添加插件</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-symbols-count-time --save</span><br></pre></td></tr></table></figure>
-<h4 id="修改根目录的-config-yml"><a href="#修改根目录的-config-yml" class="headerlink" title="修改根目录的_config.yml"></a>修改根目录的_config.yml</h4><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 文章字数统计</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">time:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<h4 id="修改主题-config-yml"><a href="#修改主题-config-yml" class="headerlink" title="修改主题_config.yml"></a>修改主题_config.yml</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Post wordcount display settings</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/theme-next/hexo-symbols-count-time</span></span><br><span class="line">symbols_count_time:</span><br><span class="line">  separated_meta: <span class="literal">true</span></span><br><span class="line">  item_text_post: <span class="literal">true</span></span><br><span class="line">  item_text_total: <span class="literal">true</span></span><br><span class="line">  awl: 4</span><br><span class="line">  wpm: 275</span><br></pre></td></tr></table></figure>
-<h2 id="开始写作"><a href="#开始写作" class="headerlink" title="开始写作"></a>开始写作</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new <span class="string">&quot;文章名称&quot;</span>      <span class="comment"># 使用命令创建文章</span></span><br><span class="line">hexo new page categories  <span class="comment"># 定义分类</span></span><br><span class="line">hexo new page tags        <span class="comment"># 定义标签</span></span><br><span class="line">hexo new page about       <span class="comment"># 定义关于</span></span><br></pre></td></tr></table></figure>
-<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol>
-<li><a href="http://theme-next.iissnan.com/">theme-next.iissnan</a></li>
-<li><a href="https://theme-next.js.org/docs/">theme-next.js</a></li>
-<li><a href="https://www.jianshu.com/p/446ec02bb0a8">Hexo+Next搭建个人博客</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/185015237">hexo之主题优化篇</a></li>
-<li><a href="https://segmentfault.com/a/1190000017986794">超详细Hexo+Github Page搭建技术博客教程【持续更新】</a></li>
-<li><a href="https://blog.csdn.net/u014786530/article/details/103548737">Hexo+NexT搭建个人博客</a></li>
-<li><a href="https://blog.csdn.net/qq_40930491/article/details/87902310">从头开始搭建hexo+github+hexo-theme-next主题博客（高级设置）</a></li>
-<li></li>
-</ol>
-]]></content>
-      <categories>
-        <category>其他</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-        <tag>github</tag>
-        <tag>Next</tag>
       </tags>
   </entry>
   <entry>
@@ -4406,267 +4406,6 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>测试</tag>
         <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JVM内存区域</title>
-    <url>/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</url>
-    <content><![CDATA[<h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png" class title="JVM内存区域知识图谱">
-
-</div>
-
-<a id="more"></a>
-
-<h2 id="总体介绍"><a href="#总体介绍" class="headerlink" title="总体介绍"></a>总体介绍</h2><ol>
-<li>JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区域【JAVA 堆、方法区】、直接内存。</li>
-<li>线程私有数据区域生命周期与线程相同, 依赖用户线程的启动/结束而创建/销毁，线程共享区域随虚拟机的启动/关闭而创建/销毁。</li>
-<li>直接内存并不是 JVM 运行时数据区的一部分, 但也会被频繁的使用（NIO，DirectByteBuffer）</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.png" class>
-
-</div>
-
-<h2 id="程序计数器-线程私有"><a href="#程序计数器-线程私有" class="headerlink" title="程序计数器(线程私有)"></a>程序计数器(线程私有)</h2><p> 由于JAVA的多线程是通过线程轮流切换分配处理时间的方式实现，为了保证能够恢复到线程的正确位置，每个线程再启动的时候都会创建<strong>一块较小的内存区域</strong>，这块区域是<strong>线程隔离</strong>的，生命周期同线程绑定，线程结束，则释放该内存区域，可以看作是当前线程所执行的字节码的行号子令器。  </p>
-<p><strong>字节码子令器的工作模式是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</strong>  </p>
-<p>计数器的大小是一个字长，因此既可以持有一个本地指针，又可以持有一个returnAddress。计数器中记录的内容根据方法类型就行划分，如果当前方法是java方法，这个计数器记录的是正在执行的虚拟机字节码指令的地址（可以是一个本地指针，也可以是在方法字节码中相对于该方法起始指令的偏移量）；如果方法是Native方法，这个计数器记录的内容则为Undefined。  </p>
-<blockquote>
-<p>Each thread of a running program has its own pc register, or program counter, which is created when the thread is started. The pc register is one word in size, so it can hold both a native pointer and a returnValue. As a thread executes a Java method, the pc register contains the address of the current instruction being executed by the thread. An “address” can be a native pointer or an offset from the beginning of a method’s bytecodes. If a thread is executing a native method, the value of the pc register is undefined.</p>
-</blockquote>
-<p><strong>此内存区域是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。</strong></p>
-<h3 id="程序计数器总结"><a href="#程序计数器总结" class="headerlink" title="程序计数器总结"></a>程序计数器总结</h3><ol>
-<li>占用的 JVM 内存空间较小</li>
-<li>每个线程生命周期内独享自己的程序计数器（内部存放的是字节码指令的地址引用）</li>
-<li>不会发生 OOM</li>
-</ol>
-<h2 id="虚拟机栈-线程私有"><a href="#虚拟机栈-线程私有" class="headerlink" title="虚拟机栈(线程私有)"></a>虚拟机栈(线程私有)</h2><p>用于描述java方法执行的线程内存模型，每个方法被执行的时候线程都会在栈中创建一个栈帧（Stack Frame），用于存储局部变量表、操作数栈、动态链接、返回值等信息的数据集。生命周期与线程同步，每个方法从调用到执行完成就是一个栈帧在VM Stack中入栈出栈的过程。</p>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589457383204.png" class>
-
-</div>
-
-<p>栈帧的数据结构：  </p>
-<ol>
-<li>局部变量表：输入参数和输出参数以及方法内的变量；</li>
-<li>操作数栈：记录出栈和入栈的操作；</li>
-<li>栈帧数据：包括类文件、方法等等。</li>
-</ol>
-<h3 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h3><p>可以理解为使用素组管理内存的方式，从0开始；存放编译期可知的Java基本类型（8种）、对象引用、入参信息以及出参信息（returnAddress）。</p>
-<h4 id="slot"><a href="#slot" class="headerlink" title="slot"></a>slot</h4><p>局部变量表中存储空间以局部变量槽（Slot，32位）表示，局部变量表所需要的内存在编译阶段完成分配。64位的long和double使用两个slot。</p>
-<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">runClassMethod</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">long</span> l,<span class="keyword">float</span> f,<span class="keyword">double</span> d,Object o,<span class="keyword">byte</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">runInstanceMethod</span><span class="params">(<span class="keyword">char</span> c,<span class="keyword">double</span> d,<span class="keyword">short</span> s,<span class="keyword">boolean</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512957352.png" class>
-
-</div>
-
-<p>runInstanceMethod的局部变量区第一项是个reference（引用），它指定的就是对象本身的引用，也就是我们常用的this,但是在runClassMethod方法中，没这个引用，那是因为runClassMethod是个静态方法。</p>
-<h3 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h3><p>与局部变量表类似，组织成一个以字长为单位的数组。但是是使用出栈入栈的方式进行访问；操作数栈是临时数据的存储区域。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a= <span class="number">100</span>;</span><br><span class="line"><span class="keyword">int</span> b =<span class="number">5</span>;</span><br><span class="line"><span class="keyword">int</span> c = a+b;</span><br></pre></td></tr></table></figure>
-<p>对应的操作数栈变化为：  </p>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589513290674.png" class>
-
-</div>
-
-<blockquote>
-<p>JVM实现里，有一种基于栈的指令集(Hotspot，oracle JVM)，还有一种基于寄存器的指令集(DalvikVM，安卓 JVM)</p>
-</blockquote>
-<h3 id="帧数据区"><a href="#帧数据区" class="headerlink" title="帧数据区"></a>帧数据区</h3><p>帧数据区存放了指向常量池的指针地址，当某些指令需要获得常量池的数据时，通过帧数据区中的指针地址来访问常量池的数据。此外，帧数据区还存放方法正常返回和异常终止需要的一些数据。</p>
-<h3 id="异常情况"><a href="#异常情况" class="headerlink" title="异常情况"></a>异常情况</h3><ol>
-<li>如果线程请求的栈深度大于虚拟机所允许的深度，将抛出StackOverflowError异常。</li>
-<li>如果VM栈可以动态扩展，在初始化新线程时没有足够内存创建栈则抛出OutOfMemoryError异常。</li>
-</ol>
-<h3 id="虚拟机栈图解"><a href="#虚拟机栈图解" class="headerlink" title="虚拟机栈图解"></a>虚拟机栈图解</h3><div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E5%9B%BE%E8%A7%A3.png" class title="虚拟机栈图解">
-
-</div>
-
-<h3 id="内存设置"><a href="#内存设置" class="headerlink" title="内存设置"></a>内存设置</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"># -Xss ：用于设置栈的大小，栈的大小决定了方法调用的深度。</span><br><span class="line"># 设置线程栈大小为 512k（以字节为单位）</span><br><span class="line">-Xss 512k</span><br></pre></td></tr></table></figure>
-<h3 id="虚拟机栈总结"><a href="#虚拟机栈总结" class="headerlink" title="虚拟机栈总结"></a>虚拟机栈总结</h3><ol>
-<li>内部结构是栈帧，每个方法在执行的时候都会创建一个栈帧，用于存储局部变量表，操作数栈，动态链接，方法返回地址等信息</li>
-<li>某方法在调用另一个方法是通过动态链接在常量池中查询方法的引用，进而完成方法调用</li>
-<li>某方法在调用另一个方法的过程，即是一个栈帧在虚拟机中的入栈到出栈的过程</li>
-<li>虚拟机中的方法入栈的顺序和方法的调用顺序是一致的</li>
-</ol>
-<h2 id="本地方法栈-线程私有"><a href="#本地方法栈-线程私有" class="headerlink" title="本地方法栈(线程私有)"></a>本地方法栈(线程私有)</h2><p>与Java Stack类似，主要区别是，Java Stack用于执行Java方法服务，本地方法栈用于native方法服务。</p>
-<ol>
-<li>和虚拟机栈类似，内部结构是栈帧，每个 Native 方法执行时创建一个栈帧</li>
-<li>该部分没有规定内存大小</li>
-</ol>
-<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>当调用一个native方法时，jvm使用c-linkage模型支持native调用，并且创建一个C栈，由于《Java虚拟机规范》没有对该实现有具体要求，所以不同厂商的实现方式不同，比如HotSpot VM 直接就把本地方法栈和虚拟机栈合二为一。它的具体做法是在本地方法栈中登记native方法，在执行引擎执行时加载Native Liberies。</p>
-<h2 id="Java堆（Heap-线程共享）-运行时数据区"><a href="#Java堆（Heap-线程共享）-运行时数据区" class="headerlink" title="Java堆（Heap-线程共享）-运行时数据区"></a>Java堆（Heap-线程共享）-运行时数据区</h2><ol>
-<li>线程共享区域</li>
-<li>存储对象和数组数据</li>
-<li>垃圾回收重点关注区域（内存最大的一块区域）</li>
-<li>从 GC 的角度还可以细分为:<strong>新生代(Eden区、From Survivor区和To Survivor区)和老年代。</strong></li>
-<li>从分配内存的角度看，所有线程共享的Java堆中可以划分出多个线程私有的分配缓冲区（Thread LocalAllocation Buffer，TLAB），以提升对象分配时的效率。</li>
-<li>通过-Xmx和-Xms设置内存大小，内存溢出则出现OOM错误，最小默认为物理内存的1/64，最大为物理内存的1/4</li>
-<li>默认当空余堆内存小于40%时，JVM会增大Heap到-Xmx指定的大小，可通过-XX:MinHeapFreeRation=来指定这个比列；当空余堆内存大于70%时，JVM会减小heap的大小到-Xms指定的大小，可通过XX:MaxHeapFreeRation=来指定这个比列</li>
-<li>建议-Xmx和-Xms设置一致</li>
-</ol>
-<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><ol>
-<li>存放新创建的对象</li>
-<li>占用堆的1/3空间</li>
-<li>回收机制：MinorGC</li>
-<li>划分Eden 区、ServivorFrom、ServivorTo 三个区。</li>
-<li>可通过-Xmn参数来指定新生代的大小，也可以通过-XX:SurvivorRation来调整Eden Space及Survivor Space的大小。</li>
-</ol>
-<h4 id="Eden-区"><a href="#Eden-区" class="headerlink" title="Eden 区"></a>Eden 区</h4><p>Java新对象的出生地（如果新创建的对象占用内存很大，则直接分配到老代）。当Eden区内存不够的时候就会触发MinorGC，对新生代区进行一次垃圾回收。</p>
-<h4 id="ServivorFrom"><a href="#ServivorFrom" class="headerlink" title="ServivorFrom"></a>ServivorFrom</h4><p>上一次 GC 的幸存者，作为这一次 GC 的被扫描者。</p>
-<h4 id="ServivorTo"><a href="#ServivorTo" class="headerlink" title="ServivorTo"></a>ServivorTo</h4><p>保留了一次 MinorGC 过程中的幸存者。</p>
-<h4 id="MinorGC-的过程（复制-gt-清空-gt-互换）"><a href="#MinorGC-的过程（复制-gt-清空-gt-互换）" class="headerlink" title="MinorGC 的过程（复制-&gt;清空-&gt;互换）"></a>MinorGC 的过程（复制-&gt;清空-&gt;互换）</h4><ol>
-<li>MinorGC 采用复制算法。</li>
-<li>把Eden和ServivorFrom区域中存活的对象复制到ServicorTo区域（如果有对象的年龄以及达到了老年的标准，则赋值到老年代区），同时把这些对象的年龄+1（如果 ServicorTo 不够位置了就放到老年区）；</li>
-<li>清空 Eden 和 ServicorFrom 中的对象；</li>
-<li>ServicorTo 和 ServicorFrom 互换，原 ServicorTo 成为下一次 GC的ServicorFrom 区。</li>
-</ol>
-<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><ol>
-<li>存放生命周期较长的对象</li>
-<li>该区域对象比较稳定，MajorGC不会频繁执行</li>
-<li>进行 MajorGC 前一般都先进行了一次 MinorGC，使得有新生代的对象晋身入老年代，导致空间不够用时才触发。</li>
-<li>当无法找到足够大的连续空间分配给新创建的较大对象时也会提前触发一次 MajorGC 进行垃圾回收腾出空间。</li>
-<li>MajorGC 采用标记清除算法：首先扫描一次所有老年代，标记出存活的对象，然后回收没有标记的对象。MajorGC 的耗时比较长，因为要扫描再回收。MajorGC 会产生内存碎片，为了减少内存损耗，我们一般需要进行合并或者标记出来方便下次直接分配。当老年代也满了装不下的时候，就会抛出 OOM（Out of Memory）异常。</li>
-<li>新建对象直接进入该区域的条件：①.大对象，可通过启动参数设置-XX:PretenureSizeThreshold=1024(单位为字节，默认为0)来代表超过多大时就不在新生代分配，而是直接在老年代分配。②.大的数组对象，切数组中无引用外部对象。</li>
-<li>内存大小为-Xmx对应的值减去-Xmn对应的值</li>
-</ol>
-<h3 id="内存展现图例"><a href="#内存展现图例" class="headerlink" title="内存展现图例"></a>内存展现图例</h3><div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589511590668.png" class>
-
-</div>
-
-<h3 id="内存参数设置"><a href="#内存参数设置" class="headerlink" title="内存参数设置"></a>内存参数设置</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"># 设置堆区的初始大小</span><br><span class="line">-Xms1024m</span><br><span class="line"># 设置堆区的存储空间最大值，一般与堆区的初始大小相等</span><br><span class="line">-Xmx1024m</span><br><span class="line"># 设置年轻代堆的大小</span><br><span class="line">-Xmn512m</span><br><span class="line"># 设置如下参数，在出现OOM时进行堆转储</span><br><span class="line">-XX:+HeapDumpOnOutOfMemoryError</span><br><span class="line"># 设置以上设置时，需配置以下参数，堆转储文件输出的位置</span><br><span class="line">-XX:HeapDumpPath=/usr/log/java_dump.hprof</span><br></pre></td></tr></table></figure>
-<h2 id="方法区-永久代（Permanent-Generation，线程共享）"><a href="#方法区-永久代（Permanent-Generation，线程共享）" class="headerlink" title="方法区/永久代（Permanent Generation，线程共享）"></a>方法区/永久代（Permanent Generation，线程共享）</h2><ol>
-<li>线程共享</li>
-<li>存储被jvm加载的类型信息、常量、静态变量、即时编译期编译后的代码缓存数据</li>
-<li>HotSpot VM也会针对该区域进行垃圾回收，主要是针对常量池回收和类型卸载，收益比较低</li>
-<li>内存不足出现OOM</li>
-<li>JDK8之后使用元空间替代了永久代</li>
-<li>默认最小16MB，最大64MB，可以通过-XX:PermSize 和 -XX:MaxPermSize 参数限制方法区的大小</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E6%96%B9%E6%B3%95%E5%8C%BA%E4%B8%8E%E6%B0%B8%E4%B9%85%E4%BB%A3.png" class title="方法区与永久代">
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E6%96%B9%E6%B3%95%E5%8C%BA%E5%9C%A8%E4%B8%8D%E5%90%8CJDK%E7%89%88%E6%9C%AC%E6%AF%94%E8%BE%83.png" class title="方法区在不同JDK版本比较">
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E6%96%B9%E6%B3%95%E5%8C%BA%E5%92%8C%E5%85%83%E7%A9%BA%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB.png" class title="方法区和元空间的区别">
-
-</div>
-
-<h3 id="内存参数设置-1"><a href="#内存参数设置-1" class="headerlink" title="内存参数设置"></a>内存参数设置</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"># jdk1.7 设置永久代内存初始大小</span><br><span class="line">-XX:PermSize=512m</span><br><span class="line"># jdk1.7 设置永久代内存最大值</span><br><span class="line">-XX:MaxPermSize=512m</span><br><span class="line"># jdk1.8 设置元空间内存初始大小</span><br><span class="line">-XX:MetaspaceSize=1024m</span><br><span class="line"># jdk1.8 设置元空间内存最大值</span><br><span class="line">-XX:MaxMetaspaceSize=1024m</span><br></pre></td></tr></table></figure>
-<h3 id="JAVA8-与元数据"><a href="#JAVA8-与元数据" class="headerlink" title="JAVA8 与元数据"></a>JAVA8 与元数据</h3><p>在Java8中，永久代已经被移除，被一个称为“元数据区”（元空间）的区域所取代。元空间的本质和永久代类似，元空间与永久代之间最大的区别在于：<strong>元空间并不在虚拟机中，而是使用本地内存</strong>。因此，默认情况下，元空间的大小仅受本地内存限制。<strong>类的元数据放入native memory, 字符串池和类的静态变量放入 java 堆中</strong>，这样可以加载多少类的元数据就不再由<br>MaxPermSize 控制, 而由系统的实际可用空间来控制。</p>
-<h3 id="运行时常量池（Runtime-Constant-Pool）"><a href="#运行时常量池（Runtime-Constant-Pool）" class="headerlink" title="运行时常量池（Runtime Constant Pool）"></a>运行时常量池（Runtime Constant Pool）</h3><ol>
-<li>Class文件中的常量池表</li>
-<li>存放编译期生成的各种<strong>字面量和符号引用</strong>，这部分内容将在类加载后存放到方法区的运行时常量池中。</li>
-<li>相较于Class文件常量池，运行时常量池更具动态性，在运行期间也可以将新的变量放入常量池中，而不是一定要在编译时确定的常量才能放入。最主要的运用便是String类的intern()方法。</li>
-<li>内存不足会出现OOM</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103068348.png" class>
-
-</div>
-
-<h2 id="直接内存（Direct-Memory）"><a href="#直接内存（Direct-Memory）" class="headerlink" title="直接内存（Direct Memory）"></a>直接内存（Direct Memory）</h2><ol>
-<li>不属于JVM运行时的数据区域</li>
-<li>内存不足会出现OOM错误</li>
-<li>JDK中NIO使用通道和缓冲区的IO方式，使用native函数库直接在堆外分配内存，然后通过一个存储在Java堆里面的DirectByteBuffer对象作为这块内存的引用进行操作</li>
-<li>受限于本机内存</li>
-</ol>
-<h2 id="执行引擎-Execution-Engine"><a href="#执行引擎-Execution-Engine" class="headerlink" title="执行引擎(Execution Engine)"></a>执行引擎(Execution Engine)</h2><p>执行引擎执行包在装载类的方法中的指令，也就是方法。执行引擎以指令为单位读取Java字节码。它就像一个CPU一样，一条一条地执行机器指令。每个字节码指令都由一个1字节的操作码和附加的操作数组成。执行引擎取得一个操作码，然后根据操作数来执行任务，完成后就继续执行下一条操作码。</p>
-<p>执行引擎必须把字节码转换成可以直接被JVM执行的语言。字节码可以通过以下两种方式转换成合适的语言：</p>
-<ol>
-<li>解释器： 一条一条地读取，解释并执行字节码执行，所以它可以很快地解释字节码，但是执行起来会比较慢。</li>
-<li>即时编译器：用来弥补解释器的缺点，执行引擎首先按照解释执行的方式来执行，然后在合适的时候，即时编译器把整段字节码编译成本地代码。然后，执行引擎就没有必要再去解释执行方法了，它可以直接通过本地代码去执行。执行本地代码比一条一条进行解释执行的速度快很多，编译后的代码可以执行的很快，因为本地代码是保存在缓存里的。</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103093701.png" class>
-
-</div>
-
-<h2 id="场景内存溢出分析"><a href="#场景内存溢出分析" class="headerlink" title="场景内存溢出分析"></a>场景内存溢出分析</h2><h2 id="对象分析-ObjectA-a-new-ObjectA"><a href="#对象分析-ObjectA-a-new-ObjectA" class="headerlink" title="对象分析(ObjectA a = new ObjectA())"></a>对象分析(ObjectA a = new ObjectA())</h2><h3 id="对象创建"><a href="#对象创建" class="headerlink" title="对象创建"></a>对象创建</h3><div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.png" class title="对象创建过程">
-
-</div>
-
-<ol>
-<li>在虚拟机栈创建栈帧</li>
-<li>栈帧内创建对象的引用</li>
-<li>方法区进行类的加载</li>
-<li>Java 堆区进行分配内存并内存初始化</li>
-<li>回到栈帧中初始化对象的数据</li>
-</ol>
-<h3 id="内存分配过程"><a href="#内存分配过程" class="headerlink" title="内存分配过程"></a>内存分配过程</h3><h4 id="指针碰撞"><a href="#指针碰撞" class="headerlink" title="指针碰撞"></a>指针碰撞</h4><ol>
-<li>支持<strong>压缩功能</strong>的垃圾收集器Serial、ParNew 等（Compact 过程），</li>
-<li>分开已使用和未使用的内存，两者之间使用一个指针作为分界点指示器</li>
-<li>分配内存只需移动指针，分界点指示器向未使用的内存一侧移动一段与对象大小相等的空间</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E6%8C%87%E9%92%88%E7%A2%B0%E6%92%9E%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98.png" class title="指针碰撞分配内存">
-
-</div>
-
-<h4 id="空闲列表"><a href="#空闲列表" class="headerlink" title="空闲列表"></a>空闲列表</h4><ol>
-<li>使用<strong>标记清除（Mark-Sweep）算法</strong>的 CMS 垃圾回收器</li>
-<li>内存划分成网格区（Region），内存分配不规整，即已使用的和未使用的内存随机分布</li>
-<li>JVM 维护一个记录表，用于记录那些内存可用于分配</li>
-<li>需要给对象分配内存区域时，寻找一块足够大的内存空间分配给对象，并更新记录表</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E7%A9%BA%E9%97%B2%E5%88%97%E8%A1%A8%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98.png" class title="空闲列表分配内存">
-
-</div>
-
-<h3 id="并发控制"><a href="#并发控制" class="headerlink" title="并发控制"></a>并发控制</h3><h4 id="同步处理"><a href="#同步处理" class="headerlink" title="同步处理"></a>同步处理</h4><p>内存分配的动作采用同步机制，JVM 为了增加效率采用了 CAS 方式。</p>
-<h4 id="TLAB"><a href="#TLAB" class="headerlink" title="TLAB"></a>TLAB</h4><ol>
-<li>全称：Thread Local Allocation Buffer</li>
-<li>原理：每个线程在 Java 堆中预先分配一小块内存，叫做本地线程分配缓冲区。类似于ThreadLocal</li>
-<li>哪个线程需要分配内存先去各自的 TLAB 中分配，但是这个缓冲区比较小，是为了加速对象的分配。只有在线程的 TLAB 用完才会去堆中进行内存分配，此时才需要同步机制。</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/TLAB%E7%BC%93%E5%86%B2%E5%8C%BA.png" class title="TLAB缓冲区">
-
-</div>
-
-<h3 id="对象访问"><a href="#对象访问" class="headerlink" title="对象访问"></a>对象访问</h3><h4 id="直接访问（HotSpot使用）"><a href="#直接访问（HotSpot使用）" class="headerlink" title="直接访问（HotSpot使用）"></a>直接访问（HotSpot使用）</h4><div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E5%AF%B9%E8%B1%A1%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F-%E7%9B%B4%E6%8E%A5%E8%AE%BF%E9%97%AE.png" class title="对象访问方式-直接访问">
-
-</div>
-
-<p><strong>优点</strong>：相对于句柄访问定位的方式，减少了一次指针定位的开销（也减少了句柄池的存储空间），HotSpot JVM 实现采用的是直接访问的方式进行对象访问定位。</p>
-<h4 id="句柄访问"><a href="#句柄访问" class="headerlink" title="句柄访问"></a>句柄访问</h4><div align="center">
-
-<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E5%AF%B9%E8%B1%A1%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F-%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE.png" class title="对象访问方式-句柄访问">
-
-</div>
-
-<p><strong>优点</strong>：在垃圾回收的时候对象要经常转移，这时候只需改变句柄中指向对象实例数据的指针即可（不用修改 reference）</p>
-<h3 id="对象内存布局"><a href="#对象内存布局" class="headerlink" title="对象内存布局"></a>对象内存布局</h3><p>参考《<a href="https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/" target="_blank">JVM HotSpot虚拟机对象探秘</a>》。</p>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="JVM-中-GC-参数的设置"><a href="#JVM-中-GC-参数的设置" class="headerlink" title="JVM 中 GC 参数的设置"></a>JVM 中 GC 参数的设置</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"># 在控制台输出GC情况</span><br><span class="line">-verbose:gc </span><br><span class="line"># GC日志输出</span><br><span class="line">-XX:+PrintGC</span><br><span class="line"># GC日志详细输出</span><br><span class="line">-XX:+PrintGCDetails</span><br><span class="line"># GC输出时间戳</span><br><span class="line">-XX:+PrintGCDateStamps</span><br><span class="line"># GC日志输出指定文件中</span><br><span class="line">-Xloggc:/log/gc.log</span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li>《深入理解Java虚拟机》</li>
-<li><a href="https://www.toutiao.com/i6797907413220459019">从Java代码运行聊到JVM及对象创建-分配-定位-布局-垃圾回收</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>JVM</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>JVM内存区域</tag>
       </tags>
   </entry>
   <entry>
@@ -5074,6 +4813,360 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>JVM内存区域</title>
+    <url>/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</url>
+    <content><![CDATA[<h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589456413403.png" class title="JVM内存区域知识图谱">
+
+</div>
+
+<a id="more"></a>
+
+<h2 id="总体介绍"><a href="#总体介绍" class="headerlink" title="总体介绍"></a>总体介绍</h2><ol>
+<li>JVM 内存区域主要分为线程私有区域【程序计数器、虚拟机栈、本地方法区】、线程共享区域【JAVA 堆、方法区】、直接内存。</li>
+<li>线程私有数据区域生命周期与线程相同, 依赖用户线程的启动/结束而创建/销毁，线程共享区域随虚拟机的启动/关闭而创建/销毁。</li>
+<li>直接内存并不是 JVM 运行时数据区的一部分, 但也会被频繁的使用（NIO，DirectByteBuffer）</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.png" class>
+
+</div>
+
+<h2 id="程序计数器-线程私有"><a href="#程序计数器-线程私有" class="headerlink" title="程序计数器(线程私有)"></a>程序计数器(线程私有)</h2><p> 由于JAVA的多线程是通过线程轮流切换分配处理时间的方式实现，为了保证能够恢复到线程的正确位置，每个线程再启动的时候都会创建<strong>一块较小的内存区域</strong>，这块区域是<strong>线程隔离</strong>的，生命周期同线程绑定，线程结束，则释放该内存区域，可以看作是当前线程所执行的字节码的行号子令器。  </p>
+<p><strong>字节码子令器的工作模式是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</strong>  </p>
+<p>计数器的大小是一个字长，因此既可以持有一个本地指针，又可以持有一个returnAddress。计数器中记录的内容根据方法类型就行划分，如果当前方法是java方法，这个计数器记录的是正在执行的虚拟机字节码指令的地址（可以是一个本地指针，也可以是在方法字节码中相对于该方法起始指令的偏移量）；如果方法是Native方法，这个计数器记录的内容则为Undefined。  </p>
+<blockquote>
+<p>Each thread of a running program has its own pc register, or program counter, which is created when the thread is started. The pc register is one word in size, so it can hold both a native pointer and a returnValue. As a thread executes a Java method, the pc register contains the address of the current instruction being executed by the thread. An “address” can be a native pointer or an offset from the beginning of a method’s bytecodes. If a thread is executing a native method, the value of the pc register is undefined.</p>
+</blockquote>
+<p><strong>此内存区域是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。</strong></p>
+<h3 id="程序计数器总结"><a href="#程序计数器总结" class="headerlink" title="程序计数器总结"></a>程序计数器总结</h3><ol>
+<li>占用的 JVM 内存空间较小</li>
+<li>每个线程生命周期内独享自己的程序计数器（内部存放的是字节码指令的地址引用）</li>
+<li>不会发生 OOM</li>
+</ol>
+<h2 id="虚拟机栈-线程私有"><a href="#虚拟机栈-线程私有" class="headerlink" title="虚拟机栈(线程私有)"></a>虚拟机栈(线程私有)</h2><p>用于描述java方法执行的线程内存模型，每个方法被执行的时候线程都会在栈中创建一个栈帧（Stack Frame），用于存储局部变量表、操作数栈、动态链接、返回值等信息的数据集。生命周期与线程同步，每个方法从调用到执行完成就是一个栈帧在VM Stack中入栈出栈的过程。</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589457383204.png" class>
+
+</div>
+
+<p>栈帧的数据结构：  </p>
+<ol>
+<li>局部变量表：输入参数和输出参数以及方法内的变量；</li>
+<li>操作数栈：记录出栈和入栈的操作；</li>
+<li>栈帧数据：包括类文件、方法等等。</li>
+</ol>
+<h3 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h3><p>可以理解为使用素组管理内存的方式，从0开始；存放编译期可知的Java基本类型（8种）、对象引用、入参信息以及出参信息（returnAddress）。</p>
+<h4 id="slot"><a href="#slot" class="headerlink" title="slot"></a>slot</h4><p>局部变量表中存储空间以局部变量槽（Slot，32位）表示，局部变量表所需要的内存在编译阶段完成分配。64位的long和double使用两个slot。</p>
+<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">runClassMethod</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">long</span> l,<span class="keyword">float</span> f,<span class="keyword">double</span> d,Object o,<span class="keyword">byte</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">runInstanceMethod</span><span class="params">(<span class="keyword">char</span> c,<span class="keyword">double</span> d,<span class="keyword">short</span> s,<span class="keyword">boolean</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589512957352.png" class>
+
+</div>
+
+<p>runInstanceMethod的局部变量区第一项是个reference（引用），它指定的就是对象本身的引用，也就是我们常用的this,但是在runClassMethod方法中，没这个引用，那是因为runClassMethod是个静态方法。</p>
+<h3 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h3><p>与局部变量表类似，组织成一个以字长为单位的数组。但是是使用出栈入栈的方式进行访问；操作数栈是临时数据的存储区域。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a= <span class="number">100</span>;</span><br><span class="line"><span class="keyword">int</span> b =<span class="number">5</span>;</span><br><span class="line"><span class="keyword">int</span> c = a+b;</span><br></pre></td></tr></table></figure>
+<p>对应的操作数栈变化为：  </p>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589513290674.png" class>
+
+</div>
+
+<blockquote>
+<p>JVM实现里，有一种基于栈的指令集(Hotspot，oracle JVM)，还有一种基于寄存器的指令集(DalvikVM，安卓 JVM)</p>
+</blockquote>
+<h3 id="帧数据区"><a href="#帧数据区" class="headerlink" title="帧数据区"></a>帧数据区</h3><p>帧数据区存放了指向常量池的指针地址，当某些指令需要获得常量池的数据时，通过帧数据区中的指针地址来访问常量池的数据。此外，帧数据区还存放方法正常返回和异常终止需要的一些数据。</p>
+<h3 id="异常情况"><a href="#异常情况" class="headerlink" title="异常情况"></a>异常情况</h3><ol>
+<li>如果线程请求的栈深度大于虚拟机所允许的深度，将抛出StackOverflowError异常。</li>
+<li>如果VM栈可以动态扩展，在初始化新线程时没有足够内存创建栈则抛出OutOfMemoryError异常。</li>
+</ol>
+<h3 id="虚拟机栈图解"><a href="#虚拟机栈图解" class="headerlink" title="虚拟机栈图解"></a>虚拟机栈图解</h3><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E5%9B%BE%E8%A7%A3.png" class title="虚拟机栈图解">
+
+</div>
+
+<h3 id="内存设置"><a href="#内存设置" class="headerlink" title="内存设置"></a>内存设置</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"># -Xss ：用于设置栈的大小，栈的大小决定了方法调用的深度。</span><br><span class="line"># 设置线程栈大小为 512k（以字节为单位）</span><br><span class="line">-Xss 512k</span><br></pre></td></tr></table></figure>
+<h3 id="虚拟机栈总结"><a href="#虚拟机栈总结" class="headerlink" title="虚拟机栈总结"></a>虚拟机栈总结</h3><ol>
+<li>内部结构是栈帧，每个方法在执行的时候都会创建一个栈帧，用于存储局部变量表，操作数栈，动态链接，方法返回地址等信息</li>
+<li>某方法在调用另一个方法是通过动态链接在常量池中查询方法的引用，进而完成方法调用</li>
+<li>某方法在调用另一个方法的过程，即是一个栈帧在虚拟机中的入栈到出栈的过程</li>
+<li>虚拟机中的方法入栈的顺序和方法的调用顺序是一致的</li>
+</ol>
+<h2 id="本地方法栈-线程私有"><a href="#本地方法栈-线程私有" class="headerlink" title="本地方法栈(线程私有)"></a>本地方法栈(线程私有)</h2><p>与Java Stack类似，主要区别是，Java Stack用于执行Java方法服务，本地方法栈用于native方法服务。</p>
+<ol>
+<li>和虚拟机栈类似，内部结构是栈帧，每个 Native 方法执行时创建一个栈帧</li>
+<li>该部分没有规定内存大小</li>
+</ol>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>当调用一个native方法时，jvm使用c-linkage模型支持native调用，并且创建一个C栈，由于《Java虚拟机规范》没有对该实现有具体要求，所以不同厂商的实现方式不同，比如HotSpot VM 直接就把本地方法栈和虚拟机栈合二为一。它的具体做法是在本地方法栈中登记native方法，在执行引擎执行时加载Native Liberies。</p>
+<h2 id="Java堆（Heap-线程共享）-运行时数据区"><a href="#Java堆（Heap-线程共享）-运行时数据区" class="headerlink" title="Java堆（Heap-线程共享）-运行时数据区"></a>Java堆（Heap-线程共享）-运行时数据区</h2><ol>
+<li>线程共享区域</li>
+<li>存储对象和数组数据</li>
+<li>垃圾回收重点关注区域（内存最大的一块区域）</li>
+<li>从 GC 的角度还可以细分为:<strong>新生代(Eden区、From Survivor区和To Survivor区)和老年代。</strong></li>
+<li>从分配内存的角度看，所有线程共享的Java堆中可以划分出多个线程私有的分配缓冲区（Thread LocalAllocation Buffer，TLAB），以提升对象分配时的效率。</li>
+<li>通过-Xmx和-Xms设置内存大小，内存溢出则出现OOM错误，最小默认为物理内存的1/64，最大为物理内存的1/4</li>
+<li>默认当空余堆内存小于40%时，JVM会增大Heap到-Xmx指定的大小，可通过-XX:MinHeapFreeRation=来指定这个比列；当空余堆内存大于70%时，JVM会减小heap的大小到-Xms指定的大小，可通过XX:MaxHeapFreeRation=来指定这个比列</li>
+<li>建议-Xmx和-Xms设置一致</li>
+</ol>
+<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><ol>
+<li>存放新创建的对象</li>
+<li>占用堆的1/3空间</li>
+<li>回收机制：MinorGC</li>
+<li>划分Eden 区、ServivorFrom、ServivorTo 三个区。</li>
+<li>可通过-Xmn参数来指定新生代的大小，也可以通过-XX:SurvivorRation来调整Eden Space及Survivor Space的大小。</li>
+</ol>
+<h4 id="Eden-区"><a href="#Eden-区" class="headerlink" title="Eden 区"></a>Eden 区</h4><p>Java新对象的出生地（如果新创建的对象占用内存很大，则直接分配到老代）。当Eden区内存不够的时候就会触发MinorGC，对新生代区进行一次垃圾回收。</p>
+<h4 id="ServivorFrom"><a href="#ServivorFrom" class="headerlink" title="ServivorFrom"></a>ServivorFrom</h4><p>上一次 GC 的幸存者，作为这一次 GC 的被扫描者。</p>
+<h4 id="ServivorTo"><a href="#ServivorTo" class="headerlink" title="ServivorTo"></a>ServivorTo</h4><p>保留了一次 MinorGC 过程中的幸存者。</p>
+<h4 id="MinorGC-的过程（复制-gt-清空-gt-互换）"><a href="#MinorGC-的过程（复制-gt-清空-gt-互换）" class="headerlink" title="MinorGC 的过程（复制-&gt;清空-&gt;互换）"></a>MinorGC 的过程（复制-&gt;清空-&gt;互换）</h4><ol>
+<li>MinorGC 采用复制算法。</li>
+<li>把Eden和ServivorFrom区域中存活的对象复制到ServicorTo区域（如果有对象的年龄以及达到了老年的标准，则赋值到老年代区），同时把这些对象的年龄+1（如果 ServicorTo 不够位置了就放到老年区）；</li>
+<li>清空 Eden 和 ServicorFrom 中的对象；</li>
+<li>ServicorTo 和 ServicorFrom 互换，原 ServicorTo 成为下一次 GC的ServicorFrom 区。</li>
+</ol>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><ol>
+<li>存放生命周期较长的对象</li>
+<li>该区域对象比较稳定，MajorGC不会频繁执行</li>
+<li>进行 MajorGC 前一般都先进行了一次 MinorGC，使得有新生代的对象晋身入老年代，导致空间不够用时才触发。</li>
+<li>当无法找到足够大的连续空间分配给新创建的较大对象时也会提前触发一次 MajorGC 进行垃圾回收腾出空间。</li>
+<li>MajorGC 采用标记清除算法：首先扫描一次所有老年代，标记出存活的对象，然后回收没有标记的对象。MajorGC 的耗时比较长，因为要扫描再回收。MajorGC 会产生内存碎片，为了减少内存损耗，我们一般需要进行合并或者标记出来方便下次直接分配。当老年代也满了装不下的时候，就会抛出 OOM（Out of Memory）异常。</li>
+<li>新建对象直接进入该区域的条件：①.大对象，可通过启动参数设置-XX:PretenureSizeThreshold=1024(单位为字节，默认为0)来代表超过多大时就不在新生代分配，而是直接在老年代分配。②.大的数组对象，切数组中无引用外部对象。</li>
+<li>内存大小为-Xmx对应的值减去-Xmn对应的值</li>
+</ol>
+<h3 id="内存展现图例"><a href="#内存展现图例" class="headerlink" title="内存展现图例"></a>内存展现图例</h3><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589511590668.png" class>
+
+</div>
+
+<h3 id="内存参数设置"><a href="#内存参数设置" class="headerlink" title="内存参数设置"></a>内存参数设置</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"># 设置堆区的初始大小</span><br><span class="line">-Xms1024m</span><br><span class="line"># 设置堆区的存储空间最大值，一般与堆区的初始大小相等</span><br><span class="line">-Xmx1024m</span><br><span class="line"># 设置年轻代堆的大小</span><br><span class="line">-Xmn512m</span><br><span class="line"># 设置如下参数，在出现OOM时进行堆转储</span><br><span class="line">-XX:+HeapDumpOnOutOfMemoryError</span><br><span class="line"># 设置以上设置时，需配置以下参数，堆转储文件输出的位置</span><br><span class="line">-XX:HeapDumpPath=/usr/log/java_dump.hprof</span><br></pre></td></tr></table></figure>
+<h2 id="方法区-永久代（Permanent-Generation，线程共享）"><a href="#方法区-永久代（Permanent-Generation，线程共享）" class="headerlink" title="方法区/永久代（Permanent Generation，线程共享）"></a>方法区/永久代（Permanent Generation，线程共享）</h2><ol>
+<li>线程共享</li>
+<li>存储被jvm加载的类型信息、常量、静态变量、即时编译期编译后的代码缓存数据</li>
+<li>HotSpot VM也会针对该区域进行垃圾回收，主要是针对常量池回收和类型卸载，收益比较低</li>
+<li>内存不足出现OOM</li>
+<li>JDK8之后使用元空间替代了永久代</li>
+<li>默认最小16MB，最大64MB，可以通过-XX:PermSize 和 -XX:MaxPermSize 参数限制方法区的大小</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E6%96%B9%E6%B3%95%E5%8C%BA%E4%B8%8E%E6%B0%B8%E4%B9%85%E4%BB%A3.png" class title="方法区与永久代">
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E6%96%B9%E6%B3%95%E5%8C%BA%E5%9C%A8%E4%B8%8D%E5%90%8CJDK%E7%89%88%E6%9C%AC%E6%AF%94%E8%BE%83.png" class title="方法区在不同JDK版本比较">
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E6%96%B9%E6%B3%95%E5%8C%BA%E5%92%8C%E5%85%83%E7%A9%BA%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB.png" class title="方法区和元空间的区别">
+
+</div>
+
+<h3 id="内存参数设置-1"><a href="#内存参数设置-1" class="headerlink" title="内存参数设置"></a>内存参数设置</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"># jdk1.7 设置永久代内存初始大小</span><br><span class="line">-XX:PermSize=512m</span><br><span class="line"># jdk1.7 设置永久代内存最大值</span><br><span class="line">-XX:MaxPermSize=512m</span><br><span class="line"># jdk1.8 设置元空间内存初始大小</span><br><span class="line">-XX:MetaspaceSize=1024m</span><br><span class="line"># jdk1.8 设置元空间内存最大值</span><br><span class="line">-XX:MaxMetaspaceSize=1024m</span><br></pre></td></tr></table></figure>
+<h3 id="JAVA8-与元数据"><a href="#JAVA8-与元数据" class="headerlink" title="JAVA8 与元数据"></a>JAVA8 与元数据</h3><p>在Java8中，永久代已经被移除，被一个称为“元数据区”（元空间）的区域所取代。元空间的本质和永久代类似，元空间与永久代之间最大的区别在于：<strong>元空间并不在虚拟机中，而是使用本地内存</strong>。因此，默认情况下，元空间的大小仅受本地内存限制。<strong>类的元数据放入native memory, 字符串池和类的静态变量放入 java 堆中</strong>，这样可以加载多少类的元数据就不再由<br>MaxPermSize 控制, 而由系统的实际可用空间来控制。</p>
+<h3 id="运行时常量池（Runtime-Constant-Pool）"><a href="#运行时常量池（Runtime-Constant-Pool）" class="headerlink" title="运行时常量池（Runtime Constant Pool）"></a>运行时常量池（Runtime Constant Pool）</h3><ol>
+<li>Class文件中的常量池表</li>
+<li>存放编译期生成的各种<strong>字面量和符号引用</strong>，这部分内容将在类加载后存放到方法区的运行时常量池中。</li>
+<li>相较于Class文件常量池，运行时常量池更具动态性，在运行期间也可以将新的变量放入常量池中，而不是一定要在编译时确定的常量才能放入。最主要的运用便是String类的intern()方法。</li>
+<li>内存不足会出现OOM</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103068348.png" class>
+
+</div>
+
+<h2 id="直接内存（Direct-Memory）"><a href="#直接内存（Direct-Memory）" class="headerlink" title="直接内存（Direct Memory）"></a>直接内存（Direct Memory）</h2><ol>
+<li>不属于JVM运行时的数据区域</li>
+<li>内存不足会出现OOM错误</li>
+<li>JDK中NIO使用通道和缓冲区的IO方式，使用native函数库直接在堆外分配内存，然后通过一个存储在Java堆里面的DirectByteBuffer对象作为这块内存的引用进行操作</li>
+<li>受限于本机内存</li>
+</ol>
+<h2 id="执行引擎-Execution-Engine"><a href="#执行引擎-Execution-Engine" class="headerlink" title="执行引擎(Execution Engine)"></a>执行引擎(Execution Engine)</h2><p>执行引擎执行包在装载类的方法中的指令，也就是方法。执行引擎以指令为单位读取Java字节码。它就像一个CPU一样，一条一条地执行机器指令。每个字节码指令都由一个1字节的操作码和附加的操作数组成。执行引擎取得一个操作码，然后根据操作数来执行任务，完成后就继续执行下一条操作码。</p>
+<p>执行引擎必须把字节码转换成可以直接被JVM执行的语言。字节码可以通过以下两种方式转换成合适的语言：</p>
+<ol>
+<li>解释器： 一条一条地读取，解释并执行字节码执行，所以它可以很快地解释字节码，但是执行起来会比较慢。</li>
+<li>即时编译器：用来弥补解释器的缺点，执行引擎首先按照解释执行的方式来执行，然后在合适的时候，即时编译器把整段字节码编译成本地代码。然后，执行引擎就没有必要再去解释执行方法了，它可以直接通过本地代码去执行。执行本地代码比一条一条进行解释执行的速度快很多，编译后的代码可以执行的很快，因为本地代码是保存在缓存里的。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/1589103093701.png" class>
+
+</div>
+
+<h2 id="场景内存溢出分析"><a href="#场景内存溢出分析" class="headerlink" title="场景内存溢出分析"></a>场景内存溢出分析</h2><h2 id="对象分析-ObjectA-a-new-ObjectA"><a href="#对象分析-ObjectA-a-new-ObjectA" class="headerlink" title="对象分析(ObjectA a = new ObjectA())"></a>对象分析(ObjectA a = new ObjectA())</h2><h3 id="对象创建"><a href="#对象创建" class="headerlink" title="对象创建"></a>对象创建</h3><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.png" class title="对象创建过程">
+
+</div>
+
+<ol>
+<li>在虚拟机栈创建栈帧</li>
+<li>栈帧内创建对象的引用</li>
+<li>方法区进行类的加载</li>
+<li>Java 堆区进行分配内存并内存初始化</li>
+<li>回到栈帧中初始化对象的数据</li>
+</ol>
+<h3 id="内存分配过程"><a href="#内存分配过程" class="headerlink" title="内存分配过程"></a>内存分配过程</h3><h4 id="指针碰撞"><a href="#指针碰撞" class="headerlink" title="指针碰撞"></a>指针碰撞</h4><ol>
+<li>支持<strong>压缩功能</strong>的垃圾收集器Serial、ParNew 等（Compact 过程），</li>
+<li>分开已使用和未使用的内存，两者之间使用一个指针作为分界点指示器</li>
+<li>分配内存只需移动指针，分界点指示器向未使用的内存一侧移动一段与对象大小相等的空间</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E6%8C%87%E9%92%88%E7%A2%B0%E6%92%9E%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98.png" class title="指针碰撞分配内存">
+
+</div>
+
+<h4 id="空闲列表"><a href="#空闲列表" class="headerlink" title="空闲列表"></a>空闲列表</h4><ol>
+<li>使用<strong>标记清除（Mark-Sweep）算法</strong>的 CMS 垃圾回收器</li>
+<li>内存划分成网格区（Region），内存分配不规整，即已使用的和未使用的内存随机分布</li>
+<li>JVM 维护一个记录表，用于记录那些内存可用于分配</li>
+<li>需要给对象分配内存区域时，寻找一块足够大的内存空间分配给对象，并更新记录表</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E7%A9%BA%E9%97%B2%E5%88%97%E8%A1%A8%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98.png" class title="空闲列表分配内存">
+
+</div>
+
+<h3 id="并发控制"><a href="#并发控制" class="headerlink" title="并发控制"></a>并发控制</h3><h4 id="同步处理"><a href="#同步处理" class="headerlink" title="同步处理"></a>同步处理</h4><p>内存分配的动作采用同步机制，JVM 为了增加效率采用了 CAS 方式。</p>
+<h4 id="TLAB"><a href="#TLAB" class="headerlink" title="TLAB"></a>TLAB</h4><ol>
+<li>全称：Thread Local Allocation Buffer</li>
+<li>原理：每个线程在 Java 堆中预先分配一小块内存，叫做本地线程分配缓冲区。类似于ThreadLocal</li>
+<li>哪个线程需要分配内存先去各自的 TLAB 中分配，但是这个缓冲区比较小，是为了加速对象的分配。只有在线程的 TLAB 用完才会去堆中进行内存分配，此时才需要同步机制。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/TLAB%E7%BC%93%E5%86%B2%E5%8C%BA.png" class title="TLAB缓冲区">
+
+</div>
+
+<h3 id="对象访问"><a href="#对象访问" class="headerlink" title="对象访问"></a>对象访问</h3><h4 id="直接访问（HotSpot使用）"><a href="#直接访问（HotSpot使用）" class="headerlink" title="直接访问（HotSpot使用）"></a>直接访问（HotSpot使用）</h4><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E5%AF%B9%E8%B1%A1%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F-%E7%9B%B4%E6%8E%A5%E8%AE%BF%E9%97%AE.png" class title="对象访问方式-直接访问">
+
+</div>
+
+<p><strong>优点</strong>：相对于句柄访问定位的方式，减少了一次指针定位的开销（也减少了句柄池的存储空间），HotSpot JVM 实现采用的是直接访问的方式进行对象访问定位。</p>
+<h4 id="句柄访问"><a href="#句柄访问" class="headerlink" title="句柄访问"></a>句柄访问</h4><div align="center">
+
+<img src="/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/%E5%AF%B9%E8%B1%A1%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F-%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE.png" class title="对象访问方式-句柄访问">
+
+</div>
+
+<p><strong>优点</strong>：在垃圾回收的时候对象要经常转移，这时候只需改变句柄中指向对象实例数据的指针即可（不用修改 reference）</p>
+<h3 id="对象内存布局"><a href="#对象内存布局" class="headerlink" title="对象内存布局"></a>对象内存布局</h3><p>参考《<a href="https://www.sunliaodong.cn/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/" target="_blank">JVM HotSpot虚拟机对象探秘</a>》。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="JVM-中-GC-参数的设置"><a href="#JVM-中-GC-参数的设置" class="headerlink" title="JVM 中 GC 参数的设置"></a>JVM 中 GC 参数的设置</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"># 在控制台输出GC情况</span><br><span class="line">-verbose:gc </span><br><span class="line"># GC日志输出</span><br><span class="line">-XX:+PrintGC</span><br><span class="line"># GC日志详细输出</span><br><span class="line">-XX:+PrintGCDetails</span><br><span class="line"># GC输出时间戳</span><br><span class="line">-XX:+PrintGCDateStamps</span><br><span class="line"># GC日志输出指定文件中</span><br><span class="line">-Xloggc:/log/gc.log</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《深入理解Java虚拟机》</li>
+<li><a href="https://www.toutiao.com/i6797907413220459019">从Java代码运行聊到JVM及对象创建-分配-定位-布局-垃圾回收</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>JVM</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>JVM内存区域</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java并发编程之Executors</title>
+    <url>/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/</url>
+    <content><![CDATA[<h2 id="newCachedThreadPool"><a href="#newCachedThreadPool" class="headerlink" title="newCachedThreadPool"></a>newCachedThreadPool</h2><p>创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。对于执行<strong>很多短期异步任务</strong>的程序而言，这些线程池通常可提高程序性能。调用 execute 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。因此，长时间保持空闲的线程池不会使用任何资源。</p>
+<a id="more"></a>
+
+<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that creates new threads as needed, but</span></span><br><span class="line"><span class="comment">* will reuse previously constructed threads when they are</span></span><br><span class="line"><span class="comment">* available.  These pools will typically improve the performance</span></span><br><span class="line"><span class="comment">* of programs that execute many short-lived asynchronous tasks.</span></span><br><span class="line"><span class="comment">* Calls to &#123;<span class="doctag">@code</span> execute&#125; will reuse previously constructed</span></span><br><span class="line"><span class="comment">* threads if available. If no existing thread is available, a new</span></span><br><span class="line"><span class="comment">* thread will be created and added to the pool. Threads that have</span></span><br><span class="line"><span class="comment">* not been used for sixty seconds are terminated and removed from</span></span><br><span class="line"><span class="comment">* the cache. Thus, a pool that remains idle for long enough will</span></span><br><span class="line"><span class="comment">* not consume any resources. Note that pools with similar</span></span><br><span class="line"><span class="comment">* properties but different details (for example, timeout parameters)</span></span><br><span class="line"><span class="comment">* may be created using &#123;<span class="doctag">@link</span> ThreadPoolExecutor&#125; constructors.</span></span><br><span class="line"><span class="comment">* - 为每一个任务创建一个线程，并且也可以重用已有的线程，无核心线程数量，</span></span><br><span class="line"><span class="comment">* - 超过60s的空闲线程将弃用，但是会受到系统实际内存的线程</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* - 当有新任务到来，则插入到SynchronousQueue中，由于SynchronousQueue是同步队列，</span></span><br><span class="line"><span class="comment">* - 因此会在池中寻找可用线程来执行，若有可以线程则执行，若没有可用线程则创建一个线程来执行该任务；</span></span><br><span class="line"><span class="comment">* - 若池中线程空闲时间超过指定大小，则该线程会被销毁。</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* - 适用：大小无界线程池，执行很多短期异步的小程序或者负载较轻的服务器；或负载较轻的服务器</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created thread pool</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                    <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                    <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that creates new threads as needed, but</span></span><br><span class="line"><span class="comment">* will reuse previously constructed threads when they are</span></span><br><span class="line"><span class="comment">* available, and uses the provided</span></span><br><span class="line"><span class="comment">* ThreadFactory to create new threads when needed.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when creating new threads</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">(ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                    <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                    <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;(),</span><br><span class="line">                                    threadFactory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="execute执行流程"><a href="#execute执行流程" class="headerlink" title="execute执行流程"></a>execute执行流程</h3><div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/1587885350899.png" class title="execute执行流程">
+
+</div>
+
+<ol>
+<li><p>执行<code>SynchronousQueue.offer（Runnabletask）</code>;如果当前maximumPool中有空闲线程正在执行<code>SynchronousQueue.poll（keepAliveTime，TimeUnit.NANOSECONDS）</code>，那么主线程执行offer操作与空闲线程执行的poll操作配对成功，主线程把任务交给空闲线程执行，execute()方法执行完成</p>
+</li>
+<li><p>当初始maximumPool为空，或者maximumPool中当前没有空闲线程时，将没有线程执行<code>SynchronousQueue.poll（keepAliveTime，TimeUnit.NANOSECONDS）</code>。此时CachedThreadPool会创建一个新线程执行任务，execute()方法执行完成。</p>
+</li>
+<li><p>在步骤2）中新创建的线程将任务执行完后，会执行<code>SynchronousQueue. poll（keepAliveTime，TimeUnit.NANOSECONDS）</code>。这个poll操作会让空闲线程最多在SynchronousQueue中等待60秒钟。如果60秒钟内主线程提交了一个新任务（主线程执行步骤1）），那么这个空闲线程将执行主线程提交的新任务；否则，这个空闲线程将终止。由于空闲60秒的空闲线程会被终止，因此长时间保持空闲的CachedThreadPool不会使用任何资源。SynchronousQueue是一个没有容量的阻塞队列。每个插入操作必须等待另一个线程的对应移除操作，反之亦然。CachedThreadPool使用SynchronousQueue，把主线程提交的任务传递给空闲线程执行。</p>
+<div align="center">
+
+</div></li>
+</ol>
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/1587885884366.png" class title="CachedThreadPool任务传递示意图">
+
+
+
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>由于CachedThreadPool的maximumPool是无界的。这意味着，如果主线程提交任务的速度高于maximumPool中线程处理任务的速度时，CachedThreadPool会不断创建新线程。极端情况下，<strong>CachedThreadPool会因为创建过多线程而耗尽CPU和内存资源</strong>。</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.threadpool;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CachedThreadPoolTest1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService es = Executors.newCachedThreadPool();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">			es.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line"></span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					System.out.println(<span class="string">&quot;run:::&quot;</span> + Thread.currentThread().getName());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">----结果</span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">2</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">1</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">5</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">7</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">6</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">4</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">6</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">4</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">5</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">7</span></span><br></pre></td></tr></table></figure>
+<p>通过结果可以发现：</p>
+<ol>
+<li>根据线程名称判断使用到了线程池</li>
+<li>根据线程名称的编号可以判断线程被复用</li>
+<li>无限性可以通过调整循环次数和增加等待时间测试（由于内存原因未模拟）</li>
+</ol>
+<h2 id="newFixedThreadPool"><a href="#newFixedThreadPool" class="headerlink" title="newFixedThreadPool"></a>newFixedThreadPool</h2><p>创建一个可重用固定线程数的线程池，可控制线程最大并发数，超出的线程会在队列中等待，以共享的无界队列方式来运行这些线程。在任意点，在大多数 nThreads 线程会处于处理任务的活动状态。如果在所有线程处于活动状态时提交附加任务，则在有可用线程之前，附加任务将在队列中等待。如果在关闭前的执行期间由于失败而导致任何线程终止，那么一个新线程将代替它执行后续的任务（如果需要）。在某个线程被显式地关闭之前，池中的线程将一直存在。</p>
+<h3 id="源码分析-1"><a href="#源码分析-1" class="headerlink" title="源码分析"></a>源码分析</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that reuses a fixed number of threads</span></span><br><span class="line"><span class="comment">* operating off a shared unbounded queue.  At any point, at most</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> nThreads&#125; threads will be active processing tasks.</span></span><br><span class="line"><span class="comment">* If additional tasks are submitted when all threads are active,</span></span><br><span class="line"><span class="comment">* they will wait in the queue until a thread is available.</span></span><br><span class="line"><span class="comment">* If any thread terminates due to a failure during execution</span></span><br><span class="line"><span class="comment">* prior to shutdown, a new one will take its place if needed to</span></span><br><span class="line"><span class="comment">* execute subsequent tasks.  The threads in the pool will exist</span></span><br><span class="line"><span class="comment">* until it is explicitly &#123;<span class="doctag">@link</span> ExecutorService#shutdown shutdown&#125;.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> nThreads the number of threads in the pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> IllegalArgumentException if &#123;<span class="doctag">@code</span> nThreads &lt;= 0&#125;</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* - 创建可容纳固定数量线程的池子，每隔线程的存活时间是无限的，当池子满了就不在添加线程了；</span></span><br><span class="line"><span class="comment">* - 如果池中的所有线程均在繁忙状态，对于新任务会进入阻塞队列中(无界的阻塞队列)</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* - 适用：执行长期的任务，性能好很多；为了满足资源管理的需求，而需要限制当前线程的数量；负载比较重的服务器</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                    <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                    <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that reuses a fixed number of threads</span></span><br><span class="line"><span class="comment">* operating off a shared unbounded queue, using the provided</span></span><br><span class="line"><span class="comment">* ThreadFactory to create new threads when needed.  At any point,</span></span><br><span class="line"><span class="comment">* at most &#123;<span class="doctag">@code</span> nThreads&#125; threads will be active processing</span></span><br><span class="line"><span class="comment">* tasks.  If additional tasks are submitted when all threads are</span></span><br><span class="line"><span class="comment">* active, they will wait in the queue until a thread is</span></span><br><span class="line"><span class="comment">* available.  If any thread terminates due to a failure during</span></span><br><span class="line"><span class="comment">* execution prior to shutdown, a new one will take its place if</span></span><br><span class="line"><span class="comment">* needed to execute subsequent tasks.  The threads in the pool will</span></span><br><span class="line"><span class="comment">* exist until it is explicitly &#123;<span class="doctag">@link</span> ExecutorService#shutdown</span></span><br><span class="line"><span class="comment">* shutdown&#125;.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> nThreads the number of threads in the pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when creating new threads</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> IllegalArgumentException if &#123;<span class="doctag">@code</span> nThreads &lt;= 0&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads, ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                    <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                    <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;(),</span><br><span class="line">                                    threadFactory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="execute执行过程"><a href="#execute执行过程" class="headerlink" title="execute执行过程"></a>execute执行过程</h3><div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/1587886474032.png" class>
+
+</div>
+
+<ul>
+<li>1）如果当前运行的线程数少于corePoolSize，则创建新线程来执行任务。当线程池中的线程数大于corePoolSize时，keepAliveTime为多余的空闲线程等待新任务的最长时间，超过这个时间后多余的线程将被终止。这里把keepAliveTime设置为0L，意味着多余的空闲线程会被立即终止。</li>
+<li>2）在线程池完成预热之后（当前运行的线程数等于corePoolSize），将任务加LinkedBlockingQueue。</li>
+<li>3）线程执行完1中的任务后，会在循环中反复从LinkedBlockingQueue获取任务来执行。</li>
+</ul>
+<h3 id="注意事项-1"><a href="#注意事项-1" class="headerlink" title="注意事项"></a>注意事项</h3><p>FixedThreadPool使用无界队列LinkedBlockingQueue作为线程池的工作队列（队列的容量为Integer.MAX_VALUE）。使用无界队列作为工作队列会对线程池带来如下影响。</p>
+<ul>
+<li>1）当线程池中的线程数达到corePoolSize后，新任务将在无界队列中等待，因此线程池中的线程数不会超过corePoolSize。</li>
+<li>2）由于1，使用无界队列时maximumPoolSize将是一个无效参数。</li>
+<li>3）由于1和2，使用无界队列时keepAliveTime将是一个无效参数。</li>
+<li>4）由于使用无界队列，运行中的FixedThreadPool（未执行方法shutdown()或shutdownNow()）不会拒绝任务（不会调用RejectedExecutionHandler.rejectedExecution方法）。</li>
+</ul>
+<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.threadpool;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FixedThreadPoolTest1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService es = Executors.newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">			es.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line"></span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					System.out.println(<span class="string">&quot;run:::&quot;</span> + Thread.currentThread().getName());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">-----结果</span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">2</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">1</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">2</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">1</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">2</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>通过结果发下：</p>
+<ol>
+<li>可以控制线程池的最大数</li>
+</ol>
+<h2 id="newScheduledThreadPool"><a href="#newScheduledThreadPool" class="headerlink" title="newScheduledThreadPool"></a>newScheduledThreadPool</h2><p>创建一个线程池，它可安排在给定延迟后运行命令或者定期地执行。</p>
+<h3 id="源码分析-2"><a href="#源码分析-2" class="headerlink" title="源码分析"></a>源码分析</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that can schedule commands to run after a</span></span><br><span class="line"><span class="comment">* given delay, or to execute periodically.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> corePoolSize the number of threads to keep in the pool,</span></span><br><span class="line"><span class="comment">* even if they are idle</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> a newly created scheduled thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> IllegalArgumentException if &#123;<span class="doctag">@code</span> corePoolSize &lt; 0&#125;</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* 创建一个固定核心大小的线程池，最大线程数没有限制，</span></span><br><span class="line"><span class="comment">* 线程池内线程存活时间无限制，线程池可以支持定时及周期性任务执行，</span></span><br><span class="line"><span class="comment">* 如果所有线程均处于繁忙状态，对于新任务会进入DelayedWorkQueue队列中，</span></span><br><span class="line"><span class="comment">* 这是一种按照超时时间排序的队列结构</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* 适用：需要多个后台线程执行周期任务，同时为了满足资源管理的需求而需要限制后台线程的数量的应用场景</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(<span class="keyword">int</span> corePoolSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that can schedule commands to run after a</span></span><br><span class="line"><span class="comment">* given delay, or to execute periodically.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> corePoolSize the number of threads to keep in the pool,</span></span><br><span class="line"><span class="comment">* even if they are idle</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when the executor</span></span><br><span class="line"><span class="comment">* creates a new thread</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> a newly created scheduled thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> IllegalArgumentException if &#123;<span class="doctag">@code</span> corePoolSize &lt; 0&#125;</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> corePoolSize, ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize, threadFactory);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a single-threaded executor that can schedule commands</span></span><br><span class="line"><span class="comment">* to run after a given delay, or to execute periodically.</span></span><br><span class="line"><span class="comment">* (Note however that if this single</span></span><br><span class="line"><span class="comment">* thread terminates due to a failure during execution prior to</span></span><br><span class="line"><span class="comment">* shutdown, a new one will take its place if needed to execute</span></span><br><span class="line"><span class="comment">* subsequent tasks.)  Tasks are guaranteed to execute</span></span><br><span class="line"><span class="comment">* sequentially, and no more than one task will be active at any</span></span><br><span class="line"><span class="comment">* given time. Unlike the otherwise equivalent</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> newScheduledThreadPool(1)&#125; the returned executor is</span></span><br><span class="line"><span class="comment">* guaranteed not to be reconfigurable to use additional threads.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created scheduled executor</span></span><br><span class="line"><span class="comment">* - 适用于需要单个后台线程执行周期任务，同时需要保证顺序地执行各个任务的应用场景。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newSingleThreadScheduledExecutor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> DelegatedScheduledExecutorService</span><br><span class="line">      (<span class="keyword">new</span> ScheduledThreadPoolExecutor(<span class="number">1</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a single-threaded executor that can schedule commands</span></span><br><span class="line"><span class="comment">* to run after a given delay, or to execute periodically.  (Note</span></span><br><span class="line"><span class="comment">* however that if this single thread terminates due to a failure</span></span><br><span class="line"><span class="comment">* during execution prior to shutdown, a new one will take its</span></span><br><span class="line"><span class="comment">* place if needed to execute subsequent tasks.)  Tasks are</span></span><br><span class="line"><span class="comment">* guaranteed to execute sequentially, and no more than one task</span></span><br><span class="line"><span class="comment">* will be active at any given time. Unlike the otherwise</span></span><br><span class="line"><span class="comment">* equivalent &#123;<span class="doctag">@code</span> newScheduledThreadPool(1, threadFactory)&#125;</span></span><br><span class="line"><span class="comment">* the returned executor is guaranteed not to be reconfigurable to</span></span><br><span class="line"><span class="comment">* use additional threads.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when creating new</span></span><br><span class="line"><span class="comment">* threads</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> a newly created scheduled executor</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newSingleThreadScheduledExecutor</span><span class="params">(ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> DelegatedScheduledExecutorService</span><br><span class="line">      (<span class="keyword">new</span> ScheduledThreadPoolExecutor(<span class="number">1</span>, threadFactory));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="newSingleThreadExecutor"><a href="#newSingleThreadExecutor" class="headerlink" title="newSingleThreadExecutor"></a>newSingleThreadExecutor</h2><p>Executors.newSingleThreadExecutor()返回一个线程池（这个线程池只有一个线程）,这个线程池可以在线程死后（或发生异常时）重新启动一个线程来替代原来的线程继续执行下去！</p>
+<h3 id="源码分析-3"><a href="#源码分析-3" class="headerlink" title="源码分析"></a>源码分析</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates an Executor that uses a single worker thread operating</span></span><br><span class="line"><span class="comment">* off an unbounded queue. (Note however that if this single</span></span><br><span class="line"><span class="comment">* thread terminates due to a failure during execution prior to</span></span><br><span class="line"><span class="comment">* shutdown, a new one will take its place if needed to execute</span></span><br><span class="line"><span class="comment">* subsequent tasks.)  Tasks are guaranteed to execute</span></span><br><span class="line"><span class="comment">* sequentially, and no more than one task will be active at any</span></span><br><span class="line"><span class="comment">* given time. Unlike the otherwise equivalent</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> newFixedThreadPool(1)&#125; the returned executor is</span></span><br><span class="line"><span class="comment">* guaranteed not to be reconfigurable to use additional threads.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created single-threaded Executor</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* 创建只有一个线程的线程池，且线程的存活时间是无限的；</span></span><br><span class="line"><span class="comment">* 当该线程正繁忙时，对于新任务会进入阻塞队列中(无界的阻塞队列)</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* 适用：一个任务一个任务执行的场景（顺序执行）；并且在任意时间点，不会有多个线程是活动的场景</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> FinalizableDelegatedExecutorService</span><br><span class="line">        (<span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</span><br><span class="line">                                <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;()));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates an Executor that uses a single worker thread operating</span></span><br><span class="line"><span class="comment">* off an unbounded queue, and uses the provided ThreadFactory to</span></span><br><span class="line"><span class="comment">* create a new thread when needed. Unlike the otherwise</span></span><br><span class="line"><span class="comment">* equivalent &#123;<span class="doctag">@code</span> newFixedThreadPool(1, threadFactory)&#125; the</span></span><br><span class="line"><span class="comment">* returned executor is guaranteed not to be reconfigurable to use</span></span><br><span class="line"><span class="comment">* additional threads.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when creating new</span></span><br><span class="line"><span class="comment">* threads</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created single-threaded Executor</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">(ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> FinalizableDelegatedExecutorService</span><br><span class="line">        (<span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</span><br><span class="line">                                <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;(),</span><br><span class="line">                                threadFactory));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="execute执行过程-1"><a href="#execute执行过程-1" class="headerlink" title="execute执行过程"></a>execute执行过程</h3><div align="center">
+
+<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/1587887145755.png" class>
+
+</div>
+
+<ol>
+<li>如果当前运行的线程数少于corePoolSize（即线程池中无运行的线程），则创建一个新线程来执行任务。</li>
+<li>在线程池完成预热之后（当前线程池中有一个运行的线程），将任务加入Linked-BlockingQueue</li>
+<li>线程执行完1中的任务后，会在一个无限循环中反复从LinkedBlockingQueue获取任务来执行。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《Java并发编程的艺术》</li>
+<li>《Java并发编程》</li>
+<li>《Java多线程编程核心技术》</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+        <category>源码分析</category>
+        <category>Java线程池</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>线程池</tag>
+        <tag>Executors</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java并发编程之Condition</title>
     <url>/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BCondition/</url>
     <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>&emsp;&emsp;Condition在jdk1.5中开始出现，主要是用来替代传统Object对象中的wait和notify方法，Object的wait和notify/notify是与<font color="red">对象监视器</font>配合完成线程间的等待/通知机制，而Condition与Lock配合完成等待通知机制，前者是java底层级别的（配合synchronized），后者是语言级别的（配合Lock），具有更高的可控制性和扩展性相比来说更加安全和  高效。</p>
@@ -5232,99 +5325,6 @@ SHR：shared memory 共享内存<br>
         <tag>Java</tag>
         <tag>线程控制</tag>
         <tag>Condition</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java并发编程之Executors</title>
-    <url>/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/</url>
-    <content><![CDATA[<h2 id="newCachedThreadPool"><a href="#newCachedThreadPool" class="headerlink" title="newCachedThreadPool"></a>newCachedThreadPool</h2><p>创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。对于执行<strong>很多短期异步任务</strong>的程序而言，这些线程池通常可提高程序性能。调用 execute 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。因此，长时间保持空闲的线程池不会使用任何资源。</p>
-<a id="more"></a>
-
-<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that creates new threads as needed, but</span></span><br><span class="line"><span class="comment">* will reuse previously constructed threads when they are</span></span><br><span class="line"><span class="comment">* available.  These pools will typically improve the performance</span></span><br><span class="line"><span class="comment">* of programs that execute many short-lived asynchronous tasks.</span></span><br><span class="line"><span class="comment">* Calls to &#123;<span class="doctag">@code</span> execute&#125; will reuse previously constructed</span></span><br><span class="line"><span class="comment">* threads if available. If no existing thread is available, a new</span></span><br><span class="line"><span class="comment">* thread will be created and added to the pool. Threads that have</span></span><br><span class="line"><span class="comment">* not been used for sixty seconds are terminated and removed from</span></span><br><span class="line"><span class="comment">* the cache. Thus, a pool that remains idle for long enough will</span></span><br><span class="line"><span class="comment">* not consume any resources. Note that pools with similar</span></span><br><span class="line"><span class="comment">* properties but different details (for example, timeout parameters)</span></span><br><span class="line"><span class="comment">* may be created using &#123;<span class="doctag">@link</span> ThreadPoolExecutor&#125; constructors.</span></span><br><span class="line"><span class="comment">* - 为每一个任务创建一个线程，并且也可以重用已有的线程，无核心线程数量，</span></span><br><span class="line"><span class="comment">* - 超过60s的空闲线程将弃用，但是会受到系统实际内存的线程</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* - 当有新任务到来，则插入到SynchronousQueue中，由于SynchronousQueue是同步队列，</span></span><br><span class="line"><span class="comment">* - 因此会在池中寻找可用线程来执行，若有可以线程则执行，若没有可用线程则创建一个线程来执行该任务；</span></span><br><span class="line"><span class="comment">* - 若池中线程空闲时间超过指定大小，则该线程会被销毁。</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* - 适用：大小无界线程池，执行很多短期异步的小程序或者负载较轻的服务器；或负载较轻的服务器</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created thread pool</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                    <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                    <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that creates new threads as needed, but</span></span><br><span class="line"><span class="comment">* will reuse previously constructed threads when they are</span></span><br><span class="line"><span class="comment">* available, and uses the provided</span></span><br><span class="line"><span class="comment">* ThreadFactory to create new threads when needed.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when creating new threads</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">(ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                    <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                    <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;(),</span><br><span class="line">                                    threadFactory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="execute执行流程"><a href="#execute执行流程" class="headerlink" title="execute执行流程"></a>execute执行流程</h3><div align="center">
-
-<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/1587885350899.png" class title="execute执行流程">
-
-</div>
-
-<ol>
-<li><p>执行<code>SynchronousQueue.offer（Runnabletask）</code>;如果当前maximumPool中有空闲线程正在执行<code>SynchronousQueue.poll（keepAliveTime，TimeUnit.NANOSECONDS）</code>，那么主线程执行offer操作与空闲线程执行的poll操作配对成功，主线程把任务交给空闲线程执行，execute()方法执行完成</p>
-</li>
-<li><p>当初始maximumPool为空，或者maximumPool中当前没有空闲线程时，将没有线程执行<code>SynchronousQueue.poll（keepAliveTime，TimeUnit.NANOSECONDS）</code>。此时CachedThreadPool会创建一个新线程执行任务，execute()方法执行完成。</p>
-</li>
-<li><p>在步骤2）中新创建的线程将任务执行完后，会执行<code>SynchronousQueue. poll（keepAliveTime，TimeUnit.NANOSECONDS）</code>。这个poll操作会让空闲线程最多在SynchronousQueue中等待60秒钟。如果60秒钟内主线程提交了一个新任务（主线程执行步骤1）），那么这个空闲线程将执行主线程提交的新任务；否则，这个空闲线程将终止。由于空闲60秒的空闲线程会被终止，因此长时间保持空闲的CachedThreadPool不会使用任何资源。SynchronousQueue是一个没有容量的阻塞队列。每个插入操作必须等待另一个线程的对应移除操作，反之亦然。CachedThreadPool使用SynchronousQueue，把主线程提交的任务传递给空闲线程执行。</p>
-<div align="center">
-
-</div></li>
-</ol>
-<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/1587885884366.png" class title="CachedThreadPool任务传递示意图">
-
-
-
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>由于CachedThreadPool的maximumPool是无界的。这意味着，如果主线程提交任务的速度高于maximumPool中线程处理任务的速度时，CachedThreadPool会不断创建新线程。极端情况下，<strong>CachedThreadPool会因为创建过多线程而耗尽CPU和内存资源</strong>。</p>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.threadpool;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CachedThreadPoolTest1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService es = Executors.newCachedThreadPool();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">			es.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line"></span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					System.out.println(<span class="string">&quot;run:::&quot;</span> + Thread.currentThread().getName());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">----结果</span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">2</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">1</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">5</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">7</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">6</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">4</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">6</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">4</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">5</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">7</span></span><br></pre></td></tr></table></figure>
-<p>通过结果可以发现：</p>
-<ol>
-<li>根据线程名称判断使用到了线程池</li>
-<li>根据线程名称的编号可以判断线程被复用</li>
-<li>无限性可以通过调整循环次数和增加等待时间测试（由于内存原因未模拟）</li>
-</ol>
-<h2 id="newFixedThreadPool"><a href="#newFixedThreadPool" class="headerlink" title="newFixedThreadPool"></a>newFixedThreadPool</h2><p>创建一个可重用固定线程数的线程池，可控制线程最大并发数，超出的线程会在队列中等待，以共享的无界队列方式来运行这些线程。在任意点，在大多数 nThreads 线程会处于处理任务的活动状态。如果在所有线程处于活动状态时提交附加任务，则在有可用线程之前，附加任务将在队列中等待。如果在关闭前的执行期间由于失败而导致任何线程终止，那么一个新线程将代替它执行后续的任务（如果需要）。在某个线程被显式地关闭之前，池中的线程将一直存在。</p>
-<h3 id="源码分析-1"><a href="#源码分析-1" class="headerlink" title="源码分析"></a>源码分析</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that reuses a fixed number of threads</span></span><br><span class="line"><span class="comment">* operating off a shared unbounded queue.  At any point, at most</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> nThreads&#125; threads will be active processing tasks.</span></span><br><span class="line"><span class="comment">* If additional tasks are submitted when all threads are active,</span></span><br><span class="line"><span class="comment">* they will wait in the queue until a thread is available.</span></span><br><span class="line"><span class="comment">* If any thread terminates due to a failure during execution</span></span><br><span class="line"><span class="comment">* prior to shutdown, a new one will take its place if needed to</span></span><br><span class="line"><span class="comment">* execute subsequent tasks.  The threads in the pool will exist</span></span><br><span class="line"><span class="comment">* until it is explicitly &#123;<span class="doctag">@link</span> ExecutorService#shutdown shutdown&#125;.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> nThreads the number of threads in the pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> IllegalArgumentException if &#123;<span class="doctag">@code</span> nThreads &lt;= 0&#125;</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* - 创建可容纳固定数量线程的池子，每隔线程的存活时间是无限的，当池子满了就不在添加线程了；</span></span><br><span class="line"><span class="comment">* - 如果池中的所有线程均在繁忙状态，对于新任务会进入阻塞队列中(无界的阻塞队列)</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* - 适用：执行长期的任务，性能好很多；为了满足资源管理的需求，而需要限制当前线程的数量；负载比较重的服务器</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                    <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                    <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that reuses a fixed number of threads</span></span><br><span class="line"><span class="comment">* operating off a shared unbounded queue, using the provided</span></span><br><span class="line"><span class="comment">* ThreadFactory to create new threads when needed.  At any point,</span></span><br><span class="line"><span class="comment">* at most &#123;<span class="doctag">@code</span> nThreads&#125; threads will be active processing</span></span><br><span class="line"><span class="comment">* tasks.  If additional tasks are submitted when all threads are</span></span><br><span class="line"><span class="comment">* active, they will wait in the queue until a thread is</span></span><br><span class="line"><span class="comment">* available.  If any thread terminates due to a failure during</span></span><br><span class="line"><span class="comment">* execution prior to shutdown, a new one will take its place if</span></span><br><span class="line"><span class="comment">* needed to execute subsequent tasks.  The threads in the pool will</span></span><br><span class="line"><span class="comment">* exist until it is explicitly &#123;<span class="doctag">@link</span> ExecutorService#shutdown</span></span><br><span class="line"><span class="comment">* shutdown&#125;.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> nThreads the number of threads in the pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when creating new threads</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> IllegalArgumentException if &#123;<span class="doctag">@code</span> nThreads &lt;= 0&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads, ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                    <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                    <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;(),</span><br><span class="line">                                    threadFactory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="execute执行过程"><a href="#execute执行过程" class="headerlink" title="execute执行过程"></a>execute执行过程</h3><div align="center">
-
-<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/1587886474032.png" class>
-
-</div>
-
-<ul>
-<li>1）如果当前运行的线程数少于corePoolSize，则创建新线程来执行任务。当线程池中的线程数大于corePoolSize时，keepAliveTime为多余的空闲线程等待新任务的最长时间，超过这个时间后多余的线程将被终止。这里把keepAliveTime设置为0L，意味着多余的空闲线程会被立即终止。</li>
-<li>2）在线程池完成预热之后（当前运行的线程数等于corePoolSize），将任务加LinkedBlockingQueue。</li>
-<li>3）线程执行完1中的任务后，会在循环中反复从LinkedBlockingQueue获取任务来执行。</li>
-</ul>
-<h3 id="注意事项-1"><a href="#注意事项-1" class="headerlink" title="注意事项"></a>注意事项</h3><p>FixedThreadPool使用无界队列LinkedBlockingQueue作为线程池的工作队列（队列的容量为Integer.MAX_VALUE）。使用无界队列作为工作队列会对线程池带来如下影响。</p>
-<ul>
-<li>1）当线程池中的线程数达到corePoolSize后，新任务将在无界队列中等待，因此线程池中的线程数不会超过corePoolSize。</li>
-<li>2）由于1，使用无界队列时maximumPoolSize将是一个无效参数。</li>
-<li>3）由于1和2，使用无界队列时keepAliveTime将是一个无效参数。</li>
-<li>4）由于使用无界队列，运行中的FixedThreadPool（未执行方法shutdown()或shutdownNow()）不会拒绝任务（不会调用RejectedExecutionHandler.rejectedExecution方法）。</li>
-</ul>
-<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.threadpool;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FixedThreadPoolTest1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService es = Executors.newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">			es.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line"></span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					System.out.println(<span class="string">&quot;run:::&quot;</span> + Thread.currentThread().getName());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">-----结果</span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">2</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">1</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">2</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">1</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">2</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">3</span></span><br><span class="line">run:::pool-<span class="number">1</span>-thread-<span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>通过结果发下：</p>
-<ol>
-<li>可以控制线程池的最大数</li>
-</ol>
-<h2 id="newScheduledThreadPool"><a href="#newScheduledThreadPool" class="headerlink" title="newScheduledThreadPool"></a>newScheduledThreadPool</h2><p>创建一个线程池，它可安排在给定延迟后运行命令或者定期地执行。</p>
-<h3 id="源码分析-2"><a href="#源码分析-2" class="headerlink" title="源码分析"></a>源码分析</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that can schedule commands to run after a</span></span><br><span class="line"><span class="comment">* given delay, or to execute periodically.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> corePoolSize the number of threads to keep in the pool,</span></span><br><span class="line"><span class="comment">* even if they are idle</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> a newly created scheduled thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> IllegalArgumentException if &#123;<span class="doctag">@code</span> corePoolSize &lt; 0&#125;</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* 创建一个固定核心大小的线程池，最大线程数没有限制，</span></span><br><span class="line"><span class="comment">* 线程池内线程存活时间无限制，线程池可以支持定时及周期性任务执行，</span></span><br><span class="line"><span class="comment">* 如果所有线程均处于繁忙状态，对于新任务会进入DelayedWorkQueue队列中，</span></span><br><span class="line"><span class="comment">* 这是一种按照超时时间排序的队列结构</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* 适用：需要多个后台线程执行周期任务，同时为了满足资源管理的需求而需要限制后台线程的数量的应用场景</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(<span class="keyword">int</span> corePoolSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a thread pool that can schedule commands to run after a</span></span><br><span class="line"><span class="comment">* given delay, or to execute periodically.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> corePoolSize the number of threads to keep in the pool,</span></span><br><span class="line"><span class="comment">* even if they are idle</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when the executor</span></span><br><span class="line"><span class="comment">* creates a new thread</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> a newly created scheduled thread pool</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> IllegalArgumentException if &#123;<span class="doctag">@code</span> corePoolSize &lt; 0&#125;</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> corePoolSize, ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize, threadFactory);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a single-threaded executor that can schedule commands</span></span><br><span class="line"><span class="comment">* to run after a given delay, or to execute periodically.</span></span><br><span class="line"><span class="comment">* (Note however that if this single</span></span><br><span class="line"><span class="comment">* thread terminates due to a failure during execution prior to</span></span><br><span class="line"><span class="comment">* shutdown, a new one will take its place if needed to execute</span></span><br><span class="line"><span class="comment">* subsequent tasks.)  Tasks are guaranteed to execute</span></span><br><span class="line"><span class="comment">* sequentially, and no more than one task will be active at any</span></span><br><span class="line"><span class="comment">* given time. Unlike the otherwise equivalent</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> newScheduledThreadPool(1)&#125; the returned executor is</span></span><br><span class="line"><span class="comment">* guaranteed not to be reconfigurable to use additional threads.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created scheduled executor</span></span><br><span class="line"><span class="comment">* - 适用于需要单个后台线程执行周期任务，同时需要保证顺序地执行各个任务的应用场景。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newSingleThreadScheduledExecutor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> DelegatedScheduledExecutorService</span><br><span class="line">      (<span class="keyword">new</span> ScheduledThreadPoolExecutor(<span class="number">1</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a single-threaded executor that can schedule commands</span></span><br><span class="line"><span class="comment">* to run after a given delay, or to execute periodically.  (Note</span></span><br><span class="line"><span class="comment">* however that if this single thread terminates due to a failure</span></span><br><span class="line"><span class="comment">* during execution prior to shutdown, a new one will take its</span></span><br><span class="line"><span class="comment">* place if needed to execute subsequent tasks.)  Tasks are</span></span><br><span class="line"><span class="comment">* guaranteed to execute sequentially, and no more than one task</span></span><br><span class="line"><span class="comment">* will be active at any given time. Unlike the otherwise</span></span><br><span class="line"><span class="comment">* equivalent &#123;<span class="doctag">@code</span> newScheduledThreadPool(1, threadFactory)&#125;</span></span><br><span class="line"><span class="comment">* the returned executor is guaranteed not to be reconfigurable to</span></span><br><span class="line"><span class="comment">* use additional threads.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when creating new</span></span><br><span class="line"><span class="comment">* threads</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> a newly created scheduled executor</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newSingleThreadScheduledExecutor</span><span class="params">(ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> DelegatedScheduledExecutorService</span><br><span class="line">      (<span class="keyword">new</span> ScheduledThreadPoolExecutor(<span class="number">1</span>, threadFactory));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="newSingleThreadExecutor"><a href="#newSingleThreadExecutor" class="headerlink" title="newSingleThreadExecutor"></a>newSingleThreadExecutor</h2><p>Executors.newSingleThreadExecutor()返回一个线程池（这个线程池只有一个线程）,这个线程池可以在线程死后（或发生异常时）重新启动一个线程来替代原来的线程继续执行下去！</p>
-<h3 id="源码分析-3"><a href="#源码分析-3" class="headerlink" title="源码分析"></a>源码分析</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates an Executor that uses a single worker thread operating</span></span><br><span class="line"><span class="comment">* off an unbounded queue. (Note however that if this single</span></span><br><span class="line"><span class="comment">* thread terminates due to a failure during execution prior to</span></span><br><span class="line"><span class="comment">* shutdown, a new one will take its place if needed to execute</span></span><br><span class="line"><span class="comment">* subsequent tasks.)  Tasks are guaranteed to execute</span></span><br><span class="line"><span class="comment">* sequentially, and no more than one task will be active at any</span></span><br><span class="line"><span class="comment">* given time. Unlike the otherwise equivalent</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> newFixedThreadPool(1)&#125; the returned executor is</span></span><br><span class="line"><span class="comment">* guaranteed not to be reconfigurable to use additional threads.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created single-threaded Executor</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* 创建只有一个线程的线程池，且线程的存活时间是无限的；</span></span><br><span class="line"><span class="comment">* 当该线程正繁忙时，对于新任务会进入阻塞队列中(无界的阻塞队列)</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* 适用：一个任务一个任务执行的场景（顺序执行）；并且在任意时间点，不会有多个线程是活动的场景</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> FinalizableDelegatedExecutorService</span><br><span class="line">        (<span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</span><br><span class="line">                                <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;()));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates an Executor that uses a single worker thread operating</span></span><br><span class="line"><span class="comment">* off an unbounded queue, and uses the provided ThreadFactory to</span></span><br><span class="line"><span class="comment">* create a new thread when needed. Unlike the otherwise</span></span><br><span class="line"><span class="comment">* equivalent &#123;<span class="doctag">@code</span> newFixedThreadPool(1, threadFactory)&#125; the</span></span><br><span class="line"><span class="comment">* returned executor is guaranteed not to be reconfigurable to use</span></span><br><span class="line"><span class="comment">* additional threads.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> threadFactory the factory to use when creating new</span></span><br><span class="line"><span class="comment">* threads</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> the newly created single-threaded Executor</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> NullPointerException if threadFactory is null</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">(ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> FinalizableDelegatedExecutorService</span><br><span class="line">        (<span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</span><br><span class="line">                                <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;(),</span><br><span class="line">                                threadFactory));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="execute执行过程-1"><a href="#execute执行过程-1" class="headerlink" title="execute执行过程"></a>execute执行过程</h3><div align="center">
-
-<img src="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/1587887145755.png" class>
-
-</div>
-
-<ol>
-<li>如果当前运行的线程数少于corePoolSize（即线程池中无运行的线程），则创建一个新线程来执行任务。</li>
-<li>在线程池完成预热之后（当前线程池中有一个运行的线程），将任务加入Linked-BlockingQueue</li>
-<li>线程执行完1中的任务后，会在一个无限循环中反复从LinkedBlockingQueue获取任务来执行。</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li>《Java并发编程的艺术》</li>
-<li>《Java并发编程》</li>
-<li>《Java多线程编程核心技术》</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>并发编程</category>
-        <category>源码分析</category>
-        <category>Java线程池</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>线程池</tag>
-        <tag>Executors</tag>
       </tags>
   </entry>
   <entry>

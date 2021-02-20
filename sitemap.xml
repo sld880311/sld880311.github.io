@@ -1173,13 +1173,6 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/tags/git/</loc>
-    <lastmod>2021-02-20</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.sunliaodong.cn/tags/Hexo/</loc>
     <lastmod>2021-02-20</lastmod>
     <changefreq>daily</changefreq>
@@ -1195,6 +1188,13 @@
   
   <url>
     <loc>https://www.sunliaodong.cn/tags/Next/</loc>
+    <lastmod>2021-02-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/tags/git/</loc>
     <lastmod>2021-02-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1236,13 +1236,6 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/tags/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</loc>
-    <lastmod>2021-02-20</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.sunliaodong.cn/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/</loc>
     <lastmod>2021-02-20</lastmod>
     <changefreq>daily</changefreq>
@@ -1257,7 +1250,7 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/tags/Condition/</loc>
+    <loc>https://www.sunliaodong.cn/tags/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</loc>
     <lastmod>2021-02-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1265,6 +1258,13 @@
   
   <url>
     <loc>https://www.sunliaodong.cn/tags/Executors/</loc>
+    <lastmod>2021-02-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/tags/Condition/</loc>
     <lastmod>2021-02-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
