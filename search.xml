@@ -1188,6 +1188,22 @@
       </tags>
   </entry>
   <entry>
+    <title>Java并发编程之知识图谱</title>
+    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</url>
+    <content><![CDATA[<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/1588238047655.png" class title="并发编程知识图谱">
+
+</div>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java并发编程之应用-设备升级</title>
     <url>/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%BA%94%E7%94%A8-%E8%AE%BE%E5%A4%87%E5%8D%87%E7%BA%A7/</url>
     <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>功能需求：设备策略升级  </p>
@@ -1218,22 +1234,6 @@
       <tags>
         <tag>Java</tag>
         <tag>线程池</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java并发编程之知识图谱</title>
-    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</url>
-    <content><![CDATA[<div align="center">
-
-<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/1588238047655.png" class title="并发编程知识图谱">
-
-</div>]]></content>
-      <categories>
-        <category>Java</category>
-        <category>并发编程</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -1378,131 +1378,6 @@
       <tags>
         <tag>Java</tag>
         <tag>线程池</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java并发编程之线程的概念</title>
-    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5/</url>
-    <content><![CDATA[<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><h3 id="线程与进程"><a href="#线程与进程" class="headerlink" title="线程与进程"></a>线程与进程</h3><h4 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h4><ol>
-<li>用来加载指令、管理内存、管理IO、磁盘读写</li>
-<li>当一个程序被运行，从磁盘加载这个程序的代码至内存，这时就开启了一个进程。</li>
-<li>进程就可以视为程序的一个实例比如java.exe</li>
-</ol>
-<h4 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h4><ol>
-<li>一个线程就是一个指令流，将指令流中的一条条指令以一定的顺序交给 CPU 执行</li>
-<li>在一个进程里可以创建多个线程，一个标准的线程包括<strong>线程ID，当前指令指针(PC），寄存器集合和堆栈组成</strong>，堆中的内容可共享。处理器在这些线程上高速切换（涉及到上下文切换），让使用者感觉到这些线程在同时执行。<strong>如果没有明确的协同机制</strong>，线程将彼此独立执行。每一个程序都至少有一个线程，若程序只有一个线程，那就是程序本身。  </li>
-<li>线程是进程的一个实体（一个进程包含多个进程），是被系统独立调度和分配的最小单元，，也叫轻量级线程（Light Weight Process），并且线程拥有独立的资源包括：栈、线程ID、寄存器和指令指针，其他堆中的资源在内存中共享。共享资源在并发编程中需要增加同步机制防止资源数据处理不对。  </li>
-<li>一个线程可以创建和撤消另一个线程，同一进程中的多个线程之间可以并发执行。由于线程之间的相互制约，致使线程在运行中呈现出间断性。线程也有<strong>就绪、阻塞和运行</strong>三种基本状态。就绪状态是指线程具备运行的所有条件，逻辑上可以运行，在等待处理机；运行状态是指线程占有处理机正在运行；阻塞状态是指线程在等待一个事件（如某个信号量），逻辑上不可执行。  </li>
-<li>线程是程序中一个单一的顺序控制流程。进程内一个相对独立的、可调度的执行单元，是系统独立调度和分派CPU的基本单位指运行中的程序的调度单位。在单个程序中同时运行多个线程完成不同的工作，称为多线程。<a id="more"></a>
-
-</li>
-</ol>
-<h5 id="Java中的线程"><a href="#Java中的线程" class="headerlink" title="Java中的线程"></a>Java中的线程</h5><p>在java中，一个应用程序对应者一个jvm实例（jvm进程），一般来说名字默认为java.exe或者javaw.exe。java采用的是<strong>单线程编程模型</strong>，即在我们自己的程序中如果没有主动创建线程，则只会创建一个主线程。但是需要注意，虽然只是一个线程执行任务，不代表jvm中只有一个线程，jvm在创建实例的过程中，同时会创建很多线程，具体参考如下说明：  </p>
-<p>一个Java程序的入口是main方法，通过调用main方法开始执行，然后按照代码逻辑执行，看似没有其他线程参与，其实java程序天生就是多线程程序，执行一个main方法其实就是一个名为mian的线程和其他线程分别执行，参考代码如下（来源于java并发编程艺术）：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread;</span><br><span class="line"><span class="keyword">import</span> java.lang.management.ManagementFactory;</span><br><span class="line"><span class="keyword">import</span> java.lang.management.ThreadInfo;</span><br><span class="line"><span class="keyword">import</span> java.lang.management.ThreadMXBean;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;Description:&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> sunliaodong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> V1.0.0</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;CreateDate:2017年9月28日 下午3:54:19&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadMXBeanTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 获取Java线程管理MXBean</span></span><br><span class="line">        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();</span><br><span class="line">        <span class="comment">// 不需要获取同步的monitor和synchronizer信息，仅获取线程和线程堆栈信息</span></span><br><span class="line">        ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(<span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">// 遍历线程信息，仅打印线程ID和线程名称信息</span></span><br><span class="line">        <span class="keyword">for</span> (ThreadInfo threadInfo : threadInfos) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;[&quot;</span> + threadInfo.getThreadId() + <span class="string">&quot;] &quot;</span> +</span><br><span class="line">                    threadInfo.getThreadName());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>返回结果：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">[<span class="number">6</span>] Monitor Ctrl-Break</span><br><span class="line">[<span class="number">5</span>] Attach Listener<span class="comment">//附加监听</span></span><br><span class="line">[<span class="number">4</span>] Signal Dispatcher<span class="comment">//分发处理发送给JVM信号的线程</span></span><br><span class="line">[<span class="number">3</span>] Finalizer<span class="comment">//调用对象finalize方法的线程</span></span><br><span class="line">[<span class="number">2</span>] Reference Handler清除Reference的线程</span><br><span class="line">[<span class="number">1</span>] main 线程，用户程序入口</span><br></pre></td></tr></table></figure>
-<h4 id="进程与线程的对比"><a href="#进程与线程的对比" class="headerlink" title="进程与线程的对比"></a>进程与线程的对比</h4><ol>
-<li>进程基本上相互独立的，而线程存在于进程内，是进程的一个子集</li>
-<li>进程拥有共享的资源，如内存空间等，供其内部的线程共享</li>
-<li>进程间通信较为复杂<ul>
-<li>同一台计算机的进程通信称为 IPC（Inter-process communication）</li>
-<li>不同计算机之间的进程通信，需要通过网络，并遵守共同的协议，例如 HTTP</li>
-</ul>
-</li>
-<li>线程通信相对简单，因为它们共享进程内的内存，一个例子是多个线程可以访问同一个共享变量</li>
-<li>线程更轻量，线程上下文切换成本一般上要比进程上下文切换低</li>
-</ol>
-<h3 id="并行与并发"><a href="#并行与并发" class="headerlink" title="并行与并发"></a>并行与并发</h3><ol>
-<li><strong>并发（concurrent）：</strong> 同一时间应对（dealing with）多件事情的能力</li>
-<li><strong>并行（parallel）：</strong> 同一时间动手做（doing）多件事情的能力，会出现资源竞争的问题</li>
-<li><strong>单核</strong>： 微观串行，宏观并行，一般会将这种<strong>线程轮流使用</strong>CPU的做法称为并发</li>
-<li><strong>多核</strong>：多核下，每个核都可以调度运行线程，这时候线程可以是并行的</li>
-</ol>
-<h2 id="线程的优缺点"><a href="#线程的优缺点" class="headerlink" title="线程的优缺点"></a>线程的优缺点</h2><h3 id="线程的优势"><a href="#线程的优势" class="headerlink" title="线程的优势"></a>线程的优势</h3><p>如果使用得当，线程可以有效地的降低程序的开发和维护成本，同时提升复杂应用程序的性能。线程能够将大部分的异步工作流转成串行工作流，因此能更好的模拟人类的工作方式和交互方式。此外，线程可以降低代码的复杂度，是代码更容易编写、阅读和维护。  </p>
-<p>在GUI应用中，线程可以提高用户界面的响应灵敏度，而在服务器应用程序中，可以提升资源利用率以及系统吞吐率。线程还可以简化jvm的实现，垃圾收集器通常在一个或多个专门的线程中运行。</p>
-<h4 id="发挥多处理器的强大能力"><a href="#发挥多处理器的强大能力" class="headerlink" title="发挥多处理器的强大能力"></a>发挥多处理器的强大能力</h4><p>随着技术的发展，在单核处理器上通过提高时钟频率来提升性能以变的越来越困难，目前大多数机器都是在单个芯片上放置多个处理器核。但是由于基本的调度单位是线程，因此如果使用单个线程会造成很多cpu资源的浪费。多线程程序可以同时在多个处理器上执行，并且可以通过提高处理器资源的利用率来提升吞吐率。比如IO读写。</p>
-<h4 id="建模的简单性"><a href="#建模的简单性" class="headerlink" title="建模的简单性"></a>建模的简单性</h4><p>通过使用线程，可以将复杂并且异步的工作流进一步分解为一组简单并且同步的工作流，每个工作流在一个单独的线程中运行，并在特定的同步位置进行交互。  </p>
-<p>可以使用框架实现以上功能，例如：servlet和RMI；框架负责解决一些细节问题，例如请求管理、线程创建、负载均衡，并在正确的时刻将请求分发给正确的应用程序组件。  </p>
-<p>Java为多线程编程提供了良好、考究并且一致的编程模型，使开发人员能够更加专注于问题的解决，即为所遇到的问题建立合适的模型，而不是绞尽脑汁地考虑如何将其多线程化。一旦开发人员建立好了模型，稍做修改总是能够方便地映射到Java提供的多线程编程模型上。</p>
-<h4 id="异步事件的简化处理"><a href="#异步事件的简化处理" class="headerlink" title="异步事件的简化处理"></a>异步事件的简化处理</h4><p>服务器应用程序在接受来自多个远程客户端的套接字链接请求时，如果为每个链接都分配其各自的线程并且使用同步IO，那么就会降低这类程序的开发难度。</p>
-<h4 id="响应更灵敏的用户界面"><a href="#响应更灵敏的用户界面" class="headerlink" title="响应更灵敏的用户界面"></a>响应更灵敏的用户界面</h4><p>使用多线程技术，即将数据一致性不强的操作派发给其他线程处理（也可以使用消息队列），如生成订单快照、发送邮件等。这样做的好处是响应用户请求的线程能够尽可能快地处理完成，缩短了响应时间，提升了用户体验。</p>
-<h3 id="线程问题"><a href="#线程问题" class="headerlink" title="线程问题"></a>线程问题</h3><h4 id="安全性问题"><a href="#安全性问题" class="headerlink" title="安全性问题"></a>安全性问题</h4><p>线程安全性非常复杂，在没有充足同步的情况下，多个线程中的操作执行顺序是不可预测的，甚至会产生奇怪的结果。比如常见的序列中计算（a++），多个线程同时调用会出现重复值的情况。  </p>
-<p>由于多个线程要共享相同的内存地址空间，并且是并发执行，因此他们会访问或则修改其他线程正在使用的变量。这样就会产生竞态条件（资源竞争），导致并发安全性问题的发生。java本身提供了各种同步机制来协同这种访问。比如加锁以及内存可见性等。</p>
-<h4 id="活跃性问题"><a href="#活跃性问题" class="headerlink" title="活跃性问题"></a>活跃性问题</h4><p>安全性的含义是“永远不发生糟糕的事情”，而活跃性则是“某个正确的事情最终会发生”。</p>
-<h4 id="性能问题"><a href="#性能问题" class="headerlink" title="性能问题"></a>性能问题</h4><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li>《Java并发编程的艺术》</li>
-<li><a href="https://www.cnblogs.com/wxd0108/p/5479442.html">Java中的多线程你只要看这一篇就够了</a></li>
-<li><a href="https://baike.baidu.com/item/%E7%BA%BF%E7%A8%8B/103101?fr=aladdin">线程</a></li>
-<li><a href="https://www.cnblogs.com/lwbqqyumidi/p/3804883.html">Java总结篇系列：Java多线程（一）</a></li>
-<li>《java并发编程实战》</li>
-<li><a href="https://blog.csdn.net/hanhaiyinheguxing/article/details/51366541">多线程01：《疯狂Java讲义》学习笔记——线程概述</a></li>
-<li><a href="https://blog.csdn.net/hla199106/article/details/47840505">java并发编程—如何创建线程以及Thread类的使用</a></li>
-<li><a href="https://www.cnblogs.com/dolphin0520/p/3920357.html">Java并发编程：Thread类的使用</a></li>
-<li><a href="https://www.cnblogs.com/loveer/p/11518402.html">Java中断机制</a></li>
-<li><a href="https://www.cnblogs.com/hapjin/p/5450779.html">JAVA多线程之中断机制(如何处理中断？)</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>并发编程</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>线程</tag>
-        <tag>进程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java并发编程之调度方式</title>
-    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/</url>
-    <content><![CDATA[<h2 id="抢占式调度"><a href="#抢占式调度" class="headerlink" title="抢占式调度"></a>抢占式调度</h2><p>抢占式调度指的是每条线程执行的时间、线程的切换都由系统控制，系统控制指的是在系统某种运行机制下，可能每条线程都分同样的执行时间片，也可能是某些线程执行的时间片较长，甚至某些线程得不到执行的时间片。在这种机制下，一个线程的堵塞不会导致整个进程堵塞。</p>
-<h2 id="协同式调度"><a href="#协同式调度" class="headerlink" title="协同式调度"></a>协同式调度</h2><p>协同式调度指某一线程执行完后主动通知系统切换到另一线程上执行，这种模式就像接力赛一样，一个人跑完自己的路程就把接力棒交接给下一个人，下个人继续往下跑。线程的执行时间由线程本身控制，线程切换可以预知，不存在多线程同步问题，但它有一个致命弱点：如果一个线程编写有问题，运行到一半就一直堵塞，那么可能导致整个系统崩溃。</p>
-<a id="more"></a>
-
-<div align="center">
-
-<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/1588842599605.png" class>
-
-</div>
-
-<h2 id="JVM-的线程调度实现（抢占式调度）"><a href="#JVM-的线程调度实现（抢占式调度）" class="headerlink" title="JVM 的线程调度实现（抢占式调度）"></a>JVM 的线程调度实现（抢占式调度）</h2><p>java 使用的线程调使用抢占式调度，Java 中线程会按优先级分配 CPU 时间片运行，且优先级越高越优先执行，但优先级高并不代表能独自占用执行时间片，可能是优先级高得到越多的执行时间片，反之，优先级低的分到的执行时间少但不会分配不到执行时间。</p>
-<h2 id="线程让出-cpu-的情况"><a href="#线程让出-cpu-的情况" class="headerlink" title="线程让出 cpu 的情况"></a>线程让出 cpu 的情况</h2><ol>
-<li>当前运行线程主动放弃 CPU，JVM 暂时放弃 CPU 操作（基于时间片轮转调度的 JVM 操作系统不会让线程永久放弃 CPU，或者说放弃本次时间片的执行权），例如调用 yield()方法。</li>
-<li>当前运行线程因为某些原因进入阻塞状态，例如阻塞在 I/O 上。</li>
-<li>当前运行线程结束，即运行完 run()方法里面的任务。</li>
-</ol>
-<h2 id="进程调度算法"><a href="#进程调度算法" class="headerlink" title="进程调度算法"></a>进程调度算法</h2><h3 id="优先调度算法"><a href="#优先调度算法" class="headerlink" title="优先调度算法"></a>优先调度算法</h3><h4 id="先来先服务调度算法（FCFS）"><a href="#先来先服务调度算法（FCFS）" class="headerlink" title="先来先服务调度算法（FCFS）"></a>先来先服务调度算法（FCFS）</h4><p>当在作业调度中采用该算法时，每次调度都是从后备作业队列中选择一个或多个最先进入该队列的作业，将它们调入内存，为它们分配资源、创建进程，然后放入就绪队列。在进程调度中采用 FCFS 算法时，则每次调度是从就绪队列中选择一个最先进入该队列的进程，为之分配处理机，使之投入运行。该进程一直运行到完成或发生某事件而阻塞后才放弃处理机，特点是：算法比较简单，可以实现基本上的公平。</p>
-<h4 id="短作业-进程-优先调度算法"><a href="#短作业-进程-优先调度算法" class="headerlink" title="短作业(进程)优先调度算法"></a>短作业(进程)优先调度算法</h4><p>短作业优先(SJF)的调度算法是从后备队列中选择一个或若干个估计运行时间最短的作业，将它们调入内存运行。而短进程优先(SPF)调度算法则是从就绪队列中选出一个估计运行时间最短的进程，将处理机分配给它，使它立即执行并一直执行到完成，或发生某事件而被阻塞放弃处理机时再重新调度。该算法未照顾紧迫型作业。</p>
-<h3 id="高优先权优先调度算法"><a href="#高优先权优先调度算法" class="headerlink" title="高优先权优先调度算法"></a>高优先权优先调度算法</h3><p>为了照顾紧迫型作业，使之在进入系统后便获得优先处理，引入了最高优先权优先(FPF)调度算法。当把该算法用于作业调度时，系统将从后备队列中选择若干个优先权最高的作业装入内存。<br>当用于进程调度时，该算法是把处理机分配给就绪队列中优先权最高的进程。</p>
-<h4 id="非抢占式优先权算法"><a href="#非抢占式优先权算法" class="headerlink" title="非抢占式优先权算法"></a>非抢占式优先权算法</h4><p>在这种方式下，系统一旦把处理机分配给就绪队列中优先权最高的进程后，该进程便一直执行下去，直至完成；或因发生某事件使该进程放弃处理机时。这种调度算法主要用于批处理系统中；也可用于某些对实时性要求不严的实时系统中。</p>
-<h4 id="抢占式优先权调度算法"><a href="#抢占式优先权调度算法" class="headerlink" title="抢占式优先权调度算法"></a>抢占式优先权调度算法</h4><p>在这种方式下，系统同样是把处理机分配给优先权最高的进程，使之执行。但在其执行期间，只要又出现了另一个其优先权更高的进程，进程调度程序就立即停止当前进程(原优先权最高的进程) 的执行，重新将处理机分配给新到的优先权最高的进程。显然，这种抢占式的优先权调度算法能更好地满足紧迫作业的要求，故而常用于要求比较严格的实时系统中，以及对性能要求较高的批处理和分时系统中。</p>
-<h3 id="高响应比优先调度算法"><a href="#高响应比优先调度算法" class="headerlink" title="高响应比优先调度算法"></a>高响应比优先调度算法</h3><p>在批处理系统中，短作业优先算法是一种比较好的算法，其主要的不足之处是长作业的运行得不到保证。如果我们能为每个作业引入前面所述的动态优先权，并使作业的优先级随着等待时间的增加而以速率a 提高，则长作业在等待一定的时间后，必然有机会分配到处理机。该优先权的变化规律可描述为：</p>
-<div align="center">
-
-<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/1588843436863.png" class>
-
-</div>
-
-<ol>
-<li>如果作业的等待时间相同，则要求服务的时间愈短，其优先权愈高，因而该算法有利于短作业。</li>
-<li>当要求服务的时间相同时，作业的优先权决定于其等待时间，等待时间愈长，其优先权愈高，因而它实现的是先来先服务。</li>
-<li>对于长作业，作业的优先级可以随等待时间的增加而提高，当其等待时间足够长时，其优先级便可升到很高，从而也可获得处理机。简言之，该算法既照顾了短作业，又考虑了作业到达的先后次序，不会使长作业长期得不到服务。因此，该算法实现了一种较好的折衷。当然，在利用该算法时，每要进行调度之前，都须先做响应比的计算，这会增加系统开销</li>
-</ol>
-<h3 id="基于时间片的轮转调度算法"><a href="#基于时间片的轮转调度算法" class="headerlink" title="基于时间片的轮转调度算法"></a>基于时间片的轮转调度算法</h3><h4 id="时间片轮转法"><a href="#时间片轮转法" class="headerlink" title="时间片轮转法"></a>时间片轮转法</h4><p>在早期的时间片轮转法中，系统将所有的就绪进程按先来先服务的原则排成一个队列，每次调度时，把 CPU 分配给队首进程，并令其执行一个时间片。时间片的大小从几 ms 到几百 ms。当执行的时间片用完时，由一个计时器发出时钟中断请求，调度程序便据此信号来停止该进程的执行，并将它送往就绪队列的末尾；然后，再把处理机分配给就绪队列中新的队首进程，同时也让它执行一个时间片。这样就可以保证就绪队列中的所有进程在一给定的时间内均能获得一时间片的处理机执行时间。</p>
-<h4 id="多级反馈队列调度算法"><a href="#多级反馈队列调度算法" class="headerlink" title="多级反馈队列调度算法"></a>多级反馈队列调度算法</h4><ol>
-<li>应设置多个就绪队列，并为各个队列赋予不同的优先级。第一个队列的优先级最高，第二个队列次之，其余各队列的优先权逐个降低。该算法赋予各个队列中进程执行时间片的大小也各不相同，在优先权愈高的队列中，为每个进程所规定的执行时间片就愈小。例如，第二个队列的时间片要比第一个队列的时间片长一倍，……，第 i+1 个队列的时间片要比第 i 个队列的时间片长一倍。</li>
-<li>当一个新进程进入内存后，首先将它放入第一队列的末尾，按 FCFS 原则排队等待调度。当轮到该进程执行时，如它能在该时间片内完成，便可准备撤离系统；如果它在一个时间片结束时尚未完成，调度程序便将该进程转入第二队列的末尾，再同样地按 FCFS 原则等待调度执行；如果它在第二队列中运行一个时间片后仍未完成，再依次将它放入第三队列，……，如此下去，当一个长作业(进程)从第一队列依次降到第 n 队列后，在第 n 队列便采取按时间片轮转的方式运行。</li>
-<li>仅当第一队列空闲时，调度程序才调度第二队列中的进程运行；仅当第 1～(i-1)队列均空时，才会调度第 i 队列中的进程运行。如果处理机正在第 i 队列中为某进程服务时，又有新进程进入优先权较高的队列(第 1～(i-1)中的任何一个队列)，则此时新进程将抢占正在运行进程的处理机，即由调度程序把正在运行的进程放回到第 i 队列的末尾，把处理机分配给新到的高优先权进程。 在多级反馈队列调度算法中，如果规定第一个队列的时间片略大于多数人机交互所需之处理时间时，便能够较好的满足各种类型用户的需要。</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
-      <categories>
-        <category>Java</category>
-        <category>并发编程</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>线程调度</tag>
       </tags>
   </entry>
   <entry>
@@ -1694,6 +1569,131 @@
       <tags>
         <tag>Java</tag>
         <tag>线程状态</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java并发编程之线程的概念</title>
+    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5/</url>
+    <content><![CDATA[<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><h3 id="线程与进程"><a href="#线程与进程" class="headerlink" title="线程与进程"></a>线程与进程</h3><h4 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h4><ol>
+<li>用来加载指令、管理内存、管理IO、磁盘读写</li>
+<li>当一个程序被运行，从磁盘加载这个程序的代码至内存，这时就开启了一个进程。</li>
+<li>进程就可以视为程序的一个实例比如java.exe</li>
+</ol>
+<h4 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h4><ol>
+<li>一个线程就是一个指令流，将指令流中的一条条指令以一定的顺序交给 CPU 执行</li>
+<li>在一个进程里可以创建多个线程，一个标准的线程包括<strong>线程ID，当前指令指针(PC），寄存器集合和堆栈组成</strong>，堆中的内容可共享。处理器在这些线程上高速切换（涉及到上下文切换），让使用者感觉到这些线程在同时执行。<strong>如果没有明确的协同机制</strong>，线程将彼此独立执行。每一个程序都至少有一个线程，若程序只有一个线程，那就是程序本身。  </li>
+<li>线程是进程的一个实体（一个进程包含多个进程），是被系统独立调度和分配的最小单元，，也叫轻量级线程（Light Weight Process），并且线程拥有独立的资源包括：栈、线程ID、寄存器和指令指针，其他堆中的资源在内存中共享。共享资源在并发编程中需要增加同步机制防止资源数据处理不对。  </li>
+<li>一个线程可以创建和撤消另一个线程，同一进程中的多个线程之间可以并发执行。由于线程之间的相互制约，致使线程在运行中呈现出间断性。线程也有<strong>就绪、阻塞和运行</strong>三种基本状态。就绪状态是指线程具备运行的所有条件，逻辑上可以运行，在等待处理机；运行状态是指线程占有处理机正在运行；阻塞状态是指线程在等待一个事件（如某个信号量），逻辑上不可执行。  </li>
+<li>线程是程序中一个单一的顺序控制流程。进程内一个相对独立的、可调度的执行单元，是系统独立调度和分派CPU的基本单位指运行中的程序的调度单位。在单个程序中同时运行多个线程完成不同的工作，称为多线程。<a id="more"></a>
+
+</li>
+</ol>
+<h5 id="Java中的线程"><a href="#Java中的线程" class="headerlink" title="Java中的线程"></a>Java中的线程</h5><p>在java中，一个应用程序对应者一个jvm实例（jvm进程），一般来说名字默认为java.exe或者javaw.exe。java采用的是<strong>单线程编程模型</strong>，即在我们自己的程序中如果没有主动创建线程，则只会创建一个主线程。但是需要注意，虽然只是一个线程执行任务，不代表jvm中只有一个线程，jvm在创建实例的过程中，同时会创建很多线程，具体参考如下说明：  </p>
+<p>一个Java程序的入口是main方法，通过调用main方法开始执行，然后按照代码逻辑执行，看似没有其他线程参与，其实java程序天生就是多线程程序，执行一个main方法其实就是一个名为mian的线程和其他线程分别执行，参考代码如下（来源于java并发编程艺术）：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread;</span><br><span class="line"><span class="keyword">import</span> java.lang.management.ManagementFactory;</span><br><span class="line"><span class="keyword">import</span> java.lang.management.ThreadInfo;</span><br><span class="line"><span class="keyword">import</span> java.lang.management.ThreadMXBean;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;Description:&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> sunliaodong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> V1.0.0</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;CreateDate:2017年9月28日 下午3:54:19&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadMXBeanTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 获取Java线程管理MXBean</span></span><br><span class="line">        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();</span><br><span class="line">        <span class="comment">// 不需要获取同步的monitor和synchronizer信息，仅获取线程和线程堆栈信息</span></span><br><span class="line">        ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(<span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">// 遍历线程信息，仅打印线程ID和线程名称信息</span></span><br><span class="line">        <span class="keyword">for</span> (ThreadInfo threadInfo : threadInfos) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;[&quot;</span> + threadInfo.getThreadId() + <span class="string">&quot;] &quot;</span> +</span><br><span class="line">                    threadInfo.getThreadName());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回结果：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">[<span class="number">6</span>] Monitor Ctrl-Break</span><br><span class="line">[<span class="number">5</span>] Attach Listener<span class="comment">//附加监听</span></span><br><span class="line">[<span class="number">4</span>] Signal Dispatcher<span class="comment">//分发处理发送给JVM信号的线程</span></span><br><span class="line">[<span class="number">3</span>] Finalizer<span class="comment">//调用对象finalize方法的线程</span></span><br><span class="line">[<span class="number">2</span>] Reference Handler清除Reference的线程</span><br><span class="line">[<span class="number">1</span>] main 线程，用户程序入口</span><br></pre></td></tr></table></figure>
+<h4 id="进程与线程的对比"><a href="#进程与线程的对比" class="headerlink" title="进程与线程的对比"></a>进程与线程的对比</h4><ol>
+<li>进程基本上相互独立的，而线程存在于进程内，是进程的一个子集</li>
+<li>进程拥有共享的资源，如内存空间等，供其内部的线程共享</li>
+<li>进程间通信较为复杂<ul>
+<li>同一台计算机的进程通信称为 IPC（Inter-process communication）</li>
+<li>不同计算机之间的进程通信，需要通过网络，并遵守共同的协议，例如 HTTP</li>
+</ul>
+</li>
+<li>线程通信相对简单，因为它们共享进程内的内存，一个例子是多个线程可以访问同一个共享变量</li>
+<li>线程更轻量，线程上下文切换成本一般上要比进程上下文切换低</li>
+</ol>
+<h3 id="并行与并发"><a href="#并行与并发" class="headerlink" title="并行与并发"></a>并行与并发</h3><ol>
+<li><strong>并发（concurrent）：</strong> 同一时间应对（dealing with）多件事情的能力</li>
+<li><strong>并行（parallel）：</strong> 同一时间动手做（doing）多件事情的能力，会出现资源竞争的问题</li>
+<li><strong>单核</strong>： 微观串行，宏观并行，一般会将这种<strong>线程轮流使用</strong>CPU的做法称为并发</li>
+<li><strong>多核</strong>：多核下，每个核都可以调度运行线程，这时候线程可以是并行的</li>
+</ol>
+<h2 id="线程的优缺点"><a href="#线程的优缺点" class="headerlink" title="线程的优缺点"></a>线程的优缺点</h2><h3 id="线程的优势"><a href="#线程的优势" class="headerlink" title="线程的优势"></a>线程的优势</h3><p>如果使用得当，线程可以有效地的降低程序的开发和维护成本，同时提升复杂应用程序的性能。线程能够将大部分的异步工作流转成串行工作流，因此能更好的模拟人类的工作方式和交互方式。此外，线程可以降低代码的复杂度，是代码更容易编写、阅读和维护。  </p>
+<p>在GUI应用中，线程可以提高用户界面的响应灵敏度，而在服务器应用程序中，可以提升资源利用率以及系统吞吐率。线程还可以简化jvm的实现，垃圾收集器通常在一个或多个专门的线程中运行。</p>
+<h4 id="发挥多处理器的强大能力"><a href="#发挥多处理器的强大能力" class="headerlink" title="发挥多处理器的强大能力"></a>发挥多处理器的强大能力</h4><p>随着技术的发展，在单核处理器上通过提高时钟频率来提升性能以变的越来越困难，目前大多数机器都是在单个芯片上放置多个处理器核。但是由于基本的调度单位是线程，因此如果使用单个线程会造成很多cpu资源的浪费。多线程程序可以同时在多个处理器上执行，并且可以通过提高处理器资源的利用率来提升吞吐率。比如IO读写。</p>
+<h4 id="建模的简单性"><a href="#建模的简单性" class="headerlink" title="建模的简单性"></a>建模的简单性</h4><p>通过使用线程，可以将复杂并且异步的工作流进一步分解为一组简单并且同步的工作流，每个工作流在一个单独的线程中运行，并在特定的同步位置进行交互。  </p>
+<p>可以使用框架实现以上功能，例如：servlet和RMI；框架负责解决一些细节问题，例如请求管理、线程创建、负载均衡，并在正确的时刻将请求分发给正确的应用程序组件。  </p>
+<p>Java为多线程编程提供了良好、考究并且一致的编程模型，使开发人员能够更加专注于问题的解决，即为所遇到的问题建立合适的模型，而不是绞尽脑汁地考虑如何将其多线程化。一旦开发人员建立好了模型，稍做修改总是能够方便地映射到Java提供的多线程编程模型上。</p>
+<h4 id="异步事件的简化处理"><a href="#异步事件的简化处理" class="headerlink" title="异步事件的简化处理"></a>异步事件的简化处理</h4><p>服务器应用程序在接受来自多个远程客户端的套接字链接请求时，如果为每个链接都分配其各自的线程并且使用同步IO，那么就会降低这类程序的开发难度。</p>
+<h4 id="响应更灵敏的用户界面"><a href="#响应更灵敏的用户界面" class="headerlink" title="响应更灵敏的用户界面"></a>响应更灵敏的用户界面</h4><p>使用多线程技术，即将数据一致性不强的操作派发给其他线程处理（也可以使用消息队列），如生成订单快照、发送邮件等。这样做的好处是响应用户请求的线程能够尽可能快地处理完成，缩短了响应时间，提升了用户体验。</p>
+<h3 id="线程问题"><a href="#线程问题" class="headerlink" title="线程问题"></a>线程问题</h3><h4 id="安全性问题"><a href="#安全性问题" class="headerlink" title="安全性问题"></a>安全性问题</h4><p>线程安全性非常复杂，在没有充足同步的情况下，多个线程中的操作执行顺序是不可预测的，甚至会产生奇怪的结果。比如常见的序列中计算（a++），多个线程同时调用会出现重复值的情况。  </p>
+<p>由于多个线程要共享相同的内存地址空间，并且是并发执行，因此他们会访问或则修改其他线程正在使用的变量。这样就会产生竞态条件（资源竞争），导致并发安全性问题的发生。java本身提供了各种同步机制来协同这种访问。比如加锁以及内存可见性等。</p>
+<h4 id="活跃性问题"><a href="#活跃性问题" class="headerlink" title="活跃性问题"></a>活跃性问题</h4><p>安全性的含义是“永远不发生糟糕的事情”，而活跃性则是“某个正确的事情最终会发生”。</p>
+<h4 id="性能问题"><a href="#性能问题" class="headerlink" title="性能问题"></a>性能问题</h4><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《Java并发编程的艺术》</li>
+<li><a href="https://www.cnblogs.com/wxd0108/p/5479442.html">Java中的多线程你只要看这一篇就够了</a></li>
+<li><a href="https://baike.baidu.com/item/%E7%BA%BF%E7%A8%8B/103101?fr=aladdin">线程</a></li>
+<li><a href="https://www.cnblogs.com/lwbqqyumidi/p/3804883.html">Java总结篇系列：Java多线程（一）</a></li>
+<li>《java并发编程实战》</li>
+<li><a href="https://blog.csdn.net/hanhaiyinheguxing/article/details/51366541">多线程01：《疯狂Java讲义》学习笔记——线程概述</a></li>
+<li><a href="https://blog.csdn.net/hla199106/article/details/47840505">java并发编程—如何创建线程以及Thread类的使用</a></li>
+<li><a href="https://www.cnblogs.com/dolphin0520/p/3920357.html">Java并发编程：Thread类的使用</a></li>
+<li><a href="https://www.cnblogs.com/loveer/p/11518402.html">Java中断机制</a></li>
+<li><a href="https://www.cnblogs.com/hapjin/p/5450779.html">JAVA多线程之中断机制(如何处理中断？)</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>线程</tag>
+        <tag>进程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java并发编程之调度方式</title>
+    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/</url>
+    <content><![CDATA[<h2 id="抢占式调度"><a href="#抢占式调度" class="headerlink" title="抢占式调度"></a>抢占式调度</h2><p>抢占式调度指的是每条线程执行的时间、线程的切换都由系统控制，系统控制指的是在系统某种运行机制下，可能每条线程都分同样的执行时间片，也可能是某些线程执行的时间片较长，甚至某些线程得不到执行的时间片。在这种机制下，一个线程的堵塞不会导致整个进程堵塞。</p>
+<h2 id="协同式调度"><a href="#协同式调度" class="headerlink" title="协同式调度"></a>协同式调度</h2><p>协同式调度指某一线程执行完后主动通知系统切换到另一线程上执行，这种模式就像接力赛一样，一个人跑完自己的路程就把接力棒交接给下一个人，下个人继续往下跑。线程的执行时间由线程本身控制，线程切换可以预知，不存在多线程同步问题，但它有一个致命弱点：如果一个线程编写有问题，运行到一半就一直堵塞，那么可能导致整个系统崩溃。</p>
+<a id="more"></a>
+
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/1588842599605.png" class>
+
+</div>
+
+<h2 id="JVM-的线程调度实现（抢占式调度）"><a href="#JVM-的线程调度实现（抢占式调度）" class="headerlink" title="JVM 的线程调度实现（抢占式调度）"></a>JVM 的线程调度实现（抢占式调度）</h2><p>java 使用的线程调使用抢占式调度，Java 中线程会按优先级分配 CPU 时间片运行，且优先级越高越优先执行，但优先级高并不代表能独自占用执行时间片，可能是优先级高得到越多的执行时间片，反之，优先级低的分到的执行时间少但不会分配不到执行时间。</p>
+<h2 id="线程让出-cpu-的情况"><a href="#线程让出-cpu-的情况" class="headerlink" title="线程让出 cpu 的情况"></a>线程让出 cpu 的情况</h2><ol>
+<li>当前运行线程主动放弃 CPU，JVM 暂时放弃 CPU 操作（基于时间片轮转调度的 JVM 操作系统不会让线程永久放弃 CPU，或者说放弃本次时间片的执行权），例如调用 yield()方法。</li>
+<li>当前运行线程因为某些原因进入阻塞状态，例如阻塞在 I/O 上。</li>
+<li>当前运行线程结束，即运行完 run()方法里面的任务。</li>
+</ol>
+<h2 id="进程调度算法"><a href="#进程调度算法" class="headerlink" title="进程调度算法"></a>进程调度算法</h2><h3 id="优先调度算法"><a href="#优先调度算法" class="headerlink" title="优先调度算法"></a>优先调度算法</h3><h4 id="先来先服务调度算法（FCFS）"><a href="#先来先服务调度算法（FCFS）" class="headerlink" title="先来先服务调度算法（FCFS）"></a>先来先服务调度算法（FCFS）</h4><p>当在作业调度中采用该算法时，每次调度都是从后备作业队列中选择一个或多个最先进入该队列的作业，将它们调入内存，为它们分配资源、创建进程，然后放入就绪队列。在进程调度中采用 FCFS 算法时，则每次调度是从就绪队列中选择一个最先进入该队列的进程，为之分配处理机，使之投入运行。该进程一直运行到完成或发生某事件而阻塞后才放弃处理机，特点是：算法比较简单，可以实现基本上的公平。</p>
+<h4 id="短作业-进程-优先调度算法"><a href="#短作业-进程-优先调度算法" class="headerlink" title="短作业(进程)优先调度算法"></a>短作业(进程)优先调度算法</h4><p>短作业优先(SJF)的调度算法是从后备队列中选择一个或若干个估计运行时间最短的作业，将它们调入内存运行。而短进程优先(SPF)调度算法则是从就绪队列中选出一个估计运行时间最短的进程，将处理机分配给它，使它立即执行并一直执行到完成，或发生某事件而被阻塞放弃处理机时再重新调度。该算法未照顾紧迫型作业。</p>
+<h3 id="高优先权优先调度算法"><a href="#高优先权优先调度算法" class="headerlink" title="高优先权优先调度算法"></a>高优先权优先调度算法</h3><p>为了照顾紧迫型作业，使之在进入系统后便获得优先处理，引入了最高优先权优先(FPF)调度算法。当把该算法用于作业调度时，系统将从后备队列中选择若干个优先权最高的作业装入内存。<br>当用于进程调度时，该算法是把处理机分配给就绪队列中优先权最高的进程。</p>
+<h4 id="非抢占式优先权算法"><a href="#非抢占式优先权算法" class="headerlink" title="非抢占式优先权算法"></a>非抢占式优先权算法</h4><p>在这种方式下，系统一旦把处理机分配给就绪队列中优先权最高的进程后，该进程便一直执行下去，直至完成；或因发生某事件使该进程放弃处理机时。这种调度算法主要用于批处理系统中；也可用于某些对实时性要求不严的实时系统中。</p>
+<h4 id="抢占式优先权调度算法"><a href="#抢占式优先权调度算法" class="headerlink" title="抢占式优先权调度算法"></a>抢占式优先权调度算法</h4><p>在这种方式下，系统同样是把处理机分配给优先权最高的进程，使之执行。但在其执行期间，只要又出现了另一个其优先权更高的进程，进程调度程序就立即停止当前进程(原优先权最高的进程) 的执行，重新将处理机分配给新到的优先权最高的进程。显然，这种抢占式的优先权调度算法能更好地满足紧迫作业的要求，故而常用于要求比较严格的实时系统中，以及对性能要求较高的批处理和分时系统中。</p>
+<h3 id="高响应比优先调度算法"><a href="#高响应比优先调度算法" class="headerlink" title="高响应比优先调度算法"></a>高响应比优先调度算法</h3><p>在批处理系统中，短作业优先算法是一种比较好的算法，其主要的不足之处是长作业的运行得不到保证。如果我们能为每个作业引入前面所述的动态优先权，并使作业的优先级随着等待时间的增加而以速率a 提高，则长作业在等待一定的时间后，必然有机会分配到处理机。该优先权的变化规律可描述为：</p>
+<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/1588843436863.png" class>
+
+</div>
+
+<ol>
+<li>如果作业的等待时间相同，则要求服务的时间愈短，其优先权愈高，因而该算法有利于短作业。</li>
+<li>当要求服务的时间相同时，作业的优先权决定于其等待时间，等待时间愈长，其优先权愈高，因而它实现的是先来先服务。</li>
+<li>对于长作业，作业的优先级可以随等待时间的增加而提高，当其等待时间足够长时，其优先级便可升到很高，从而也可获得处理机。简言之，该算法既照顾了短作业，又考虑了作业到达的先后次序，不会使长作业长期得不到服务。因此，该算法实现了一种较好的折衷。当然，在利用该算法时，每要进行调度之前，都须先做响应比的计算，这会增加系统开销</li>
+</ol>
+<h3 id="基于时间片的轮转调度算法"><a href="#基于时间片的轮转调度算法" class="headerlink" title="基于时间片的轮转调度算法"></a>基于时间片的轮转调度算法</h3><h4 id="时间片轮转法"><a href="#时间片轮转法" class="headerlink" title="时间片轮转法"></a>时间片轮转法</h4><p>在早期的时间片轮转法中，系统将所有的就绪进程按先来先服务的原则排成一个队列，每次调度时，把 CPU 分配给队首进程，并令其执行一个时间片。时间片的大小从几 ms 到几百 ms。当执行的时间片用完时，由一个计时器发出时钟中断请求，调度程序便据此信号来停止该进程的执行，并将它送往就绪队列的末尾；然后，再把处理机分配给就绪队列中新的队首进程，同时也让它执行一个时间片。这样就可以保证就绪队列中的所有进程在一给定的时间内均能获得一时间片的处理机执行时间。</p>
+<h4 id="多级反馈队列调度算法"><a href="#多级反馈队列调度算法" class="headerlink" title="多级反馈队列调度算法"></a>多级反馈队列调度算法</h4><ol>
+<li>应设置多个就绪队列，并为各个队列赋予不同的优先级。第一个队列的优先级最高，第二个队列次之，其余各队列的优先权逐个降低。该算法赋予各个队列中进程执行时间片的大小也各不相同，在优先权愈高的队列中，为每个进程所规定的执行时间片就愈小。例如，第二个队列的时间片要比第一个队列的时间片长一倍，……，第 i+1 个队列的时间片要比第 i 个队列的时间片长一倍。</li>
+<li>当一个新进程进入内存后，首先将它放入第一队列的末尾，按 FCFS 原则排队等待调度。当轮到该进程执行时，如它能在该时间片内完成，便可准备撤离系统；如果它在一个时间片结束时尚未完成，调度程序便将该进程转入第二队列的末尾，再同样地按 FCFS 原则等待调度执行；如果它在第二队列中运行一个时间片后仍未完成，再依次将它放入第三队列，……，如此下去，当一个长作业(进程)从第一队列依次降到第 n 队列后，在第 n 队列便采取按时间片轮转的方式运行。</li>
+<li>仅当第一队列空闲时，调度程序才调度第二队列中的进程运行；仅当第 1～(i-1)队列均空时，才会调度第 i 队列中的进程运行。如果处理机正在第 i 队列中为某进程服务时，又有新进程进入优先权较高的队列(第 1～(i-1)中的任何一个队列)，则此时新进程将抢占正在运行进程的处理机，即由调度程序把正在运行的进程放回到第 i 队列的末尾，把处理机分配给新到的高优先权进程。 在多级反馈队列调度算法中，如果规定第一个队列的时间片略大于多数人机交互所需之处理时间时，便能够较好的满足各种类型用户的需要。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>线程调度</tag>
       </tags>
   </entry>
   <entry>
@@ -3280,85 +3280,6 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>MySQL之日志-中继日志</title>
-    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/</url>
-    <content><![CDATA[<p>中继日志用于主从复制架构中的从服务器上，从服务器的 slave 进程从主服务器处获取二进制日志的内容并写入中继日志，然后由 IO 进程读取并执行中继日志中的语句。在复制过程中产生的日志一个线程读取别人的二进制日志,存到本地叫做中继日志,然后本地在开启一个线程去读取中继日志在本地做回放,就完成了数据的同步</p>
-<a id="more"></a>
-
-<h2 id="参数配置"><a href="#参数配置" class="headerlink" title="参数配置"></a>参数配置</h2><p>max_relay_log_size 最大中继日志大小<br>relay_log_info_file=relay-log.info 中继日志存放的文件  </p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>中继日志</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL之日志-事务日志</title>
-    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/</url>
-    <content><![CDATA[<p>MySQL会最大程度的利用缓存，从而提高数据的访问效率。那么换一句话来说，任何高性能的系统都必须利用到缓存，从各个层面来讲，缓存都发挥了巨大的作用。再上升到一个高度提炼一下：缓存和队列是实现高性能的必走之路。那么对于数据库来说这个却是个很棘手的问题，要保证数据更高效率的读取和存储，所以要利用到缓存。但是要保证数据的一致性，则必须保证所有的数据都必须准确无误的存储到数据库中，及时发生意外，也要保证数据可恢复。我们知道InnoDB是一个事务安全的存储引擎，而一致性是事务ACID中的一个重要特性。InnoDB存储引擎主要是通过InnoDB事务日志实现数据一致性的，InnoDB事务日志包括重做（redo、循环写入）日志，以及回滚（undo）日志。</p>
-<a id="more"></a>
-
-<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>事务日志（InnoDB特有的日志）可以帮助提高事务的效率。<br>事物日志是innodb专用功能,这里只考虑innod存储引擎。<br>出于性能和故障恢复的考虑，MySQL 服务器不会立即执行事务，而是先将事务记录在日志里面，这样可以将随机IO转换成顺序IO，从而提高IO性能。<br>事物日志默认情况下会有两个文件，名称分别为ib_logfile0和ib_logfile1。当其中一个写满时，MySQL会将事务日志写入另一个日志文件(先清空原有内容)。当 MySQL 从崩溃中恢复时，会读取事务日志，将其中已经 commit 的事务写入数据库，没有 commit 的事务 rollback 。<br>在事物提交时，innodb是否将缓冲到文件中同步，只要提交则立刻同步，同时又不会保证每个语句都同步，因此性能不会有特别大的影响。<br>使用事务日志，存储引擎在修改表的数据时只需要修改其内存拷贝，再把该修改行为记录到持久在硬盘上的事务日志中，而不用每次都将修改的数据本身持久到磁盘。<br>事务日志采用追加的方式，因此写日志的操作是磁盘上一小块区域内的顺序I/O，而不像随机I/O需要在磁盘的多个地方移动磁头，所以采用事务日志的方式相对来说要快得多。<br>事务日志持久以后，内存中被修改的数据在后台可以慢慢的刷回到磁盘。目前大多数的存储引擎都是这样实现的，我们通常称之为预写式日志，修改数据需要写两次磁盘。<br>如果数据的修改已经记录到事务日志并持久化，但数据本身还没有写回磁盘，此时系统崩溃，存储引擎在重启时能够自动恢复这部分修改的数据。具有的恢复方式则视存储引擎而定。<br>事务日志是被轮转的,一启动就分配完毕了, 并且是连续的存储空间,默认每个文件的大小为5M<br>主要功能: 将随机I/O转换为顺序I/O<br>ib_logfile0, ib_logfile1, 这两个文件如果坏了那么对于mysql来说是致命的, 所以建议事务log使用raid<br>会把一些相关信息记录事务日志中(记录对数据文件数据修改的物理位置或叫做偏移量);<br>作用:在系统崩溃重启时，作事务重做；在系统正常时，每次checkpoint时间点，会将之前写入事务应用到数据文件中。<br>有了 redo log，InnoDB 就可以保证即使数据库发生异常重启，之前提交的记录都不会丢失，这个能力称为 crash-safe。  </p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><div align="center">
-
-<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544132375.png" class>
-
-</div>
-
-<div align="center">
-
-<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544168998.png" class title="redo log循环写入">
-
-</div>
-
-<h2 id="查看事务日志定义"><a href="#查看事务日志定义" class="headerlink" title="查看事务日志定义"></a>查看事务日志定义</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">global</span> variables <span class="keyword">like</span> <span class="string">&#x27;innodb_log%&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<div align="center">
-
-<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544274091.png" class>
-
-</div>
-
-<h3 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> <span class="keyword">global</span> variables <span class="keyword">like</span> <span class="string">&#x27;innodb_log%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------+----------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name               <span class="operator">|</span> <span class="keyword">Value</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------+----------+</span></span><br><span class="line"># 定义内存空间的大小，万一都写在buffer里面，如果进程崩溃，也会丢失事物，</span><br><span class="line"># 因此避免这种情况，一旦事物提交了，那么需要立即同步到磁盘中，而不是间断同步</span><br><span class="line"># 事务日志缓存区,可设置<span class="number">1</span>M<span class="operator">~</span><span class="number">8</span>M,默认<span class="number">8</span>M,延迟事务日志写入磁盘,</span><br><span class="line"># 启用大的事务日志缓存,可以将完整运行大事务日志，暂时存放在事务缓存区中,</span><br><span class="line"># 不必(事务提交前)写入磁盘保存,同时也起到节约磁盘空间占用;</span><br><span class="line"><span class="operator">|</span> innodb_log_buffer_size      <span class="operator">|</span> <span class="number">16777216</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_checksums        <span class="operator">|</span> <span class="keyword">ON</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_compressed_pages <span class="operator">|</span> <span class="keyword">ON</span>       <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 控制事务日志ib_logfile的大小,范围<span class="number">5</span>MB<span class="operator">~</span><span class="number">4</span>G；</span><br><span class="line"># 所有事务日志ib_logfile0<span class="operator">+</span>ib_logfile1<span class="operator">+</span>..累加大小不能超过<span class="number">4</span>G，</span><br><span class="line"># 事务日志大，checkpoint会少,节省磁盘IO，</span><br><span class="line"># 但是大的事务日志意味着数据库crash时，恢复起来较慢.</span><br><span class="line"># 引入问题:修改该参数大小，导致ib_logfile文件的大小和之前存在的文件大小不匹配</span><br><span class="line"># 解决方式：在干净关闭数据库情况下，删除ib_logfile，而后重启数据库，会自行创建该文件;</span><br><span class="line">#每个日志的单位大小为<span class="number">5</span>MB，如果有些大数据的话，则需要将其调大，</span><br><span class="line">#否则恢复起来会比较慢，但是太大了也会导致恢复比较慢</span><br><span class="line"><span class="operator">|</span> innodb_log_file_size        <span class="operator">|</span> <span class="number">50331648</span> <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 至少有两个</span><br><span class="line"><span class="operator">|</span> innodb_log_files_in_group   <span class="operator">|</span> <span class="number">2</span>        <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 定义innodb事务日志组的位置，</span><br><span class="line"># 定义事物日志组的位置，一般来讲会有<span class="number">2</span>个日志，</span><br><span class="line"># 一个写满后会重建文件（达到轮询功能，写满后会同步到磁盘并将其清空）</span><br><span class="line"># 一般来讲，日志文件大小是固定的，凡是mysql已启动日志空间会在磁盘上立即分配，</span><br><span class="line"># 因为他们的主要功能是将随机IO转为顺序IO ，默认大小是每个文件为<span class="number">5</span>MB，</span><br><span class="line"># 明确说明事物日志的路径保存在.<span class="operator">/</span> 表示在当前路径下</span><br><span class="line"><span class="operator">|</span> innodb_log_group_home_dir   <span class="operator">|</span> .<span class="operator">/</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_write_ahead_size <span class="operator">|</span> <span class="number">8192</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------+----------+</span></span><br><span class="line"><span class="number">7</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="innodb-flush-log-at-trx-commit"><a href="#innodb-flush-log-at-trx-commit" class="headerlink" title="innodb_flush_log_at_trx_commit"></a>innodb_flush_log_at_trx_commit</h4><p>在事务提交时innodb是否同步日志从缓冲到文件中（1表示事务一提交就同步不提交每隔一秒同步一次，性能会很差造成大量的磁盘I/O；定义为2表示只有在事务提交时才会同步但是可能会丢失整个事务 ）<br>innodb_flush_log_at_trx_commit：控制事务日志何时写盘和刷盘，安全递增：0,2,1；事务缓存区:log_buffer;<br>如果innodb_flush_log_at_trx_commit设置为0，log buffer将每秒一次地写入log file中，并且log file的flush(刷到磁盘)操作同时进行.该模式下，在事务提交的时候，不会主动触发写入磁盘的操作。<br>如果innodb_flush_log_at_trx_commit设置为1，每次事务提交时MySQL都会把log buffer的数据写入log file，并且flush(刷到磁盘)中去. （最安全）<br>如果innodb_flush_log_at_trx_commit设置为2，每次事务提交时MySQL都会把log buffer的数据写入log file.但是flush(刷到磁盘)操作并不会同时进行。该模式下,MySQL会每秒执行一次 flush(刷到磁盘)操作。<br>适用环境:</p>
-<ul>
-<li>0:磁盘IO能力有限,安全方便较差,无复制或复制延迟可以接受，如日志性业务，mysql损坏丢失1s事务数据;</li>
-<li>2:数据安全性有要求，可以丢失一点事务日志，复制延迟也可以接受，OS损坏时才可能丢失数据;</li>
-<li>1:数据安全性要求非常高，且磁盘IO能力足够支持业务，如充值消费，敏感业务;</li>
-</ul>
-<h4 id="innodb-mirrored-log-groups"><a href="#innodb-mirrored-log-groups" class="headerlink" title="innodb_mirrored_log_groups"></a>innodb_mirrored_log_groups</h4><p>表示对日志组做镜像</p>
-<h3 id="文件位置"><a href="#文件位置" class="headerlink" title="文件位置"></a>文件位置</h3><div align="center">
-
-<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544946386.png" class>
-
-</div>
-
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
-<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
-<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
-<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
-<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
-<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
-<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
-<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>事务日志</tag>
-        <tag>redo</tag>
-        <tag>undo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL之原理分析-排序</title>
     <url>/2021/02/14/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-%E6%8E%92%E5%BA%8F/</url>
     <content><![CDATA[<h2 id="排序算法"><a href="#排序算法" class="headerlink" title="排序算法"></a>排序算法</h2><div align="center">
@@ -3442,6 +3363,85 @@ SHR：shared memory 共享内存<br>
         <tag>语法分析</tag>
         <tag>排序</tag>
         <tag>order by</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之日志-中继日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<p>中继日志用于主从复制架构中的从服务器上，从服务器的 slave 进程从主服务器处获取二进制日志的内容并写入中继日志，然后由 IO 进程读取并执行中继日志中的语句。在复制过程中产生的日志一个线程读取别人的二进制日志,存到本地叫做中继日志,然后本地在开启一个线程去读取中继日志在本地做回放,就完成了数据的同步</p>
+<a id="more"></a>
+
+<h2 id="参数配置"><a href="#参数配置" class="headerlink" title="参数配置"></a>参数配置</h2><p>max_relay_log_size 最大中继日志大小<br>relay_log_info_file=relay-log.info 中继日志存放的文件  </p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>中继日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之日志-事务日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<p>MySQL会最大程度的利用缓存，从而提高数据的访问效率。那么换一句话来说，任何高性能的系统都必须利用到缓存，从各个层面来讲，缓存都发挥了巨大的作用。再上升到一个高度提炼一下：缓存和队列是实现高性能的必走之路。那么对于数据库来说这个却是个很棘手的问题，要保证数据更高效率的读取和存储，所以要利用到缓存。但是要保证数据的一致性，则必须保证所有的数据都必须准确无误的存储到数据库中，及时发生意外，也要保证数据可恢复。我们知道InnoDB是一个事务安全的存储引擎，而一致性是事务ACID中的一个重要特性。InnoDB存储引擎主要是通过InnoDB事务日志实现数据一致性的，InnoDB事务日志包括重做（redo、循环写入）日志，以及回滚（undo）日志。</p>
+<a id="more"></a>
+
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>事务日志（InnoDB特有的日志）可以帮助提高事务的效率。<br>事物日志是innodb专用功能,这里只考虑innod存储引擎。<br>出于性能和故障恢复的考虑，MySQL 服务器不会立即执行事务，而是先将事务记录在日志里面，这样可以将随机IO转换成顺序IO，从而提高IO性能。<br>事物日志默认情况下会有两个文件，名称分别为ib_logfile0和ib_logfile1。当其中一个写满时，MySQL会将事务日志写入另一个日志文件(先清空原有内容)。当 MySQL 从崩溃中恢复时，会读取事务日志，将其中已经 commit 的事务写入数据库，没有 commit 的事务 rollback 。<br>在事物提交时，innodb是否将缓冲到文件中同步，只要提交则立刻同步，同时又不会保证每个语句都同步，因此性能不会有特别大的影响。<br>使用事务日志，存储引擎在修改表的数据时只需要修改其内存拷贝，再把该修改行为记录到持久在硬盘上的事务日志中，而不用每次都将修改的数据本身持久到磁盘。<br>事务日志采用追加的方式，因此写日志的操作是磁盘上一小块区域内的顺序I/O，而不像随机I/O需要在磁盘的多个地方移动磁头，所以采用事务日志的方式相对来说要快得多。<br>事务日志持久以后，内存中被修改的数据在后台可以慢慢的刷回到磁盘。目前大多数的存储引擎都是这样实现的，我们通常称之为预写式日志，修改数据需要写两次磁盘。<br>如果数据的修改已经记录到事务日志并持久化，但数据本身还没有写回磁盘，此时系统崩溃，存储引擎在重启时能够自动恢复这部分修改的数据。具有的恢复方式则视存储引擎而定。<br>事务日志是被轮转的,一启动就分配完毕了, 并且是连续的存储空间,默认每个文件的大小为5M<br>主要功能: 将随机I/O转换为顺序I/O<br>ib_logfile0, ib_logfile1, 这两个文件如果坏了那么对于mysql来说是致命的, 所以建议事务log使用raid<br>会把一些相关信息记录事务日志中(记录对数据文件数据修改的物理位置或叫做偏移量);<br>作用:在系统崩溃重启时，作事务重做；在系统正常时，每次checkpoint时间点，会将之前写入事务应用到数据文件中。<br>有了 redo log，InnoDB 就可以保证即使数据库发生异常重启，之前提交的记录都不会丢失，这个能力称为 crash-safe。  </p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544132375.png" class>
+
+</div>
+
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544168998.png" class title="redo log循环写入">
+
+</div>
+
+<h2 id="查看事务日志定义"><a href="#查看事务日志定义" class="headerlink" title="查看事务日志定义"></a>查看事务日志定义</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">global</span> variables <span class="keyword">like</span> <span class="string">&#x27;innodb_log%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544274091.png" class>
+
+</div>
+
+<h3 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> <span class="keyword">global</span> variables <span class="keyword">like</span> <span class="string">&#x27;innodb_log%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------+----------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name               <span class="operator">|</span> <span class="keyword">Value</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------+----------+</span></span><br><span class="line"># 定义内存空间的大小，万一都写在buffer里面，如果进程崩溃，也会丢失事物，</span><br><span class="line"># 因此避免这种情况，一旦事物提交了，那么需要立即同步到磁盘中，而不是间断同步</span><br><span class="line"># 事务日志缓存区,可设置<span class="number">1</span>M<span class="operator">~</span><span class="number">8</span>M,默认<span class="number">8</span>M,延迟事务日志写入磁盘,</span><br><span class="line"># 启用大的事务日志缓存,可以将完整运行大事务日志，暂时存放在事务缓存区中,</span><br><span class="line"># 不必(事务提交前)写入磁盘保存,同时也起到节约磁盘空间占用;</span><br><span class="line"><span class="operator">|</span> innodb_log_buffer_size      <span class="operator">|</span> <span class="number">16777216</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_checksums        <span class="operator">|</span> <span class="keyword">ON</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_compressed_pages <span class="operator">|</span> <span class="keyword">ON</span>       <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 控制事务日志ib_logfile的大小,范围<span class="number">5</span>MB<span class="operator">~</span><span class="number">4</span>G；</span><br><span class="line"># 所有事务日志ib_logfile0<span class="operator">+</span>ib_logfile1<span class="operator">+</span>..累加大小不能超过<span class="number">4</span>G，</span><br><span class="line"># 事务日志大，checkpoint会少,节省磁盘IO，</span><br><span class="line"># 但是大的事务日志意味着数据库crash时，恢复起来较慢.</span><br><span class="line"># 引入问题:修改该参数大小，导致ib_logfile文件的大小和之前存在的文件大小不匹配</span><br><span class="line"># 解决方式：在干净关闭数据库情况下，删除ib_logfile，而后重启数据库，会自行创建该文件;</span><br><span class="line">#每个日志的单位大小为<span class="number">5</span>MB，如果有些大数据的话，则需要将其调大，</span><br><span class="line">#否则恢复起来会比较慢，但是太大了也会导致恢复比较慢</span><br><span class="line"><span class="operator">|</span> innodb_log_file_size        <span class="operator">|</span> <span class="number">50331648</span> <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 至少有两个</span><br><span class="line"><span class="operator">|</span> innodb_log_files_in_group   <span class="operator">|</span> <span class="number">2</span>        <span class="operator">|</span></span><br><span class="line"></span><br><span class="line"># 定义innodb事务日志组的位置，</span><br><span class="line"># 定义事物日志组的位置，一般来讲会有<span class="number">2</span>个日志，</span><br><span class="line"># 一个写满后会重建文件（达到轮询功能，写满后会同步到磁盘并将其清空）</span><br><span class="line"># 一般来讲，日志文件大小是固定的，凡是mysql已启动日志空间会在磁盘上立即分配，</span><br><span class="line"># 因为他们的主要功能是将随机IO转为顺序IO ，默认大小是每个文件为<span class="number">5</span>MB，</span><br><span class="line"># 明确说明事物日志的路径保存在.<span class="operator">/</span> 表示在当前路径下</span><br><span class="line"><span class="operator">|</span> innodb_log_group_home_dir   <span class="operator">|</span> .<span class="operator">/</span>       <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_log_write_ahead_size <span class="operator">|</span> <span class="number">8192</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------------------+----------+</span></span><br><span class="line"><span class="number">7</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="innodb-flush-log-at-trx-commit"><a href="#innodb-flush-log-at-trx-commit" class="headerlink" title="innodb_flush_log_at_trx_commit"></a>innodb_flush_log_at_trx_commit</h4><p>在事务提交时innodb是否同步日志从缓冲到文件中（1表示事务一提交就同步不提交每隔一秒同步一次，性能会很差造成大量的磁盘I/O；定义为2表示只有在事务提交时才会同步但是可能会丢失整个事务 ）<br>innodb_flush_log_at_trx_commit：控制事务日志何时写盘和刷盘，安全递增：0,2,1；事务缓存区:log_buffer;<br>如果innodb_flush_log_at_trx_commit设置为0，log buffer将每秒一次地写入log file中，并且log file的flush(刷到磁盘)操作同时进行.该模式下，在事务提交的时候，不会主动触发写入磁盘的操作。<br>如果innodb_flush_log_at_trx_commit设置为1，每次事务提交时MySQL都会把log buffer的数据写入log file，并且flush(刷到磁盘)中去. （最安全）<br>如果innodb_flush_log_at_trx_commit设置为2，每次事务提交时MySQL都会把log buffer的数据写入log file.但是flush(刷到磁盘)操作并不会同时进行。该模式下,MySQL会每秒执行一次 flush(刷到磁盘)操作。<br>适用环境:</p>
+<ul>
+<li>0:磁盘IO能力有限,安全方便较差,无复制或复制延迟可以接受，如日志性业务，mysql损坏丢失1s事务数据;</li>
+<li>2:数据安全性有要求，可以丢失一点事务日志，复制延迟也可以接受，OS损坏时才可能丢失数据;</li>
+<li>1:数据安全性要求非常高，且磁盘IO能力足够支持业务，如充值消费，敏感业务;</li>
+</ul>
+<h4 id="innodb-mirrored-log-groups"><a href="#innodb-mirrored-log-groups" class="headerlink" title="innodb_mirrored_log_groups"></a>innodb_mirrored_log_groups</h4><p>表示对日志组做镜像</p>
+<h3 id="文件位置"><a href="#文件位置" class="headerlink" title="文件位置"></a>文件位置</h3><div align="center">
+
+<img src="/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/1587544946386.png" class>
+
+</div>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>事务日志</tag>
+        <tag>redo</tag>
+        <tag>undo</tag>
       </tags>
   </entry>
   <entry>
@@ -4409,311 +4409,6 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>JVM HotSpot虚拟机对象探秘</title>
-    <url>/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/</url>
-    <content><![CDATA[<h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><h2 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h2><p>在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、实例数据（Instance Data）和对齐填充（Padding）。</p>
-<div align="center">
-
-<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80.png" class title="对象的内存布局">
-
-</div>
-
-<a id="more"></a>
-
-<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><p>Object Header（64或96bit）,包括：Mark Word（32bit）、Klass World（32bits）、array length（32bits，存在数据组对象时）</p>
-<h4 id="Markword"><a href="#Markword" class="headerlink" title="Markword"></a>Markword</h4><p>在HotSpot中，GC堆上的对象需要维持一些状态信息，具体如下：</p>
-<ol>
-<li>身份哈希码（identity hash code）</li>
-<li>当前是否已被GC标记（只在GC过程中需要）</li>
-<li>当前对象年龄（经历GC的次数，最大15）</li>
-<li>当前是否被当做锁同步</li>
-<li>最近持有该对象锁的线程ID（用于偏向锁）</li>
-</ol>
-<p>以上信息根据对象状态有选择的记录（参考后续Markword在32和64位VM中的说明）。</p>
-<p>markword数据的长度在32位和64位的虚拟机（未开启压缩指针）中分别为32bit和64bit，它的最后2bit是锁状态标志位，用来标记当前对象的状态，对象的所处的状态，决定了markword存储的内容，如下表所示:</p>
-<style type="text/css">
-.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
-.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
-  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
-  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-.tg .tg-sjuo{background-color:#C2FFD6;text-align:left;vertical-align:top}
-</style>
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;&nbsp;状态&nbsp;&nbsp;&nbsp;&nbsp;</th>
-    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;&nbsp;标志位&nbsp;&nbsp;&nbsp;&nbsp;</th>
-    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;&nbsp;存储内容&nbsp;&nbsp;&nbsp;&nbsp;</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;未锁定&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;01&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;对象哈希码、对象分代年龄&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;轻量级锁定&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;00&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;指向锁记录的指针&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;膨胀(重量级锁定)&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;执行重量级锁定的指针&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;GC标记&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;空(不需要记录信息)&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;可偏向&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;01&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;偏向线程ID、偏向时间戳、对象分代年龄&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-</tbody>
-</table>
-
-<h5 id="32位虚拟机markword"><a href="#32位虚拟机markword" class="headerlink" title="32位虚拟机markword"></a>32位虚拟机markword</h5><style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-baqh{text-align:center;vertical-align:top}
-.tg .tg-29iq{background-color:#FFFFC7;text-align:center;vertical-align:top}
-.tg .tg-fw9x{background-color:#96FFFB;text-align:left;vertical-align:top}
-</style>
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-fw9x" rowspan="3">锁状态</th>
-    <th class="tg-29iq" colspan="5">32bit</th>
-  </tr>
-  <tr>
-    <td class="tg-29iq" colspan="2">25bit</td>
-    <td class="tg-29iq">4bit</td>
-    <td class="tg-29iq">1bit</td>
-    <td class="tg-29iq">2bit</td>
-  </tr>
-  <tr>
-    <td class="tg-29iq">23bit</td>
-    <td class="tg-29iq">2bit</td>
-    <td class="tg-29iq">age</td>
-    <td class="tg-29iq">偏向模式</td>
-    <td class="tg-29iq">标志位</td>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-fw9x">未锁定</td>
-    <td class="tg-baqh" colspan="2">对象哈希码（25）</td>
-    <td class="tg-baqh">分代年龄</td>
-    <td class="tg-baqh">0</td>
-    <td class="tg-baqh">01</td>
-  </tr>
-  <tr>
-    <td class="tg-fw9x">轻量级锁<br>自旋锁<br>无锁</td>
-    <td class="tg-baqh" colspan="4">指向调用栈中锁记录指针（Lock Record）<br>ptr_to_lock_record(30)</td>
-    <td class="tg-baqh">00</td>
-  </tr>
-  <tr>
-    <td class="tg-fw9x">重量级锁定<br>（锁碰撞）</td>
-    <td class="tg-baqh" colspan="4">指向互斥量（重量级锁）的指针<br>ptr_to_heavyweigth_monitor(30)</td>
-    <td class="tg-baqh">10</td>
-  </tr>
-  <tr>
-    <td class="tg-fw9x">GC标记</td>
-    <td class="tg-baqh" colspan="4">空（30，CMS过程中用到的标记信息）</td>
-    <td class="tg-baqh">11</td>
-  </tr>
-  <tr>
-    <td class="tg-fw9x">可偏向</td>
-    <td class="tg-baqh">当前线程指针JavaThread*（23）</td>
-    <td class="tg-baqh">Epoch</td>
-    <td class="tg-baqh">分代年龄</td>
-    <td class="tg-baqh">1</td>
-    <td class="tg-baqh">01</td>
-  </tr>
-</tbody>
-</table>
-
-<h5 id="64位虚拟机markword"><a href="#64位虚拟机markword" class="headerlink" title="64位虚拟机markword"></a>64位虚拟机markword</h5><style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-mukq{background-color:#96FFFB;border-color:inherit;text-align:left;vertical-align:top}
-.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
-.tg .tg-hafo{background-color:#fffc9e;border-color:inherit;text-align:center;vertical-align:top}
-</style>
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-mukq" rowspan="3">锁状态</th>
-    <th class="tg-hafo" colspan="7">64bit</th>
-  </tr>
-  <tr>
-    <td class="tg-hafo" colspan="3">56bit</td>
-    <td class="tg-hafo">1bit</td>
-    <td class="tg-hafo">4bit</td>
-    <td class="tg-hafo">1bit</td>
-    <td class="tg-hafo">2bit</td>
-  </tr>
-  <tr>
-    <td class="tg-hafo">25bit</td>
-    <td class="tg-hafo">29bit</td>
-    <td class="tg-hafo">2bit</td>
-    <td class="tg-hafo">1bit</td>
-    <td class="tg-hafo">age</td>
-    <td class="tg-hafo">偏向模式</td>
-    <td class="tg-hafo">标志位</td>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-mukq">未锁定</td>
-    <td class="tg-c3ow">unused</td>
-    <td class="tg-c3ow" colspan="2">对象哈希码（31）</td>
-    <td class="tg-c3ow">unused</td>
-    <td class="tg-c3ow">分代年龄</td>
-    <td class="tg-c3ow">0</td>
-    <td class="tg-c3ow">01</td>
-  </tr>
-  <tr>
-    <td class="tg-mukq">轻量级锁<br>自旋锁<br>无锁</td>
-    <td class="tg-c3ow" colspan="6">指向调用栈中锁记录指针（Lock Record）<br>ptr_to_lock_record(62)</td>
-    <td class="tg-c3ow">00</td>
-  </tr>
-  <tr>
-    <td class="tg-mukq">重量级锁定<br>（锁碰撞）</td>
-    <td class="tg-c3ow" colspan="6">指向互斥量（重量级锁）的指针<br>ptr_to_heavyweigth_monitor(62)</td>
-    <td class="tg-c3ow">10</td>
-  </tr>
-  <tr>
-    <td class="tg-mukq">GC标记</td>
-    <td class="tg-c3ow" colspan="6">空（CMS过程中用到的标记信息）</td>
-    <td class="tg-c3ow">11</td>
-  </tr>
-  <tr>
-    <td class="tg-mukq">可偏向</td>
-    <td class="tg-c3ow" colspan="2">当前线程指针JavaThread*（54）</td>
-    <td class="tg-c3ow">Epoch（2）</td>
-    <td class="tg-c3ow">unused</td>
-    <td class="tg-c3ow">分代年龄</td>
-    <td class="tg-c3ow">1</td>
-    <td class="tg-c3ow">01</td>
-  </tr>
-</tbody>
-</table>
-
-<h5 id="特殊字段说明"><a href="#特殊字段说明" class="headerlink" title="特殊字段说明"></a>特殊字段说明</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hash： 保存对象的哈希码</span><br><span class="line">age： 保存对象的分代年龄</span><br><span class="line">biased_lock： 偏向锁标识位</span><br><span class="line">lock： 锁状态标识位</span><br><span class="line">JavaThread*： 保存持有偏向锁的线程ID</span><br><span class="line">epoch： 保存偏向时间戳</span><br></pre></td></tr></table></figure>
-<h4 id="klass"><a href="#klass" class="headerlink" title="klass"></a>klass</h4><p>对象头的另外一部分是klass类型指针，即对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例.</p>
-<ol>
-<li>在Hotspot中，所有存储在由GC管理的堆（Java堆和PermGen）的子类的实例都有一个_klass字段，用于指向一个描述自身的元数据的对象</li>
-<li>Java对象和数组对象的klass并不是Java中的Class。klass用于运行而Class只用于Java中的反射；klass中有_java_mirror字段执行java中的class</li>
-</ol>
-<h4 id="数组长度（只有数组对象有）"><a href="#数组长度（只有数组对象有）" class="headerlink" title="数组长度（只有数组对象有）"></a>数组长度（只有数组对象有）</h4><p>如果对象是一个数组, 那在对象头中还必须有一块数据用于记录数组长度.</p>
-<h3 id="实例数据"><a href="#实例数据" class="headerlink" title="实例数据"></a>实例数据</h3><ol>
-<li>实例数据部分是对象真正存储的有效信息，也是在程序代码中所定义的各种类型的字段内容。无论是从父类继承下来的，还是在子类中定义的，都需要记录起来。</li>
-<li>在Hotspot中对象实例数据紧跟在对象头后面分配空间</li>
-<li>字段的分配顺序与代码中的顺序和Hotspot的分配策略相关</li>
-<li>无论哪种策略都必须满足<ul>
-<li>宽度相同的字段总是相邻分配</li>
-<li>不同宽度的字段可能存在对象填充（padding）</li>
-</ul>
-</li>
-<li>一般是基类声明的实例字段会出现在派生类声明字段之前，但是如果开启压缩模式时派生类较短的字段可能会插入到基类的实例字段之间的对齐填充部分</li>
-<li>相关参数，参考FieldsAllocationStyle、CompactFields</li>
-</ol>
-<h3 id="对齐填充"><a href="#对齐填充" class="headerlink" title="对齐填充"></a>对齐填充</h3><ol>
-<li>对齐填充并不是必然存在的，也没有特别的含义，它仅仅起着占位符的作用。</li>
-<li>在Hotspot中，GC堆上的对象要求<strong>起始地址是8的倍数，占用的空间也必须是8的倍数</strong>，如果不足则用0补齐</li>
-<li>对齐可能出现不同宽度的字段之间，也可能出现在对象的末尾</li>
-<li>不存在为对齐数据时则不会对齐填充</li>
-<li><strong>对象头部分正好是8字节的倍数</strong>（1倍或者2倍）</li>
-<li>对象实例数据部分没有对齐时，就需要通过对齐填充来补全</li>
-</ol>
-<h2 id="对象大小计算"><a href="#对象大小计算" class="headerlink" title="对象大小计算"></a>对象大小计算</h2><ol>
-<li>在32位系统下，存放Class指针的空间大小是4字节,MarkWord是4字节，对象头为8字节。</li>
-<li>在64位系统下，存放Class指针的空间大小是8字节,MarkWord是8字节，对象头为16字节。</li>
-<li>64位开启指针压缩的情况下，存放Class指针的空间大小是4字节，MarkWord是8字节，对象头为12字节。 数组长度4字节+数组对象头8字节(对象引用4字节（未开启指针压缩的64位为8字节）+数组markword为4字节（64位未开启指针压缩的为8字节）)+对齐4=16字节。</li>
-<li>静态属性不算在对象大小内。</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104073081.png" class title="对象大小计算">
-
-</div>
-
-<div align="center">
-
-<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104088136.png" class title="对象大小计算">
-
-</div>
-
-<h2 id="对象头分析工具JOL"><a href="#对象头分析工具JOL" class="headerlink" title="对象头分析工具JOL"></a>对象头分析工具JOL</h2><h3 id="maven"><a href="#maven" class="headerlink" title="maven"></a>maven</h3><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.openjdk.jol<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jol-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.jvm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.openjdk.jol.info.ClassLayout;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Test t = <span class="keyword">new</span> Test();</span><br><span class="line">        System.out.println(ClassLayout.parseInstance(t).toPrintable());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="输出结果"><a href="#输出结果" class="headerlink" title="输出结果"></a>输出结果</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">com.sunld.jvm.Test object internals:</span><br><span class="line"> OFFSET  SIZE   TYPE DESCRIPTION                               VALUE</span><br><span class="line">      <span class="number">0</span>     <span class="number">4</span>        (object header)                           <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00000001</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">1</span>)</span><br><span class="line">      <span class="number">4</span>     <span class="number">4</span>        (object header)                           <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">0</span>)</span><br><span class="line">      <span class="number">8</span>     <span class="number">4</span>        (object header)                           <span class="number">05</span> c1 <span class="number">00</span> f8 (<span class="number">00000101</span> <span class="number">11000001</span> <span class="number">00000000</span> <span class="number">11111000</span>) (-<span class="number">134168315</span>)</span><br><span class="line">     <span class="number">12</span>     <span class="number">4</span>        (loss due to the next object alignment)</span><br><span class="line">Instance size: <span class="number">16</span> bytes</span><br><span class="line">Space losses: <span class="number">0</span> bytes internal + <span class="number">4</span> bytes external = <span class="number">4</span> bytes total</span><br></pre></td></tr></table></figure>
-<h2 id="对象的定位"><a href="#对象的定位" class="headerlink" title="对象的定位"></a>对象的定位</h2><p>参考：<a href="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" target="_blank">JVM内存区域</a></p>
-<h3 id="HotSpot对象模型"><a href="#HotSpot对象模型" class="headerlink" title="HotSpot对象模型"></a>HotSpot对象模型</h3><p>HotSpot中采用了<strong>OOP-Klass</strong>模型，它是描述Java对象实例的模型，它分为两部分：</p>
-<ol>
-<li>类加载到内存时封装为<strong>klass</strong>，klass包含类的元数据信息（比如类的方法、常量池等信息，类似于java.lang.Class对象）</li>
-<li><strong>OOP（Ordinary Object Pointer）</strong> ：普通对象指针，包含MarkWord（存储当前指针指向的对象运行时的一些状态数据） 和元数据指针（指向klass，表示使用的对象类型）</li>
-</ol>
-<blockquote>
-<p>HotSopt JVM的设计者把对象模型拆成<strong>klass和oop</strong>，其中oop中不含有任何虚函数，而klass就含有虚函数表，可以进行method dispatch。<br>HotSpot中，OOP-Klass实现的代码都在/hotspot/src/share/vm/oops/路径下，oop的实现为<strong>instanceOop 和 arrayOop</strong>，他们来描述对象头，其中arrayOop对象用于描述数组类型。</p>
-</blockquote>
-<p>以下就是oop.hhp文件中oopDesc的源码，可以看到两个变量_mark就是MarkWord，_metadata就是元数据指针，指向klass对象，这个指针压缩的是32位，未压缩的是64位；</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">volatile</span> markOop _mark; <span class="comment">// 标识运行时数据</span></span><br><span class="line"><span class="class"><span class="keyword">union</span> _<span class="title">metadata</span> &#123;</span></span><br><span class="line">  Klass* _klass;</span><br><span class="line">  narrowKlass _compressed_klass;</span><br><span class="line">&#125; _metadata; <span class="comment">//klass指针</span></span><br></pre></td></tr></table></figure>
-<p>一个Java对象在内存中的布局可以连续分成两部分：instanceOop（继承自oop.hpp）和实例数据；通过栈帧中的对象引用reference找到Java堆中的对象，再通过对象的<strong>instanceOop中的元数据指针klass来找到方法区中的instanceKlass</strong>，从而确定该对象的类型。执行过程：</p>
-<ol>
-<li><strong>类加载</strong>：在JVM内部创建一个instanceKlass对象表示这个类的运行时元数据（类似Class对象）</li>
-<li><strong>初始化对象的时候</strong>（执行invokespecial ***::），JVM就会创建一个instanceOopDesc对象表示这个对象的实例，然后进行Mark Word的填充，将元数据指针指向Klass对象，并填充实例变量。</li>
-<li>元数据—— instanceKlass 对象会存在元空间（方法区）</li>
-<li>对象实例—— instanceOopDesc 会存在Java堆。Java虚拟机栈中会存有这个对象实例的引用。</li>
-</ol>
-<h3 id="成员变量重排序"><a href="#成员变量重排序" class="headerlink" title="成员变量重排序"></a>成员变量重排序</h3><p>为了提高性能，每个对象的起始地址都对齐于8字节，当封装对象的时候为了高效率，对象字段声明的顺序会被重排序成下列基于字节大小的顺序：</p>
-<ol>
-<li>double (8字节) 和 long (8字节)</li>
-<li>int (4字节) 和 float (4字节)</li>
-<li>short (2字节) 和 char (2字节)：char在java中是2个字节。java采用unicode，2个字节（16位）来表示一个字符。</li>
-<li>boolean (1字节) 和 byte (1字节)</li>
-<li>reference引用 (4/8 字节)</li>
-<li>&lt;子类字段重复上述顺序&gt;</li>
-</ol>
-<p>我们可以测试一下java对不同类型的重排序，使用jdk1.8，采用反射的方式先获取到unsafe类，然后获取到每个field在类里面的偏移地址，就能看出来了<br>测试代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.jvm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sun.misc.Contended;</span><br><span class="line"><span class="keyword">import</span> sun.misc.Unsafe;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TypeSequence</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> contended_boolean;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">byte</span> a;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> b;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> contended_short;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">char</span> d;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">short</span> c;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> e;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">float</span> f;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> contended_int;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> contended_double;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">double</span> g;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">long</span> h;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span>  Unsafe UNSAFE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="meta">@SuppressWarnings(&quot;ALL&quot;)</span></span><br><span class="line">            Field theUnsafe = Unsafe.class.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);</span><br><span class="line">            theUnsafe.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            UNSAFE = (Unsafe) theUnsafe.get(<span class="keyword">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchFieldException, SecurityException</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;e:int    \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;e&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;g:double \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;g&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;h:long   \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;h&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;f:float  \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;f&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;c:short  \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;c&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;d:char   \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;d&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;a:byte   \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;a&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;b:boolean\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;b&quot;</span>)));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;contended_boolean:boolean\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_boolean&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;contended_short:short\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_short&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;contended_int:int\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_int&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;contended_double:double\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_double&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>以上代码运行结果如下:</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">e:<span class="keyword">int</span>    	<span class="number">40</span></span><br><span class="line">g:<span class="keyword">double</span> 	<span class="number">24</span></span><br><span class="line">h:<span class="keyword">long</span>   	<span class="number">32</span></span><br><span class="line">f:<span class="keyword">float</span>  	<span class="number">44</span></span><br><span class="line">c:<span class="keyword">short</span>  	<span class="number">54</span></span><br><span class="line">d:<span class="keyword">char</span>   	<span class="number">52</span></span><br><span class="line">a:<span class="keyword">byte</span>   	<span class="number">57</span></span><br><span class="line">b:<span class="keyword">boolean</span>	<span class="number">58</span></span><br><span class="line">contended_boolean:<span class="keyword">boolean</span>	<span class="number">56</span></span><br><span class="line">contended_short:<span class="keyword">short</span>	<span class="number">12</span></span><br><span class="line">contended_int:<span class="keyword">int</span>	<span class="number">48</span></span><br><span class="line">contended_double:<span class="keyword">double</span>	<span class="number">16</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>除了int字段跑到了前面来了，还有两个添加了contended注解的字段外，其它字段都是按照重排序的顺序，类型由最长到最短的顺序排序的；</p>
-<h4 id="对象头对成员变量排序的影响"><a href="#对象头对成员变量排序的影响" class="headerlink" title="对象头对成员变量排序的影响"></a>对象头对成员变量排序的影响</h4><p>有的童鞋疑惑了，为啥int跑到前面来了呢？这是因为int字段被提升到前面填充对象头了，对象头有12个字节，会优先在字段中选择一个或多个能够将对象头填充为16个字节的field放到前面，如果填充不满，就加上padding，上面的例子加上一个4字节的int，正好是16字节，地址按8字节对齐；</p>
-<h4 id="扩展contended对成员变量排序的影响"><a href="#扩展contended对成员变量排序的影响" class="headerlink" title="扩展contended对成员变量排序的影响"></a>扩展contended对成员变量排序的影响</h4><ol>
-<li>解决cpu缓存行伪共享问题的</li>
-<li>加了contended注解的字段会按照声明的顺序放到末尾，contended注解如果是用在类的field上会在该field前面插入128字节的padding，如果是用在类上则会在类所有field的前后都加上128字节的padding</li>
-</ol>
-<h3 id="ObjectMonitor对象（每个对象都具备jdk1-8）"><a href="#ObjectMonitor对象（每个对象都具备jdk1-8）" class="headerlink" title="ObjectMonitor对象（每个对象都具备jdk1.8）"></a>ObjectMonitor对象（每个对象都具备jdk1.8）</h3><p>objectMonitor.hpp</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">ObjectMonitor() &#123;</span><br><span class="line">    _header       = <span class="literal">NULL</span>;</span><br><span class="line">    _count        = <span class="number">0</span>;     <span class="comment">// 重入次数</span></span><br><span class="line">    _waiters      = <span class="number">0</span>,     <span class="comment">// 等待线程数</span></span><br><span class="line">    _recursions   = <span class="number">0</span>;</span><br><span class="line">    _object       = <span class="literal">NULL</span>;</span><br><span class="line">    _owner        = <span class="literal">NULL</span>;  <span class="comment">// 当前持有锁的线程</span></span><br><span class="line">    _WaitSet      = <span class="literal">NULL</span>;  <span class="comment">// 调用wait方法的线程被阻塞放置在这里</span></span><br><span class="line">    _WaitSetLock  = <span class="number">0</span> ;</span><br><span class="line">    _Responsible  = <span class="literal">NULL</span> ;</span><br><span class="line">    _succ         = <span class="literal">NULL</span> ;</span><br><span class="line">    _cxq          = <span class="literal">NULL</span> ;</span><br><span class="line">    FreeNext      = <span class="literal">NULL</span> ;</span><br><span class="line">    _EntryList    = <span class="literal">NULL</span> ; <span class="comment">// 等待锁处于block的线程，才有资格成为候选资源的线程</span></span><br><span class="line">    _SpinFreq     = <span class="number">0</span> ;</span><br><span class="line">    _SpinClock    = <span class="number">0</span> ;</span><br><span class="line">    OwnerIsThread = <span class="number">0</span> ;</span><br><span class="line">    _previous_owner_tid = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://www.toutiao.com/i6799522958990639628">记一次生产频繁出现 Full GC 的 GC日志图文详解</a></li>
-<li><a href="http://openjdk.java.net/">openjdk</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>JVM</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Java虚拟机</tag>
-        <tag>Java内存对象</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>JVM内存区域</title>
     <url>/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</url>
     <content><![CDATA[<h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><div align="center">
@@ -4972,6 +4667,410 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>Java</tag>
         <tag>JVM内存区域</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JVM HotSpot虚拟机对象探秘</title>
+    <url>/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/</url>
+    <content><![CDATA[<h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><h2 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h2><p>在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、实例数据（Instance Data）和对齐填充（Padding）。</p>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80.png" class title="对象的内存布局">
+
+</div>
+
+<a id="more"></a>
+
+<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><p>Object Header（64或96bit）,包括：Mark Word（32bit）、Klass World（32bits）、array length（32bits，存在数据组对象时）</p>
+<h4 id="Markword"><a href="#Markword" class="headerlink" title="Markword"></a>Markword</h4><p>在HotSpot中，GC堆上的对象需要维持一些状态信息，具体如下：</p>
+<ol>
+<li>unused：表示未使用</li>
+<li>身份哈希码（identity hash code），采用延迟加载技术。调用<code>System.identityHashCode()</code>计算后会写入对象头中。当对象加锁后（偏向、轻量级、重量级），MarkWord的字节没有足够的空间保存hashCode，因此该值会移动到管程Monitor中。</li>
+<li>当前是否已被GC标记（只在GC过程中需要）</li>
+<li>当前对象年龄（经历GC的次数，最大15）这就是-XX:MaxTenuringThreshold选项最大值为15的原因</li>
+<li>biased_lock：对象是否启用偏向锁标记，只占1个二进制位</li>
+<li>lock：2位的锁状态标记位</li>
+</ol>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+.tg .tg-sjuo{background-color:#C2FFD6;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;&nbsp;状态&nbsp;&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;&nbsp;标志位&nbsp;&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;&nbsp;存储内容&nbsp;&nbsp;&nbsp;&nbsp;</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;未锁定&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;01&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;对象哈希码、对象分代年龄&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;轻量级锁定&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;00&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;指向锁记录的指针&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;膨胀(重量级锁定)&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;执行重量级锁定的指针&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;GC标记&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;空(不需要记录信息)&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;可偏向&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;01&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-sjuo">&nbsp;&nbsp;&nbsp;偏向线程ID、偏向时间戳、对象分代年龄&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+</tbody>
+</table>
+
+<ol start="7">
+<li>最近持有该对象锁的线程ID（用于偏向锁）</li>
+<li>epoch：偏向锁的时间戳</li>
+<li>ptr_to_lock_record：轻量级锁状态下，指向栈中锁记录的指针。</li>
+<li>ptr_to_heavyweight_monitor：重量级锁状态下，指向对象监视器Monitor的指针。</li>
+</ol>
+<h5 id="32位虚拟机markword"><a href="#32位虚拟机markword" class="headerlink" title="32位虚拟机markword"></a>32位虚拟机markword</h5><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-baqh{text-align:center;vertical-align:top}
+.tg .tg-29iq{background-color:#FFFFC7;text-align:center;vertical-align:top}
+.tg .tg-fw9x{background-color:#96FFFB;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-fw9x" rowspan="3">锁状态</th>
+    <th class="tg-29iq" colspan="5">32bit</th>
+  </tr>
+  <tr>
+    <td class="tg-29iq" colspan="2">25bit</td>
+    <td class="tg-29iq">4bit</td>
+    <td class="tg-29iq">1bit</td>
+    <td class="tg-29iq">2bit</td>
+  </tr>
+  <tr>
+    <td class="tg-29iq">23bit</td>
+    <td class="tg-29iq">2bit</td>
+    <td class="tg-29iq">age</td>
+    <td class="tg-29iq">偏向模式</td>
+    <td class="tg-29iq">标志位</td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-fw9x">未锁定</td>
+    <td class="tg-baqh" colspan="2">对象哈希码（25）</td>
+    <td class="tg-baqh">分代年龄</td>
+    <td class="tg-baqh">0</td>
+    <td class="tg-baqh">01</td>
+  </tr>
+  <tr>
+    <td class="tg-fw9x">轻量级锁<br>自旋锁<br>无锁</td>
+    <td class="tg-baqh" colspan="4">指向调用栈中锁记录指针（Lock Record）<br>ptr_to_lock_record(30)</td>
+    <td class="tg-baqh">00</td>
+  </tr>
+  <tr>
+    <td class="tg-fw9x">重量级锁定<br>（锁碰撞）</td>
+    <td class="tg-baqh" colspan="4">指向互斥量（重量级锁）的指针<br>ptr_to_heavyweigth_monitor(30)</td>
+    <td class="tg-baqh">10</td>
+  </tr>
+  <tr>
+    <td class="tg-fw9x">GC标记</td>
+    <td class="tg-baqh" colspan="4">空（30，CMS过程中用到的标记信息）</td>
+    <td class="tg-baqh">11</td>
+  </tr>
+  <tr>
+    <td class="tg-fw9x">可偏向</td>
+    <td class="tg-baqh">当前线程指针JavaThread*（23）</td>
+    <td class="tg-baqh">Epoch</td>
+    <td class="tg-baqh">分代年龄</td>
+    <td class="tg-baqh">1</td>
+    <td class="tg-baqh">01</td>
+  </tr>
+</tbody>
+</table>
+
+<h5 id="64位虚拟机markword"><a href="#64位虚拟机markword" class="headerlink" title="64位虚拟机markword"></a>64位虚拟机markword</h5><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-mukq{background-color:#96FFFB;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-hafo{background-color:#fffc9e;border-color:inherit;text-align:center;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-mukq" rowspan="3">锁状态</th>
+    <th class="tg-hafo" colspan="7">64bit</th>
+  </tr>
+  <tr>
+    <td class="tg-hafo" colspan="3">56bit</td>
+    <td class="tg-hafo">1bit</td>
+    <td class="tg-hafo">4bit</td>
+    <td class="tg-hafo">1bit</td>
+    <td class="tg-hafo">2bit</td>
+  </tr>
+  <tr>
+    <td class="tg-hafo">25bit</td>
+    <td class="tg-hafo">29bit</td>
+    <td class="tg-hafo">2bit</td>
+    <td class="tg-hafo">1bit</td>
+    <td class="tg-hafo">age</td>
+    <td class="tg-hafo">偏向模式</td>
+    <td class="tg-hafo">标志位</td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-mukq">未锁定</td>
+    <td class="tg-c3ow">unused</td>
+    <td class="tg-c3ow" colspan="2">对象哈希码（31）</td>
+    <td class="tg-c3ow">unused</td>
+    <td class="tg-c3ow">分代年龄</td>
+    <td class="tg-c3ow">0</td>
+    <td class="tg-c3ow">01</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">轻量级锁<br>自旋锁<br>无锁</td>
+    <td class="tg-c3ow" colspan="6">指向调用栈中锁记录指针（Lock Record）<br>ptr_to_lock_record(62)</td>
+    <td class="tg-c3ow">00</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">重量级锁定<br>（锁碰撞）</td>
+    <td class="tg-c3ow" colspan="6">指向互斥量（重量级锁）的指针<br>ptr_to_heavyweigth_monitor(62)</td>
+    <td class="tg-c3ow">10</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">GC标记</td>
+    <td class="tg-c3ow" colspan="6">空（CMS过程中用到的标记信息）</td>
+    <td class="tg-c3ow">11</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">可偏向</td>
+    <td class="tg-c3ow" colspan="2">当前线程指针JavaThread*（54）</td>
+    <td class="tg-c3ow">Epoch（2）</td>
+    <td class="tg-c3ow">unused</td>
+    <td class="tg-c3ow">分代年龄</td>
+    <td class="tg-c3ow">1</td>
+    <td class="tg-c3ow">01</td>
+  </tr>
+</tbody>
+</table>
+
+<h4 id="klass"><a href="#klass" class="headerlink" title="klass"></a>klass</h4><p>对象头的另外一部分是klass类型指针，即对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例.</p>
+<ol>
+<li>在Hotspot中，所有存储在由GC管理的堆（Java堆和PermGen）的子类的实例都有一个_klass字段，用于指向一个描述自身的元数据的对象</li>
+<li>Java对象和数组对象的klass并不是Java中的Class。klass用于运行而Class只用于Java中的反射；klass中有_java_mirror字段执行java中的class</li>
+<li>可压缩：每个Class的属性指针（即静态变量）、每个对象的属性指针（即对象变量）、普通对象数组的每个元素指针</li>
+<li>不可压缩：比如指向Metaspace的Class对象指针(JDK8中指向元空间的Class对象指针)、本地变量、堆栈元素、入参、返回值和NULL指针等</li>
+</ol>
+<h4 id="数组长度（只有数组对象有）"><a href="#数组长度（只有数组对象有）" class="headerlink" title="数组长度（只有数组对象有）"></a>数组长度（只有数组对象有）</h4><p>如果对象是一个数组, 那在对象头中还必须有一块数据用于记录数组长度.</p>
+<h3 id="实例数据"><a href="#实例数据" class="headerlink" title="实例数据"></a>实例数据</h3><ol>
+<li>实例数据部分是对象真正存储的有效信息，也是在程序代码中所定义的各种类型的字段内容。无论是从父类继承下来的，还是在子类中定义的，都需要记录起来。</li>
+<li>在Hotspot中对象实例数据紧跟在对象头后面分配空间</li>
+<li>字段的分配顺序与代码中的顺序和Hotspot的分配策略相关</li>
+<li>无论哪种策略都必须满足<ul>
+<li>宽度相同的字段总是相邻分配</li>
+<li>不同宽度的字段可能存在对象填充（padding）</li>
+</ul>
+</li>
+<li>一般是基类声明的实例字段会出现在派生类声明字段之前，但是如果开启压缩模式时派生类较短的字段可能会插入到基类的实例字段之间的对齐填充部分</li>
+<li>相关参数，参考FieldsAllocationStyle、CompactFields</li>
+</ol>
+<h3 id="对齐填充"><a href="#对齐填充" class="headerlink" title="对齐填充"></a>对齐填充</h3><ol>
+<li>对齐填充并不是必然存在的，也没有特别的含义，它仅仅起着占位符的作用。</li>
+<li>在Hotspot中，GC堆上的对象要求<strong>起始地址是8的倍数，占用的空间也必须是8的倍数</strong>，如果不足则用0补齐</li>
+<li>对齐可能出现不同宽度的字段之间，也可能出现在对象的末尾</li>
+<li>不存在为对齐数据时则不会对齐填充</li>
+<li><strong>对象头部分正好是8字节的倍数</strong>（1倍或者2倍）</li>
+<li>对象实例数据部分没有对齐时，就需要通过对齐填充来补全</li>
+</ol>
+<h2 id="对象大小计算"><a href="#对象大小计算" class="headerlink" title="对象大小计算"></a>对象大小计算</h2><ol>
+<li>在32位系统下，存放Class指针的空间大小是4字节,MarkWord是4字节，对象头为8字节。</li>
+<li>在64位系统下，存放Class指针的空间大小是8字节,MarkWord是8字节，对象头为16字节。</li>
+<li>64位压缩，<ul>
+<li>对象：存放Class指针的空间大小是4字节，MarkWord是8字节，对象头为12字节+对齐4=16字节。 </li>
+<li>数组：MarkWord是8字节+存放Class指针的空间大小是4字节+数组长度4字节=16字节。</li>
+</ul>
+</li>
+<li>静态属性不算在对象大小内。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104073081.png" class title="对象大小计算">
+
+</div>
+
+<div align="center">
+
+<img src="/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/1589104088136.png" class title="对象大小计算">
+
+</div>
+
+<h2 id="对象分析工具JOL"><a href="#对象分析工具JOL" class="headerlink" title="对象分析工具JOL"></a>对象分析工具JOL</h2><h3 id="maven"><a href="#maven" class="headerlink" title="maven"></a>maven</h3><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.openjdk.jol<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jol-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="虚拟机信息"><a href="#虚拟机信息" class="headerlink" title="虚拟机信息"></a>虚拟机信息</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.jvm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.openjdk.jol.info.ClassLayout;</span><br><span class="line"><span class="keyword">import</span> org.openjdk.jol.vm.VM;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//返回有关当前 VM 模式的信息详细信息</span></span><br><span class="line">        <span class="comment">//ClassLayout:class的内存内存布局</span></span><br><span class="line">        <span class="comment">//parseInstance:表示解析传入的对象</span></span><br><span class="line">        <span class="comment">//toPrintable:表示转换为一种可输出的格式打印</span></span><br><span class="line">        System.out.println(VM.current().details());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>结果输出：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line"># WARNING: Unable to attach Serviceability Agent. You can try again with escalated privileges. Two options: a) use -Djol.tryWithSudo=true to try with sudo; b) echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope</span><br><span class="line"># Running 64-bit HotSpot VM.</span><br><span class="line"># Using compressed oop with 3-bit shift.</span><br><span class="line"># Using compressed klass with 3-bit shift.</span><br><span class="line"># WARNING | Compressed references base/shifts are guessed by the experiment!</span><br><span class="line"># WARNING | Therefore, computed addresses are just guesses, and ARE NOT RELIABLE.</span><br><span class="line"># WARNING | Make sure to attach Serviceability Agent to get the reliable addresses.</span><br><span class="line"># Objects are 8 bytes aligned.</span><br><span class="line"># Field sizes by type: 4, 1, 1, 2, 2, 4, 4, 8, 8 [bytes]</span><br><span class="line"># Array element sizes: 4, 1, 1, 2, 2, 4, 4, 8, 8 [bytes]</span><br></pre></td></tr></table></figure>
+<ol>
+<li>第一行表示警告信息，可以忽略</li>
+<li>第二行表示使用的虚拟机是64位</li>
+<li>第三行表示启用普通对象指针压缩，即-XX:+UseCompressedOops</li>
+<li>第四行表示启用类型指针压缩，即-XX:+UseCompressedClassPointers开启参数</li>
+<li>第八行：对象的大小必须8bytes对齐。</li>
+<li>第九行：表示字段类型的指针长度（bytes），依次为引用句柄（对象指针），byte, boolean, char, short, int, float, double, long类型。</li>
+<li>第十行：表示数组类型的指针长度（bytes），依次为引用句柄（对象指针），byte, boolean, char, short, int, float, double, long类型。</li>
+</ol>
+<h3 id="普通对象信息"><a href="#普通对象信息" class="headerlink" title="普通对象信息"></a>普通对象信息</h3><h4 id="参考代码"><a href="#参考代码" class="headerlink" title="参考代码"></a>参考代码</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.jvm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.openjdk.jol.info.ClassLayout;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;----------- obj1 details ------------&quot;</span>);</span><br><span class="line">        JoLObj  obj1 = <span class="keyword">new</span> JoLObj();</span><br><span class="line">        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JoLObj</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> flag = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">256</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> number_1 = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> number_2 = <span class="number">11</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> number_3 = <span class="number">12</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="输出结果"><a href="#输出结果" class="headerlink" title="输出结果"></a>输出结果</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">com.sunld.jvm.JoLObj object internals:</span><br><span class="line"> OFFSET  SIZE      TYPE DESCRIPTION                               VALUE</span><br><span class="line">      <span class="number">0</span>     <span class="number">4</span>           (object header)                           <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00000001</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">1</span>)</span><br><span class="line">      <span class="number">4</span>     <span class="number">4</span>           (object header)                           <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">0</span>)</span><br><span class="line">      <span class="number">8</span>     <span class="number">4</span>           (object header)                           <span class="number">43</span> c1 <span class="number">00</span> f8 (<span class="number">01000011</span> <span class="number">11000001</span> <span class="number">00000000</span> <span class="number">11111000</span>) (-<span class="number">134168253</span>)</span><br><span class="line">     <span class="number">12</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number                             <span class="number">256</span></span><br><span class="line">     <span class="number">16</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number_2                           <span class="number">11</span></span><br><span class="line">     <span class="number">20</span>     <span class="number">1</span>   <span class="keyword">boolean</span> JoLObj.flag                               <span class="keyword">false</span></span><br><span class="line">     <span class="number">21</span>     <span class="number">3</span>           (loss due to the next object alignment)</span><br><span class="line">Instance size: <span class="number">24</span> bytes</span><br><span class="line">Space losses: <span class="number">0</span> bytes internal + <span class="number">3</span> bytes external = <span class="number">3</span> bytes total</span><br></pre></td></tr></table></figure>
+<h4 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h4><ol>
+<li>使用了64位vm，且进行了压缩</li>
+<li>对象头占用12个Byte。 （8个Byte的markword，和被压缩后的klasss point为4个Byte）</li>
+<li>对象实例9个Byte（int：4 + int：4 + boolean：1）</li>
+<li>对齐占用了3个字节（因为在64位虚拟机上对象的大小必须是Word字长的倍数，既8字节的倍数）</li>
+<li>静态变量不在对象头中</li>
+</ol>
+<h3 id="hashcode分析"><a href="#hashcode分析" class="headerlink" title="hashcode分析"></a>hashcode分析</h3><h4 id="参考代码-1"><a href="#参考代码-1" class="headerlink" title="参考代码"></a>参考代码</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.jvm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.openjdk.jol.info.ClassLayout;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        JoLObj  obj1 = <span class="keyword">new</span> JoLObj();</span><br><span class="line">        System.out.println(<span class="string">&quot;----------- before hash ------------&quot;</span>);</span><br><span class="line">        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());</span><br><span class="line">        System.out.println(<span class="string">&quot;obj1 hashcode is: &quot;</span> + Integer.toBinaryString(obj1.hashCode()));</span><br><span class="line">        System.out.println(<span class="string">&quot;obj1 hashcode is: &quot;</span> + Integer.toHexString(obj1.hashCode()));</span><br><span class="line">        System.out.println(<span class="string">&quot;----------- after hash ------------&quot;</span>);</span><br><span class="line">        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JoLObj</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> flag = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">256</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> number_1 = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> number_2 = <span class="number">11</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> number_3 = <span class="number">12</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="输出结果-1"><a href="#输出结果-1" class="headerlink" title="输出结果"></a>输出结果</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">com.sunld.jvm.JoLObj object internals:</span><br><span class="line"> OFFSET  SIZE      TYPE DESCRIPTION                               VALUE</span><br><span class="line">      <span class="number">0</span>     <span class="number">4</span>           (object header)                           <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00000001</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">1</span>)</span><br><span class="line">      <span class="number">4</span>     <span class="number">4</span>           (object header)                           <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">0</span>)</span><br><span class="line">      <span class="number">8</span>     <span class="number">4</span>           (object header)                           <span class="number">43</span> c1 <span class="number">00</span> f8 (<span class="number">01000011</span> <span class="number">11000001</span> <span class="number">00000000</span> <span class="number">11111000</span>) (-<span class="number">134168253</span>)</span><br><span class="line">     <span class="number">12</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number                             <span class="number">256</span></span><br><span class="line">     <span class="number">16</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number_2                           <span class="number">11</span></span><br><span class="line">     <span class="number">20</span>     <span class="number">1</span>   <span class="keyword">boolean</span> JoLObj.flag                               <span class="keyword">false</span></span><br><span class="line">     <span class="number">21</span>     <span class="number">3</span>           (loss due to the next object alignment)</span><br><span class="line">Instance size: <span class="number">24</span> bytes</span><br><span class="line">Space losses: <span class="number">0</span> bytes internal + <span class="number">3</span> bytes external = <span class="number">3</span> bytes total</span><br><span class="line"></span><br><span class="line">obj1 hashcode is: <span class="number">100100001101111100011011011100</span></span><br><span class="line">obj1 hashcode is: 2437c6dc</span><br><span class="line">----------- after hash ------------</span><br><span class="line">com.sunld.jvm.JoLObj object internals:</span><br><span class="line"> OFFSET  SIZE      TYPE DESCRIPTION                               VALUE</span><br><span class="line">      <span class="number">0</span>     <span class="number">4</span>           (object header)                           <span class="number">01</span> dc c6 <span class="number">37</span> (<span class="number">00000001</span> <span class="number">11011100</span> <span class="number">11000110</span> <span class="number">00110111</span>) (<span class="number">935779329</span>)</span><br><span class="line">      <span class="number">4</span>     <span class="number">4</span>           (object header)                           <span class="number">24</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00100100</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">36</span>)</span><br><span class="line">      <span class="number">8</span>     <span class="number">4</span>           (object header)                           <span class="number">43</span> c1 <span class="number">00</span> f8 (<span class="number">01000011</span> <span class="number">11000001</span> <span class="number">00000000</span> <span class="number">11111000</span>) (-<span class="number">134168253</span>)</span><br><span class="line">     <span class="number">12</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number                             <span class="number">256</span></span><br><span class="line">     <span class="number">16</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number_2                           <span class="number">11</span></span><br><span class="line">     <span class="number">20</span>     <span class="number">1</span>   <span class="keyword">boolean</span> JoLObj.flag                               <span class="keyword">false</span></span><br><span class="line">     <span class="number">21</span>     <span class="number">3</span>           (loss due to the next object alignment)</span><br><span class="line">Instance size: <span class="number">24</span> bytes</span><br><span class="line">Space losses: <span class="number">0</span> bytes internal + <span class="number">3</span> bytes external = <span class="number">3</span> bytes total</span><br></pre></td></tr></table></figure>
+<h4 id="结果分析-1"><a href="#结果分析-1" class="headerlink" title="结果分析"></a>结果分析</h4><style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax"></th>
+    <th class="tg-0lax">对象markword（小端）</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">计算hashcode前</td>
+    <td class="tg-0lax">00000001 00000000 00000000 00000000 00000000 00000000 00000000 00000000</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">计算hashcode后</td>
+    <td class="tg-0lax">00000001 11011100 11000110 00110111 00100100 00000000 00000000 00000000</td>
+  </tr>
+</tbody>
+</table>
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax"></th>
+    <th class="tg-0lax">对象markword（大端）</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">计算hashcode前</td>
+    <td class="tg-0lax">00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">计算hashcode后</td>
+    <td class="tg-0lax">00000000 00000000 00000000 00100100 00110111 11000110 11011100 00000001</td>
+  </tr>
+</tbody>
+</table>
+
+<ol>
+<li>在未计算hashcode之前，markword中默认都是0，计算之后保存到对象头的markword中</li>
+<li>25bit表示unused</li>
+<li>31bit表示hashcode：0100100 00110111 11000110 11011100</li>
+<li>4bit（0000）表示age， GC中分代年龄。由于age只有4位，所以最大值为15</li>
+<li>1个bit为：biased_lock，值为0，表示无偏向锁（计算hashcode后不在使用偏向锁）</li>
+<li>2个bit为：lock状态，值为01，表示未锁定</li>
+</ol>
+<h3 id="age变化"><a href="#age变化" class="headerlink" title="age变化"></a>age变化</h3><h4 id="参考代码-2"><a href="#参考代码-2" class="headerlink" title="参考代码"></a>参考代码</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.jvm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.openjdk.jol.info.ClassLayout;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.nio.ByteOrder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;nativeOrder:&quot;</span> + ByteOrder.nativeOrder()); <span class="comment">//查看当前JVM使用字节序是大端、小端。</span></span><br><span class="line">        JoLObj  obj1 = <span class="keyword">new</span> JoLObj();</span><br><span class="line">        System.out.println(<span class="string">&quot;----------- before gc ------------&quot;</span>);</span><br><span class="line">        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());</span><br><span class="line">        System.gc(); <span class="comment">// 人工发起GC</span></span><br><span class="line">        System.out.println(<span class="string">&quot;----------- after GC ------------&quot;</span>);</span><br><span class="line">        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JoLObj</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> flag = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">256</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> number_1 = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> number_2 = <span class="number">11</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> number_3 = <span class="number">12</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="输出结果-2"><a href="#输出结果-2" class="headerlink" title="输出结果"></a>输出结果</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">com.sunld.jvm.JoLObj object internals:</span><br><span class="line"> OFFSET  SIZE      TYPE DESCRIPTION                               VALUE</span><br><span class="line">      <span class="number">0</span>     <span class="number">4</span>           (object header)                           <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00000001</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">1</span>)</span><br><span class="line">      <span class="number">4</span>     <span class="number">4</span>           (object header)                           <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">0</span>)</span><br><span class="line">      <span class="number">8</span>     <span class="number">4</span>           (object header)                           <span class="number">43</span> c1 <span class="number">00</span> f8 (<span class="number">01000011</span> <span class="number">11000001</span> <span class="number">00000000</span> <span class="number">11111000</span>) (-<span class="number">134168253</span>)</span><br><span class="line">     <span class="number">12</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number                             <span class="number">256</span></span><br><span class="line">     <span class="number">16</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number_2                           <span class="number">11</span></span><br><span class="line">     <span class="number">20</span>     <span class="number">1</span>   <span class="keyword">boolean</span> JoLObj.flag                               <span class="keyword">false</span></span><br><span class="line">     <span class="number">21</span>     <span class="number">3</span>           (loss due to the next object alignment)</span><br><span class="line">Instance size: <span class="number">24</span> bytes</span><br><span class="line">Space losses: <span class="number">0</span> bytes internal + <span class="number">3</span> bytes external = <span class="number">3</span> bytes total</span><br><span class="line"></span><br><span class="line">----------- after GC ------------</span><br><span class="line">com.sunld.jvm.JoLObj object internals:</span><br><span class="line"> OFFSET  SIZE      TYPE DESCRIPTION                               VALUE</span><br><span class="line">      <span class="number">0</span>     <span class="number">4</span>           (object header)                           09 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00001001</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">9</span>)</span><br><span class="line">      <span class="number">4</span>     <span class="number">4</span>           (object header)                           <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> (<span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>) (<span class="number">0</span>)</span><br><span class="line">      <span class="number">8</span>     <span class="number">4</span>           (object header)                           <span class="number">43</span> c1 <span class="number">00</span> f8 (<span class="number">01000011</span> <span class="number">11000001</span> <span class="number">00000000</span> <span class="number">11111000</span>) (-<span class="number">134168253</span>)</span><br><span class="line">     <span class="number">12</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number                             <span class="number">256</span></span><br><span class="line">     <span class="number">16</span>     <span class="number">4</span>       <span class="keyword">int</span> JoLObj.number_2                           <span class="number">11</span></span><br><span class="line">     <span class="number">20</span>     <span class="number">1</span>   <span class="keyword">boolean</span> JoLObj.flag                               <span class="keyword">false</span></span><br><span class="line">     <span class="number">21</span>     <span class="number">3</span>           (loss due to the next object alignment)</span><br><span class="line">Instance size: <span class="number">24</span> bytes</span><br><span class="line">Space losses: <span class="number">0</span> bytes internal + <span class="number">3</span> bytes external = <span class="number">3</span> bytes total</span><br></pre></td></tr></table></figure>
+<h4 id="结果分析-2"><a href="#结果分析-2" class="headerlink" title="结果分析"></a>结果分析</h4><p>可以看到大端的最后一个字节数据：从00000001变成了00001001，既age增加了1</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>关于锁的对象头分析请参考<a href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/" target="_blank">java并发编程之锁</a></p>
+<h2 id="对象的定位"><a href="#对象的定位" class="headerlink" title="对象的定位"></a>对象的定位</h2><p>参考：<a href="https://www.sunliaodong.cn/2021/02/05/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" target="_blank">JVM内存区域</a></p>
+<h3 id="HotSpot对象模型"><a href="#HotSpot对象模型" class="headerlink" title="HotSpot对象模型"></a>HotSpot对象模型</h3><p>HotSpot中采用了<strong>OOP-Klass</strong>模型，它是描述Java对象实例的模型，它分为两部分：</p>
+<ol>
+<li>类加载到内存时封装为<strong>klass</strong>，klass包含类的元数据信息（比如类的方法、常量池等信息，类似于java.lang.Class对象）</li>
+<li><strong>OOP（Ordinary Object Pointer）</strong> ：普通对象指针，包含MarkWord（存储当前指针指向的对象运行时的一些状态数据） 和元数据指针（指向klass，表示使用的对象类型）</li>
+</ol>
+<blockquote>
+<p>HotSopt JVM的设计者把对象模型拆成<strong>klass和oop</strong>，其中oop中不含有任何虚函数，而klass就含有虚函数表，可以进行method dispatch。<br>HotSpot中，OOP-Klass实现的代码都在/hotspot/src/share/vm/oops/路径下，oop的实现为<strong>instanceOop 和 arrayOop</strong>，他们来描述对象头，其中arrayOop对象用于描述数组类型。</p>
+</blockquote>
+<p>以下就是oop.hhp文件中oopDesc的源码，可以看到两个变量_mark就是MarkWord，_metadata就是元数据指针，指向klass对象，这个指针压缩的是32位，未压缩的是64位；</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">volatile</span> markOop _mark; <span class="comment">// 标识运行时数据</span></span><br><span class="line"><span class="class"><span class="keyword">union</span> _<span class="title">metadata</span> &#123;</span></span><br><span class="line">  Klass* _klass;</span><br><span class="line">  narrowKlass _compressed_klass;</span><br><span class="line">&#125; _metadata; <span class="comment">//klass指针</span></span><br></pre></td></tr></table></figure>
+<p>一个Java对象在内存中的布局可以连续分成两部分：instanceOop（继承自oop.hpp）和实例数据；通过栈帧中的对象引用reference找到Java堆中的对象，再通过对象的<strong>instanceOop中的元数据指针klass来找到方法区中的instanceKlass</strong>，从而确定该对象的类型。执行过程：</p>
+<ol>
+<li><strong>类加载</strong>：在JVM内部创建一个instanceKlass对象表示这个类的运行时元数据（类似Class对象）</li>
+<li><strong>初始化对象的时候</strong>（执行invokespecial ***::），JVM就会创建一个instanceOopDesc对象表示这个对象的实例，然后进行Mark Word的填充，将元数据指针指向Klass对象，并填充实例变量。</li>
+<li>元数据—— instanceKlass 对象会存在元空间（方法区）</li>
+<li>对象实例—— instanceOopDesc 会存在Java堆。Java虚拟机栈中会存有这个对象实例的引用。</li>
+</ol>
+<h3 id="成员变量重排序"><a href="#成员变量重排序" class="headerlink" title="成员变量重排序"></a>成员变量重排序</h3><p>为了提高性能，每个对象的起始地址都对齐于8字节，当封装对象的时候为了高效率，对象字段声明的顺序会被重排序成下列基于字节大小的顺序：</p>
+<ol>
+<li>double (8字节) 和 long (8字节)</li>
+<li>int (4字节) 和 float (4字节)</li>
+<li>short (2字节) 和 char (2字节)：char在java中是2个字节。java采用unicode，2个字节（16位）来表示一个字符。</li>
+<li>boolean (1字节) 和 byte (1字节)</li>
+<li>reference引用 (4/8 字节)</li>
+<li>&lt;子类字段重复上述顺序&gt;</li>
+</ol>
+<p>我们可以测试一下java对不同类型的重排序，使用jdk1.8，采用反射的方式先获取到unsafe类，然后获取到每个field在类里面的偏移地址，就能看出来了<br>测试代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.jvm;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sun.misc.Contended;</span><br><span class="line"><span class="keyword">import</span> sun.misc.Unsafe;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TypeSequence</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> contended_boolean;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">byte</span> a;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> b;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> contended_short;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">char</span> d;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">short</span> c;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> e;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">float</span> f;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> contended_int;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Contended</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> contended_double;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">double</span> g;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">long</span> h;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span>  Unsafe UNSAFE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="meta">@SuppressWarnings(&quot;ALL&quot;)</span></span><br><span class="line">            Field theUnsafe = Unsafe.class.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);</span><br><span class="line">            theUnsafe.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            UNSAFE = (Unsafe) theUnsafe.get(<span class="keyword">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchFieldException, SecurityException</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;e:int    \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;e&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;g:double \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;g&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;h:long   \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;h&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;f:float  \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;f&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;c:short  \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;c&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;d:char   \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;d&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;a:byte   \t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;a&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;b:boolean\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;b&quot;</span>)));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;contended_boolean:boolean\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_boolean&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;contended_short:short\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_short&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;contended_int:int\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_int&quot;</span>)));</span><br><span class="line">        System.out.println(<span class="string">&quot;contended_double:double\t&quot;</span>+UNSAFE.objectFieldOffset(TypeSequence.class.getDeclaredField(<span class="string">&quot;contended_double&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码运行结果如下:</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">e:<span class="keyword">int</span>    	<span class="number">40</span></span><br><span class="line">g:<span class="keyword">double</span> 	<span class="number">24</span></span><br><span class="line">h:<span class="keyword">long</span>   	<span class="number">32</span></span><br><span class="line">f:<span class="keyword">float</span>  	<span class="number">44</span></span><br><span class="line">c:<span class="keyword">short</span>  	<span class="number">54</span></span><br><span class="line">d:<span class="keyword">char</span>   	<span class="number">52</span></span><br><span class="line">a:<span class="keyword">byte</span>   	<span class="number">57</span></span><br><span class="line">b:<span class="keyword">boolean</span>	<span class="number">58</span></span><br><span class="line">contended_boolean:<span class="keyword">boolean</span>	<span class="number">56</span></span><br><span class="line">contended_short:<span class="keyword">short</span>	<span class="number">12</span></span><br><span class="line">contended_int:<span class="keyword">int</span>	<span class="number">48</span></span><br><span class="line">contended_double:<span class="keyword">double</span>	<span class="number">16</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>除了int字段跑到了前面来了，还有两个添加了contended注解的字段外，其它字段都是按照重排序的顺序，类型由最长到最短的顺序排序的；</p>
+<h4 id="对象头对成员变量排序的影响"><a href="#对象头对成员变量排序的影响" class="headerlink" title="对象头对成员变量排序的影响"></a>对象头对成员变量排序的影响</h4><p>有的童鞋疑惑了，为啥int跑到前面来了呢？这是因为int字段被提升到前面填充对象头了，对象头有12个字节，会优先在字段中选择一个或多个能够将对象头填充为16个字节的field放到前面，如果填充不满，就加上padding，上面的例子加上一个4字节的int，正好是16字节，地址按8字节对齐；</p>
+<h4 id="扩展contended对成员变量排序的影响"><a href="#扩展contended对成员变量排序的影响" class="headerlink" title="扩展contended对成员变量排序的影响"></a>扩展contended对成员变量排序的影响</h4><ol>
+<li>解决cpu缓存行伪共享问题的</li>
+<li>加了contended注解的字段会按照声明的顺序放到末尾，contended注解如果是用在类的field上会在该field前面插入128字节的padding，如果是用在类上则会在类所有field的前后都加上128字节的padding</li>
+</ol>
+<h3 id="ObjectMonitor对象（每个对象都具备jdk1-8）"><a href="#ObjectMonitor对象（每个对象都具备jdk1-8）" class="headerlink" title="ObjectMonitor对象（每个对象都具备jdk1.8）"></a>ObjectMonitor对象（每个对象都具备jdk1.8）</h3><p>objectMonitor.hpp</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">ObjectMonitor() &#123;</span><br><span class="line">    _header       = <span class="literal">NULL</span>;</span><br><span class="line">    _count        = <span class="number">0</span>;     <span class="comment">// 重入次数</span></span><br><span class="line">    _waiters      = <span class="number">0</span>,     <span class="comment">// 等待线程数</span></span><br><span class="line">    _recursions   = <span class="number">0</span>;</span><br><span class="line">    _object       = <span class="literal">NULL</span>;</span><br><span class="line">    _owner        = <span class="literal">NULL</span>;  <span class="comment">// 当前持有锁的线程</span></span><br><span class="line">    _WaitSet      = <span class="literal">NULL</span>;  <span class="comment">// 调用wait方法的线程被阻塞放置在这里</span></span><br><span class="line">    _WaitSetLock  = <span class="number">0</span> ;</span><br><span class="line">    _Responsible  = <span class="literal">NULL</span> ;</span><br><span class="line">    _succ         = <span class="literal">NULL</span> ;</span><br><span class="line">    _cxq          = <span class="literal">NULL</span> ;</span><br><span class="line">    FreeNext      = <span class="literal">NULL</span> ;</span><br><span class="line">    _EntryList    = <span class="literal">NULL</span> ; <span class="comment">// 等待锁处于block的线程，才有资格成为候选资源的线程</span></span><br><span class="line">    _SpinFreq     = <span class="number">0</span> ;</span><br><span class="line">    _SpinClock    = <span class="number">0</span> ;</span><br><span class="line">    OwnerIsThread = <span class="number">0</span> ;</span><br><span class="line">    _previous_owner_tid = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.toutiao.com/i6799522958990639628">记一次生产频繁出现 Full GC 的 GC日志图文详解</a></li>
+<li><a href="http://openjdk.java.net/">openjdk</a></li>
+<li><a href="https://github.com/openjdk/jol">jol</a></li>
+<li><a href="https://blog.csdn.net/zyplanke/article/details/106893992">Java对象头Object Header、偏向锁、轻量锁、重量锁研究</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>JVM</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Java虚拟机</tag>
+        <tag>Java内存对象</tag>
       </tags>
   </entry>
   <entry>
