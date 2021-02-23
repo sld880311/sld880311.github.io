@@ -14,34 +14,125 @@ date: 2021-02-08 08:24:05
 
 <!--more-->
 
-### i--/++分析
+### 实例分析（i--/++分析）
 
-#### 字节码指令
+#### 参考代码
 
 ```java
-getstatic i // 获取静态变量i的值
-iconst_1    // 准备常量1
-isub        // 自减
-putstatic i // 将修改后的值存入静态变量i
+public class ITest {
+    static int i = 1;
+    public static void main(String[] args) {
+        i--;
+        i++;
+    }
+}
+```
 
-getstatic i // 获取静态变量i的值
-iconst_1    // 准备常量1
-iadd        // 自增
-putstatic i // 将修改后的值存入静态变量i
+#### 字节码指令(javap)
+
+```java
+"C:\Program Files\Java\jdk1.8.0_152\bin\javap.exe" -v -c com.sunld.thread.ITest
+Classfile /D:/workspace/learning/target/classes/com/sunld/thread/ITest.class
+  Last modified 2021-2-22; size 496 bytes
+  MD5 checksum dc04316ac92307b849ac52ae7654d8d6
+  Compiled from "ITest.java"
+public class com.sunld.thread.ITest
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #4.#21         // java/lang/Object."<init>":()V
+   #2 = Fieldref           #3.#22         // com/sunld/thread/ITest.i:I
+   #3 = Class              #23            // com/sunld/thread/ITest
+   #4 = Class              #24            // java/lang/Object
+   #5 = Utf8               i
+   #6 = Utf8               I
+   #7 = Utf8               <init>
+   #8 = Utf8               ()V
+   #9 = Utf8               Code
+  #10 = Utf8               LineNumberTable
+  #11 = Utf8               LocalVariableTable
+  #12 = Utf8               this
+  #13 = Utf8               Lcom/sunld/thread/ITest;
+  #14 = Utf8               main
+  #15 = Utf8               ([Ljava/lang/String;)V
+  #16 = Utf8               args
+  #17 = Utf8               [Ljava/lang/String;
+  #18 = Utf8               <clinit>
+  #19 = Utf8               SourceFile
+  #20 = Utf8               ITest.java
+  #21 = NameAndType        #7:#8          // "<init>":()V
+  #22 = NameAndType        #5:#6          // i:I
+  #23 = Utf8               com/sunld/thread/ITest
+  #24 = Utf8               java/lang/Object
+{
+  static int i;
+    descriptor: I
+    flags: ACC_STATIC
+
+  public com.sunld.thread.ITest();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 3: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       5     0  this   Lcom/sunld/thread/ITest;
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: getstatic     #2                  // Field i:I，获取静态变量i的值（1）
+         3: iconst_1                          // 将int型1推入栈顶
+         4: isub                              // 将栈顶两个int型数值相减并将结果压入栈顶
+         5: putstatic     #2                  // Field i:I，为指定域中的静态变量赋值
+         8: getstatic     #2                  // Field i:I，获取静态变量i的值（1）
+        11: iconst_1                          // 将int型1推入栈顶
+        12: iadd                              // 将栈顶两个int型数值相加并将结果压入栈顶
+        13: putstatic     #2                  // Field i:I，为指定域中的静态变量赋值
+        16: return
+      LineNumberTable:
+        line 6: 0
+        line 7: 8
+        line 8: 16
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      17     0  args   [Ljava/lang/String;
+
+  static {};
+    descriptor: ()V
+    flags: ACC_STATIC
+    Code:
+      stack=1, locals=0, args_size=0
+         0: iconst_1
+         1: putstatic     #2                  // Field i:I
+         4: return
+      LineNumberTable:
+        line 4: 0
+}
+SourceFile: "ITest.java"
+
 ```
 
 #### i--/++流程图
 
 <div align=center>
 
-![i--/++流程图](Java并发编程之锁/1590651451164.png)
+![i--/++流程图](Java并发编程之锁/i++、i--流程图.png)
 
 </div>
 
 ### 临界区 Critical Section
 
 1. 一个程序运行多个线程本身是没有问题的
-2. 问题出在多个线程访问共享资源
+2. 问题出在多个线程**访问共享资源**
    - 多个线程读共享资源其实也没有问题
    - 在多个线程对共享资源读写操作时发生指令交错，就会出现问题
 3. 一段代码块内如果存在对共享资源的多线程读写操作，称这段代码块为临界区
@@ -114,6 +205,8 @@ java 并发包提供的加锁模式分为独占锁和共享锁。
 高效并发是从JDK 5升级到JDK 6后一项重要的改进项，HotSpot虚拟机开发团队在这个版本上花费了大量的资源去实现各种锁优化技术，如**适应性自旋（Adaptive Spinning）、锁消除（Lock Elimination）、锁膨胀（LockCoarsening）、轻量级锁（Lightweight Locking）、偏向锁（Biased Locking）** 等，这些技术都是为了在线程之间更高效地共享数据及解决竞争问题，从而提高程序的执行效率。
 **锁的状态总共有四种：无锁状态、偏向锁、轻量级锁和重量级锁。** 
 
+### 锁优化方式
+
 1. 锁升级：随着锁的竞争，锁可以从偏向锁升级到轻量级锁，再升级的重量级锁（但是锁的升级是单向的，也就是说只能从低到高升级，不会出现锁的降级）。 
 2. 优化方式
    - 减少锁的持有时间：只用在有线程安全要求的线程上加锁
@@ -127,9 +220,7 @@ java 并发包提供的加锁模式分为独占锁和共享锁。
    - 防止锁的多次请求、同步和释放
 5. 锁消除 锁消除是在编译器级别的事情。在即时编译器时，如果发现不可能被共享的对象，则可以消除这些对象的锁操作，多数是因为程序员编码不规范引起。 
 
-### 锁升级
-
-#### 偏向锁（偏向第一个获取它的线程，优化锁机制）
+## 偏向锁（偏向第一个获取它的线程，优化锁机制）
 
 1. 背景：锁在大部分情况下不仅不存在多线程竞争，并且可能会被同一个线程访问多次
 2. 目的：消除这个线程锁冲入的开销
@@ -137,40 +228,33 @@ java 并发包提供的加锁模式分为独占锁和共享锁。
 4. 轻量级锁是为了在线程交替执行同步块时提高性能，而偏向锁则是在只有一个线程执行同步块时进一步提高性能
 5. 偏向锁也是JDK 6中引入的一项锁优化措施，它的目的是消除数据在无竞争情况下的同步原语，进一步提高程序的运行性能。如果说轻量级锁是在无竞争的情况下使用CAS操作去消除同步使用的互斥量，那偏向锁就是在无竞争的情况下把整个同步都消除掉，连CAS操作都不去做了
 6. 启动方式：启用参数-XX：+UseBiased Locking，这是自JDK 6起HotSpot虚拟机的默认值
+7. JVM延迟偏向锁是因为：如果不延迟，一上来就是偏向锁，假设程序后续还有线程调用，他会升级。jvm确定同步块中大部分代码都不是偏向锁，所以在启动的时候延迟。
 
-##### 偏向锁获取过程
+### 偏向锁获取过程
 
-<div align=center>
-
-![偏向锁的获取过程](Java并发编程之锁/1589109028095.png)
-
-![](Java并发编程之锁/1590754383821.png)
-
-</div>
-
-1. 初始化创建对象时（上图1：**未锁定，不偏向**）
-2. 第一次调用（上图2：**未锁定，已偏向**），进入偏向模式。同时使用CAS操作把获取到这个锁的线程的ID记录在对象的Mark Word之中
+1. 初始化创建对象时（**未锁定，不偏向**）
+2. 第一次调用（**未锁定，已偏向**），进入偏向模式。同时使用CAS操作把获取到这个锁的线程的ID记录在对象的Mark Word之中
 3. 第二次调用：通过Markword判断是否可偏向（偏向锁标识为1且锁标志为01）
    1. 相同：可偏向，判断线程ID是否与当前线程相同，相同则执行代码块
    2. 不相同，通过CAS操作竞争锁，成功则设置Markword中threadID为当前线程，并执行代码块
-4. 竞争失败（锁升级为轻量级锁，上图3：），当到达全局安全点（safepoint）时获得偏向锁的线程被挂起，偏向锁升级为轻量级锁，然后被阻塞在安全点的线程继续往下执行同步代码。（撤销偏向锁的时候会导致stop the word，时间很短
+4. 竞争失败（锁升级为轻量级锁），当到达全局安全点（safepoint）时获得偏向锁的线程被挂起，偏向锁升级为轻量级锁，然后被阻塞在安全点的线程继续往下执行同步代码。（撤销偏向锁的时候会导致stop the word，时间很短
 
-##### 偏向锁的撤销
+### 偏向锁的撤销
 
 **一旦出现另外一个线程去尝试获取这个锁的情况，偏向模式就马上宣告结束。** 
 根据锁对象目前是否处于被锁定的状态决定是否撤销偏向（偏向模式设置为“0”），撤销后标志位恢复到未锁定（标志位为“01”）或轻量级锁定（标志位为“00”）的状态
 
-##### HashCode
+### HashCode
 
-1. 当一个对象已经计算过一致性哈希码后，它就再也无法进入偏向锁状态了
-2. 而当一个对象当前正处于偏向锁状态，又收到需要计算其一致性哈希码请求时，它的偏向状态会被立即撤销，并且锁会膨胀为重量级锁。
+1. 对象计算过hash之后不能进入偏向状态
+2. 偏向状态的对象需要进行hash计算时，偏向锁膨胀为重量锁
 3. 在重量级锁的实现中，对象头指向了重量级锁的位置，代表重量级锁的ObjectMonitor类里有字段可以记录非加锁状态（标志位为“01”）下的Mark Word，其中自然可以存储原来的哈希码。
 
-##### 使用场景
+### 使用场景
 
 始终只有一个线程在执行同步块，在它没有执行完释放锁之前，没有其它线程去执行同步块，在锁无竞争的情况下使用，一旦有了竞争就升级为轻量级锁，升级为轻量级锁的时候需要撤销偏向锁，撤销偏向锁的时候会导致stop the word操作；在有锁的竞争时，偏向锁会多做很多额外操作，尤其是撤销偏向所的时候会导致进入安全点，安全点会导致stw，导致性能下降，这种情况下应当禁用；
 
-##### 查看停顿–安全点停顿日志
+### 查看停顿–安全点停顿日志
 
 1. 打开安全点日志（不能这一会打开）
    - -XX:+PrintGCApplicationStoppedTime 会打出系统停止的时间，
@@ -192,7 +276,7 @@ java 并发包提供的加锁模式分为独占锁和共享锁。
 
 </div>
 
-###### 安全点日志分析
+#### 安全点日志分析
 
 1. 第一部分是时间戳，VM Operation的类型 
 2. 第二部分是线程概况，被中括号括起来 
@@ -208,14 +292,14 @@ java 并发包提供的加锁模式分为独占锁和共享锁。
 
 **可见，那些很多但又很短的安全点，全都是RevokeBias， 高并发的应用会禁用掉偏向锁。**
 
-#### 轻量级锁
+## 轻量级锁
 
 1. 目的：轻量级锁并不是用来代替重量级锁的，轻量级锁的初衷是在没有多线程竞争的前提下，减少传统的重量级锁使用操作系统互斥量产生的性能消耗
 2. 限制：依赖于Java对象的头信息
 3. 场景：线程交替执行同步块的情况，如果存在同一时间访问同一锁的情况，就会导致轻量级锁膨胀为重量级锁。 
 4. 由来：轻量级锁是由偏向所升级来的，偏向锁运行在一个线程进入同步块的情况下，当第二个线程加入锁争用的时候，偏向锁就会升级为轻量级锁； 
 
-##### 轻量级锁加锁过程
+### 轻量级锁加锁过程
 
 当对象锁状态为无锁状态（锁标志位为“01”状态，是否为偏向锁为“0”），虚拟机首先将在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，用于存储锁对象目前的Mark Word的拷贝，官方称之为 Displaced Mark Word。这时候线程堆栈与对象头的状态如图所示： 
 <div align=center>
@@ -237,33 +321,33 @@ java 并发包提供的加锁模式分为独占锁和共享锁。
      - 会检查对象的Mark Word是否指向当前线程的栈帧，如果是就说明当前线程已经拥有了这个对象的锁，那就可以直接进入同步块继续执行
      - 否则说明多个线程竞争锁，轻量级锁就要膨胀为重量级锁，锁标志的状态值变为“10”，Mark Word中存储的就是指向重量级锁（互斥量）的指针，后面等待锁的线程也要进入阻塞状态。 而当前线程便尝试使用自旋来获取锁，自旋就是为了不让线程阻塞，而采用循环去获取锁的过程。
 
-##### 轻量级锁的释放
+### 轻量级锁的释放
 
-###### 释放锁线程视角
+#### 释放锁线程视角
 
 1. 轻量锁切换重量锁是发生在轻量锁释放锁的期间，
 2. 比对：在释放锁的时候使用复制的Markword与对象中的Markword的比对，如果不一致则切换到重量级锁（说明在这期间有线程修改了Markword）
 3. 无需mutex的场景：确认该markword是否被其他线程持有，如果否说明线程已经释放了markword，通过CAS后就可以直接进入线程，无需进入mutex
 
-###### 尝试获取锁线程视角
+#### 尝试获取锁线程视角
 
 1. 线程尝试获取锁，如果轻量锁正在被其他线程占有，则修改markwod为重量级锁
 2. 等待轻量锁的线程不会阻塞，它会一直自旋等待锁，并如上所说修改markword。这就是自旋锁，尝试获取锁的线程，在没有获得锁的时候，不被挂起，而转而去执行一个空循环，即自旋。在若干个自旋后，如果还没有获得锁，则才被挂起，获得锁，则执行代码。
 
-#### 自旋锁 
+## 自旋锁 
 
 1. 原理：消耗CPU自旋，用来获取锁
 2. 目的：减少内核态和用户态之间的切换，防止进入阻塞挂起状态
 3. 退出：获取到了锁，或者超过了自旋最大时间
 
-##### 自旋锁的优缺点
+### 自旋锁的优缺点
 
 1. 减少线程的阻塞，
 2. 锁竞争不激烈：可以提高性能
 3. 锁竞争激烈：浪费资源
 4. 持有锁的线程长时间不释放锁：浪费资源
 
-##### 自旋锁时间阈值（1.6引入了适应性自旋锁）
+### 自旋锁时间阈值（1.6引入了适应性自旋锁）
  
 JVM 对于自旋周期的选择，jdk1.5 这个限度是写死的，在 1.6 引入了适应性自旋锁，适应性自旋锁意味着自旋的时间不在是固定的了，而是由前一次在同一个锁上的自旋时间以及锁的拥有者的状态来决定，基本认为一个线程上下文切换的时间是最佳的一个时间，同时 JVM 还针对当前 CPU 的负荷情况做了较多的优化：
 
@@ -273,43 +357,906 @@ JVM 对于自旋周期的选择，jdk1.5 这个限度是写死的，在 1.6 引�
 4. 如果 CPU 处于节电模式则停止自旋，自旋时间的最坏情况是 CPU 的存储延迟（CPU A 存储了一个数据，到 CPU B 得知这个数据直接的时间差），
 5. 自旋时会适当放弃线程优先级之间的差异。 
 
-##### 自旋锁的开启
+### 自旋锁的开启
 
 JDK1.6 中-XX:+UseSpinning 开启；  
 -XX:PreBlockSpin=10 为自旋次数；  
 JDK1.7 后，去掉此参数，由 jvm 控制； 
 
-#### 重量级锁（Mutex Lock） 
+## 重量级锁（Mutex Lock） 
 
 1. 定义：依赖于操作系统 Mutex Lock 所实现的锁（线程之间的切换需要从用户态转换成核心态，成本非常高）
 2. Synchronized 是通过对象内部的一个叫做监视器锁（monitor）来实现的
 3. 监视器锁本质又是依赖于底层的操作系统的 Mutex Lock 来实现的
 
-### 锁分离
+## 锁升级分析
 
-#### 读写锁  
+<div align=center>
+
+![锁升级过程](Java并发编程之锁/锁升级过程.png)
+
+</div>
+
+### 直接使用（轻量锁）
+
+#### 测试代码
+
+```java
+package com.sunld.jvm;
+
+import org.openjdk.jol.info.ClassLayout;
+
+public class TestMarkWord {
+    public static void main(String[] args) {
+        MarkWord obj1 = new MarkWord();
+        System.out.println("----------- lock before ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+        synchronized (obj1) {
+            System.out.println("----------- locking ------------");
+            System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+        }
+
+        System.out.println("----------- after lock ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+    }
+}
+
+class MarkWord{ }
+```
+
+#### 输出结果
+
+```java
+----------- lock before ------------
+# WARNING: Unable to attach Serviceability Agent. You can try again with escalated privileges. Two options: a) use -Djol.tryWithSudo=true to try with sudo; b) echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+----------- locking ------------
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           d8 f4 16 03 (11011000 11110100 00010110 00000011) (51836120)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+----------- after lock ------------
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+```
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-mukq{background-color:#96FFFB;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-as6s{background-color:#FFFC9E;border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-mukq" rowspan="3">锁状态</th>
+    <th class="tg-as6s" colspan="7">64bit</th>
+  </tr>
+  <tr>
+    <td class="tg-as6s" colspan="3">56bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">4bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">2bit</td>
+  </tr>
+  <tr>
+    <td class="tg-as6s">25bit（unused）</td>
+    <td class="tg-as6s">29bit</td>
+    <td class="tg-as6s">2bit</td>
+    <td class="tg-as6s">1bit（unused）</td>
+    <td class="tg-as6s">age</td>
+    <td class="tg-as6s">偏向模式</td>
+    <td class="tg-as6s">标志位</td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-mukq">未锁定</td>
+    <td class="tg-0pky">00000000 00000000 00000000 0</td>
+    <td class="tg-0pky" colspan="2">对象哈希码（31）<br>0000000 00000000 00000000 00000000</td>
+    <td class="tg-0pky">0</td>
+    <td class="tg-0pky">0000</td>
+    <td class="tg-0pky">0</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">锁定中</td>
+    <td class="tg-0pky" colspan="6">指向调用栈中锁记录指针（Lock Record）<br>ptr_to_lock_record(62)<br>00000000 00000000 00000000 00000000<br>00000011&nbsp;&nbsp;00010110 11110100 110110</td>
+    <td class="tg-c3ow">00</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">锁释放</td>
+    <td class="tg-0pky">00000000 00000000 00000000 0</td>
+    <td class="tg-0pky" colspan="2">对象哈希码（31）<br>0000000 00000000 00000000 00000000</td>
+    <td class="tg-0pky">0</td>
+    <td class="tg-0pky">0000</td>
+    <td class="tg-0pky">0</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+</tbody>
+</table>
+
+结论：**默认启动由于偏向锁延迟4s，所以默认为不偏向、未锁定；获取锁时为轻量锁；释放锁时为不偏向、未锁定**
+
+### 延迟后使用（偏向锁）
+
+#### 测试代码
+
+```java
+package com.sunld.jvm;
+
+import org.openjdk.jol.info.ClassLayout;
+
+public class TestMarkWord {
+    public static void main(String[] args) throws InterruptedException {
+        Thread.sleep(5 * 1000);
+        MarkWord obj1 = new MarkWord();
+        System.out.println("----------- lock before ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+        synchronized (obj1) {
+            System.out.println("----------- locking ------------");
+            System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+        }
+
+        System.out.println("----------- after lock ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+    }
+}
+
+class MarkWord{ }
+```
+
+#### 输出结果
+
+```java
+----------- lock before ------------
+# WARNING: Unable to attach Serviceability Agent. You can try again with escalated privileges. Two options: a) use -Djol.tryWithSudo=true to try with sudo; b) echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 00 00 00 (00000101 00000000 00000000 00000000) (5)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+----------- locking ------------
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 e8 94 03 (00000101 11101000 10010100 00000011) (60090373)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+----------- after lock ------------
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 e8 94 03 (00000101 11101000 10010100 00000011) (60090373)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+```
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-mukq{background-color:#96FFFB;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-as6s{background-color:#FFFC9E;border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-fw9x{background-color:#96FFFB;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-mukq" rowspan="3">锁状态</th>
+    <th class="tg-as6s" colspan="7">64bit</th>
+  </tr>
+  <tr>
+    <td class="tg-as6s" colspan="3">56bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">4bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">2bit</td>
+  </tr>
+  <tr>
+    <td class="tg-as6s">25bit</td>
+    <td class="tg-as6s">29bit</td>
+    <td class="tg-as6s">2bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">age</td>
+    <td class="tg-as6s">偏向模式</td>
+    <td class="tg-as6s">标志位</td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-mukq">可偏向</td>
+    <td class="tg-0pky" colspan="2">当前线程指针JavaThread*（54）<br>00000000 00000000 00000000 00000000<br>00000000 00000000 000000</td>
+    <td class="tg-0pky">Epoch（2）<br>00</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0000</td>
+    <td class="tg-0pky">1</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+  <tr>
+    <td class="tg-fw9x">可偏向</td>
+    <td class="tg-0lax" colspan="2">当前线程指针JavaThread*（54）<br>00000000 00000000 00000000 00000000<br>00000011 10010100 111010</td>
+    <td class="tg-0lax">Epoch（2）<br>00</td>
+    <td class="tg-0lax">unused<br>0</td>
+    <td class="tg-0lax">分代年龄<br>0000</td>
+    <td class="tg-0lax">1</td>
+    <td class="tg-0lax">01</td>
+  </tr>
+  <tr>
+    <td class="tg-fw9x">可偏向</td>
+    <td class="tg-0lax" colspan="2">当前线程指针JavaThread*（54）<br>00000000 00000000 00000000 00000000<br>00000011 10010100 111010</td>
+    <td class="tg-0lax">Epoch（2）<br>00</td>
+    <td class="tg-0lax">unused<br>0</td>
+    <td class="tg-0lax">分代年龄<br>0000</td>
+    <td class="tg-0lax">1</td>
+    <td class="tg-0lax">01</td>
+  </tr>
+</tbody>
+</table>
+
+结论：**在可偏向状态下，默认为可偏向、未加锁；获取锁时为可偏向、未加锁且存在Thread线程信息；释放锁时为可偏向、未加锁且保持Thread线程信息**
+
+### hash对锁的影响
+
+#### 参考代码
+
+```java
+package com.sunld.jvm;
+
+import org.openjdk.jol.info.ClassLayout;
+
+public class TestMarkWord {
+    public static void main(String[] args) throws InterruptedException {
+        Thread.sleep(5 * 1000);
+        MarkWord obj1 = new MarkWord();
+        System.out.println("----------- before hash ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+        System.out.println("obj1 hashcode is: " + Integer.toBinaryString(obj1.hashCode()));
+        System.out.println("obj1 hashcode is: " + Integer.toHexString(obj1.hashCode()));
+        System.out.println("----------- after hash ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+        synchronized (obj1) {
+            System.out.println("----------- locking ------------");
+            System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+        }
+
+        System.out.println("----------- after lock ------------");
+        System.out.println(ClassLayout.parseInstance(obj1).toPrintable());
+    }
+}
+
+class MarkWord{ }
+```
+
+#### 输出结果
+
+```java
+----------- before hash ------------
+# WARNING: Unable to attach Serviceability Agent. You can try again with escalated privileges. Two options: a) use -Djol.tryWithSudo=true to try with sudo; b) echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 00 00 00 (00000101 00000000 00000000 00000000) (5)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+obj1 hashcode is: 10010101110110100110111111000
+obj1 hashcode is: 12bb4df8
+----------- after hash ------------
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           01 f8 4d bb (00000001 11111000 01001101 10111011) (-1152518143)
+      4     4        (object header)                           12 00 00 00 (00010010 00000000 00000000 00000000) (18)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+----------- locking ------------
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           88 f3 af 03 (10001000 11110011 10101111 00000011) (61862792)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+----------- after lock ------------
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           01 f8 4d bb (00000001 11111000 01001101 10111011) (-1152518143)
+      4     4        (object header)                           12 00 00 00 (00010010 00000000 00000000 00000000) (18)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+```
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-mukq{background-color:#96FFFB;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-baqh{text-align:center;vertical-align:top}
+.tg .tg-as6s{background-color:#FFFC9E;border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-fw9x{background-color:#96FFFB;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-mukq" rowspan="3">锁状态</th>
+    <th class="tg-as6s" colspan="7">64bit</th>
+  </tr>
+  <tr>
+    <td class="tg-as6s" colspan="3">56bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">4bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">2bit</td>
+  </tr>
+  <tr>
+    <td class="tg-as6s">25bit</td>
+    <td class="tg-as6s">29bit</td>
+    <td class="tg-as6s">2bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">age</td>
+    <td class="tg-as6s">偏向模式</td>
+    <td class="tg-as6s">标志位</td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-mukq">hash前</td>
+    <td class="tg-0pky" colspan="2">当前线程指针JavaThread*（54）<br>00000000 00000000 00000000 00000000<br>00000000 00000000 000000</td>
+    <td class="tg-0pky">Epoch（2）<br>00</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0000</td>
+    <td class="tg-0pky">1</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">hash后</td>
+    <td class="tg-0pky">unused<br>00000000 00000000 00000000 0</td>
+    <td class="tg-0pky" colspan="2">对象哈希码（31）<br>0010010 10111011 01001101 11111000</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0000</td>
+    <td class="tg-0pky">0</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+  <tr>
+    <td class="tg-fw9x">轻量级锁</td>
+    <td class="tg-0lax" colspan="6">指向调用栈中锁记录指针（Lock Record）<br>ptr_to_lock_record(62)<br>00000000 00000000 00000000 00000000<br>00000011 10101111&nbsp;&nbsp;11110011&nbsp;&nbsp;100010</td>
+    <td class="tg-baqh">00</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">释放锁</td>
+    <td class="tg-0pky">unused<br>00000000 00000000 00000000 0</td>
+    <td class="tg-0pky" colspan="2">对象哈希码（31）<br>0010010 10111011 01001101 11111000</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0000</td>
+    <td class="tg-0pky">0</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+</tbody>
+</table>
+
+总结：**hash后偏向锁会变成带有hash值，不可偏向未锁定状态；加锁之后变成轻量级锁，释放之后为hash后的状态。**
+
+### 重量锁
+
+#### 参考代码
+
+```java
+package com.sunld.jvm;
+
+import org.openjdk.jol.info.ClassLayout;
+
+public class TestMarkWord {
+    static MarkWord obj1;
+    public static void main(String[] args) throws InterruptedException {
+        Thread.sleep(5 * 1000);
+        obj1 = new MarkWord();
+        System.out.println(System.currentTimeMillis() + " before lock 偏向未锁定 \n" +
+                ClassLayout.parseInstance(obj1).toPrintable());
+
+        Thread t1= new Thread(() -> {
+            System.out.println(System.currentTimeMillis() + " t1 thread before lock  \n" +
+                    ClassLayout.parseInstance(obj1).toPrintable());
+            synchronized (obj1){
+                System.out.println(System.currentTimeMillis() + " t1 thread locking \n" +
+                        ClassLayout.parseInstance(obj1).toPrintable());
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println(System.currentTimeMillis() + " t1 thread unlock \n" +
+                    ClassLayout.parseInstance(obj1).toPrintable());
+        });
+
+        Thread t2= new Thread(() -> {
+            System.out.println(System.currentTimeMillis() + " t2 thread before lock  \n" +
+                    ClassLayout.parseInstance(obj1).toPrintable());
+            synchronized (obj1){
+                System.out.println(System.currentTimeMillis() + " t2 thread locking \n" +
+                        ClassLayout.parseInstance(obj1).toPrintable());
+                try {
+                    Thread.sleep(8000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println(System.currentTimeMillis() + " t2 thread unlock \n" +
+                    ClassLayout.parseInstance(obj1).toPrintable());
+        });
+        t1.start();
+        Thread.sleep(1000);// 先保证t1执行完成
+        t2.start();
+        Thread.sleep(1000);// 主线程先睡一会，让子线程先执行起来。
+
+//        处理主线程
+        sync();
+
+        System.out.println(System.currentTimeMillis() + " after1 t1 or t2 unlock \n" +
+                ClassLayout.parseInstance(obj1).toPrintable());
+        Thread.sleep(2000); // 主线程先睡一会，让重量锁充分释放（几百毫秒有时也可以，但不一定）。
+        System.out.println(System.currentTimeMillis() + " after2 t1 or t2 unlock \n" +
+                ClassLayout.parseInstance(obj1).toPrintable());
+
+        System.gc();
+        System.out.println(System.currentTimeMillis() + " after gc  \n" +
+                ClassLayout.parseInstance(obj1).toPrintable());
+    }
+
+    public  static  void sync() throws InterruptedException {
+        System.out.println(System.currentTimeMillis() + " main thread before lock  \n" +
+                ClassLayout.parseInstance(obj1).toPrintable());
+        synchronized (obj1){
+            System.out.println(System.currentTimeMillis() + "main thread locking \n" +
+                    ClassLayout.parseInstance(obj1).toPrintable());
+        }
+        System.out.println(System.currentTimeMillis() + " main thread unlock \n" +
+                ClassLayout.parseInstance(obj1).toPrintable());
+    }
+}
+
+class MarkWord{ }
+```
+
+#### 输出结果
+
+```java
+1614039798031 before lock 偏向未锁定 
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 00 00 00 (00000101 00000000 00000000 00000000) (5)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039860069 t1 thread before lock  
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 00 00 00 (00000101 00000000 00000000 00000000) (5)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039860069 t1 thread locking 
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 40 d8 1f (00000101 01000000 11011000 00011111) (534265861)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039860572 t1 thread unlock 
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 40 d8 1f (00000101 01000000 11011000 00011111) (534265861)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039861077 t2 thread before lock  
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 40 d8 1f (00000101 01000000 11011000 00011111) (534265861)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039861078 t2 thread locking 
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           a0 f4 b3 00 (10100000 11110100 10110011 00000000) (11793568)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039862090 main thread before lock  
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           a0 f4 b3 00 (10100000 11110100 10110011 00000000) (11793568)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039869082 t2 thread unlock 
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           4a 1a cc 1c (01001010 00011010 11001100 00011100) (483138122)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039869082main thread locking 
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           4a 1a cc 1c (01001010 00011010 11001100 00011100) (483138122)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039869083 main thread unlock 
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           4a 1a cc 1c (01001010 00011010 11001100 00011100) (483138122)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039869084 after1 t1 or t2 unlock 
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           4a 1a cc 1c (01001010 00011010 11001100 00011100) (483138122)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039871090 after2 t1 or t2 unlock 
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+1614039871104 after gc  
+com.sunld.jvm.MarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           09 00 00 00 (00001001 00000000 00000000 00000000) (9)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+```
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-mukq{background-color:#96FFFB;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-as6s{background-color:#FFFC9E;border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-mukq" rowspan="3">锁状态</th>
+    <th class="tg-as6s" colspan="7">64bit</th>
+  </tr>
+  <tr>
+    <td class="tg-as6s" colspan="3">56bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">4bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">2bit</td>
+  </tr>
+  <tr>
+    <td class="tg-as6s">25bit</td>
+    <td class="tg-as6s">29bit</td>
+    <td class="tg-as6s">2bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">age</td>
+    <td class="tg-as6s">偏向模式</td>
+    <td class="tg-as6s">标志位</td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-mukq">可偏向<br>t1获取锁前</td>
+    <td class="tg-0pky" colspan="2">当前线程指针JavaThread*（54）<br>00000000 00000000 00000000 00000000<br>00000000 00000000 000000</td>
+    <td class="tg-0pky">Epoch（2）<br>00</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0000</td>
+    <td class="tg-0pky">1</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">t1获取锁<br>t1释放锁<br>t2获取锁前</td>
+    <td class="tg-0pky" colspan="2">当前线程指针JavaThread*（54）<br>00000000 00000000 00000000 00000000<br>00011111&nbsp;&nbsp;11011000 010000</td>
+    <td class="tg-0pky">Epoch（2）<br>00</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0000</td>
+    <td class="tg-0pky">1</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">t2获取锁<br>main 获取锁前<br>锁升级</td>
+    <td class="tg-0pky" colspan="6">指向调用栈中锁记录指针（Lock Record）<br>ptr_to_lock_record(62)<br>00000000 00000000 00000000 00000000<br>00000000 10110011 11110100&nbsp;&nbsp;101000</td>
+    <td class="tg-c3ow">00</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">t2释放锁<br>main获取锁<br>main释放锁<br>未充分释放<br>锁膨胀</td>
+    <td class="tg-0pky" colspan="6">指向互斥量（重量级锁）的指针<br>ptr_to_heavyweigth_monitor(62)<br>00000000 00000000 00000000 00000000<br>00011100 11001100&nbsp;&nbsp;00011010 010010</td>
+    <td class="tg-c3ow">10</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">充分释放</td>
+    <td class="tg-0pky">unused<br>00000000 00000000 00000000 0</td>
+    <td class="tg-0pky" colspan="2">对象哈希码（31）<br>0000000 00000000 00000000 00000000</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0000</td>
+    <td class="tg-0pky">0</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">gc</td>
+    <td class="tg-0pky">unused<br>00000000 00000000 00000000 0</td>
+    <td class="tg-0pky" colspan="2">对象哈希码（31）<br>0000000 00000000 00000000 00000000</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0001</td>
+    <td class="tg-0pky">0</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+</tbody>
+</table>
+
+### wait方法的影响
+
+#### 参考代码
+
+```java
+package com.sunld.jvm;
+
+
+import org.openjdk.jol.info.ClassLayout;
+
+public class TestWaitMarkWord {
+    static WaitMarkWord obj1;
+    public static void main(String[] args) throws InterruptedException {
+        Thread.sleep(5 * 1000);
+        obj1 = new WaitMarkWord();
+        System.out.println("befre lock \n" +
+                ClassLayout.parseInstance(obj1).toPrintable());
+
+        Thread t1= new Thread(() -> {
+            synchronized (obj1){
+                try {
+                    synchronized (obj1) {
+                        System.out.println("before wait \n" +
+                                ClassLayout.parseInstance(obj1).toPrintable());
+                        obj1.wait();
+                        System.out.println("after wait \n" +
+                                ClassLayout.parseInstance(obj1).toPrintable());
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t1.start();
+        Thread.sleep(7000);
+        synchronized (obj1) {
+            obj1.notifyAll();
+        }
+    }
+}
+class WaitMarkWord {}
+
+```
+
+#### 输出结果
+
+```java
+# WARNING: Unable to attach Serviceability Agent. You can try again with escalated privileges. Two options: a) use -Djol.tryWithSudo=true to try with sudo; b) echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+befre lock 
+com.sunld.jvm.WaitMarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 00 00 00 (00000101 00000000 00000000 00000000) (5)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+before wait 
+com.sunld.jvm.WaitMarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           05 60 a8 20 (00000101 01100000 10101000 00100000) (547905541)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+after wait 
+com.sunld.jvm.WaitMarkWord object internals:
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           1a 35 9d 1d (00011010 00110101 10011101 00011101) (496842010)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           43 c1 00 f8 (01000011 11000001 00000000 11111000) (-134168253)
+     12     4        (loss due to the next object alignment)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+
+```
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-mukq{background-color:#96FFFB;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-as6s{background-color:#FFFC9E;border-color:inherit;text-align:center;vertical-align:top}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-mukq" rowspan="3">锁状态</th>
+    <th class="tg-as6s" colspan="7">64bit</th>
+  </tr>
+  <tr>
+    <td class="tg-as6s" colspan="3">56bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">4bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">2bit</td>
+  </tr>
+  <tr>
+    <td class="tg-as6s">25bit</td>
+    <td class="tg-as6s">29bit</td>
+    <td class="tg-as6s">2bit</td>
+    <td class="tg-as6s">1bit</td>
+    <td class="tg-as6s">age</td>
+    <td class="tg-as6s">偏向模式</td>
+    <td class="tg-as6s">标志位</td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-mukq">可偏向<br>t1获取锁前</td>
+    <td class="tg-0pky" colspan="2">当前线程指针JavaThread*（54）<br>00000000 00000000 00000000 00000000<br>00000000 00000000 000000</td>
+    <td class="tg-0pky">Epoch（2）<br>00</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0000</td>
+    <td class="tg-0pky">1</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">wait前</td>
+    <td class="tg-0pky" colspan="2">当前线程指针JavaThread*（54）<br>00000000 00000000 00000000 00000000<br>00100000 10101000 011000</td>
+    <td class="tg-0pky">Epoch（2）<br>00</td>
+    <td class="tg-0pky">unused<br>0</td>
+    <td class="tg-0pky">分代年龄<br>0000</td>
+    <td class="tg-0pky">1</td>
+    <td class="tg-0pky">01</td>
+  </tr>
+  <tr>
+    <td class="tg-mukq">wait后</td>
+    <td class="tg-0pky" colspan="6">指向互斥量（重量级锁）的指针<br>ptr_to_heavyweigth_monitor(62)<br>00000000 00000000 00000000 00000000<br>00011101 10011101&nbsp;&nbsp;00110101 000110</td>
+    <td class="tg-c3ow">10</td>
+  </tr>
+</tbody>
+</table>
+
+**总结：调用wait之后则直接升级为重量锁**
+
+## 锁分离
+
+### 读写锁  
 
 为了提高性能，Java 提供了读写锁，在读的地方使用读锁，在写的地方使用写锁，灵活控制，如果没有写锁的情况下，读是无阻塞的,在一定程度上提高了程序的执行效率。读写锁分为读锁和写锁，多个读锁不互斥，读锁与写锁互斥，这是由 jvm 自己控制的，你只要上好相应的锁即可。 
 
-##### 读锁（并发读）
+#### 读锁（并发读）
 
 如果你的代码只读数据，可以很多人同时读，但不能同时写，那就上读锁 
 
-##### 写锁（单独写）
+#### 写锁（单独写）
 
 如果你的代码修改数据，只能有一个人在写，且不能同时读取，那就上写锁。总之，读的时候上读锁，写的时候上写锁！ 
 
-##### Java中的实现
+#### Java中的实现
 
 1. Java中读写锁有个接口ReadWriteLock实现类ReentrantReadWriteLock；可以用来实现TreeMap的线程安全使用。
 2. CopyOnWriteArrayList 、CopyOnWriteArraySet
 3. CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。CopyOnWrite并发容器用于读多写少的并发场景，因为，读的时候没有锁，但是对其进行更改的时候是会加锁的，否则会导致多个线程同时复制出多个副本，各自修改各自的；
 
-### 锁粗化（减小锁的粒度）
+## 锁粗化（减小锁的粒度）
 
 减小锁粒度是指缩小锁定对象的范围，从而减小锁冲突的可能性，从而提高系统的并发能力。减小锁粒度是一种削弱多线程锁竞争的有效手段。
 
-#### 分段锁-ConcurrentHashMap
+### 分段锁-ConcurrentHashMap
 
 java中的ConcurrentHashMap在jdk1.8之前的版本，使用一个Segment 数组
 
@@ -329,17 +1276,17 @@ ConcurrentHashMap 是由 Segment 数组结构和 HashEntry 数组结构组成。
 
 </div>
 
-#### LongAdder
+### LongAdder
 
 LongAdder 实现思路也类似ConcurrentHashMap，LongAdder有一个根据当前并发状况动态改变的Cell数组，Cell对象里面有一个long类型的value用来存储值; 
 开始没有并发争用的时候或者是cells数组正在初始化的时候，会使用cas来将值累加到成员变量的base上，在并发争用的情况下，LongAdder会初始化cells数组，在Cell数组中选定一个Cell加锁，数组有多少个cell，就允许同时有多少线程进行修改，最后将数组中每个Cell中的value相加，在加上base的值，就是最终的值；cell数组还能根据当前线程争用情况进行扩容，初始长度为2，每次扩容会增长一倍，直到扩容到大于等于cpu数量就不再扩容，这也就是为什么LongAdder比cas和AtomicInteger效率要高的原因，后面两者都是volatile+cas实现的，他们的竞争维度是1，LongAdder的竞争维度为“Cell个数+1”为什么要+1？因为它还有一个base，如果竞争不到锁还会尝试将数值加到base上；
 
-#### LinkedBlockingQueue
+### LinkedBlockingQueue
 
 LinkedBlockingQueue也体现了这样的思想，在队列头入队，在队列尾出队，入队和出队使用不同的锁，相对于LinkedBlockingArray只有一个锁效率要高；
 拆锁的粒度不能无限拆，最多可以将一个锁拆为当前cup数量个锁即可；
 
-### 无锁编程
+## 无锁编程
 
 1. 一写一读的无锁队列：内存屏障
 2. 一写多读的无锁队列：volatile关键字

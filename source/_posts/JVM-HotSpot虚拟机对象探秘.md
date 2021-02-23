@@ -649,8 +649,6 @@ public class TypeSequence {
     private volatile char d;
     private volatile short c;
 
-
-
     private volatile int e;
     private volatile float f;
 
