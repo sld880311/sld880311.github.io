@@ -299,24 +299,110 @@ java 并发包提供的加锁模式分为独占锁和共享锁。
 3. 场景：线程交替执行同步块的情况，如果存在同一时间访问同一锁的情况，就会导致轻量级锁膨胀为重量级锁。 
 4. 由来：轻量级锁是由偏向所升级来的，偏向锁运行在一个线程进入同步块的情况下，当第二个线程加入锁争用的时候，偏向锁就会升级为轻量级锁； 
 
+### Lock record
+
+1. **作用：**用于偏向锁和轻量锁的优化
+2. **包含的数据：**The lock record holds the original value of the object’s mark word and also contains metadata necessary to identify which object is locked.
+3. **创建时机：**When an object is lightweight locked by a monitorenter bytecode, a lock record is either implicitly or explicitly allocated on the stack of the thread performing the lock acquisition operation.
+4. **创建位置：**Interpreted frames contain a region which holds the lock records for all monitors owned by the activation. During interpreted method execution this region grows or shrinks depending upon the number of locks held.（在线程的Interpretered Frame上(解释帧)分配）
+5. 作用：
+   - 持有displaced word和锁住对象的元数据
+   - 解释器使用lock record来检测非法的锁状态
+   - 隐式地充当锁重入机制的计数器
+
+#### basicLock.hpp初始化
+
+```c
+#ifndef SHARE_VM_RUNTIME_BASICLOCK_HPP
+#define SHARE_VM_RUNTIME_BASICLOCK_HPP
+
+#include "oops/markOop.hpp"
+#include "runtime/handles.hpp"
+#include "utilities/top.hpp"
+
+class BasicLock VALUE_OBJ_CLASS_SPEC {
+  friend class VMStructs;
+ private:
+  volatile markOop _displaced_header;
+ public:
+  markOop      displaced_header() const               { return _displaced_header; }
+  void         set_displaced_header(markOop header)   { _displaced_header = header; }
+
+  void print_on(outputStream* st) const;
+
+  // move a basic lock (used during deoptimization
+  void move_to(oop obj, BasicLock* dest);
+
+  static int displaced_header_offset_in_bytes()       { return offset_of(BasicLock, _displaced_header); }
+};
+
+// A BasicObjectLock associates a specific Java object with a BasicLock.
+// It is currently embedded in an interpreter frame.
+
+// Because some machines have alignment restrictions on the control stack,
+// the actual space allocated by the interpreter may include padding words
+// after the end of the BasicObjectLock.  Also, in order to guarantee
+// alignment of the embedded BasicLock objects on such machines, we
+// put the embedded BasicLock at the beginning of the struct.
+
+class BasicObjectLock VALUE_OBJ_CLASS_SPEC {
+  friend class VMStructs;
+ private:
+  BasicLock _lock;                                    // the lock, must be double word aligned
+  oop       _obj;                                     // object holds the lock;
+
+ public:
+  // Manipulation
+  oop      obj() const                                { return _obj;  }
+  void set_obj(oop obj)                               { _obj = obj; }
+  BasicLock* lock()                                   { return &_lock; }
+
+  // Note: Use frame::interpreter_frame_monitor_size() for the size of BasicObjectLocks
+  //       in interpreter activation frames since it includes machine-specific padding.
+  static int size()                                   { return sizeof(BasicObjectLock)/wordSize; }
+
+  // GC support
+  void oops_do(OopClosure* f) { f->do_oop(&_obj); }
+
+  static int obj_offset_in_bytes()                    { return offset_of(BasicObjectLock, _obj);  }
+  static int lock_offset_in_bytes()                   { return offset_of(BasicObjectLock, _lock); }
+};
+
+
+#endif // SHARE_VM_RUNTIME_BASICLOCK_HPP
+```
+
+#### 轻量级加锁代码（bytecodeInterpreter.cpp）
+
+```c
+        // Traditional lightweight locking.
+        if (!success) {
+          markOop displaced = rcvr->mark()->set_unlocked();
+          mon->lock()->set_displaced_header(displaced);
+          bool call_vm = UseHeavyMonitors;
+          if (call_vm || Atomic::cmpxchg_ptr(mon, rcvr->mark_addr(), displaced) != displaced) {
+            // Is it simple recursive case?
+            if (!call_vm && THREAD->is_lock_owned((address) displaced->clear_lock_bits())) {
+              mon->lock()->set_displaced_header(NULL);
+            } else {
+              CALL_VM(InterpreterRuntime::monitorenter(THREAD, mon), handle_exception);
+            }
+          }
+        }
+```
+
 ### 轻量级锁加锁过程
 
-当对象锁状态为无锁状态（锁标志位为“01”状态，是否为偏向锁为“0”），虚拟机首先将在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，用于存储锁对象目前的Mark Word的拷贝，官方称之为 Displaced Mark Word。这时候线程堆栈与对象头的状态如图所示： 
 <div align=center>
 
-![](Java并发编程之锁/1589109098671.png)
+![轻量级锁的获取过程](Java并发编程之锁/轻量级锁的获取过程.png)
 
 </div>
 
-
+当对象锁状态为无锁状态（锁标志位为“01”状态，是否为偏向锁为“0”），虚拟机首先将在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，用于存储锁对象目前的Mark Word的拷贝，官方称之为 Displaced Mark Word。
 1. 拷贝对象头中的Mark Word复制到锁记录中；
 2. 拷贝成功后，虚拟机将使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针，并将Lock record里的owner指针指向object mark word
-   - 如果成功，那么这个线程就拥有了该对象的锁，并且对象Mark Word的锁标志位设置为“00”，即表示此对象处于轻量级锁定状态，如图所示：
-      <div align=center>
-
-      ![](Java并发编程之锁/1589109123275.png)
-
-      </div>
+   - 如果成功，那么这个线程就拥有了该对象的锁，并且对象Mark Word的锁标志位设置为“00”，即表示此对象处于轻量级锁定状态
    - 如果失败
      - 会检查对象的Mark Word是否指向当前线程的栈帧，如果是就说明当前线程已经拥有了这个对象的锁，那就可以直接进入同步块继续执行
      - 否则说明多个线程竞争锁，轻量级锁就要膨胀为重量级锁，锁标志的状态值变为“10”，Mark Word中存储的就是指向重量级锁（互斥量）的指针，后面等待锁的线程也要进入阻塞状态。 而当前线程便尝试使用自旋来获取锁，自旋就是为了不让线程阻塞，而采用循环去获取锁的过程。
@@ -368,6 +454,33 @@ JDK1.7 后，去掉此参数，由 jvm 控制；
 1. 定义：依赖于操作系统 Mutex Lock 所实现的锁（线程之间的切换需要从用户态转换成核心态，成本非常高）
 2. Synchronized 是通过对象内部的一个叫做监视器锁（monitor）来实现的
 3. 监视器锁本质又是依赖于底层的操作系统的 Mutex Lock 来实现的
+
+
+### ObjectMonitor对象（每个对象都具备jdk1.8）
+
+objectMonitor.hpp
+
+```c
+ObjectMonitor() {
+    _header       = NULL;
+    _count        = 0;     // 重入次数
+    _waiters      = 0,     // 等待线程数
+    _recursions   = 0;
+    _object       = NULL;
+    _owner        = NULL;  // 当前持有锁的线程
+    _WaitSet      = NULL;  // 调用wait方法的线程被阻塞放置在这里
+    _WaitSetLock  = 0 ;
+    _Responsible  = NULL ;
+    _succ         = NULL ;
+    _cxq          = NULL ;
+    FreeNext      = NULL ;
+    _EntryList    = NULL ; // 等待锁处于block的线程，才有资格成为候选资源的线程
+    _SpinFreq     = 0 ;
+    _SpinClock    = 0 ;
+    OwnerIsThread = 0 ;
+    _previous_owner_tid = 0;
+  }
+```
 
 ## 锁升级分析
 
@@ -1236,21 +1349,17 @@ Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
 
 ### 读写锁  
 
-为了提高性能，Java 提供了读写锁，在读的地方使用读锁，在写的地方使用写锁，灵活控制，如果没有写锁的情况下，读是无阻塞的,在一定程度上提高了程序的执行效率。读写锁分为读锁和写锁，多个读锁不互斥，读锁与写锁互斥，这是由 jvm 自己控制的，你只要上好相应的锁即可。 
-
-#### 读锁（并发读）
-
-如果你的代码只读数据，可以很多人同时读，但不能同时写，那就上读锁 
-
-#### 写锁（单独写）
-
-如果你的代码修改数据，只能有一个人在写，且不能同时读取，那就上写锁。总之，读的时候上读锁，写的时候上写锁！ 
+java的读写锁，在没有写锁的情况下读无阻塞。
+1. 读锁：并发读
+2. 写锁：单独写，阻塞读写 
 
 #### Java中的实现
 
-1. Java中读写锁有个接口ReadWriteLock实现类ReentrantReadWriteLock；可以用来实现TreeMap的线程安全使用。
-2. CopyOnWriteArrayList 、CopyOnWriteArraySet
-3. CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。CopyOnWrite并发容器用于读多写少的并发场景，因为，读的时候没有锁，但是对其进行更改的时候是会加锁的，否则会导致多个线程同时复制出多个副本，各自修改各自的；
+1. 接口ReadWriteLock实现类ReentrantReadWriteLock；可以用来实现TreeMap的线程安全使用
+2. CopyOnWrite容器（写时复制的容器，读多写少的场景；CopyOnWriteArrayList、CopyOnWriteArraySet）: 添加数据的步骤
+   -  复制当前容器
+   -  添加数据到新容器中
+   -  修改原容器引用指向新容器
 
 ## 锁粗化（减小锁的粒度）
 
@@ -1264,12 +1373,10 @@ java中的ConcurrentHashMap在jdk1.8之前的版本，使用一个Segment 数组
 Segment< K,V >[] segments
 ```
 
-Segment继承自ReenTrantLock，所以每个Segment就是个可重入锁，每个Segment 有一个HashEntry< K,V >数组用来存放数据，put操作时，先确定往哪个Segment放数据，只需要锁定这个Segment，执行put，其它的Segment不会被锁定；所以数组中有多少个Segment就允许同一时刻多少个线程存放数据，这样增加了并发能力。
+1. Segment继承ReentrantLock，可重入
+2. 在segment中使用HashEntry< K,V >维护数据，在执行put的时候只需要锁定当前的segment（segment的个数表示了并发度）
+3. ConcurrentHashMap 是由Segment 数组结构和HashEntry 数组结构组成 
 
-ConcurrentHashMap，它内部细分了若干个小的 HashMap，称之为段(Segment)。默认情况下一个 ConcurrentHashMap 被进一步细分为 16 个段，既就是锁的并发度。 
-如果需要在 ConcurrentHashMap 中添加一个新的表项，并不是将整个 HashMap 加锁，而是首先根据hashcode得到该表项应该存放在哪个段中，然后对该段加锁，并完成put操作。在多线程环境中，如果多个线程同时进行put操作，只要被加入的表项不存放在同一个段中，则线程间可以做到真正的并行。 
-ConcurrentHashMap 是由Segment 数组结构和HashEntry 数组结构组成 
-ConcurrentHashMap 是由 Segment 数组结构和 HashEntry 数组结构组成。Segment 是一种可重入锁 ReentrantLock，在 ConcurrentHashMap 里扮演锁的角色，HashEntry 则用于存储键值对数据。一个 ConcurrentHashMap 里包含一个 Segment 数组，Segment 的结构和 HashMap 类似，是一种数组和链表结构， 一个 Segment 里包含一个 HashEntry 数组，每个 HashEntry 是一个链表结构的元素， 每个 Segment 守护一个 HashEntry 数组里的元素,当对 HashEntry 数组的数据进行修改时，必须首先获得它对应的 Segment 锁。 
 <div align=center>
 
 ![](Java并发编程之锁/1589108702724.png)
@@ -1278,8 +1385,10 @@ ConcurrentHashMap 是由 Segment 数组结构和 HashEntry 数组结构组成。
 
 ### LongAdder
 
-LongAdder 实现思路也类似ConcurrentHashMap，LongAdder有一个根据当前并发状况动态改变的Cell数组，Cell对象里面有一个long类型的value用来存储值; 
-开始没有并发争用的时候或者是cells数组正在初始化的时候，会使用cas来将值累加到成员变量的base上，在并发争用的情况下，LongAdder会初始化cells数组，在Cell数组中选定一个Cell加锁，数组有多少个cell，就允许同时有多少线程进行修改，最后将数组中每个Cell中的value相加，在加上base的值，就是最终的值；cell数组还能根据当前线程争用情况进行扩容，初始长度为2，每次扩容会增长一倍，直到扩容到大于等于cpu数量就不再扩容，这也就是为什么LongAdder比cas和AtomicInteger效率要高的原因，后面两者都是volatile+cas实现的，他们的竞争维度是1，LongAdder的竞争维度为“Cell个数+1”为什么要+1？因为它还有一个base，如果竞争不到锁还会尝试将数值加到base上；
+1. LongAdder有一个根据当前并发状况动态改变的Cell数组，Cell对象里面有一个long类型的value用来存储值;
+2. 在没有竞争或初始化时使用cas来将值累加到成员变量的base上
+3. 竞争时，LongAdder会初始化cells数组（个数决定并发度），在Cell数组中选定一个Cell加锁，最后将数组中每个Cell中的value相加，在加上base的值，就是最终的值
+4. cell数组还能根据当前线程争用情况进行扩容，初始长度为2，每次扩容会增长一倍，直到扩容到大于等于cpu数量就不再扩容，这也就是为什么LongAdder比cas和AtomicInteger效率要高的原因，后面两者都是volatile+cas实现的，他们的竞争维度是1，LongAdder的竞争维度为“Cell个数+1”为什么要+1？因为它还有一个base，如果竞争不到锁还会尝试将数值加到base上；
 
 ### LinkedBlockingQueue
 
@@ -1315,6 +1424,47 @@ LinkedBlockingQueue也体现了这样的思想，在队列头入队，在队列�
 1. 对象内部得有一个标志位（state变量），记录自己有没有被某个线程占用，最简单的情况是这个state有0、1两个取值，0表示没有线程占用这个锁，1表示有某个线程占用了这个锁。
 2. 如果这个对象被某个线程占用，它得记录这个线程的thread ID，知道自己是被哪个线程占用了
 3. 这个对象还得维护一个thread id list，记录其他所有阻塞的、等待拿这个锁的线程（也就是记录所有在外边等待的游客）。在当前线程释放锁之后（也就是把state从1改回0），从这个thread id list里面取一个线程唤醒。
+
+### 锁之间的比对
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">锁</th>
+    <th class="tg-0lax">优点</th>
+    <th class="tg-0lax">缺点</th>
+    <th class="tg-0lax">场景</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">偏向锁</td>
+    <td class="tg-0lax">1.加锁和解锁不需要case，没有额外的消耗<br>2.与非同步方法相比仅存在纳秒级差别</td>
+    <td class="tg-0lax">存在竞争时带来偏向撤销的资源消耗</td>
+    <td class="tg-0lax">只有一个线程访问同步的场景</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">轻量锁</td>
+    <td class="tg-0lax">竞争的线程不会阻塞，提高响应速度</td>
+    <td class="tg-0lax">自旋消耗CPU</td>
+    <td class="tg-0lax">追求响应时间，同步快，执行速度快</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">重量锁</td>
+    <td class="tg-0lax">不自旋，不消化额外的cpu</td>
+    <td class="tg-0lax">1.响应速度慢<br>2.频繁获取释放锁，消耗性能</td>
+    <td class="tg-0lax">追求吞吐量，同步快，执行速度较长</td>
+  </tr>
+</tbody>
+</table>
 
 ## 参考
 

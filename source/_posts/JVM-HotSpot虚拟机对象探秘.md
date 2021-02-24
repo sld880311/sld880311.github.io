@@ -722,32 +722,6 @@ contended_double:double	16
 1. 解决cpu缓存行伪共享问题的
 2. 加了contended注解的字段会按照声明的顺序放到末尾，contended注解如果是用在类的field上会在该field前面插入128字节的padding，如果是用在类上则会在类所有field的前后都加上128字节的padding
 
-### ObjectMonitor对象（每个对象都具备jdk1.8）
-
-objectMonitor.hpp
-
-```c
-ObjectMonitor() {
-    _header       = NULL;
-    _count        = 0;     // 重入次数
-    _waiters      = 0,     // 等待线程数
-    _recursions   = 0;
-    _object       = NULL;
-    _owner        = NULL;  // 当前持有锁的线程
-    _WaitSet      = NULL;  // 调用wait方法的线程被阻塞放置在这里
-    _WaitSetLock  = 0 ;
-    _Responsible  = NULL ;
-    _succ         = NULL ;
-    _cxq          = NULL ;
-    FreeNext      = NULL ;
-    _EntryList    = NULL ; // 等待锁处于block的线程，才有资格成为候选资源的线程
-    _SpinFreq     = 0 ;
-    _SpinClock    = 0 ;
-    OwnerIsThread = 0 ;
-    _previous_owner_tid = 0;
-  }
-```
-
 ## 参考
 
 1. [记一次生产频繁出现 Full GC 的 GC日志图文详解](https://www.toutiao.com/i6799522958990639628)
