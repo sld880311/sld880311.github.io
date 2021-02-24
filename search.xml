@@ -88,6 +88,119 @@
       </tags>
   </entry>
   <entry>
+    <title>Hadoop1.X伪分布式安装</title>
+    <url>/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h2 id="安装模式"><a href="#安装模式" class="headerlink" title="安装模式"></a>安装模式</h2><h3 id="单机模式"><a href="#单机模式" class="headerlink" title="单机模式"></a>单机模式</h3><p>安装简单，几乎不用作任何配置，但仅限于调试用途；</p>
+<h3 id="伪分布模式"><a href="#伪分布模式" class="headerlink" title="伪分布模式"></a>伪分布模式</h3><p>在单节点上同时启动NameNode、DataNode、JobTracker、TaskTracker、Secondary Namenode等5个进程，模拟分布式运行的各个节点；</p>
+<h3 id="完全分布式模式"><a href="#完全分布式模式" class="headerlink" title="完全分布式模式"></a>完全分布式模式</h3><p>正常的Hadoop集群，由多个各司其职的节点构成</p>
+<a id="more"></a>
+
+<h2 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h2><p>创建安装用户（sunld），所有的组件和jdk放到目前/app下，并且授权如下：<br>chown –R sunld:sunld /app</p>
+<h3 id="设置网络"><a href="#设置网络" class="headerlink" title="设置网络"></a>设置网络</h3><p>IP地址: 192.168.42.8<br>子网掩码： 255.255.255.0<br>DNS： 221.12.1.227 (需要根据所在地设置DNS服务器)<br>Domain: 221.12.33.227  </p>
+<p>效果如下：</p>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976157995.png" class>
+
+</div>
+
+<h3 id="设置机器名（重启后生效）"><a href="#设置机器名（重启后生效）" class="headerlink" title="设置机器名（重启后生效）"></a>设置机器名（重启后生效）</h3><div align="center">
+
+<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976217994.png" class>
+
+</div>
+
+<h3 id="设置host映射文件"><a href="#设置host映射文件" class="headerlink" title="设置host映射文件"></a>设置host映射文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/hosts</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976251086.png" class>
+
+</div>
+
+<p>使用ping命令验证配置是否正确</p>
+<h3 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service iptables status</span><br><span class="line">sudo chkconfig iptables off</span><br></pre></td></tr></table></figure>
+<h3 id="关闭Selinux"><a href="#关闭Selinux" class="headerlink" title="关闭Selinux"></a>关闭Selinux</h3><ol>
+<li>使用getenforce命令查看是否关闭</li>
+<li>修改/etc/selinux/config 文件</li>
+</ol>
+<p>将SELINUX=enforcing改为SELINUX=disabled，执行该命令后重启机器生效</p>
+<h3 id="安装jdk"><a href="#安装jdk" class="headerlink" title="安装jdk"></a>安装jdk</h3><p>首先在官网现在安装包，创建安装目录，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir /app</span><br><span class="line">sudo chown -R sunld:sunld /app</span><br><span class="line">mkdir /app/lib</span><br><span class="line"></span><br><span class="line">tar -zxf jdk-7u55-linux-x64.tar.gz</span><br><span class="line">mv jdk1.7.0_55/ /app/lib</span><br><span class="line">ll /app/lib</span><br><span class="line"></span><br><span class="line">配置环境变量：sudo vi /etc/profile</span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/app/lib/jdk1.7.0_55</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</span><br></pre></td></tr></table></figure>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line">java -version</span><br></pre></td></tr></table></figure>
+<h3 id="更新OpenSSL"><a href="#更新OpenSSL" class="headerlink" title="更新OpenSSL"></a>更新OpenSSL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum update openssl</span><br></pre></td></tr></table></figure>
+<h3 id="SSH无密码验证配置"><a href="#SSH无密码验证配置" class="headerlink" title="SSH无密码验证配置"></a>SSH无密码验证配置</h3><ol>
+<li>使用sudo vi /etc/ssh/sshd_config，打开sshd_config配置文件，开放三个配置<ul>
+<li>RSAAuthentication yes</li>
+<li>PubkeyAuthentication yes</li>
+<li>AuthorizedKeysFile .ssh/authorized_keys</li>
+</ul>
+</li>
+<li>配置后重启服务:sudo service sshd restart</li>
+<li>使用shiyanlou用户登录使用如下命令生成私钥和公钥；ssh-keygen -t rsa<div align="center">
+
+</div></li>
+</ol>
+<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976463414.png" class>
+
+
+
+<ol start="4">
+<li>进入/home/shiyanlou/.ssh目录把公钥命名为authorized_keys，使用命令如下：cp id_rsa.pub authorized_keys</li>
+<li>使用如下设置authorized_keys读写权限:sudo chmod 400 authorized_keys</li>
+<li>测试ssh免密码登录是否生效</li>
+</ol>
+<h2 id="Hadoop变量配置"><a href="#Hadoop变量配置" class="headerlink" title="Hadoop变量配置"></a>Hadoop变量配置</h2><h3 id="下载安装包"><a href="#下载安装包" class="headerlink" title="下载安装包"></a>下载安装包</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -xzf hadoop-1.1.2-bin.tar.gz</span><br><span class="line">rm -rf /app/hadoop-1.1.2</span><br><span class="line">mv hadoop-1.1.2 /app</span><br></pre></td></tr></table></figure>
+<h3 id="创建子目录"><a href="#创建子目录" class="headerlink" title="创建子目录"></a>创建子目录</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /app/hadoop-1.1.2</span><br><span class="line">mkdir tmp</span><br><span class="line">mkdir hdfs</span><br><span class="line">mkdir hdfs/name</span><br><span class="line">mkdir hdfs/data</span><br><span class="line">ls</span><br></pre></td></tr></table></figure>
+<p>把hdfs/data设置为755，否则DataNode会启动失败<br><code>chmod -R 755 data</code></p>
+<h3 id="配置hadoop-env-sh"><a href="#配置hadoop-env-sh" class="headerlink" title="配置hadoop-env.sh"></a>配置hadoop-env.sh</h3><ol>
+<li>进入hadoop-1.1.2/conf目录，打开配置文件hadoop-env.sh</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /app/hadoop-1.1.2/conf</span><br><span class="line">vi hadoop-env.sh</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976604242.png" class>
+
+</div>
+
+<ol start="2">
+<li>加入配置内容，设置了hadoop中jdk和hadoop/bin路径</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/lib/java/jdk1.7.0_55</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/app/hadoop-1.1.2/bin</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976645071.png" class>
+
+</div>
+
+<ol start="3">
+<li>编译配置文件hadoop-env.sh，并确认生效</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> hadoop-env.sh</span><br><span class="line">hadoop version</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976670800.png" class>
+
+</div>
+
+<h3 id="配置core-site-xml"><a href="#配置core-site-xml" class="headerlink" title="配置core-site.xml"></a>配置core-site.xml</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;fs.default.name&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;hdfs:&#x2F;&#x2F;hadoop:9000&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;hadoop.tmp.dir&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;&#x2F;app&#x2F;hadoop-1.1.2&#x2F;tmp&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="配置hdfs-site-xml"><a href="#配置hdfs-site-xml" class="headerlink" title="配置hdfs-site.xml"></a>配置hdfs-site.xml</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;dfs.replication&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;1&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;dfs.name.dir&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;&#x2F;app&#x2F;hadoop-1.1.2&#x2F;hdfs&#x2F;name&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;dfs.data.dir&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;&#x2F;app&#x2F;hadoop-1.1.2&#x2F;hdfs&#x2F;data&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="配置mapred-site-xml"><a href="#配置mapred-site-xml" class="headerlink" title="配置mapred-site.xml"></a>配置mapred-site.xml</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;mapred.job.tracker&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;hadoop:9001&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="配置masters和slaves文件"><a href="#配置masters和slaves文件" class="headerlink" title="配置masters和slaves文件"></a>配置masters和slaves文件</h3><ol>
+<li>vi masters</li>
+<li>vi slaves</li>
+<li>输入hadoop（节点名称）</li>
+</ol>
+<h3 id="格式化namenode"><a href="#格式化namenode" class="headerlink" title="格式化namenode"></a>格式化namenode</h3><p>在hadoop1机器上使用如下命令进行格式化namenode<br>hadoop namenode -format</p>
+<h3 id="启动hadoop"><a href="#启动hadoop" class="headerlink" title="启动hadoop"></a>启动hadoop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /app/hadoop-1.1.2/bin</span><br><span class="line">./start-all.sh</span><br></pre></td></tr></table></figure>
+<h3 id="用jps检验各后台进程是否成功启动"><a href="#用jps检验各后台进程是否成功启动" class="headerlink" title="用jps检验各后台进程是否成功启动"></a>用jps检验各后台进程是否成功启动</h3>]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>Hadoop</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Centos7.2离线安装mysql5.7.20</title>
     <url>/2021/02/07/Centos7-2%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85mysql5-7-20/</url>
     <content><![CDATA[<h2 id="安装包下载"><a href="#安装包下载" class="headerlink" title="安装包下载"></a>安装包下载</h2><p><a href="https://dev.mysql.com/downloads/mysql/">https://dev.mysql.com/downloads/mysql/</a><br>根据系统版本下载</p>
@@ -219,119 +332,6 @@
       </categories>
       <tags>
         <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hadoop1.X伪分布式安装</title>
-    <url>/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h2 id="安装模式"><a href="#安装模式" class="headerlink" title="安装模式"></a>安装模式</h2><h3 id="单机模式"><a href="#单机模式" class="headerlink" title="单机模式"></a>单机模式</h3><p>安装简单，几乎不用作任何配置，但仅限于调试用途；</p>
-<h3 id="伪分布模式"><a href="#伪分布模式" class="headerlink" title="伪分布模式"></a>伪分布模式</h3><p>在单节点上同时启动NameNode、DataNode、JobTracker、TaskTracker、Secondary Namenode等5个进程，模拟分布式运行的各个节点；</p>
-<h3 id="完全分布式模式"><a href="#完全分布式模式" class="headerlink" title="完全分布式模式"></a>完全分布式模式</h3><p>正常的Hadoop集群，由多个各司其职的节点构成</p>
-<a id="more"></a>
-
-<h2 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h2><p>创建安装用户（sunld），所有的组件和jdk放到目前/app下，并且授权如下：<br>chown –R sunld:sunld /app</p>
-<h3 id="设置网络"><a href="#设置网络" class="headerlink" title="设置网络"></a>设置网络</h3><p>IP地址: 192.168.42.8<br>子网掩码： 255.255.255.0<br>DNS： 221.12.1.227 (需要根据所在地设置DNS服务器)<br>Domain: 221.12.33.227  </p>
-<p>效果如下：</p>
-<div align="center">
-
-<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976157995.png" class>
-
-</div>
-
-<h3 id="设置机器名（重启后生效）"><a href="#设置机器名（重启后生效）" class="headerlink" title="设置机器名（重启后生效）"></a>设置机器名（重启后生效）</h3><div align="center">
-
-<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976217994.png" class>
-
-</div>
-
-<h3 id="设置host映射文件"><a href="#设置host映射文件" class="headerlink" title="设置host映射文件"></a>设置host映射文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/hosts</span><br></pre></td></tr></table></figure>
-<div align="center">
-
-<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976251086.png" class>
-
-</div>
-
-<p>使用ping命令验证配置是否正确</p>
-<h3 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service iptables status</span><br><span class="line">sudo chkconfig iptables off</span><br></pre></td></tr></table></figure>
-<h3 id="关闭Selinux"><a href="#关闭Selinux" class="headerlink" title="关闭Selinux"></a>关闭Selinux</h3><ol>
-<li>使用getenforce命令查看是否关闭</li>
-<li>修改/etc/selinux/config 文件</li>
-</ol>
-<p>将SELINUX=enforcing改为SELINUX=disabled，执行该命令后重启机器生效</p>
-<h3 id="安装jdk"><a href="#安装jdk" class="headerlink" title="安装jdk"></a>安装jdk</h3><p>首先在官网现在安装包，创建安装目录，如下所示：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir /app</span><br><span class="line">sudo chown -R sunld:sunld /app</span><br><span class="line">mkdir /app/lib</span><br><span class="line"></span><br><span class="line">tar -zxf jdk-7u55-linux-x64.tar.gz</span><br><span class="line">mv jdk1.7.0_55/ /app/lib</span><br><span class="line">ll /app/lib</span><br><span class="line"></span><br><span class="line">配置环境变量：sudo vi /etc/profile</span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/app/lib/jdk1.7.0_55</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</span><br></pre></td></tr></table></figure>
-<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line">java -version</span><br></pre></td></tr></table></figure>
-<h3 id="更新OpenSSL"><a href="#更新OpenSSL" class="headerlink" title="更新OpenSSL"></a>更新OpenSSL</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum update openssl</span><br></pre></td></tr></table></figure>
-<h3 id="SSH无密码验证配置"><a href="#SSH无密码验证配置" class="headerlink" title="SSH无密码验证配置"></a>SSH无密码验证配置</h3><ol>
-<li>使用sudo vi /etc/ssh/sshd_config，打开sshd_config配置文件，开放三个配置<ul>
-<li>RSAAuthentication yes</li>
-<li>PubkeyAuthentication yes</li>
-<li>AuthorizedKeysFile .ssh/authorized_keys</li>
-</ul>
-</li>
-<li>配置后重启服务:sudo service sshd restart</li>
-<li>使用shiyanlou用户登录使用如下命令生成私钥和公钥；ssh-keygen -t rsa<div align="center">
-
-</div></li>
-</ol>
-<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976463414.png" class>
-
-
-
-<ol start="4">
-<li>进入/home/shiyanlou/.ssh目录把公钥命名为authorized_keys，使用命令如下：cp id_rsa.pub authorized_keys</li>
-<li>使用如下设置authorized_keys读写权限:sudo chmod 400 authorized_keys</li>
-<li>测试ssh免密码登录是否生效</li>
-</ol>
-<h2 id="Hadoop变量配置"><a href="#Hadoop变量配置" class="headerlink" title="Hadoop变量配置"></a>Hadoop变量配置</h2><h3 id="下载安装包"><a href="#下载安装包" class="headerlink" title="下载安装包"></a>下载安装包</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -xzf hadoop-1.1.2-bin.tar.gz</span><br><span class="line">rm -rf /app/hadoop-1.1.2</span><br><span class="line">mv hadoop-1.1.2 /app</span><br></pre></td></tr></table></figure>
-<h3 id="创建子目录"><a href="#创建子目录" class="headerlink" title="创建子目录"></a>创建子目录</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /app/hadoop-1.1.2</span><br><span class="line">mkdir tmp</span><br><span class="line">mkdir hdfs</span><br><span class="line">mkdir hdfs/name</span><br><span class="line">mkdir hdfs/data</span><br><span class="line">ls</span><br></pre></td></tr></table></figure>
-<p>把hdfs/data设置为755，否则DataNode会启动失败<br><code>chmod -R 755 data</code></p>
-<h3 id="配置hadoop-env-sh"><a href="#配置hadoop-env-sh" class="headerlink" title="配置hadoop-env.sh"></a>配置hadoop-env.sh</h3><ol>
-<li>进入hadoop-1.1.2/conf目录，打开配置文件hadoop-env.sh</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /app/hadoop-1.1.2/conf</span><br><span class="line">vi hadoop-env.sh</span><br></pre></td></tr></table></figure>
-<div align="center">
-
-<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976604242.png" class>
-
-</div>
-
-<ol start="2">
-<li>加入配置内容，设置了hadoop中jdk和hadoop/bin路径</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/lib/java/jdk1.7.0_55</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/app/hadoop-1.1.2/bin</span><br></pre></td></tr></table></figure>
-<div align="center">
-
-<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976645071.png" class>
-
-</div>
-
-<ol start="3">
-<li>编译配置文件hadoop-env.sh，并确认生效</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> hadoop-env.sh</span><br><span class="line">hadoop version</span><br></pre></td></tr></table></figure>
-<div align="center">
-
-<img src="/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/1589976670800.png" class>
-
-</div>
-
-<h3 id="配置core-site-xml"><a href="#配置core-site-xml" class="headerlink" title="配置core-site.xml"></a>配置core-site.xml</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;fs.default.name&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;hdfs:&#x2F;&#x2F;hadoop:9000&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;hadoop.tmp.dir&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;&#x2F;app&#x2F;hadoop-1.1.2&#x2F;tmp&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="配置hdfs-site-xml"><a href="#配置hdfs-site-xml" class="headerlink" title="配置hdfs-site.xml"></a>配置hdfs-site.xml</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;dfs.replication&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;1&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;dfs.name.dir&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;&#x2F;app&#x2F;hadoop-1.1.2&#x2F;hdfs&#x2F;name&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line"> &lt;name&gt;dfs.data.dir&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;&#x2F;app&#x2F;hadoop-1.1.2&#x2F;hdfs&#x2F;data&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="配置mapred-site-xml"><a href="#配置mapred-site-xml" class="headerlink" title="配置mapred-site.xml"></a>配置mapred-site.xml</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">    &lt;name&gt;mapred.job.tracker&lt;&#x2F;name&gt;</span><br><span class="line">    &lt;value&gt;hadoop:9001&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="配置masters和slaves文件"><a href="#配置masters和slaves文件" class="headerlink" title="配置masters和slaves文件"></a>配置masters和slaves文件</h3><ol>
-<li>vi masters</li>
-<li>vi slaves</li>
-<li>输入hadoop（节点名称）</li>
-</ol>
-<h3 id="格式化namenode"><a href="#格式化namenode" class="headerlink" title="格式化namenode"></a>格式化namenode</h3><p>在hadoop1机器上使用如下命令进行格式化namenode<br>hadoop namenode -format</p>
-<h3 id="启动hadoop"><a href="#启动hadoop" class="headerlink" title="启动hadoop"></a>启动hadoop</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /app/hadoop-1.1.2/bin</span><br><span class="line">./start-all.sh</span><br></pre></td></tr></table></figure>
-<h3 id="用jps检验各后台进程是否成功启动"><a href="#用jps检验各后台进程是否成功启动" class="headerlink" title="用jps检验各后台进程是否成功启动"></a>用jps检验各后台进程是否成功启动</h3>]]></content>
-      <categories>
-        <category>其他</category>
-      </categories>
-      <tags>
-        <tag>Hadoop</tag>
       </tags>
   </entry>
   <entry>
@@ -546,40 +546,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hibernate系统化学习之常用方法</title>
-    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<h2 id="session-find-load"><a href="#session-find-load" class="headerlink" title="session.find/load"></a>session.find/load</h2><p>hibernate中session.find/load方法都能通过指定实体类名和id从数据库中读取指定的记录，并且返回与之对映的实体对象。但是它们也有很大的区别 ,find()和load()方法在执行检索时的区别：</p>
-<ol>
-<li><p>find()在类检索级别时总是执行立即检索而且如果检索不到相关的对象的话会返回null,load()方法则会抛出一个ObjectNotException</p>
-</li>
-<li><p>load()方法可返回一个实体代理类类型，而find()方法直接返回的是实体类对象。</p>
-</li>
-<li><p>load()方法可以充分利用内部缓存和二级缓存，而find()方法会忽略二级缓存，若内部缓存没有查询到会到数据库中去查询。</p>
-<a id="more"></a>
-<h2 id="Session-get-load"><a href="#Session-get-load" class="headerlink" title="Session.get/load"></a>Session.get/load</h2></li>
-<li><p>如果未能发现符合条件的记录，get方法返回null，而load方法会抛出一个ObejctNotFoundException。</p>
-</li>
-<li><p>Load方法可返回实体的代理类类型，而get方法永远直接返回实体类。</p>
-</li>
-<li><p>Load方法可以充分利用内部缓存和二级缓存中现有数据，而get方法则仅仅在内部缓存中进行数据查找，如没有发现对应数据，将越过二级缓存，直接调用SQL完成数据读取。</p>
-</li>
-</ol>
-<p>Session 的load(), get() , find() 方法都可实现对业务数据的查询，其中load()会因所要查询的对象类的映射文件（比如Customer.hbm.xml文件）中设置的检索策略，而实现立即检索或延迟检索。get()方法和find()方法却不受这种控制，它们总是会执行立即检索。</p>
-<p>那么象load()这样的方法，当其被设置为使用延迟检索时，它会返回什么样的实例呢？当使用延迟检索时返回为这一对象的代理类实例，代理类实例也有一个标志性的OID, 但没有被实例化，其所有属性为默认初始值或为空。提到检索，load() 和get()方法都是用指定了OID的方式检索并返回一个与数据库中记录相对应的实例对象。如Customer customer = (Customer)session.get(Customer.class, new Long(1)) 将会返回一个Customer实例对象customer. 而 find()可以实现批量的检索，其返回类型为List的对象集合。例如：<br>List customerList = session.find( “from Customer as c”);</p>
-<p>Load(): 另一种读取数据的方法,和get的区别是: 1.异常处理: load有异常处理,get没有,它返回null,2.get从数据库读数据,load可能去读缓冲区。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
-      <categories>
-        <category>Java</category>
-        <category>Hibernate</category>
-        <category>开源框架</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>常用方法</tag>
-        <tag>Hibernate</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hibernate系统化学习之对象状态</title>
     <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/</url>
     <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><style type="text/css">
@@ -652,8 +618,42 @@
       </categories>
       <tags>
         <tag>Java</tag>
-        <tag>Hibernate</tag>
         <tag>对象状态</tag>
+        <tag>Hibernate</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hibernate系统化学习之常用方法</title>
+    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<h2 id="session-find-load"><a href="#session-find-load" class="headerlink" title="session.find/load"></a>session.find/load</h2><p>hibernate中session.find/load方法都能通过指定实体类名和id从数据库中读取指定的记录，并且返回与之对映的实体对象。但是它们也有很大的区别 ,find()和load()方法在执行检索时的区别：</p>
+<ol>
+<li><p>find()在类检索级别时总是执行立即检索而且如果检索不到相关的对象的话会返回null,load()方法则会抛出一个ObjectNotException</p>
+</li>
+<li><p>load()方法可返回一个实体代理类类型，而find()方法直接返回的是实体类对象。</p>
+</li>
+<li><p>load()方法可以充分利用内部缓存和二级缓存，而find()方法会忽略二级缓存，若内部缓存没有查询到会到数据库中去查询。</p>
+<a id="more"></a>
+<h2 id="Session-get-load"><a href="#Session-get-load" class="headerlink" title="Session.get/load"></a>Session.get/load</h2></li>
+<li><p>如果未能发现符合条件的记录，get方法返回null，而load方法会抛出一个ObejctNotFoundException。</p>
+</li>
+<li><p>Load方法可返回实体的代理类类型，而get方法永远直接返回实体类。</p>
+</li>
+<li><p>Load方法可以充分利用内部缓存和二级缓存中现有数据，而get方法则仅仅在内部缓存中进行数据查找，如没有发现对应数据，将越过二级缓存，直接调用SQL完成数据读取。</p>
+</li>
+</ol>
+<p>Session 的load(), get() , find() 方法都可实现对业务数据的查询，其中load()会因所要查询的对象类的映射文件（比如Customer.hbm.xml文件）中设置的检索策略，而实现立即检索或延迟检索。get()方法和find()方法却不受这种控制，它们总是会执行立即检索。</p>
+<p>那么象load()这样的方法，当其被设置为使用延迟检索时，它会返回什么样的实例呢？当使用延迟检索时返回为这一对象的代理类实例，代理类实例也有一个标志性的OID, 但没有被实例化，其所有属性为默认初始值或为空。提到检索，load() 和get()方法都是用指定了OID的方式检索并返回一个与数据库中记录相对应的实例对象。如Customer customer = (Customer)session.get(Customer.class, new Long(1)) 将会返回一个Customer实例对象customer. 而 find()可以实现批量的检索，其返回类型为List的对象集合。例如：<br>List customerList = session.find( “from Customer as c”);</p>
+<p>Load(): 另一种读取数据的方法,和get的区别是: 1.异常处理: load有异常处理,get没有,它返回null,2.get从数据库读数据,load可能去读缓冲区。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>Hibernate</category>
+        <category>开源框架</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Hibernate</tag>
+        <tag>常用方法</tag>
       </tags>
   </entry>
   <entry>
@@ -785,6 +785,48 @@
         <tag>Javap</tag>
         <tag>Class分析</tag>
         <tag>JVM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java常见问题之两套JRE</title>
+    <url>/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/</url>
+    <content><![CDATA[<p>JDK在安装过程中如果勾选安装JRE最终会在安装目录中有两套JRE。简单来说一套用于Java本身的运行（比如java本身的javac、还有监控套件javap等），一套用于程序的运行。两套JRE的路径默认为：</p>
+<ol>
+<li>C:\Program Files\Java\jdk1.8.0_192\jre</li>
+<li>C:\Program Files\Java\jre1.8.0_192<a id="more"></a>
+
+</li>
+</ol>
+<h2 id="JDK、JRE、JVM之间的关系"><a href="#JDK、JRE、JVM之间的关系" class="headerlink" title="JDK、JRE、JVM之间的关系"></a>JDK、JRE、JVM之间的关系</h2><p>JDK本身运行环境中的jre比jre目录下多了Server端的Java虚拟机。  </p>
+<p>JRE：Java编译后的可运行环境。<br>JVM：Java虚拟机</p>
+<h3 id="使用两套JDK的原因"><a href="#使用两套JDK的原因" class="headerlink" title="使用两套JDK的原因"></a>使用两套JDK的原因</h3><p>JDK里面有很多用Java所编写的开发工具（如javac.exe、jar.exe等），而且都放置在 &lt;JDK安装目录&gt;\lib\tools.jar 里。<code>javac.exe与输入 java -cp c:\jdk\lib\tools.jar com.sun.tools.javac.Main</code>是一样的，会得到相同的结果。</p>
+<h3 id="如何选择使用那套JRE"><a href="#如何选择使用那套JRE" class="headerlink" title="如何选择使用那套JRE"></a>如何选择使用那套JRE</h3><p>由<code>java.exe</code>决定，执行顺序如下：</p>
+<ol>
+<li>自己的目录下有没有JRE；</li>
+<li>父目录有没有JRE；</li>
+<li>查询注册表：<br>[HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment]</li>
+</ol>
+<h3 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h3><p><strong>JRE目录下的Bin目录有两个目录：server与client。这就是真正的jvm.dll所在。</strong><br>jvm.dll 无法单独工作，当jvm.dll启动后，会使用explicit的方法（就是使用Win32 API之中的LoadLibrary()与GetProcAddress()来载入辅助用的动态链接库），而这些辅助用的动态链接库（.dll）都必须位于jvm.dll所在目录的父目录之中。因此想使用哪个JVM，只需要设置PATH，指向JRE所在目录底下的jvm.dll。</p>
+<h2 id="名称解释"><a href="#名称解释" class="headerlink" title="名称解释"></a>名称解释</h2><ol>
+<li><strong>JAVA IDE</strong>:JAVA集成开发环境，如JBuilder Eclipse NetBeans,JEdit,TaxPad等等。</li>
+<li><strong>JDK Java开发包</strong>:java development kit ，它是使用JAVA进行开发的基础，包含：JVM（JAVA虚拟机）,JAVA 类库，JAVA运行环境。简单的说就是个开发平台：包含开发平台，和JAVA运行平台（即JRE或J2RE是Java2 Runtime Environment，即Java运行环境，有时简称JRE。如果你只需要运行Java程序或Applet，下载并安装它即可。）</li>
+<li><strong>SDK（Software Development Kit）</strong>一般指软件开发包，可以包括函数库、编译程序等。</li>
+<li><strong>JRE（Java Runtime Enviroment）</strong>是指Java的运行环境，是面向Java程序的使用者，而不是开发者。其内部含有JVM(JAVA虚拟机）</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="jdk下bin目录里的java-exe与外部jre中的java-exe的秘密"><a href="#jdk下bin目录里的java-exe与外部jre中的java-exe的秘密" class="headerlink" title="jdk下bin目录里的java.exe与外部jre中的java.exe的秘密"></a>jdk下bin目录里的java.exe与外部jre中的java.exe的秘密</h3><p>jdk里的java.exe和jre中的java.exe其实是一样的，但我们在运行的时候用的却是优先使用外部jre中的java.exe（即使我们安装了JDK且也配置了环境变量）。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>安装JDK时一定会在其子目录下面安装一个JRE，同时在安装的过程也会询问你是否要安装一个外部的JRE。</li>
+<li>如果我们选择安装则就同时拥有了两个jre。这两个JRE其实本质上是没有任何分别的。最主要的区别在于：JDK目录里面的JRE主要是设计用来运行JDK自带的那些工具的（Bin目录下）。而外部的JRE在安装的时候会自动注册到操作系统的path（但在我的电脑\属性\高级系统设置\环境变量\系统变量中的 path中并没有包含该命令的路径值）里面一般是：System32文件夹下（该文件夹下包含：java.exe javaw.exe  javaws.exe 三个文件）面。</li>
+<li>因此我们只要安装了外部的JRE（即使JDK没有安装，环境变量没有配置）则运行Java程序时都是用的外部JRE的java.exe程序来运行的（即使安装了JDK且配置了环境变量）（系统的默认path具有优先）。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>JDK</tag>
+        <tag>JRE</tag>
       </tags>
   </entry>
   <entry>
@@ -1892,62 +1934,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Java系统化学习之克隆</title>
-    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%85%8B%E9%9A%86/</url>
-    <content><![CDATA[<p>所谓克隆就是对原有对象复用的复用，<strong>Java语言中克隆针对的是类的实例（对象）</strong>，在Java中一共有三种方式实现。</p>
-<ol>
-<li>直接赋值</li>
-<li>浅拷贝</li>
-<li>深拷贝<a id="more"></a>
-<h2 id="java-lang-Cloneable"><a href="#java-lang-Cloneable" class="headerlink" title="java.lang.Cloneable"></a>java.lang.Cloneable</h2></li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * A class implements the &lt;code&gt;Cloneable&lt;/code&gt; interface to</span></span><br><span class="line"><span class="comment"> * indicate to the &#123;<span class="doctag">@link</span> java.lang.Object#clone()&#125; method that it</span></span><br><span class="line"><span class="comment"> * is legal for that method to make a</span></span><br><span class="line"><span class="comment"> * field-for-field copy of instances of that class.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Invoking Object&#x27;s clone method on an instance that does not implement the</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;Cloneable&lt;/code&gt; interface results in the exception</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;CloneNotSupportedException&lt;/code&gt; being thrown.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * By convention, classes that implement this interface should override</span></span><br><span class="line"><span class="comment"> * &lt;tt&gt;Object.clone&lt;/tt&gt; (which is protected) with a public method.</span></span><br><span class="line"><span class="comment"> * See &#123;<span class="doctag">@link</span> java.lang.Object#clone()&#125; for details on overriding this</span></span><br><span class="line"><span class="comment"> * method.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Note that this interface does &lt;i&gt;not&lt;/i&gt; contain the &lt;tt&gt;clone&lt;/tt&gt; method.</span></span><br><span class="line"><span class="comment"> * Therefore, it is not possible to clone an object merely by virtue of the</span></span><br><span class="line"><span class="comment"> * fact that it implements this interface.  Even if the clone method is invoked</span></span><br><span class="line"><span class="comment"> * reflectively, there is no guarantee that it will succeed.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 实现该接口类，可以通过java.lang.Object.clone()方法完成对象中属性的赋值</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>  unascribed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     java.lang.CloneNotSupportedException</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     java.lang.Object#clone()</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span>   JDK1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过源码分析可知：  </p>
-<ol>
-<li>必须实现Cloneable接口，否则抛出CloneNotSupportedException异常</li>
-<li>实现Cloneable的类应该重写clone()，重写时该方法的修饰符为public。</li>
-</ol>
-<h2 id="java-lang-Object-clone"><a href="#java-lang-Object-clone" class="headerlink" title="java.lang.Object.clone()"></a>java.lang.Object.clone()</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates and returns a copy of this object.  The precise meaning</span></span><br><span class="line"><span class="comment">* of &quot;copy&quot; may depend on the class of the object. The general</span></span><br><span class="line"><span class="comment">* intent is that, for any object &#123;<span class="doctag">@code</span> x&#125;, the expression:</span></span><br><span class="line"><span class="comment">* &lt;blockquote&gt;</span></span><br><span class="line"><span class="comment">* &lt;pre&gt;</span></span><br><span class="line"><span class="comment">* x.clone() != x&lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">* will be true, and that the expression:</span></span><br><span class="line"><span class="comment">* &lt;blockquote&gt;</span></span><br><span class="line"><span class="comment">* &lt;pre&gt;</span></span><br><span class="line"><span class="comment">* x.clone().getClass() == x.getClass()&lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">* will be &#123;<span class="doctag">@code</span> true&#125;, but these are not absolute requirements.</span></span><br><span class="line"><span class="comment">* While it is typically the case that:</span></span><br><span class="line"><span class="comment">* &lt;blockquote&gt;</span></span><br><span class="line"><span class="comment">* &lt;pre&gt;</span></span><br><span class="line"><span class="comment">* x.clone().equals(x)&lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">* will be &#123;<span class="doctag">@code</span> true&#125;, this is not an absolute requirement.</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* By convention, the returned object should be obtained by calling</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> super.clone&#125;.  If a class and all of its superclasses (except</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> Object&#125;) obey this convention, it will be the case that</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> x.clone().getClass() == x.getClass()&#125;.</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* By convention, the object returned by this method should be independent</span></span><br><span class="line"><span class="comment">* of this object (which is being cloned).  To achieve this independence,</span></span><br><span class="line"><span class="comment">* it may be necessary to modify one or more fields of the object returned</span></span><br><span class="line"><span class="comment">* by &#123;<span class="doctag">@code</span> super.clone&#125; before returning it.  Typically, this means</span></span><br><span class="line"><span class="comment">* copying any mutable objects that comprise the internal &quot;deep structure&quot;</span></span><br><span class="line"><span class="comment">* of the object being cloned and replacing the references to these</span></span><br><span class="line"><span class="comment">* objects with references to the copies.  If a class contains only</span></span><br><span class="line"><span class="comment">* primitive fields or references to immutable objects, then it is usually</span></span><br><span class="line"><span class="comment">* the case that no fields in the object returned by &#123;<span class="doctag">@code</span> super.clone&#125;</span></span><br><span class="line"><span class="comment">* need to be modified.</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* The method &#123;<span class="doctag">@code</span> clone&#125; for class &#123;<span class="doctag">@code</span> Object&#125; performs a</span></span><br><span class="line"><span class="comment">* specific cloning operation. First, if the class of this object does</span></span><br><span class="line"><span class="comment">* not implement the interface &#123;<span class="doctag">@code</span> Cloneable&#125;, then a</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> CloneNotSupportedException&#125; is thrown. Note that all arrays</span></span><br><span class="line"><span class="comment">* are considered to implement the interface &#123;<span class="doctag">@code</span> Cloneable&#125; and that</span></span><br><span class="line"><span class="comment">* the return type of the &#123;<span class="doctag">@code</span> clone&#125; method of an array type &#123;<span class="doctag">@code</span> T[]&#125;</span></span><br><span class="line"><span class="comment">* is &#123;<span class="doctag">@code</span> T[]&#125; where T is any reference or primitive type.</span></span><br><span class="line"><span class="comment">* Otherwise, this method creates a new instance of the class of this</span></span><br><span class="line"><span class="comment">* object and initializes all its fields with exactly the contents of</span></span><br><span class="line"><span class="comment">* the corresponding fields of this object, as if by assignment; the</span></span><br><span class="line"><span class="comment">* contents of the fields are not themselves cloned. Thus, this method</span></span><br><span class="line"><span class="comment">* performs a &quot;shallow copy&quot; of this object, not a &quot;deep copy&quot; operation.</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* The class &#123;<span class="doctag">@code</span> Object&#125; does not itself implement the interface</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> Cloneable&#125;, so calling the &#123;<span class="doctag">@code</span> clone&#125; method on an object</span></span><br><span class="line"><span class="comment">* whose class is &#123;<span class="doctag">@code</span> Object&#125; will result in throwing an</span></span><br><span class="line"><span class="comment">* exception at run time.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span>     a clone of this instance.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span>  CloneNotSupportedException  if the object&#x27;s class does not</span></span><br><span class="line"><span class="comment">*               support the &#123;<span class="doctag">@code</span> Cloneable&#125; interface. Subclasses</span></span><br><span class="line"><span class="comment">*               that override the &#123;<span class="doctag">@code</span> clone&#125; method can also</span></span><br><span class="line"><span class="comment">*               throw this exception to indicate that an instance cannot</span></span><br><span class="line"><span class="comment">*               be cloned.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@see</span> java.lang.Cloneable</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">native</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException</span>;</span><br></pre></td></tr></table></figure>
-<h2 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h2><h3 id="测试代码准备"><a href="#测试代码准备" class="headerlink" title="测试代码准备"></a>测试代码准备</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.clone;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CloneTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		CloneObject co1 = <span class="keyword">new</span> CloneObject();</span><br><span class="line">		co1.setName(<span class="string">&quot;name1&quot;</span>);</span><br><span class="line">		co1.setAge(<span class="number">10</span>);</span><br><span class="line">		CloneObject2 c021 = <span class="keyword">new</span> CloneObject2();</span><br><span class="line">		c021.setName2(<span class="string">&quot;name21&quot;</span>);</span><br><span class="line">		co1.setCloneObject2(c021);</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">	<span class="keyword">private</span> CloneObject2 cloneObject2;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject2 <span class="title">getCloneObject2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCloneObject2</span><span class="params">(CloneObject2 cloneObject2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cloneObject2 = cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject2</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name2;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name2;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName2</span><span class="params">(String name2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name2 = name2;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="直接赋值"><a href="#直接赋值" class="headerlink" title="直接赋值"></a>直接赋值</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 1.直接赋值</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">CloneObject co2 = co1;</span><br><span class="line">System.out.println(co2.getName());</span><br><span class="line">System.out.println(co1.getName());</span><br></pre></td></tr></table></figure>
-<p>对象co2和co1在堆内存中的地址一致，所以<strong>两个对象之间会互相影响</strong>。</p>
-<h3 id="浅复制（复制引用但不复制引用的对象）"><a href="#浅复制（复制引用但不复制引用的对象）" class="headerlink" title="浅复制（复制引用但不复制引用的对象）"></a>浅复制（复制引用但不复制引用的对象）</h3><p>需要通过实现接口<code>java.lang.Cloneable</code>，并且重新<code>java.lang.Object.clone()</code>的方法进行实现。实现原理：创建一个新对象，然后将当前对象的非静态字段复制到该新对象，如果字段是值类型的，那么对该字段执行复制；如果该字段是引用类型的话，则复制引用但不复制引用的对象。<strong>因此，原始对象及其副本引用同一个对象。（对象中的对象）</strong></p>
-<p>参考代码如下：  </p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject</span> <span class="keyword">implements</span> <span class="title">Cloneable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">	<span class="keyword">private</span> CloneObject2 cloneObject2;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject2 <span class="title">getCloneObject2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCloneObject2</span><span class="params">(CloneObject2 cloneObject2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cloneObject2 = cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * (1) 实现 Cloneable 接口</span></span><br><span class="line"><span class="comment">	 * (2) 覆盖 clone()</span></span><br><span class="line"><span class="comment">	 * (3) 在自己的 clone()中调用 super.clone()</span></span><br><span class="line"><span class="comment">	 * (4) 在自己的 clone()中捕获违例</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject <span class="title">clone</span><span class="params">()</span>  </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> (CloneObject) <span class="keyword">super</span>.clone();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 2.浅复制</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">CloneObject co2 = co1.clone();</span><br><span class="line">co2.setName(<span class="string">&quot;cloneName&quot;</span>);</span><br><span class="line">co2.getCloneObject2().setName2(<span class="string">&quot;cloneName2222&quot;</span>);</span><br><span class="line">System.out.println(co2.getName());</span><br><span class="line">System.out.println(co1.getName());</span><br><span class="line"></span><br><span class="line">System.out.println(co1.getCloneObject2().getName2());</span><br><span class="line">System.out.println(co2.getCloneObject2().getName2());</span><br></pre></td></tr></table></figure>
-<h3 id="深复制（复制对象和其应用对象）"><a href="#深复制（复制对象和其应用对象）" class="headerlink" title="深复制（复制对象和其应用对象）"></a>深复制（复制对象和其应用对象）</h3><p>深拷贝不仅复制对象本身，而且复制对象包含的引用指向的所有对象。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject</span> <span class="keyword">implements</span> <span class="title">Cloneable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">	<span class="keyword">private</span> CloneObject2 cloneObject2;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject2 <span class="title">getCloneObject2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCloneObject2</span><span class="params">(CloneObject2 cloneObject2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cloneObject2 = cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * (1) 实现 Cloneable 接口</span></span><br><span class="line"><span class="comment">	 * (2) 覆盖 clone()</span></span><br><span class="line"><span class="comment">	 * (3) 在自己的 clone()中调用 super.clone()</span></span><br><span class="line"><span class="comment">	 * (4) 在自己的 clone()中捕获违例</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject <span class="title">clone</span><span class="params">()</span>  </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			CloneObject cloneObject = (CloneObject) <span class="keyword">super</span>.clone();</span><br><span class="line">			cloneObject.cloneObject2 = <span class="keyword">this</span>.cloneObject2.clone();</span><br><span class="line">			<span class="keyword">return</span> cloneObject;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject2</span> <span class="keyword">implements</span> <span class="title">Cloneable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name2;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name2;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName2</span><span class="params">(String name2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name2 = name2;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject2 <span class="title">clone</span><span class="params">()</span>  </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> (CloneObject2) <span class="keyword">super</span>.clone();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="序列化（深-clone-一中实现）"><a href="#序列化（深-clone-一中实现）" class="headerlink" title="序列化（深 clone 一中实现）"></a>序列化（深 clone 一中实现）</h3><p>在Java 语言里深复制一个对象，常常可以先使对象实现 <code>Serializable 接口</code>(必须)，然后把对象（实际上只是对象的一个拷贝）写到一个流里（<strong>可以实现对象持久化到内存或磁盘中，提高对象的生命周期</strong>），再从流里读出来，便可以重建对象。特点：</p>
-<ol>
-<li>序列化对象以字节数组保持-静态成员不保存，保存到是对象的“状态”</li>
-<li>序列化用户远程对象传输，比如：RMI(远程方法调用)</li>
-<li>实现接口<code>java.io.Serializable</code></li>
-<li>序列化和反序列化：<code>ObjectOutputStream</code> 和<code>ObjectInputStream</code></li>
-<li><code>writeObject</code> 和 <code>readObject</code> 自定义序列化策略，可以实现序列化信息和反序列化的控制</li>
-<li>序列化 ID（<code>private static final long serialVersionUID</code>） ：需要保证序列化和反序列化类的ID一致性</li>
-<li>Transient  关键字阻止该变量被序列化到文件中<ul>
-<li>阻止该变量被序列化到文件中，在被反序列化后，transient 变量的值被设为初始值，如 int 型的是 0，对象型的是 null。</li>
-<li>writeExternal() 使用该方法也可以实现序列信息的控制</li>
-</ul>
-</li>
-</ol>
-<h4 id="实现deepclone"><a href="#实现deepclone" class="headerlink" title="实现deepclone"></a>实现deepclone</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.clone;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SerCloneTest2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SerCloneObject co1 = <span class="keyword">new</span> SerCloneObject();</span><br><span class="line">		co1.setName(<span class="string">&quot;name1&quot;</span>);</span><br><span class="line">		co1.setAge(<span class="number">10</span>);</span><br><span class="line">		SerCloneObject2 c021 = <span class="keyword">new</span> SerCloneObject2();</span><br><span class="line">		c021.setName2(<span class="string">&quot;name21&quot;</span>);</span><br><span class="line">		co1.setCloneObject2(c021);</span><br><span class="line">		</span><br><span class="line">		SerCloneObject co2 = co1.deepClone();</span><br><span class="line">		co2.setName(<span class="string">&quot;cloneName&quot;</span>);</span><br><span class="line">		co2.getCloneObject2().setName2(<span class="string">&quot;cloneName2222&quot;</span>);</span><br><span class="line">		System.out.println(co2.getName());</span><br><span class="line">		System.out.println(co1.getName());</span><br><span class="line">		</span><br><span class="line">		System.out.println(co1.getCloneObject2().getName2());</span><br><span class="line">		System.out.println(co2.getCloneObject2().getName2());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SerCloneObject</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">	<span class="keyword">private</span> SerCloneObject2 cloneObject2;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> SerCloneObject2 <span class="title">getCloneObject2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCloneObject2</span><span class="params">(SerCloneObject2 cloneObject2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cloneObject2 = cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> SerCloneObject <span class="title">deepClone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//将该对象序列化成流,因为写在流里的是对象的一个拷贝，</span></span><br><span class="line">		<span class="comment">//而原对象仍然存在于JVM里面。所以利用这个特性可以实现对象的深拷贝  </span></span><br><span class="line">		ByteArrayOutputStream bos = <span class="keyword">new</span> ByteArrayOutputStream();  </span><br><span class="line">		ObjectOutputStream oos;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			oos = <span class="keyword">new</span> ObjectOutputStream(bos);</span><br><span class="line">			oos.writeObject(<span class="keyword">this</span>);  </span><br><span class="line">			<span class="comment">//将流序列化成对象  </span></span><br><span class="line">			ByteArrayInputStream bis = <span class="keyword">new</span> ByteArrayInputStream(bos.toByteArray());  </span><br><span class="line">			ObjectInputStream ois = <span class="keyword">new</span> ObjectInputStream(bis);  </span><br><span class="line">			<span class="keyword">return</span> (SerCloneObject) ois.readObject();  </span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;  </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SerCloneObject2</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">	<span class="keyword">private</span> String name2;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name2;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName2</span><span class="params">(String name2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name2 = name2;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="反射（深复制一种）"><a href="#反射（深复制一种）" class="headerlink" title="反射（深复制一种）"></a>反射（深复制一种）</h3><h4 id="org-springframework-beans-BeanUtils"><a href="#org-springframework-beans-BeanUtils" class="headerlink" title="org.springframework.beans.BeanUtils"></a>org.springframework.beans.BeanUtils</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Copy the property values of the given source bean into the given target bean.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;Note: The source and target classes do not have to match or even be derived</span></span><br><span class="line"><span class="comment"> * from each other, as long as the properties match. Any bean properties that the</span></span><br><span class="line"><span class="comment"> * source bean exposes but the target bean does not will silently be ignored.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> source the source bean</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> target the target bean</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> editable the class (or interface) to restrict property setting to</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> ignoreProperties array of property names to ignore</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> BeansException if the copying failed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> BeanWrapper</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">copyProperties</span><span class="params">(Object source, Object target, <span class="meta">@Nullable</span> Class&lt;?&gt; editable,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="meta">@Nullable</span> String... ignoreProperties)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line"></span><br><span class="line">	Assert.notNull(source, <span class="string">&quot;Source must not be null&quot;</span>);</span><br><span class="line">	Assert.notNull(target, <span class="string">&quot;Target must not be null&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 获取目标对象的class</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	Class&lt;?&gt; actualEditable = target.getClass();</span><br><span class="line">	<span class="keyword">if</span> (editable != <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (!editable.isInstance(target)) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Target class [&quot;</span> + target.getClass().getName() +</span><br><span class="line">					<span class="string">&quot;] not assignable to Editable class [&quot;</span> + editable.getName() + <span class="string">&quot;]&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		actualEditable = editable;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 获取目标对象的属性信息</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	PropertyDescriptor[] targetPds = getPropertyDescriptors(actualEditable);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 处理忽略属性</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	List&lt;String&gt; ignoreList = (ignoreProperties != <span class="keyword">null</span> ? Arrays.asList(ignoreProperties) : <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (PropertyDescriptor targetPd : targetPds) &#123;</span><br><span class="line">		Method writeMethod = targetPd.getWriteMethod();</span><br><span class="line">		<span class="keyword">if</span> (writeMethod != <span class="keyword">null</span> &amp;&amp; (ignoreList == <span class="keyword">null</span> || !ignoreList.contains(targetPd.getName()))) &#123;</span><br><span class="line">			PropertyDescriptor sourcePd = getPropertyDescriptor(source.getClass(), targetPd.getName());</span><br><span class="line">			<span class="keyword">if</span> (sourcePd != <span class="keyword">null</span>) &#123;</span><br><span class="line">				Method readMethod = sourcePd.getReadMethod();</span><br><span class="line">				<span class="keyword">if</span> (readMethod != <span class="keyword">null</span> &amp;&amp;</span><br><span class="line">						ClassUtils.isAssignable(writeMethod.getParameterTypes()[<span class="number">0</span>], readMethod.getReturnType())) &#123;</span><br><span class="line">					<span class="keyword">try</span> &#123;</span><br><span class="line">						<span class="keyword">if</span> (!Modifier.isPublic(readMethod.getDeclaringClass().getModifiers())) &#123;</span><br><span class="line">							readMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">						&#125;</span><br><span class="line">						Object value = readMethod.invoke(source);</span><br><span class="line">						<span class="keyword">if</span> (!Modifier.isPublic(writeMethod.getDeclaringClass().getModifiers())) &#123;</span><br><span class="line">							writeMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">						&#125;</span><br><span class="line">						writeMethod.invoke(target, value);</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">						<span class="keyword">throw</span> <span class="keyword">new</span> FatalBeanException(</span><br><span class="line">								<span class="string">&quot;Could not copy property &#x27;&quot;</span> + targetPd.getName() + <span class="string">&quot;&#x27; from source to target&quot;</span>, ex);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://www.cnblogs.com/Qian123/p/5710533.html">Java提高篇——对象克隆（复制）</a></li>
-<li><a href="https://lingcoder.github.io/OnJava8/#/book/Appendix-Object-Serialization">编程思想</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>clone</tag>
-        <tag>克隆</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java系统化学习之内部类</title>
     <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%86%85%E9%83%A8%E7%B1%BB/</url>
     <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ol>
@@ -2101,6 +2087,62 @@
       </tags>
   </entry>
   <entry>
+    <title>Java系统化学习之克隆</title>
+    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%85%8B%E9%9A%86/</url>
+    <content><![CDATA[<p>所谓克隆就是对原有对象复用的复用，<strong>Java语言中克隆针对的是类的实例（对象）</strong>，在Java中一共有三种方式实现。</p>
+<ol>
+<li>直接赋值</li>
+<li>浅拷贝</li>
+<li>深拷贝<a id="more"></a>
+<h2 id="java-lang-Cloneable"><a href="#java-lang-Cloneable" class="headerlink" title="java.lang.Cloneable"></a>java.lang.Cloneable</h2></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * A class implements the &lt;code&gt;Cloneable&lt;/code&gt; interface to</span></span><br><span class="line"><span class="comment"> * indicate to the &#123;<span class="doctag">@link</span> java.lang.Object#clone()&#125; method that it</span></span><br><span class="line"><span class="comment"> * is legal for that method to make a</span></span><br><span class="line"><span class="comment"> * field-for-field copy of instances of that class.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Invoking Object&#x27;s clone method on an instance that does not implement the</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;Cloneable&lt;/code&gt; interface results in the exception</span></span><br><span class="line"><span class="comment"> * &lt;code&gt;CloneNotSupportedException&lt;/code&gt; being thrown.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * By convention, classes that implement this interface should override</span></span><br><span class="line"><span class="comment"> * &lt;tt&gt;Object.clone&lt;/tt&gt; (which is protected) with a public method.</span></span><br><span class="line"><span class="comment"> * See &#123;<span class="doctag">@link</span> java.lang.Object#clone()&#125; for details on overriding this</span></span><br><span class="line"><span class="comment"> * method.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * Note that this interface does &lt;i&gt;not&lt;/i&gt; contain the &lt;tt&gt;clone&lt;/tt&gt; method.</span></span><br><span class="line"><span class="comment"> * Therefore, it is not possible to clone an object merely by virtue of the</span></span><br><span class="line"><span class="comment"> * fact that it implements this interface.  Even if the clone method is invoked</span></span><br><span class="line"><span class="comment"> * reflectively, there is no guarantee that it will succeed.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 实现该接口类，可以通过java.lang.Object.clone()方法完成对象中属性的赋值</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>  unascribed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     java.lang.CloneNotSupportedException</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span>     java.lang.Object#clone()</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span>   JDK1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过源码分析可知：  </p>
+<ol>
+<li>必须实现Cloneable接口，否则抛出CloneNotSupportedException异常</li>
+<li>实现Cloneable的类应该重写clone()，重写时该方法的修饰符为public。</li>
+</ol>
+<h2 id="java-lang-Object-clone"><a href="#java-lang-Object-clone" class="headerlink" title="java.lang.Object.clone()"></a>java.lang.Object.clone()</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates and returns a copy of this object.  The precise meaning</span></span><br><span class="line"><span class="comment">* of &quot;copy&quot; may depend on the class of the object. The general</span></span><br><span class="line"><span class="comment">* intent is that, for any object &#123;<span class="doctag">@code</span> x&#125;, the expression:</span></span><br><span class="line"><span class="comment">* &lt;blockquote&gt;</span></span><br><span class="line"><span class="comment">* &lt;pre&gt;</span></span><br><span class="line"><span class="comment">* x.clone() != x&lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">* will be true, and that the expression:</span></span><br><span class="line"><span class="comment">* &lt;blockquote&gt;</span></span><br><span class="line"><span class="comment">* &lt;pre&gt;</span></span><br><span class="line"><span class="comment">* x.clone().getClass() == x.getClass()&lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">* will be &#123;<span class="doctag">@code</span> true&#125;, but these are not absolute requirements.</span></span><br><span class="line"><span class="comment">* While it is typically the case that:</span></span><br><span class="line"><span class="comment">* &lt;blockquote&gt;</span></span><br><span class="line"><span class="comment">* &lt;pre&gt;</span></span><br><span class="line"><span class="comment">* x.clone().equals(x)&lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">* will be &#123;<span class="doctag">@code</span> true&#125;, this is not an absolute requirement.</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* By convention, the returned object should be obtained by calling</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> super.clone&#125;.  If a class and all of its superclasses (except</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> Object&#125;) obey this convention, it will be the case that</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> x.clone().getClass() == x.getClass()&#125;.</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* By convention, the object returned by this method should be independent</span></span><br><span class="line"><span class="comment">* of this object (which is being cloned).  To achieve this independence,</span></span><br><span class="line"><span class="comment">* it may be necessary to modify one or more fields of the object returned</span></span><br><span class="line"><span class="comment">* by &#123;<span class="doctag">@code</span> super.clone&#125; before returning it.  Typically, this means</span></span><br><span class="line"><span class="comment">* copying any mutable objects that comprise the internal &quot;deep structure&quot;</span></span><br><span class="line"><span class="comment">* of the object being cloned and replacing the references to these</span></span><br><span class="line"><span class="comment">* objects with references to the copies.  If a class contains only</span></span><br><span class="line"><span class="comment">* primitive fields or references to immutable objects, then it is usually</span></span><br><span class="line"><span class="comment">* the case that no fields in the object returned by &#123;<span class="doctag">@code</span> super.clone&#125;</span></span><br><span class="line"><span class="comment">* need to be modified.</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* The method &#123;<span class="doctag">@code</span> clone&#125; for class &#123;<span class="doctag">@code</span> Object&#125; performs a</span></span><br><span class="line"><span class="comment">* specific cloning operation. First, if the class of this object does</span></span><br><span class="line"><span class="comment">* not implement the interface &#123;<span class="doctag">@code</span> Cloneable&#125;, then a</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> CloneNotSupportedException&#125; is thrown. Note that all arrays</span></span><br><span class="line"><span class="comment">* are considered to implement the interface &#123;<span class="doctag">@code</span> Cloneable&#125; and that</span></span><br><span class="line"><span class="comment">* the return type of the &#123;<span class="doctag">@code</span> clone&#125; method of an array type &#123;<span class="doctag">@code</span> T[]&#125;</span></span><br><span class="line"><span class="comment">* is &#123;<span class="doctag">@code</span> T[]&#125; where T is any reference or primitive type.</span></span><br><span class="line"><span class="comment">* Otherwise, this method creates a new instance of the class of this</span></span><br><span class="line"><span class="comment">* object and initializes all its fields with exactly the contents of</span></span><br><span class="line"><span class="comment">* the corresponding fields of this object, as if by assignment; the</span></span><br><span class="line"><span class="comment">* contents of the fields are not themselves cloned. Thus, this method</span></span><br><span class="line"><span class="comment">* performs a &quot;shallow copy&quot; of this object, not a &quot;deep copy&quot; operation.</span></span><br><span class="line"><span class="comment">* &lt;p&gt;</span></span><br><span class="line"><span class="comment">* The class &#123;<span class="doctag">@code</span> Object&#125; does not itself implement the interface</span></span><br><span class="line"><span class="comment">* &#123;<span class="doctag">@code</span> Cloneable&#125;, so calling the &#123;<span class="doctag">@code</span> clone&#125; method on an object</span></span><br><span class="line"><span class="comment">* whose class is &#123;<span class="doctag">@code</span> Object&#125; will result in throwing an</span></span><br><span class="line"><span class="comment">* exception at run time.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span>     a clone of this instance.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span>  CloneNotSupportedException  if the object&#x27;s class does not</span></span><br><span class="line"><span class="comment">*               support the &#123;<span class="doctag">@code</span> Cloneable&#125; interface. Subclasses</span></span><br><span class="line"><span class="comment">*               that override the &#123;<span class="doctag">@code</span> clone&#125; method can also</span></span><br><span class="line"><span class="comment">*               throw this exception to indicate that an instance cannot</span></span><br><span class="line"><span class="comment">*               be cloned.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@see</span> java.lang.Cloneable</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">native</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h2><h3 id="测试代码准备"><a href="#测试代码准备" class="headerlink" title="测试代码准备"></a>测试代码准备</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.clone;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CloneTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		CloneObject co1 = <span class="keyword">new</span> CloneObject();</span><br><span class="line">		co1.setName(<span class="string">&quot;name1&quot;</span>);</span><br><span class="line">		co1.setAge(<span class="number">10</span>);</span><br><span class="line">		CloneObject2 c021 = <span class="keyword">new</span> CloneObject2();</span><br><span class="line">		c021.setName2(<span class="string">&quot;name21&quot;</span>);</span><br><span class="line">		co1.setCloneObject2(c021);</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">	<span class="keyword">private</span> CloneObject2 cloneObject2;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject2 <span class="title">getCloneObject2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCloneObject2</span><span class="params">(CloneObject2 cloneObject2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cloneObject2 = cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject2</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name2;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name2;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName2</span><span class="params">(String name2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name2 = name2;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="直接赋值"><a href="#直接赋值" class="headerlink" title="直接赋值"></a>直接赋值</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 1.直接赋值</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">CloneObject co2 = co1;</span><br><span class="line">System.out.println(co2.getName());</span><br><span class="line">System.out.println(co1.getName());</span><br></pre></td></tr></table></figure>
+<p>对象co2和co1在堆内存中的地址一致，所以<strong>两个对象之间会互相影响</strong>。</p>
+<h3 id="浅复制（复制引用但不复制引用的对象）"><a href="#浅复制（复制引用但不复制引用的对象）" class="headerlink" title="浅复制（复制引用但不复制引用的对象）"></a>浅复制（复制引用但不复制引用的对象）</h3><p>需要通过实现接口<code>java.lang.Cloneable</code>，并且重新<code>java.lang.Object.clone()</code>的方法进行实现。实现原理：创建一个新对象，然后将当前对象的非静态字段复制到该新对象，如果字段是值类型的，那么对该字段执行复制；如果该字段是引用类型的话，则复制引用但不复制引用的对象。<strong>因此，原始对象及其副本引用同一个对象。（对象中的对象）</strong></p>
+<p>参考代码如下：  </p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject</span> <span class="keyword">implements</span> <span class="title">Cloneable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">	<span class="keyword">private</span> CloneObject2 cloneObject2;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject2 <span class="title">getCloneObject2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCloneObject2</span><span class="params">(CloneObject2 cloneObject2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cloneObject2 = cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * (1) 实现 Cloneable 接口</span></span><br><span class="line"><span class="comment">	 * (2) 覆盖 clone()</span></span><br><span class="line"><span class="comment">	 * (3) 在自己的 clone()中调用 super.clone()</span></span><br><span class="line"><span class="comment">	 * (4) 在自己的 clone()中捕获违例</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject <span class="title">clone</span><span class="params">()</span>  </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> (CloneObject) <span class="keyword">super</span>.clone();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 2.浅复制</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">CloneObject co2 = co1.clone();</span><br><span class="line">co2.setName(<span class="string">&quot;cloneName&quot;</span>);</span><br><span class="line">co2.getCloneObject2().setName2(<span class="string">&quot;cloneName2222&quot;</span>);</span><br><span class="line">System.out.println(co2.getName());</span><br><span class="line">System.out.println(co1.getName());</span><br><span class="line"></span><br><span class="line">System.out.println(co1.getCloneObject2().getName2());</span><br><span class="line">System.out.println(co2.getCloneObject2().getName2());</span><br></pre></td></tr></table></figure>
+<h3 id="深复制（复制对象和其应用对象）"><a href="#深复制（复制对象和其应用对象）" class="headerlink" title="深复制（复制对象和其应用对象）"></a>深复制（复制对象和其应用对象）</h3><p>深拷贝不仅复制对象本身，而且复制对象包含的引用指向的所有对象。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject</span> <span class="keyword">implements</span> <span class="title">Cloneable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">	<span class="keyword">private</span> CloneObject2 cloneObject2;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject2 <span class="title">getCloneObject2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCloneObject2</span><span class="params">(CloneObject2 cloneObject2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cloneObject2 = cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * (1) 实现 Cloneable 接口</span></span><br><span class="line"><span class="comment">	 * (2) 覆盖 clone()</span></span><br><span class="line"><span class="comment">	 * (3) 在自己的 clone()中调用 super.clone()</span></span><br><span class="line"><span class="comment">	 * (4) 在自己的 clone()中捕获违例</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject <span class="title">clone</span><span class="params">()</span>  </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			CloneObject cloneObject = (CloneObject) <span class="keyword">super</span>.clone();</span><br><span class="line">			cloneObject.cloneObject2 = <span class="keyword">this</span>.cloneObject2.clone();</span><br><span class="line">			<span class="keyword">return</span> cloneObject;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CloneObject2</span> <span class="keyword">implements</span> <span class="title">Cloneable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name2;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name2;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName2</span><span class="params">(String name2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name2 = name2;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> CloneObject2 <span class="title">clone</span><span class="params">()</span>  </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> (CloneObject2) <span class="keyword">super</span>.clone();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="序列化（深-clone-一中实现）"><a href="#序列化（深-clone-一中实现）" class="headerlink" title="序列化（深 clone 一中实现）"></a>序列化（深 clone 一中实现）</h3><p>在Java 语言里深复制一个对象，常常可以先使对象实现 <code>Serializable 接口</code>(必须)，然后把对象（实际上只是对象的一个拷贝）写到一个流里（<strong>可以实现对象持久化到内存或磁盘中，提高对象的生命周期</strong>），再从流里读出来，便可以重建对象。特点：</p>
+<ol>
+<li>序列化对象以字节数组保持-静态成员不保存，保存到是对象的“状态”</li>
+<li>序列化用户远程对象传输，比如：RMI(远程方法调用)</li>
+<li>实现接口<code>java.io.Serializable</code></li>
+<li>序列化和反序列化：<code>ObjectOutputStream</code> 和<code>ObjectInputStream</code></li>
+<li><code>writeObject</code> 和 <code>readObject</code> 自定义序列化策略，可以实现序列化信息和反序列化的控制</li>
+<li>序列化 ID（<code>private static final long serialVersionUID</code>） ：需要保证序列化和反序列化类的ID一致性</li>
+<li>Transient  关键字阻止该变量被序列化到文件中<ul>
+<li>阻止该变量被序列化到文件中，在被反序列化后，transient 变量的值被设为初始值，如 int 型的是 0，对象型的是 null。</li>
+<li>writeExternal() 使用该方法也可以实现序列信息的控制</li>
+</ul>
+</li>
+</ol>
+<h4 id="实现deepclone"><a href="#实现deepclone" class="headerlink" title="实现deepclone"></a>实现deepclone</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.clone;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SerCloneTest2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SerCloneObject co1 = <span class="keyword">new</span> SerCloneObject();</span><br><span class="line">		co1.setName(<span class="string">&quot;name1&quot;</span>);</span><br><span class="line">		co1.setAge(<span class="number">10</span>);</span><br><span class="line">		SerCloneObject2 c021 = <span class="keyword">new</span> SerCloneObject2();</span><br><span class="line">		c021.setName2(<span class="string">&quot;name21&quot;</span>);</span><br><span class="line">		co1.setCloneObject2(c021);</span><br><span class="line">		</span><br><span class="line">		SerCloneObject co2 = co1.deepClone();</span><br><span class="line">		co2.setName(<span class="string">&quot;cloneName&quot;</span>);</span><br><span class="line">		co2.getCloneObject2().setName2(<span class="string">&quot;cloneName2222&quot;</span>);</span><br><span class="line">		System.out.println(co2.getName());</span><br><span class="line">		System.out.println(co1.getName());</span><br><span class="line">		</span><br><span class="line">		System.out.println(co1.getCloneObject2().getName2());</span><br><span class="line">		System.out.println(co2.getCloneObject2().getName2());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SerCloneObject</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">	<span class="keyword">private</span> SerCloneObject2 cloneObject2;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> SerCloneObject2 <span class="title">getCloneObject2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCloneObject2</span><span class="params">(SerCloneObject2 cloneObject2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cloneObject2 = cloneObject2;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> SerCloneObject <span class="title">deepClone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//将该对象序列化成流,因为写在流里的是对象的一个拷贝，</span></span><br><span class="line">		<span class="comment">//而原对象仍然存在于JVM里面。所以利用这个特性可以实现对象的深拷贝  </span></span><br><span class="line">		ByteArrayOutputStream bos = <span class="keyword">new</span> ByteArrayOutputStream();  </span><br><span class="line">		ObjectOutputStream oos;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			oos = <span class="keyword">new</span> ObjectOutputStream(bos);</span><br><span class="line">			oos.writeObject(<span class="keyword">this</span>);  </span><br><span class="line">			<span class="comment">//将流序列化成对象  </span></span><br><span class="line">			ByteArrayInputStream bis = <span class="keyword">new</span> ByteArrayInputStream(bos.toByteArray());  </span><br><span class="line">			ObjectInputStream ois = <span class="keyword">new</span> ObjectInputStream(bis);  </span><br><span class="line">			<span class="keyword">return</span> (SerCloneObject) ois.readObject();  </span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;  </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SerCloneObject2</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">	<span class="keyword">private</span> String name2;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name2;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName2</span><span class="params">(String name2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name2 = name2;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="反射（深复制一种）"><a href="#反射（深复制一种）" class="headerlink" title="反射（深复制一种）"></a>反射（深复制一种）</h3><h4 id="org-springframework-beans-BeanUtils"><a href="#org-springframework-beans-BeanUtils" class="headerlink" title="org.springframework.beans.BeanUtils"></a>org.springframework.beans.BeanUtils</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Copy the property values of the given source bean into the given target bean.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;Note: The source and target classes do not have to match or even be derived</span></span><br><span class="line"><span class="comment"> * from each other, as long as the properties match. Any bean properties that the</span></span><br><span class="line"><span class="comment"> * source bean exposes but the target bean does not will silently be ignored.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> source the source bean</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> target the target bean</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> editable the class (or interface) to restrict property setting to</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> ignoreProperties array of property names to ignore</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> BeansException if the copying failed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> BeanWrapper</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">copyProperties</span><span class="params">(Object source, Object target, <span class="meta">@Nullable</span> Class&lt;?&gt; editable,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="meta">@Nullable</span> String... ignoreProperties)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line"></span><br><span class="line">	Assert.notNull(source, <span class="string">&quot;Source must not be null&quot;</span>);</span><br><span class="line">	Assert.notNull(target, <span class="string">&quot;Target must not be null&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 获取目标对象的class</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	Class&lt;?&gt; actualEditable = target.getClass();</span><br><span class="line">	<span class="keyword">if</span> (editable != <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (!editable.isInstance(target)) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Target class [&quot;</span> + target.getClass().getName() +</span><br><span class="line">					<span class="string">&quot;] not assignable to Editable class [&quot;</span> + editable.getName() + <span class="string">&quot;]&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		actualEditable = editable;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 获取目标对象的属性信息</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	PropertyDescriptor[] targetPds = getPropertyDescriptors(actualEditable);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 处理忽略属性</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	List&lt;String&gt; ignoreList = (ignoreProperties != <span class="keyword">null</span> ? Arrays.asList(ignoreProperties) : <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (PropertyDescriptor targetPd : targetPds) &#123;</span><br><span class="line">		Method writeMethod = targetPd.getWriteMethod();</span><br><span class="line">		<span class="keyword">if</span> (writeMethod != <span class="keyword">null</span> &amp;&amp; (ignoreList == <span class="keyword">null</span> || !ignoreList.contains(targetPd.getName()))) &#123;</span><br><span class="line">			PropertyDescriptor sourcePd = getPropertyDescriptor(source.getClass(), targetPd.getName());</span><br><span class="line">			<span class="keyword">if</span> (sourcePd != <span class="keyword">null</span>) &#123;</span><br><span class="line">				Method readMethod = sourcePd.getReadMethod();</span><br><span class="line">				<span class="keyword">if</span> (readMethod != <span class="keyword">null</span> &amp;&amp;</span><br><span class="line">						ClassUtils.isAssignable(writeMethod.getParameterTypes()[<span class="number">0</span>], readMethod.getReturnType())) &#123;</span><br><span class="line">					<span class="keyword">try</span> &#123;</span><br><span class="line">						<span class="keyword">if</span> (!Modifier.isPublic(readMethod.getDeclaringClass().getModifiers())) &#123;</span><br><span class="line">							readMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">						&#125;</span><br><span class="line">						Object value = readMethod.invoke(source);</span><br><span class="line">						<span class="keyword">if</span> (!Modifier.isPublic(writeMethod.getDeclaringClass().getModifiers())) &#123;</span><br><span class="line">							writeMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">						&#125;</span><br><span class="line">						writeMethod.invoke(target, value);</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">						<span class="keyword">throw</span> <span class="keyword">new</span> FatalBeanException(</span><br><span class="line">								<span class="string">&quot;Could not copy property &#x27;&quot;</span> + targetPd.getName() + <span class="string">&quot;&#x27; from source to target&quot;</span>, ex);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.cnblogs.com/Qian123/p/5710533.html">Java提高篇——对象克隆（复制）</a></li>
+<li><a href="https://lingcoder.github.io/OnJava8/#/book/Appendix-Object-Serialization">编程思想</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>clone</tag>
+        <tag>克隆</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java系统化学习之注解</title>
     <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/</url>
     <content><![CDATA[<p>在jdk1.5中引入了注解的概念，注解是Java提供的一种对类信息（包括：类、属性与方法）进行扩展的一种行为。Annatation(注解)是一个接口，程序可以通过反射来获取指定程序中元素的 Annotation 对象，然后通过该 Annotation 对象来获取注解中的元数据信息。通过使用注解，可以将元数据保存在 Java 源代码中。并拥有如下优势：</p>
@@ -2194,6 +2236,44 @@
       <tags>
         <tag>Java</tag>
         <tag>注解</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux cpu过高分析</title>
+    <url>/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h2 id="CPU使用率过高"><a href="#CPU使用率过高" class="headerlink" title="CPU使用率过高"></a>CPU使用率过高</h2><p>在高负载情况下CPU持续使用率高一般没有问题，但是导致任务无法正常调度或者load持续增加就需要重点关注，并且定位具体原因。（<strong>一般计算密集型应用 CPU 使用率偏高 load 偏低，IO 密集型相反。</strong>）</p>
+<a id="more"></a>
+
+<h3 id="计算方式"><a href="#计算方式" class="headerlink" title="计算方式"></a>计算方式</h3><div align="center">
+
+<img src="/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/1587429499354.png" class title="CPU使用率计算公式">
+
+</div>
+
+<h3 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h3><ol>
+<li>频繁 FullGC/YongGC</li>
+<li>代码异常，出现死循环</li>
+<li>死锁</li>
+</ol>
+<h3 id="定位步骤"><a href="#定位步骤" class="headerlink" title="定位步骤"></a>定位步骤</h3><h3 id="处理方式"><a href="#处理方式" class="headerlink" title="处理方式"></a>处理方式</h3><ol>
+<li>登录服务器之后使用<a href="#_Top">top</a>命令，并且输入1按照cpu使用率降序排序获取使用率最高的线程</li>
+<li>perf top -g -p pid查看调用关系（-g开启调用关系分析，-p指定线程号）</li>
+<li>top -Hp pid可以查看某个进程的线程信息（ ps mp pid -o THREAD,tid）</li>
+<li>jstack 线程ID 可以查看某个线程的堆栈情况，特别对于hung挂死的线程，可以使用选项-F强制打印dump信息jstack -F pid</li>
+<li>执行 jstack pid|grep -A 10 pid的16进制，得到线程堆栈信息中1371这个线程所在行的后面10行</li>
+</ol>
+<h2 id="load过高"><a href="#load过高" class="headerlink" title="load过高"></a>load过高</h2><h2 id="cpu-wait过高"><a href="#cpu-wait过高" class="headerlink" title="cpu_wait过高"></a>cpu_wait过高</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://developer.aliyun.com/article/757655?spm=a2cdg.index.lists.18">重启大法好！线上常见问题排查手册</a></li>
+<li><a href="https://github.com/alibaba/arthas">arthas开源组件</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>CPU过高</tag>
       </tags>
   </entry>
   <entry>
@@ -2397,44 +2477,6 @@
         <tag>jdk</tag>
         <tag>mysql</tag>
         <tag>tomcat</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux cpu过高分析</title>
-    <url>/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<h2 id="CPU使用率过高"><a href="#CPU使用率过高" class="headerlink" title="CPU使用率过高"></a>CPU使用率过高</h2><p>在高负载情况下CPU持续使用率高一般没有问题，但是导致任务无法正常调度或者load持续增加就需要重点关注，并且定位具体原因。（<strong>一般计算密集型应用 CPU 使用率偏高 load 偏低，IO 密集型相反。</strong>）</p>
-<a id="more"></a>
-
-<h3 id="计算方式"><a href="#计算方式" class="headerlink" title="计算方式"></a>计算方式</h3><div align="center">
-
-<img src="/2021/02/05/Linux-cpu%E8%BF%87%E9%AB%98%E5%88%86%E6%9E%90/1587429499354.png" class title="CPU使用率计算公式">
-
-</div>
-
-<h3 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h3><ol>
-<li>频繁 FullGC/YongGC</li>
-<li>代码异常，出现死循环</li>
-<li>死锁</li>
-</ol>
-<h3 id="定位步骤"><a href="#定位步骤" class="headerlink" title="定位步骤"></a>定位步骤</h3><h3 id="处理方式"><a href="#处理方式" class="headerlink" title="处理方式"></a>处理方式</h3><ol>
-<li>登录服务器之后使用<a href="#_Top">top</a>命令，并且输入1按照cpu使用率降序排序获取使用率最高的线程</li>
-<li>perf top -g -p pid查看调用关系（-g开启调用关系分析，-p指定线程号）</li>
-<li>top -Hp pid可以查看某个进程的线程信息（ ps mp pid -o THREAD,tid）</li>
-<li>jstack 线程ID 可以查看某个线程的堆栈情况，特别对于hung挂死的线程，可以使用选项-F强制打印dump信息jstack -F pid</li>
-<li>执行 jstack pid|grep -A 10 pid的16进制，得到线程堆栈信息中1371这个线程所在行的后面10行</li>
-</ol>
-<h2 id="load过高"><a href="#load过高" class="headerlink" title="load过高"></a>load过高</h2><h2 id="cpu-wait过高"><a href="#cpu-wait过高" class="headerlink" title="cpu_wait过高"></a>cpu_wait过高</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://developer.aliyun.com/article/757655?spm=a2cdg.index.lists.18">重启大法好！线上常见问题排查手册</a></li>
-<li><a href="https://github.com/alibaba/arthas">arthas开源组件</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>CPU过高</tag>
       </tags>
   </entry>
   <entry>
@@ -4367,48 +4409,6 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>Java常见问题之两套JRE</title>
-    <url>/2021/02/05/Java%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B9%8B%E4%B8%A4%E5%A5%97JRE/</url>
-    <content><![CDATA[<p>JDK在安装过程中如果勾选安装JRE最终会在安装目录中有两套JRE。简单来说一套用于Java本身的运行（比如java本身的javac、还有监控套件javap等），一套用于程序的运行。两套JRE的路径默认为：</p>
-<ol>
-<li>C:\Program Files\Java\jdk1.8.0_192\jre</li>
-<li>C:\Program Files\Java\jre1.8.0_192<a id="more"></a>
-
-</li>
-</ol>
-<h2 id="JDK、JRE、JVM之间的关系"><a href="#JDK、JRE、JVM之间的关系" class="headerlink" title="JDK、JRE、JVM之间的关系"></a>JDK、JRE、JVM之间的关系</h2><p>JDK本身运行环境中的jre比jre目录下多了Server端的Java虚拟机。  </p>
-<p>JRE：Java编译后的可运行环境。<br>JVM：Java虚拟机</p>
-<h3 id="使用两套JDK的原因"><a href="#使用两套JDK的原因" class="headerlink" title="使用两套JDK的原因"></a>使用两套JDK的原因</h3><p>JDK里面有很多用Java所编写的开发工具（如javac.exe、jar.exe等），而且都放置在 &lt;JDK安装目录&gt;\lib\tools.jar 里。<code>javac.exe与输入 java -cp c:\jdk\lib\tools.jar com.sun.tools.javac.Main</code>是一样的，会得到相同的结果。</p>
-<h3 id="如何选择使用那套JRE"><a href="#如何选择使用那套JRE" class="headerlink" title="如何选择使用那套JRE"></a>如何选择使用那套JRE</h3><p>由<code>java.exe</code>决定，执行顺序如下：</p>
-<ol>
-<li>自己的目录下有没有JRE；</li>
-<li>父目录有没有JRE；</li>
-<li>查询注册表：<br>[HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment]</li>
-</ol>
-<h3 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h3><p><strong>JRE目录下的Bin目录有两个目录：server与client。这就是真正的jvm.dll所在。</strong><br>jvm.dll 无法单独工作，当jvm.dll启动后，会使用explicit的方法（就是使用Win32 API之中的LoadLibrary()与GetProcAddress()来载入辅助用的动态链接库），而这些辅助用的动态链接库（.dll）都必须位于jvm.dll所在目录的父目录之中。因此想使用哪个JVM，只需要设置PATH，指向JRE所在目录底下的jvm.dll。</p>
-<h2 id="名称解释"><a href="#名称解释" class="headerlink" title="名称解释"></a>名称解释</h2><ol>
-<li><strong>JAVA IDE</strong>:JAVA集成开发环境，如JBuilder Eclipse NetBeans,JEdit,TaxPad等等。</li>
-<li><strong>JDK Java开发包</strong>:java development kit ，它是使用JAVA进行开发的基础，包含：JVM（JAVA虚拟机）,JAVA 类库，JAVA运行环境。简单的说就是个开发平台：包含开发平台，和JAVA运行平台（即JRE或J2RE是Java2 Runtime Environment，即Java运行环境，有时简称JRE。如果你只需要运行Java程序或Applet，下载并安装它即可。）</li>
-<li><strong>SDK（Software Development Kit）</strong>一般指软件开发包，可以包括函数库、编译程序等。</li>
-<li><strong>JRE（Java Runtime Enviroment）</strong>是指Java的运行环境，是面向Java程序的使用者，而不是开发者。其内部含有JVM(JAVA虚拟机）</li>
-</ol>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="jdk下bin目录里的java-exe与外部jre中的java-exe的秘密"><a href="#jdk下bin目录里的java-exe与外部jre中的java-exe的秘密" class="headerlink" title="jdk下bin目录里的java.exe与外部jre中的java.exe的秘密"></a>jdk下bin目录里的java.exe与外部jre中的java.exe的秘密</h3><p>jdk里的java.exe和jre中的java.exe其实是一样的，但我们在运行的时候用的却是优先使用外部jre中的java.exe（即使我们安装了JDK且也配置了环境变量）。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
-<li>安装JDK时一定会在其子目录下面安装一个JRE，同时在安装的过程也会询问你是否要安装一个外部的JRE。</li>
-<li>如果我们选择安装则就同时拥有了两个jre。这两个JRE其实本质上是没有任何分别的。最主要的区别在于：JDK目录里面的JRE主要是设计用来运行JDK自带的那些工具的（Bin目录下）。而外部的JRE在安装的时候会自动注册到操作系统的path（但在我的电脑\属性\高级系统设置\环境变量\系统变量中的 path中并没有包含该命令的路径值）里面一般是：System32文件夹下（该文件夹下包含：java.exe javaw.exe  javaws.exe 三个文件）面。</li>
-<li>因此我们只要安装了外部的JRE（即使JDK没有安装，环境变量没有配置）则运行Java程序时都是用的外部JRE的java.exe程序来运行的（即使安装了JDK且配置了环境变量）（系统的默认path具有优先）。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>JDK</tag>
-        <tag>JRE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>JVM HotSpot虚拟机对象探秘</title>
     <url>/2021/02/05/JVM-HotSpot%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E6%8E%A2%E7%A7%98/</url>
     <content><![CDATA[<h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><h2 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h2><p>在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：对象头（Header）、实例数据（Instance Data）和对齐填充（Padding）。</p>
@@ -4793,8 +4793,6 @@ SHR：shared memory 共享内存<br>
 <li>解决cpu缓存行伪共享问题的</li>
 <li>加了contended注解的字段会按照声明的顺序放到末尾，contended注解如果是用在类的field上会在该field前面插入128字节的padding，如果是用在类上则会在类所有field的前后都加上128字节的padding</li>
 </ol>
-<h3 id="ObjectMonitor对象（每个对象都具备jdk1-8）"><a href="#ObjectMonitor对象（每个对象都具备jdk1-8）" class="headerlink" title="ObjectMonitor对象（每个对象都具备jdk1.8）"></a>ObjectMonitor对象（每个对象都具备jdk1.8）</h3><p>objectMonitor.hpp</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">ObjectMonitor() &#123;</span><br><span class="line">    _header       = <span class="literal">NULL</span>;</span><br><span class="line">    _count        = <span class="number">0</span>;     <span class="comment">// 重入次数</span></span><br><span class="line">    _waiters      = <span class="number">0</span>,     <span class="comment">// 等待线程数</span></span><br><span class="line">    _recursions   = <span class="number">0</span>;</span><br><span class="line">    _object       = <span class="literal">NULL</span>;</span><br><span class="line">    _owner        = <span class="literal">NULL</span>;  <span class="comment">// 当前持有锁的线程</span></span><br><span class="line">    _WaitSet      = <span class="literal">NULL</span>;  <span class="comment">// 调用wait方法的线程被阻塞放置在这里</span></span><br><span class="line">    _WaitSetLock  = <span class="number">0</span> ;</span><br><span class="line">    _Responsible  = <span class="literal">NULL</span> ;</span><br><span class="line">    _succ         = <span class="literal">NULL</span> ;</span><br><span class="line">    _cxq          = <span class="literal">NULL</span> ;</span><br><span class="line">    FreeNext      = <span class="literal">NULL</span> ;</span><br><span class="line">    _EntryList    = <span class="literal">NULL</span> ; <span class="comment">// 等待锁处于block的线程，才有资格成为候选资源的线程</span></span><br><span class="line">    _SpinFreq     = <span class="number">0</span> ;</span><br><span class="line">    _SpinClock    = <span class="number">0</span> ;</span><br><span class="line">    OwnerIsThread = <span class="number">0</span> ;</span><br><span class="line">    _previous_owner_tid = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
 <li><a href="https://www.toutiao.com/i6799522958990639628">记一次生产频繁出现 Full GC 的 GC日志图文详解</a></li>
 <li><a href="http://openjdk.java.net/">openjdk</a></li>
@@ -12113,27 +12111,32 @@ SHR：shared memory 共享内存<br>
 <li>场景：线程交替执行同步块的情况，如果存在同一时间访问同一锁的情况，就会导致轻量级锁膨胀为重量级锁。 </li>
 <li>由来：轻量级锁是由偏向所升级来的，偏向锁运行在一个线程进入同步块的情况下，当第二个线程加入锁争用的时候，偏向锁就会升级为轻量级锁； </li>
 </ol>
-<h3 id="轻量级锁加锁过程"><a href="#轻量级锁加锁过程" class="headerlink" title="轻量级锁加锁过程"></a>轻量级锁加锁过程</h3><p>当对象锁状态为无锁状态（锁标志位为“01”状态，是否为偏向锁为“0”），虚拟机首先将在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，用于存储锁对象目前的Mark Word的拷贝，官方称之为 Displaced Mark Word。这时候线程堆栈与对象头的状态如图所示： </p>
-<div align="center">
+<h3 id="Lock-record"><a href="#Lock-record" class="headerlink" title="Lock record"></a>Lock record</h3><ol>
+<li><strong>作用：</strong>用于偏向锁和轻量锁的优化</li>
+<li><strong>包含的数据：</strong>The lock record holds the original value of the object’s mark word and also contains metadata necessary to identify which object is locked.</li>
+<li><strong>创建时机：</strong>When an object is lightweight locked by a monitorenter bytecode, a lock record is either implicitly or explicitly allocated on the stack of the thread performing the lock acquisition operation.</li>
+<li><strong>创建位置：</strong>Interpreted frames contain a region which holds the lock records for all monitors owned by the activation. During interpreted method execution this region grows or shrinks depending upon the number of locks held.（在线程的Interpretered Frame上(解释帧)分配）</li>
+<li>作用：<ul>
+<li>持有displaced word和锁住对象的元数据</li>
+<li>解释器使用lock record来检测非法的锁状态</li>
+<li>隐式地充当锁重入机制的计数器</li>
+</ul>
+</li>
+</ol>
+<h4 id="basicLock-hpp初始化"><a href="#basicLock-hpp初始化" class="headerlink" title="basicLock.hpp初始化"></a>basicLock.hpp初始化</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> SHARE_VM_RUNTIME_BASICLOCK_HPP</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SHARE_VM_RUNTIME_BASICLOCK_HPP</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;oops/markOop.hpp&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;runtime/handles.hpp&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;utilities/top.hpp&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BasicLock</span> <span class="title">VALUE_OBJ_CLASS_SPEC</span> &#123;</span></span><br><span class="line">  <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">VMStructs</span>;</span></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">volatile</span> markOop _displaced_header;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function">markOop      <span class="title">displaced_header</span><span class="params">()</span> <span class="keyword">const</span>               </span>&#123; <span class="keyword">return</span> _displaced_header; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span>         <span class="title">set_displaced_header</span><span class="params">(markOop header)</span>   </span>&#123; _displaced_header = header; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">print_on</span><span class="params">(outputStream* st)</span> <span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// move a basic lock (used during deoptimization</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">move_to</span><span class="params">(oop obj, BasicLock* dest)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">displaced_header_offset_in_bytes</span><span class="params">()</span>       </span>&#123; <span class="keyword">return</span> offset_of(BasicLock, _displaced_header); &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// A BasicObjectLock associates a specific Java object with a BasicLock.</span></span><br><span class="line"><span class="comment">// It is currently embedded in an interpreter frame.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Because some machines have alignment restrictions on the control stack,</span></span><br><span class="line"><span class="comment">// the actual space allocated by the interpreter may include padding words</span></span><br><span class="line"><span class="comment">// after the end of the BasicObjectLock.  Also, in order to guarantee</span></span><br><span class="line"><span class="comment">// alignment of the embedded BasicLock objects on such machines, we</span></span><br><span class="line"><span class="comment">// put the embedded BasicLock at the beginning of the struct.</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BasicObjectLock</span> <span class="title">VALUE_OBJ_CLASS_SPEC</span> &#123;</span></span><br><span class="line">  <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">VMStructs</span>;</span></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  BasicLock _lock;                                    <span class="comment">// the lock, must be double word aligned</span></span><br><span class="line">  oop       _obj;                                     <span class="comment">// object holds the lock;</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="comment">// Manipulation</span></span><br><span class="line">  <span class="function">oop      <span class="title">obj</span><span class="params">()</span> <span class="keyword">const</span>                                </span>&#123; <span class="keyword">return</span> _obj;  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">set_obj</span><span class="params">(oop obj)</span>                               </span>&#123; _obj = obj; &#125;</span><br><span class="line">  <span class="function">BasicLock* <span class="title">lock</span><span class="params">()</span>                                   </span>&#123; <span class="keyword">return</span> &amp;_lock; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Note: Use frame::interpreter_frame_monitor_size() for the size of BasicObjectLocks</span></span><br><span class="line">  <span class="comment">//       in interpreter activation frames since it includes machine-specific padding.</span></span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span>                                   </span>&#123; <span class="keyword">return</span> <span class="keyword">sizeof</span>(BasicObjectLock)/wordSize; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// GC support</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">oops_do</span><span class="params">(OopClosure* f)</span> </span>&#123; f-&gt;do_oop(&amp;_obj); &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">obj_offset_in_bytes</span><span class="params">()</span>                    </span>&#123; <span class="keyword">return</span> offset_of(BasicObjectLock, _obj);  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">lock_offset_in_bytes</span><span class="params">()</span>                   </span>&#123; <span class="keyword">return</span> offset_of(BasicObjectLock, _lock); &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">// SHARE_VM_RUNTIME_BASICLOCK_HPP</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="轻量级加锁代码（bytecodeInterpreter-cpp）"><a href="#轻量级加锁代码（bytecodeInterpreter-cpp）" class="headerlink" title="轻量级加锁代码（bytecodeInterpreter.cpp）"></a>轻量级加锁代码（bytecodeInterpreter.cpp）</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Traditional lightweight locking.</span></span><br><span class="line"><span class="keyword">if</span> (!success) &#123;</span><br><span class="line">  markOop displaced = rcvr-&gt;mark()-&gt;set_unlocked();</span><br><span class="line">  mon-&gt;lock()-&gt;set_displaced_header(displaced);</span><br><span class="line">  <span class="keyword">bool</span> call_vm = UseHeavyMonitors;</span><br><span class="line">  <span class="keyword">if</span> (call_vm || Atomic::cmpxchg_ptr(mon, rcvr-&gt;mark_addr(), displaced) != displaced) &#123;</span><br><span class="line">    <span class="comment">// Is it simple recursive case?</span></span><br><span class="line">    <span class="keyword">if</span> (!call_vm &amp;&amp; THREAD-&gt;is_lock_owned((address) displaced-&gt;clear_lock_bits())) &#123;</span><br><span class="line">      mon-&gt;lock()-&gt;set_displaced_header(<span class="literal">NULL</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      CALL_VM(InterpreterRuntime::monitorenter(THREAD, mon), handle_exception);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="轻量级锁加锁过程"><a href="#轻量级锁加锁过程" class="headerlink" title="轻量级锁加锁过程"></a>轻量级锁加锁过程</h3><div align="center">
 
-<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109098671.png" class>
+<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81%E7%9A%84%E8%8E%B7%E5%8F%96%E8%BF%87%E7%A8%8B.png" class title="轻量级锁的获取过程">
 
 </div>
 
-
+<p>当对象锁状态为无锁状态（锁标志位为“01”状态，是否为偏向锁为“0”），虚拟机首先将在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，用于存储锁对象目前的Mark Word的拷贝，官方称之为 Displaced Mark Word。</p>
 <ol>
-<li><p>拷贝对象头中的Mark Word复制到锁记录中；</p>
-</li>
-<li><p>拷贝成功后，虚拟机将使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针，并将Lock record里的owner指针指向object mark word</p>
-<ul>
-<li><p>如果成功，那么这个线程就拥有了该对象的锁，并且对象Mark Word的锁标志位设置为“00”，即表示此对象处于轻量级锁定状态，如图所示：</p>
- <div align="center">
-
- <img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589109123275.png" class>
-
- </div></li>
-<li><p>如果失败</p>
-<ul>
+<li>拷贝对象头中的Mark Word复制到锁记录中；</li>
+<li>拷贝成功后，虚拟机将使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针，并将Lock record里的owner指针指向object mark word<ul>
+<li>如果成功，那么这个线程就拥有了该对象的锁，并且对象Mark Word的锁标志位设置为“00”，即表示此对象处于轻量级锁定状态</li>
+<li>如果失败<ul>
 <li>会检查对象的Mark Word是否指向当前线程的栈帧，如果是就说明当前线程已经拥有了这个对象的锁，那就可以直接进入同步块继续执行</li>
 <li>否则说明多个线程竞争锁，轻量级锁就要膨胀为重量级锁，锁标志的状态值变为“10”，Mark Word中存储的就是指向重量级锁（互斥量）的指针，后面等待锁的线程也要进入阻塞状态。 而当前线程便尝试使用自旋来获取锁，自旋就是为了不让线程阻塞，而采用循环去获取锁的过程。</li>
 </ul>
@@ -12175,6 +12178,8 @@ SHR：shared memory 共享内存<br>
 <li>Synchronized 是通过对象内部的一个叫做监视器锁（monitor）来实现的</li>
 <li>监视器锁本质又是依赖于底层的操作系统的 Mutex Lock 来实现的</li>
 </ol>
+<h3 id="ObjectMonitor对象（每个对象都具备jdk1-8）"><a href="#ObjectMonitor对象（每个对象都具备jdk1-8）" class="headerlink" title="ObjectMonitor对象（每个对象都具备jdk1.8）"></a>ObjectMonitor对象（每个对象都具备jdk1.8）</h3><p>objectMonitor.hpp</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">ObjectMonitor() &#123;</span><br><span class="line">    _header       = <span class="literal">NULL</span>;</span><br><span class="line">    _count        = <span class="number">0</span>;     <span class="comment">// 重入次数</span></span><br><span class="line">    _waiters      = <span class="number">0</span>,     <span class="comment">// 等待线程数</span></span><br><span class="line">    _recursions   = <span class="number">0</span>;</span><br><span class="line">    _object       = <span class="literal">NULL</span>;</span><br><span class="line">    _owner        = <span class="literal">NULL</span>;  <span class="comment">// 当前持有锁的线程</span></span><br><span class="line">    _WaitSet      = <span class="literal">NULL</span>;  <span class="comment">// 调用wait方法的线程被阻塞放置在这里</span></span><br><span class="line">    _WaitSetLock  = <span class="number">0</span> ;</span><br><span class="line">    _Responsible  = <span class="literal">NULL</span> ;</span><br><span class="line">    _succ         = <span class="literal">NULL</span> ;</span><br><span class="line">    _cxq          = <span class="literal">NULL</span> ;</span><br><span class="line">    FreeNext      = <span class="literal">NULL</span> ;</span><br><span class="line">    _EntryList    = <span class="literal">NULL</span> ; <span class="comment">// 等待锁处于block的线程，才有资格成为候选资源的线程</span></span><br><span class="line">    _SpinFreq     = <span class="number">0</span> ;</span><br><span class="line">    _SpinClock    = <span class="number">0</span> ;</span><br><span class="line">    OwnerIsThread = <span class="number">0</span> ;</span><br><span class="line">    _previous_owner_tid = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 <h2 id="锁升级分析"><a href="#锁升级分析" class="headerlink" title="锁升级分析"></a>锁升级分析</h2><div align="center">
 
 <img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/%E9%94%81%E5%8D%87%E7%BA%A7%E8%BF%87%E7%A8%8B.png" class title="锁升级过程">
@@ -12539,26 +12544,40 @@ SHR：shared memory 共享内存<br>
 </table>
 
 <p><strong>总结：调用wait之后则直接升级为重量锁</strong></p>
-<h2 id="锁分离"><a href="#锁分离" class="headerlink" title="锁分离"></a>锁分离</h2><h3 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h3><p>为了提高性能，Java 提供了读写锁，在读的地方使用读锁，在写的地方使用写锁，灵活控制，如果没有写锁的情况下，读是无阻塞的,在一定程度上提高了程序的执行效率。读写锁分为读锁和写锁，多个读锁不互斥，读锁与写锁互斥，这是由 jvm 自己控制的，你只要上好相应的锁即可。 </p>
-<h4 id="读锁（并发读）"><a href="#读锁（并发读）" class="headerlink" title="读锁（并发读）"></a>读锁（并发读）</h4><p>如果你的代码只读数据，可以很多人同时读，但不能同时写，那就上读锁 </p>
-<h4 id="写锁（单独写）"><a href="#写锁（单独写）" class="headerlink" title="写锁（单独写）"></a>写锁（单独写）</h4><p>如果你的代码修改数据，只能有一个人在写，且不能同时读取，那就上写锁。总之，读的时候上读锁，写的时候上写锁！ </p>
+<h2 id="锁分离"><a href="#锁分离" class="headerlink" title="锁分离"></a>锁分离</h2><h3 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h3><p>java的读写锁，在没有写锁的情况下读无阻塞。</p>
+<ol>
+<li>读锁：并发读</li>
+<li>写锁：单独写，阻塞读写 </li>
+</ol>
 <h4 id="Java中的实现"><a href="#Java中的实现" class="headerlink" title="Java中的实现"></a>Java中的实现</h4><ol>
-<li>Java中读写锁有个接口ReadWriteLock实现类ReentrantReadWriteLock；可以用来实现TreeMap的线程安全使用。</li>
-<li>CopyOnWriteArrayList 、CopyOnWriteArraySet</li>
-<li>CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。CopyOnWrite并发容器用于读多写少的并发场景，因为，读的时候没有锁，但是对其进行更改的时候是会加锁的，否则会导致多个线程同时复制出多个副本，各自修改各自的；</li>
+<li>接口ReadWriteLock实现类ReentrantReadWriteLock；可以用来实现TreeMap的线程安全使用</li>
+<li>CopyOnWrite容器（写时复制的容器，读多写少的场景；CopyOnWriteArrayList、CopyOnWriteArraySet）: 添加数据的步骤<ul>
+<li> 复制当前容器</li>
+<li> 添加数据到新容器中</li>
+<li> 修改原容器引用指向新容器</li>
+</ul>
+</li>
 </ol>
 <h2 id="锁粗化（减小锁的粒度）"><a href="#锁粗化（减小锁的粒度）" class="headerlink" title="锁粗化（减小锁的粒度）"></a>锁粗化（减小锁的粒度）</h2><p>减小锁粒度是指缩小锁定对象的范围，从而减小锁冲突的可能性，从而提高系统的并发能力。减小锁粒度是一种削弱多线程锁竞争的有效手段。</p>
 <h3 id="分段锁-ConcurrentHashMap"><a href="#分段锁-ConcurrentHashMap" class="headerlink" title="分段锁-ConcurrentHashMap"></a>分段锁-ConcurrentHashMap</h3><p>java中的ConcurrentHashMap在jdk1.8之前的版本，使用一个Segment 数组</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Segment&lt; K,V &gt;[] segments</span><br></pre></td></tr></table></figure>
-<p>Segment继承自ReenTrantLock，所以每个Segment就是个可重入锁，每个Segment 有一个HashEntry&lt; K,V &gt;数组用来存放数据，put操作时，先确定往哪个Segment放数据，只需要锁定这个Segment，执行put，其它的Segment不会被锁定；所以数组中有多少个Segment就允许同一时刻多少个线程存放数据，这样增加了并发能力。</p>
-<p>ConcurrentHashMap，它内部细分了若干个小的 HashMap，称之为段(Segment)。默认情况下一个 ConcurrentHashMap 被进一步细分为 16 个段，既就是锁的并发度。<br>如果需要在 ConcurrentHashMap 中添加一个新的表项，并不是将整个 HashMap 加锁，而是首先根据hashcode得到该表项应该存放在哪个段中，然后对该段加锁，并完成put操作。在多线程环境中，如果多个线程同时进行put操作，只要被加入的表项不存放在同一个段中，则线程间可以做到真正的并行。<br>ConcurrentHashMap 是由Segment 数组结构和HashEntry 数组结构组成<br>ConcurrentHashMap 是由 Segment 数组结构和 HashEntry 数组结构组成。Segment 是一种可重入锁 ReentrantLock，在 ConcurrentHashMap 里扮演锁的角色，HashEntry 则用于存储键值对数据。一个 ConcurrentHashMap 里包含一个 Segment 数组，Segment 的结构和 HashMap 类似，是一种数组和链表结构， 一个 Segment 里包含一个 HashEntry 数组，每个 HashEntry 是一个链表结构的元素， 每个 Segment 守护一个 HashEntry 数组里的元素,当对 HashEntry 数组的数据进行修改时，必须首先获得它对应的 Segment 锁。 </p>
+<ol>
+<li>Segment继承ReentrantLock，可重入</li>
+<li>在segment中使用HashEntry&lt; K,V &gt;维护数据，在执行put的时候只需要锁定当前的segment（segment的个数表示了并发度）</li>
+<li>ConcurrentHashMap 是由Segment 数组结构和HashEntry 数组结构组成 </li>
+</ol>
 <div align="center">
 
 <img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/1589108702724.png" class>
 
 </div>
 
-<h3 id="LongAdder"><a href="#LongAdder" class="headerlink" title="LongAdder"></a>LongAdder</h3><p>LongAdder 实现思路也类似ConcurrentHashMap，LongAdder有一个根据当前并发状况动态改变的Cell数组，Cell对象里面有一个long类型的value用来存储值;<br>开始没有并发争用的时候或者是cells数组正在初始化的时候，会使用cas来将值累加到成员变量的base上，在并发争用的情况下，LongAdder会初始化cells数组，在Cell数组中选定一个Cell加锁，数组有多少个cell，就允许同时有多少线程进行修改，最后将数组中每个Cell中的value相加，在加上base的值，就是最终的值；cell数组还能根据当前线程争用情况进行扩容，初始长度为2，每次扩容会增长一倍，直到扩容到大于等于cpu数量就不再扩容，这也就是为什么LongAdder比cas和AtomicInteger效率要高的原因，后面两者都是volatile+cas实现的，他们的竞争维度是1，LongAdder的竞争维度为“Cell个数+1”为什么要+1？因为它还有一个base，如果竞争不到锁还会尝试将数值加到base上；</p>
+<h3 id="LongAdder"><a href="#LongAdder" class="headerlink" title="LongAdder"></a>LongAdder</h3><ol>
+<li>LongAdder有一个根据当前并发状况动态改变的Cell数组，Cell对象里面有一个long类型的value用来存储值;</li>
+<li>在没有竞争或初始化时使用cas来将值累加到成员变量的base上</li>
+<li>竞争时，LongAdder会初始化cells数组（个数决定并发度），在Cell数组中选定一个Cell加锁，最后将数组中每个Cell中的value相加，在加上base的值，就是最终的值</li>
+<li>cell数组还能根据当前线程争用情况进行扩容，初始长度为2，每次扩容会增长一倍，直到扩容到大于等于cpu数量就不再扩容，这也就是为什么LongAdder比cas和AtomicInteger效率要高的原因，后面两者都是volatile+cas实现的，他们的竞争维度是1，LongAdder的竞争维度为“Cell个数+1”为什么要+1？因为它还有一个base，如果竞争不到锁还会尝试将数值加到base上；</li>
+</ol>
 <h3 id="LinkedBlockingQueue"><a href="#LinkedBlockingQueue" class="headerlink" title="LinkedBlockingQueue"></a>LinkedBlockingQueue</h3><p>LinkedBlockingQueue也体现了这样的思想，在队列头入队，在队列尾出队，入队和出队使用不同的锁，相对于LinkedBlockingArray只有一个锁效率要高；<br>拆锁的粒度不能无限拆，最多可以将一个锁拆为当前cup数量个锁即可；</p>
 <h2 id="无锁编程"><a href="#无锁编程" class="headerlink" title="无锁编程"></a>无锁编程</h2><ol>
 <li>一写一读的无锁队列：内存屏障</li>
@@ -12575,6 +12594,45 @@ SHR：shared memory 共享内存<br>
 <li>如果这个对象被某个线程占用，它得记录这个线程的thread ID，知道自己是被哪个线程占用了</li>
 <li>这个对象还得维护一个thread id list，记录其他所有阻塞的、等待拿这个锁的线程（也就是记录所有在外边等待的游客）。在当前线程释放锁之后（也就是把state从1改回0），从这个thread id list里面取一个线程唤醒。</li>
 </ol>
+<h3 id="锁之间的比对"><a href="#锁之间的比对" class="headerlink" title="锁之间的比对"></a>锁之间的比对</h3><style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">锁</th>
+    <th class="tg-0lax">优点</th>
+    <th class="tg-0lax">缺点</th>
+    <th class="tg-0lax">场景</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">偏向锁</td>
+    <td class="tg-0lax">1.加锁和解锁不需要case，没有额外的消耗<br>2.与非同步方法相比仅存在纳秒级差别</td>
+    <td class="tg-0lax">存在竞争时带来偏向撤销的资源消耗</td>
+    <td class="tg-0lax">只有一个线程访问同步的场景</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">轻量锁</td>
+    <td class="tg-0lax">竞争的线程不会阻塞，提高响应速度</td>
+    <td class="tg-0lax">自旋消耗CPU</td>
+    <td class="tg-0lax">追求响应时间，同步快，执行速度快</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">重量锁</td>
+    <td class="tg-0lax">不自旋，不消化额外的cpu</td>
+    <td class="tg-0lax">1.响应速度慢<br>2.频繁获取释放锁，消耗性能</td>
+    <td class="tg-0lax">追求吞吐量，同步快，执行速度较长</td>
+  </tr>
+</tbody>
+</table>
+
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
 <li><a href="https://www.jianshu.com/p/39628e1180a9">Java锁 - 导读</a></li>
 <li><a href="https://blog.csdn.net/zqz_zqz/article/details/70233767">java 中的锁 – 偏向锁、轻量级锁、自旋锁、重量级锁</a></li>

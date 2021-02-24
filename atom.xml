@@ -503,7 +503,7 @@
     <link href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/"/>
     <id>https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/</id>
     <published>2021-02-08T00:24:05.000Z</published>
-    <updated>2021-02-23T10:07:54.470Z</updated>
+    <updated>2021-02-24T07:26:16.346Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;在多线程同时访问同一个资源时，如果需要考虑对共享资源的竞争问题以及数据的正确性，这需要引入锁的概念，这就是所谓的线程安全。最常见的场景就是i–操作。&lt;/p&gt;</summary>
