@@ -1470,3 +1470,4 @@ LinkedBlockingQueue也体现了这样的思想，在队列头入队，在队列�
 
 1. [Java锁 - 导读](https://www.jianshu.com/p/39628e1180a9)
 2. [java 中的锁 -- 偏向锁、轻量级锁、自旋锁、重量级锁](https://blog.csdn.net/zqz_zqz/article/details/70233767)
+3. [David Dice's paper Implementing Fast Java Monitors with Relaxed-Locks](https://www.usenix.org/legacy/event/jvm01/full_papers/dice/dice.pdf)

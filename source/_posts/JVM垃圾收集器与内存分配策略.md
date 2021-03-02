@@ -233,7 +233,7 @@ permanent generation空间不足会引发Full GC,仍然不够会引发PermGen Sp
 <tbody>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>标记-清除&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">基础算法（以下算法以此为基础）<br>标记：标记出所有需要回收的对象<br>回收：回收掉所有被标记的对象<br>缺点：<br>效率太低<br>出现大量碎片空间打，只后续无法分配大对象   </td>
+    <td class="tg-0lax">基础算法（以下算法以此为基础）<br>标记：标记出所有需要回收的对象<br>回收：回收掉所有被标记的对象<br>缺点：<br>效率太低<br>出现大量碎片后，无法分配大的对象   </td>
   </tr>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>复制&nbsp;&nbsp;&nbsp;</td>
@@ -274,27 +274,142 @@ permanent generation空间不足会引发Full GC,仍然不够会引发PermGen Sp
 <tbody>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>Serial收集器&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">串行收集器是最古老，最稳定以及效率高的收集器，可能会产生较长的停顿，只使用一个线程去回收。<br><span style="color:red">新生代、老年代使用串行回收；新生代复制算法、老年代标记-压缩</span>；垃圾收集的过程中会Stop The World（服务暂停）<br>参数控制：-XX:+UseSerialGC  串行收集器   </td>
+    <td class="tg-0lax">
+    最基础、最古老的简单高效收集器；<br>
+    单线程收集，暂停其他所有工作线程（JVM后台完成，STW）<br>
+    <span style="color:red">新生代：复制算法</span><br>
+    适用于客户端模式<br>
+    -XX:+UseSerialGC  串行收集器   </td>
   </tr>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>ParNew收集器&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">ParNew收集器其实就是Serial收集器的多线程版本。<span style="color:red">新生代并行，老年代串行；新生代复制算法、老年代标记-压缩</span><br>参数控制：-XX:+UseParNewGC  ParNew收集器<br>-XX:ParallelGCThreads   限制线程数量   </td>
+    <td class="tg-0lax">
+    Serial收集器的多线程并行版本<br>
+    <span style="color:red">新生代：复制算法</span><br>
+    -XX:+UseParNewGC  ParNew收集器<br>
+    -XX:ParallelGCThreads   限制线程数量   </td>
   </tr>
   <tr>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>Parallel收集器&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax"><span style="color:red">Parallel Scavenge收集器类似ParNew收集器，Parallel收集器更关注系统的吞吐量</span>。可以通过参数来打开自适应调节策略，虚拟机会根据当前系统的运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或最大的吞吐量；也可以通过参数控制GC的时间不大于多少毫秒或者比例；<span style="color:red">新生代复制算法、老年代标记-压缩</span><br>参数控制：-XX:+UseParallelGC  使用Parallel收集器+ 老年代串行   </td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>Parallel Scavenge收集器&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">
+    <span style="color:red">类似ParNew，Parallel收集器更关注系统的吞吐量（通过参数动态调整）</span><br>
+    吞吐量=运行用户代码时间/（运行用户代码时间+垃圾收集时间）<br>
+    <span style="color:red">新生代：复制算法</span><br>
+    -XX:+UseParallelGC<br>
+    -XX：MaxGCPauseMillis 最大垃圾收集停顿时间<br>
+    -XX：GCTimeRatio 吞吐量大小<br>
+    </td>
   </tr>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>Parallel&nbsp;&nbsp;&nbsp;Old 收集器&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">Parallel Old是Parallel   Scavenge收集器的老年代版本，使用多线程和“<span style="color:red">标记－整理</span>”算法。这个收集器是在JDK 1.6中才开始提供<br>参数控制：   -XX:+UseParallelOldGC 使用Parallel收集器+ 老年代并行   </td>
+    <td class="tg-0lax">Parallel Scavenge收集器的老年代版本，使用多线程和“<span style="color:red">标记－整理</span>”算法。<br>
+    JDK 1.6中才开始提供<br>
+    -XX:+UseParallelOldGC <br></td>
   </tr>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>CMS收集器&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax"></td>
+    <td class="tg-0lax">特点：<br>
+    1. <span style="color:red">一种以获取最短回收停顿时间为目标的收集器</span><br>
+    2. <span style="color:red">基于标记-清除算法</span><br>
+    3. <span style="color:red">顶一个真正意义的并发收集器（回收和用户线程同时工作）</span><br>
+   <span style="font-weight:bold">收集步骤：</span><br>
+   1. 初始标记（CMS initial mark）：会出现短暂SWT，标记GC Roots能直接关联到的对象<br>
+   2. 并发标记（CMS concurrent mark）：执行GC Root Tracing<br>
+   3. 重新标记（CMS remark）：出现SWT（稍长），修正并发标记中由于用户程序执行产生变动的对象<br>
+   4. 并发清除（CMS concurrent sweep）：开启用户线程，同时GC线程开始对标记的区域做清扫<br>
+优点：并发收集、低停顿<br>
+缺点：<br>
+1. 对CPU资源敏感<br>
+2. 无法处理浮动垃圾（Floating Garbage）；<br>
+3. 基于标记-清除算法实现的收集器，这意味着收集结束时会有大量空间碎片产生<br>
+  </td>
   </tr>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>G1收集器&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">特点：<br>1. <span style="color:red">空间整合</span>，<span style="color:red">G1收集器采用标记整理算法，不会产生内存空间碎片。</span><br>2. <span style="color:red">可预测停顿</span>，这是G1的另一大优势，降低停顿时间是G1和CMS的共同关注点，但G1除了追求低停顿外，还能<span style="color:red">建立可预测的停顿时间模型，能让使用者明确指定在一个长度为N毫秒的时间片段内</span>，消耗在垃圾收集上的时间不得超过N毫秒，这几乎已经是实时Java（RTSJ）的垃圾收集器的特征了。<br>将整个Java堆划分为多个大小相等的独立区域（Region），虽然还保留有新生代和老年代的概念，但新生代和老年代不再是物理隔阂了，它们都是一部分（可以不连续）Region的集合。<br><span style="font-weight:bold">收集步骤：</span><br>1、标记阶段，首先初始标记(Initial-Mark),这个阶段是停顿的(Stop   the World Event)，并且会触发一次普通Mintor GC。对应GC log:GC pause (young) (inital-mark)<br>2、Root Region   Scanning，程序运行过程中会回收survivor区(存活到老年代)，这一过程必须在young GC之前完成。<br>3、Concurrent   Marking，在整个堆中进行并发标记(和应用程序并发执行)，此过程可能被young   GC中断。在并发标记阶段，若发现区域对象中的所有对象都是垃圾，那个这个区域会被立即回收(图中打X)。同时，并发标记过程中，会计算每个区域的对象活性(区域中存活对象的比例)。<br>4、Remark, 再标记，会有短暂停顿(STW)。再标记阶段是用来收集   并发标记阶段 产生新的垃圾(并发阶段和应用程序一同运行)；G1中采用了比CMS更快的初始快照算法:snapshot-at-the-beginning   (SATB)。<br>5、Copy/Clean   up，多线程清除失活对象，会有STW。G1将回收区域的存活对象拷贝到新区域，清除Remember Sets，并发清空回收区域并把它返回到空闲区域链表中。<br>6、复制/清除过程后。回收区域的活性对象已经被集中回收到深蓝色和深绿色区域。</td>
+    <td class="tg-0lax">
+    一种面向服务端应用的收集器，对于多CPU和大内存的机器可以极高满足停顿时间和吞吐量<br>
+    特点：<br>
+    1. <span style="color:red">并行与并发：充分利用CPU，基于多核硬件缩短SWT</span><br>
+    2. <span style="color:red">分代收集：管理整个GC堆，但保留了分代收集的概念</span><br>
+    3. <span style="color:red">空间整合：整体上基于标记-整理算法，局部上基于复制算法，无碎片化</span><br>
+    4. <span style="color:red">可预测的停顿：建立可预测的停顿时间模型，便于使用者指定停顿时间</span><br>
+   
+G1跟踪各个Region里面的垃圾堆积的价值大小（回收所获得的空间大小以及回收所需时间的经验值），在后台维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的Region（这也就是Garbage-First名称的来由）。这种使用Region划分内存空间以及有优先级的区域回收方式，保证了G1收集器在有限的时间内可以获取尽可能高的收集效率。<br>
+   
+   <span style="font-weight:bold">收集步骤：</span><br>
+1. 初始标记（Initial Marking）：标记GC Roots直接关联对象，修改TAMS指针的值，让下一阶段用户线程并发运行时，能正确地在可用的Region中分配新对象；借用Minor GC的时候同步完成短暂停顿<br>
+2. 并发标记（Concurrent Marking）：对象可达性分析，找出需要回收的对象，这阶段耗时较长，但可与用户程序并发执行处理完成后，需要重新处理SATB记录下的在并发时有引用变动的对象。<br>
+3. 最终标记（Final Marking）：对用户线程做另一个短暂的暂停，用于处理并发阶段结束后仍遗留下来的最后那少量的SATB记录。<br>
+4. 筛选回收（Live Data Counting and Evacuation）：负责更新Region的统计数据，对各个Region的回收价值和成本进行排序，根据用户所期望的停顿时间来制定回收计划，可以自由选择任意多个Region构成回收集，然后把决定回收的那一部分Region的存活对象复制到空的Region中，再清理掉整个旧Region的全部空间。这里的操作涉及存活对象的移动，是必须暂停用户线程，由多条收集器线程并行完成的。<br>
+  </tr>
+</tbody>
+</table>
+
+### 收集器组合
+
+<div align=center>
+
+![JVM垃圾收集器组合](JVM垃圾收集器与内存分配策略/JVM垃圾收集器的组合.png)
+
+</div>
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-rz5g{background-color:#92D050;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg" style="undefined;table-layout: fixed; width: 819px">
+<colgroup>
+<col style="width: 142px">
+<col style="width: 137px">
+<col style="width: 540px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-rz5g"><span style="font-weight:bold">YGC</span></th>
+    <th class="tg-rz5g"><span style="font-weight:bold">FGC</span></th>
+    <th class="tg-rz5g"><span style="font-weight:bold">说明</span></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">Serial   </td>
+    <td class="tg-0lax">Serial   Old   </td>
+    <td class="tg-0lax">Serial和Serial   Old都是单线程进行GC，特点就是GC时暂停所有应用线程。</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">Serial   </td>
+    <td class="tg-0lax">CMS+Serial   Old   </td>
+    <td class="tg-0lax">CMS（Concurrent Mark   Sweep）是并发GC，实现GC线程和应用线程并发工作，不需要暂停所有应用线程。另外，当CMS进行GC失败时，会自动使用Serial Old策略进行GC。   </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">ParNew   </td>
+    <td class="tg-0lax">CMS   </td>
+    <td class="tg-0lax">使用-XX:+UseParNewGC选项来开启。ParNew是Serial的并行版本，可以指定GC线程数，默认GC线程数为CPU的数量。可以使用-XX:ParallelGCThreads选项指定GC的线程数。<br>如果指定了选项-XX:+UseConcMarkSweepGC选项，则新生代默认使用ParNew   GC策略。   </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">ParNew   </td>
+    <td class="tg-0lax">Serial   Old   </td>
+    <td class="tg-0lax">使用-XX:+UseParNewGC选项来开启。新生代使用ParNew   GC策略，年老代默认使用Serial Old GC策略。   </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">Parallel   Scavenge  </td>
+    <td class="tg-0lax">Serial   Old   </td>
+    <td class="tg-0lax">Parallel Scavenge策略主要是关注一个可控的吞吐量：应用程序运行时间   / (应用程序运行时间 + GC时间)，可见这会使得CPU的利用率尽可能的高，适用于后台持久运行的应用程序，而不适用于交互较多的应用程序。   </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">Parallel   Scavenge </td>
+    <td class="tg-0lax">Parallel   Old   </td>
+    <td class="tg-0lax">Parallel Old是Serial Old的并行版本   </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">G1GC   </td>
+    <td class="tg-0lax">G1GC   </td>
+    <td class="tg-0lax">-XX:+UnlockExperimentalVMOptions   -XX:+UseG1GC        #开启<br>-XX:MaxGCPauseMillis   =50                  #暂停时间目标<br>-XX:GCPauseIntervalMillis   =200          #暂停间隔目标<br>-XX:+G1YoungGenSize=512m            #年轻代大小<br>-XX:SurvivorRatio=6                            #幸存区比例   </td>
   </tr>
 </tbody>
 </table>
@@ -846,69 +961,6 @@ java -Xmx3550m -Xms3550m -Xmn2g -Xss128k -XX:+UseConcMarkSweepGC -XX:CMSFULLGCsB
 </tbody>
 </table>
 
-## 收集器组合
-
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-rz5g{background-color:#92D050;text-align:left;vertical-align:top}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-</style>
-<table class="tg" style="undefined;table-layout: fixed; width: 819px">
-<colgroup>
-<col style="width: 142px">
-<col style="width: 137px">
-<col style="width: 540px">
-</colgroup>
-<thead>
-  <tr>
-    <th class="tg-rz5g"><span style="font-weight:bold">YGC</span></th>
-    <th class="tg-rz5g"><span style="font-weight:bold">FGC</span></th>
-    <th class="tg-rz5g"><span style="font-weight:bold">说明</span></th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-0lax">Serial   </td>
-    <td class="tg-0lax">Serial   Old   </td>
-    <td class="tg-0lax">Serial和Serial   Old都是单线程进行GC，特点就是GC时暂停所有应用线程。</td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">Serial   </td>
-    <td class="tg-0lax">CMS+Serial   Old   </td>
-    <td class="tg-0lax">CMS（Concurrent Mark   Sweep）是并发GC，实现GC线程和应用线程并发工作，不需要暂停所有应用线程。另外，当CMS进行GC失败时，会自动使用Serial Old策略进行GC。   </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">ParNew   </td>
-    <td class="tg-0lax">CMS   </td>
-    <td class="tg-0lax">使用-XX:+UseParNewGC选项来开启。ParNew是Serial的并行版本，可以指定GC线程数，默认GC线程数为CPU的数量。可以使用-XX:ParallelGCThreads选项指定GC的线程数。<br>如果指定了选项-XX:+UseConcMarkSweepGC选项，则新生代默认使用ParNew   GC策略。   </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">ParNew   </td>
-    <td class="tg-0lax">Serial   Old   </td>
-    <td class="tg-0lax">使用-XX:+UseParNewGC选项来开启。新生代使用ParNew   GC策略，年老代默认使用Serial Old GC策略。   </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">Parallel   Scavenge  </td>
-    <td class="tg-0lax">Serial   Old   </td>
-    <td class="tg-0lax">Parallel Scavenge策略主要是关注一个可控的吞吐量：应用程序运行时间   / (应用程序运行时间 + GC时间)，可见这会使得CPU的利用率尽可能的高，适用于后台持久运行的应用程序，而不适用于交互较多的应用程序。   </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">Parallel   Scavenge </td>
-    <td class="tg-0lax">Parallel   Old   </td>
-    <td class="tg-0lax">Parallel Old是Serial Old的并行版本   </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">G1GC   </td>
-    <td class="tg-0lax">G1GC   </td>
-    <td class="tg-0lax">-XX:+UnlockExperimentalVMOptions   -XX:+UseG1GC        #开启<br>-XX:MaxGCPauseMillis   =50                  #暂停时间目标<br>-XX:GCPauseIntervalMillis   =200          #暂停间隔目标<br>-XX:+G1YoungGenSize=512m            #年轻代大小<br>-XX:SurvivorRatio=6                            #幸存区比例   </td>
-  </tr>
-</tbody>
-</table>
-
 ## 调优技巧
 
 ### 年轻代大小选择
@@ -933,8 +985,73 @@ java -Xmx3550m -Xms3550m -Xmn2g -Xss128k -XX:+UseConcMarkSweepGC -XX:CMSFULLGCsB
 
 因为年老代的并发收集器使用标记、清除算法，所以不会对堆进行压缩。当收集器回收时，他会把相邻的空间进行合并，这样可以分配给较大的对象。但是，当堆空间较小时，运行一段时间以后，就会出现“碎片”，如果并发收集器找不到足够的空间，那么并发收集器将会停止，然后使用传统的标记、清除方式进行回收。如果出现“碎片”，可能需要进行如下配置：`-XX:+UseCMSCompactAtFullCollection`：使用并发收集器时，开启对年老代的压缩。`-XX:CMSFullGCsBeforeCompaction=0：`上面配置开启的情况下，这里设置多少次Full GC后，对年老代进行压缩
 
+## HotSpot算法实现细节
+
+### 根节点枚举
+
+可作为GC Roots节点的主要数据为：
+
+1. 全局引用：如常量或类静态属性
+2. 执行上线文：如栈帧中的本地变量表
+
+所有的收集器在收集GC Roots可达对象时都会出现SWT；在Hotspot中使用OopMap（记录了在该类型的对象内什么偏移量上是什么类型的数据）结构可以指导在那些地方存放着对象的引用，这样可以减少停顿时间（不需要重头到尾的扫描）。
+
+> 每个被JIT编译过后的方法也会在一些特定的位置记录下OopMap，记录了执行到该方法的某条指令的时候，栈上和寄存器里哪些位置是引用。这样GC在扫描栈的时候就会查询这些OopMap就知道哪里是引用了。这些特定的位置(safepoint)主要在： 
+1、循环的末尾 
+2、方法临返回前 / 调用方法的call指令后 
+3、可能抛异常的位置
+
+### 安全点
+
+安全点（Safepoint）。有了安全点的设定，也就决定了用户程序执行时并非在代码指令流的任意位置都能够停顿下来开始垃圾收集，而是强制要求必须执行到达安全点后才能够暂停。生成OopMap的地方。到达安全点的方法：
+1. 抢先式中断：垃圾收集时触发，中断全部用户线程，如果发现用户线程不在安全点上，就恢复该线程执行，之后在重新中断，直到在安全点上。很少有收集器使用该方式。
+2. 主动式中断：收集器需要中断时，只是记录一个标志位，各个线程在执行过程中会不停的主动轮询这个标志，一旦发现为真就自己在最近的安全点上主动中断挂起。Hotspot使用内存保护陷阱的方式（精简至一条汇编指令），提高轮询的效率。
+
+### 安全区域
+
+当线程处于sleep或阻塞状态时，自己无法中断自己达到安全点；为了解决这个问题引入安全区域。安全区域是指能够确保在某一段代码片段中，引用关系不发生变化。处理过程如下：
+1. 用户线程执行到安全区域时，标识自己进入安全区域
+2. 垃圾回收时不处理该区域的数据
+3. 线程离开安全区域时，首先检测JVM是否完成根节点枚举，如果完成则线程继续执行，否则一直等待直到可以离开安全区域
+
+### 记忆卡与卡表
+
+1. 在新生代中建立记忆卡，避免整个老年代加入GC Roots扫描（跨代引用）
+2. 记忆卡是一种用于记录从非收集区域指向收集区域的指针集合的抽象数据结构
+3. 字节数组CARD_TABLE的每一个元素都对应着其标识的内存区域中一块特定大小的内存块，这个内存块被称作“卡页”（Card Page）
+4. 一个卡页中可能会包含多个对象，只要存在一个对象引用则记录为脏页；来及回收时只需要把脏页加入GC Roots中扫描即可
+
+### 写屏障（卡表原始维护）
+
+1. 变脏的时间点：引用类型赋值的那一刻
+2. Hotspot中使用写屏障维护卡表的状态，在虚拟机层面对引用类型字段赋值的AOP切面
+3. 伪共享：当多线程修改互相独立的变量时，如果这些变量恰好共享同一个缓存行，就会彼此影响（写回、无效化或者同步）而导致性能降低
+4. 解决伪共享：不采用无条件的写屏障，需要先检查卡表记录，只有未标记时才标记为脏
+5. -XX：+UseCondCardMark：是否开启卡表更新的条件判断
+
+### 并发的可达性分析
+
+可达性分析算法理论上要求全过程都基于一个能保障一致性的快照中才能够进行分析，这意味着必须全程冻结用户线程的运行。
+
+是否可达的三色法（灰色对象是黑色对象与白色对象之间的中间态）：
+
+1. 白色：尚未被垃圾收集器访问过；初始状态都是白色；如果分析结束后还是白色则表示不可达
+2. 黑色：已经被访问过且所有引用都被访问过；如果有其它的对象引用指向了黑色对象，无须重新扫描一遍。黑色对象不可能直接（不经过灰色对象）指向某个白色对象。
+3. 灰色：表示对象已经被垃圾回收器访问过，但这个对象至少存在一个引用还没有被扫描过。
+
+#### 对象消失的问题
+
+产生条件：
+1. 条件一：赋值器插入了一条或者多条从黑色对象到白色对象的新引用。
+2. 条件二：赋值器删除了全部从灰色对象到该白色对象的直接或间接引用。
+
+解决方式：
+
+增量更新（Incremental Update）和原始快照（Snapshot At The Beginning，SATB）；CMS是基于增量更新来做并发标记的，G1、Shenandoah则是用原始快照来实现。
+
 ## 参考
 
 1. [Java GC收集器配置说明](https://www.cnblogs.com/parryyang/p/5750146.html)
 2. [GC算法 垃圾收集器](https://www.cnblogs.com/ityouknow/p/5614961.html)
 3. [垃圾收集器与内存分配策略](https://segmentfault.com/a/1190000020483916)
+4. [面试官:你说你熟悉jvm?那你讲一下并发的可达性分析](https://www.cnblogs.com/thisiswhy/p/12354864.html)

@@ -18,17 +18,21 @@ date: 2021-02-08 08:28:49
 
 ## Synchronized 语义
 
-1. 一种块结构同步语法，javac编译之后会在同步块的前后分别形成monitorenter和monitorexit这两个字节码指令，使用reference类型指明加锁和加锁的对象（用户自定义对象、当前this对象、当前class对象）
-2. 通过锁的计数器来判断是否释放锁，在执行monitorenter指令时，首先要去尝试获取对象的锁，获取锁或当前拥有锁则计数器+1；执行monitorexit指令时会将锁计数器的值减一；一旦计数器的值为零，锁随即就被释放了
-3. 如果获取对象锁失败，那当前线程就应当被阻塞等待，直到请求锁定的对象被持有它的线程释放为止
-4. 被synchronized修饰的同步块对同一条线程来说是可重入的。这意味着同一线程反复进入同步块也不会出现自己把自己锁死的情况
-5. 被synchronized修饰的同步块在持有锁的线程执行完毕并释放锁之前，会无条件地阻塞后面其他线程的进入。这意味着无法像处理某些数据库中的锁那样，强制已获取锁的线程释放锁；也无法强制正在等待锁的线程中断等待或超时退出。
+1. 同步语法，在JDK1.6之后增加了锁的优化，包括偏向锁、轻量锁、自旋
+2. 代码块语义：编译之后在进入同步代码之前写入`monitorenter`字节码指令，执行完成写入`monitorexit`指令（异常退出的时候也会写入该指令） 
+3. 方法同步语义：`ACC_SYNCHRONIZED`
+4. 锁对象：使用reference类型指明加锁和加锁的对象（自定义对象、this、当前class）
+5. 锁计数：通过锁的计数器来判断是否释放锁，在执行monitorenter指令时，首先要去尝试获取对象的锁，获取锁或当前拥有锁则计数器+1；执行monitorexit指令时会将锁计数器的值减一；一旦计数器的值为零，锁随即就被释放了
+6. 如果获取对象锁失败，那当前线程就应当被阻塞等待，直到请求锁定的对象被持有它的线程释放为止
+7. 支持可重入，防止死锁
+8. 独占锁，不能强制已经获取锁的线程释放锁；不能强制正在等待锁的线程中断等待或超时退出
+9. 作用粒度：对象，用来实现临界资源的同步互斥访问
 
 ## Synchronized 作用范围
  
-1. 作用于方法时，锁住的是对象的实例(this)； 
-2. 当作用于静态方法时，锁住的是Class实例，又因为Class的相关数据存储在永久带PermGen（jdk1.8 则是 metaspace），永久带是全局共享的，因此静态方法锁相当于类的一个全局锁，会锁所有调用该方法的线程； 
-3. synchronized 作用于一个对象实例时，锁住的是所有以该对象为锁的代码块。它有多个队列，当多个线程一起访问某个对象监视器的时候，对象监视器会将这些线程存储在不同的容器中。 
+1. 普通同步方法：使用当前实例锁定
+2. 静态同步方法：锁是当前类的Class实例，Class数据存在永久代中，是该类的一个全局锁
+3. 同步代码块：使用代码块中定义的对象（this、自定义对象、class对象）
 
 ## Synchronized 核心组件
 
@@ -41,27 +45,30 @@ date: 2021-02-08 08:28:49
 
 ```c
 ObjectMonitor() {
-    _header       = NULL;
+    _header       = NULL;  // markOop对象头
     _count        = 0;     // 重入次数
     _waiters      = 0,     // 等待线程数
-    _recursions   = 0;
+    _recursions   = 0;     // 重入次数
     _object       = NULL;
-    _owner        = NULL;  // 当前持有锁的线程
-    _WaitSet      = NULL;  // 调用wait方法的线程被阻塞放置在这里
+    _owner        = NULL;  // 指向获得ObjectMonitor对象的线程
+    _WaitSet      = NULL;  // 处于wait状态的线程，会被加入到waitset中
     _WaitSetLock  = 0 ;
     _Responsible  = NULL ;
     _succ         = NULL ;
-    _cxq          = NULL ;
+    _cxq          = NULL ; // JVM为每个尝试进入synchronized代码段的线程创建一个ObjectWaiter并添加到该队列
     FreeNext      = NULL ;
-    _EntryList    = NULL ; // 等待锁处于block的线程，才有资格成为候选资源的线程
+    _EntryList    = NULL ; // 处于等待block状态的线程，由ObjectWaiter组成的双向链表
+                           // JVM会从该链表中获取一个ObjectWaiter并唤醒对应的JavaThread
     _SpinFreq     = 0 ;
     _SpinClock    = 0 ;
     OwnerIsThread = 0 ;
-    _previous_owner_tid = 0;
+    _previous_owner_tid = 0; // 监视器前一个拥有者的线程ID
   }
 ```
 
-## Synchronized 实现 
+## Synchronized 实现原理
+
+重量锁的实现依赖于对象中的警示器monitor，本质依赖于操作系统中的Mutex Lock；
 
 <div align=center>
 
@@ -282,8 +289,6 @@ Constant pool:
             0       1     0  args   [Ljava/lang/String;
 }
 SourceFile: "TestSynchronized.java"
-
-Process finished with exit code 0
 ```
 
 ## 参考
