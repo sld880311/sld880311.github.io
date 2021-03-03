@@ -11,6 +11,8 @@ categories:
 date: 2021-02-08 08:28:49
 ---
 
+## 特点
+
 1. 任意非NULL对象当作锁
 2. 独占式悲观锁
 3. 可重入锁
@@ -22,7 +24,7 @@ date: 2021-02-08 08:28:49
 2. 代码块语义：编译之后在进入同步代码之前写入`monitorenter`字节码指令，执行完成写入`monitorexit`指令（异常退出的时候也会写入该指令） 
 3. 方法同步语义：`ACC_SYNCHRONIZED`
 4. 锁对象：使用reference类型指明加锁和加锁的对象（自定义对象、this、当前class）
-5. 锁计数：通过锁的计数器来判断是否释放锁，在执行monitorenter指令时，首先要去尝试获取对象的锁，获取锁或当前拥有锁则计数器+1；执行monitorexit指令时会将锁计数器的值减一；一旦计数器的值为零，锁随即就被释放了
+5. 锁计数：通过锁的**计数器**来判断是否释放锁，在执行monitorenter指令时，首先要去尝试获取对象的锁，获取锁或当前拥有锁则计数器+1；执行monitorexit指令时会将锁计数器的值减一；一旦计数器的值为零，锁随即就被释放了
 6. 如果获取对象锁失败，那当前线程就应当被阻塞等待，直到请求锁定的对象被持有它的线程释放为止
 7. 支持可重入，防止死锁
 8. 独占锁，不能强制已经获取锁的线程释放锁；不能强制正在等待锁的线程中断等待或超时退出
@@ -39,7 +41,7 @@ date: 2021-02-08 08:28:49
 1. Wait Set：调用 wait 方法被阻塞的线程被放置在这里； 
 2. Contention List：竞争队列，所有请求锁的线程首先被放在这个竞争队列中； 
 3. Entry List：Contention List 中那些有资格成为候选资源的线程被移动到 Entry List 中； 
-4. OnDeck：任意时刻，最多只有一个线程正在竞争锁资源，该线程被成为 OnDeck； 
+4. OnDeck：任意时刻，最多只有一个线程正在竞争锁资源，该线程被称为 OnDeck； 
 5. Owner：当前已经获取到所资源的线程被称为 Owner； 
 6. !Owner：当前释放锁的线程。 
 
@@ -72,21 +74,20 @@ ObjectMonitor() {
 
 <div align=center>
 
-![Synchronized 实现 ](Java并发编程之Synchronized/1589108463996.png)
+![synchronized锁的使用过程](Java并发编程之Synchronized/synchronized锁的使用过程.png)
 
 </div>
 
-1. JVM 每次从队列的尾部取出一个数据用于锁竞争候选者（OnDeck），但是并发情况下，ContentionList 会被大量的并发线程进行 CAS 访问，为了降低对尾部元素的竞争，JVM 会将一部分线程移动到 EntryList 中作为候选竞争线程。 
-2. Owner 线程会在 unlock 时，将 ContentionList 中的部分线程迁移到 EntryList 中，并指定EntryList 中的某个线程为 OnDeck 线程（一般是最先进去的那个线程）。 
-3. Owner 线程并不直接把锁传递给 OnDeck 线程，而是把锁竞争的权利交给 OnDeck，OnDeck需要重新竞争锁。这样虽然牺牲了一些公平性，但是能极大的提升系统的吞吐量，在JVM 中，也把这种选择行为称之为“竞争切换”。 
-4. OnDeck 线程获取到锁资源后会变为 Owner 线程，而没有得到锁资源的仍然停留在 EntryList 中。如果Owner线程被wait方法阻塞，则转移到WaitSet队列中，直到某个时刻通过notify 或者 notifyAll 唤醒，会重新进去 EntryList 中。 
-5. 处于 ContentionList、EntryList、WaitSet 中的线程都处于阻塞状态，该阻塞是由操作系统来完成的（Linux 内核下采用 pthread_mutex_lock 内核函数实现的）。 
-6. Synchronized 是非公平锁。 Synchronized 在线程进入 ContentionList 时，等待的线程会先尝试自旋获取锁，如果获取不到就进入 ContentionList，这明显对于已经进入队列的线程是不公平的，还有一个不公平的事情就是自旋获取锁的线程还可能直接抢占 OnDeck 线程的锁资源。 
-7. 每个对象都有个 monitor 对象，加锁就是在竞争 monitor 对象，代码块加锁是在前后分别加上 monitorenter 和 monitorexit 指令来实现的，方法加锁是通过一个标记位来判断的 
-8. synchronized 是一个重量级操作，需要调用操作系统相关接口，性能是低效的，有可能给线程加锁消耗的时间比有用操作消耗的时间更多。 
-9. Java1.6，synchronized进行了很多的优化，有适应自旋、锁消除、锁粗化、轻量级锁及偏向锁等，效率有了本质上的提高。在之后推出的 Java1.7 与 1.8 中，均对该关键字的实现机理做了优化。引入了偏向锁和轻量级锁。都是在对象头中有标记位，不需要经过操作系统加锁。 
-10. 锁可以从偏向锁升级到轻量级锁，再升级到重量级锁。这种升级过程叫做锁膨胀； 
-11. JDK 1.6 中默认是开启偏向锁和轻量级锁，可以通过-XX:-UseBiasedLocking 来禁用偏向锁。
+1. 线程首先会进入ContentionList队列，JVM复制部分线程到EntryList，JVM从EntryList的尾部获取后选择线程（OnDeck）
+   - 为了解决并发进程引入EntryList队列（候选者竞争队列） 
+   - 处于 ContentionList、EntryList、WaitSet 中的线程都处于阻塞状态，该阻塞是由操作系统来完成的(Linux 内核下采用 pthread_mutex_lock 内核函数实现的);
+2. 当进入OnDeck中的线程获取锁之后：
+   - 修改_owner为当前线程
+   - 修改markword（地址+状态10）
+   - 阻塞后续线程到ContentionList
+3. Owner释放锁或则阻塞：
+   - 释放锁： 执行1（需要重新竞争锁、提高吞吐量，称为“竞争切换”）
+   - 阻塞（wait）：转移到WaitSet，并且释放锁，只有notify 或者 notifyAll 唤醒，会重新进去EntryList中 
 
 ## 代码
 
@@ -295,3 +296,6 @@ SourceFile: "TestSynchronized.java"
 
 1. [java 中的锁 -- 偏向锁、轻量级锁、自旋锁、重量级锁](https://blog.csdn.net/zqz_zqz/article/details/70233767)
 2. [Java中的锁](book/java-thread-lock.md)
+3. [一个synchronized跟面试官扯了半个小时](https://www.toutiao.com/i6918719190144647687)
+4. [synchronized原理](https://www.cnblogs.com/wuzhenzhao/p/10250801.html)
+5. [啃碎并发（七）：深入分析Synchronized原理](https://www.jianshu.com/p/e62fa839aa41)
