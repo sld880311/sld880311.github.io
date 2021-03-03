@@ -1218,6 +1218,22 @@
       </tags>
   </entry>
   <entry>
+    <title>Java并发编程之知识图谱</title>
+    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</url>
+    <content><![CDATA[<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/1588238047655.png" class title="并发编程知识图谱">
+
+</div>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java并发编程之应用-设备升级</title>
     <url>/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%BA%94%E7%94%A8-%E8%AE%BE%E5%A4%87%E5%8D%87%E7%BA%A7/</url>
     <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>功能需求：设备策略升级  </p>
@@ -1248,22 +1264,6 @@
       <tags>
         <tag>Java</tag>
         <tag>线程池</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java并发编程之知识图谱</title>
-    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</url>
-    <content><![CDATA[<div align="center">
-
-<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/1588238047655.png" class title="并发编程知识图谱">
-
-</div>]]></content>
-      <categories>
-        <category>Java</category>
-        <category>并发编程</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -1865,43 +1865,6 @@
         <tag>Java</tag>
         <tag>上线文切换</tag>
         <tag>死锁</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java系统化学习之Type</title>
-    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>这里的Type指java.lang.reflect.Type, 是Java中所有类型的公共高级接口, 代表了Java中的所有类型. Type体系中类型的包括：数组类型(GenericArrayType)、参数化类型(ParameterizedType)、类型变量(TypeVariable)、通配符类型(WildcardType)、原始类型(Class)、基本类型(Class), 以上这些类型都实现Type接口.  </p>
-<p>Type 表示的全部类型而每个Class对象表示一个具体类型的实例，如String.class仅代表String类型。由此看来Type与 Class 表示类型几乎是相同的（Class实现接口Type），只不过 Type表示的范围比Class要广得多而已。当然Type还有其他子类。</p>
-<ol>
-<li>参数化类型（ParameterizedType）：有原始类型和具体的类型参数，泛型List<String>、Map；</String></li>
-<li>数组类型（GenericArrayType）：不是数组String[] 、byte[]，而是带有泛型的数组，即T[] ；</li>
-<li>通配符类型（WildcardType）： 指的是&lt;?&gt;, &lt;? extends T&gt;等等</li>
-<li>原始类型（Class）： 不仅仅包含我们平常所指的类，还包括枚举、数组、注解等；</li>
-<li>基本类型（Class）, 也就是我们所说的java的基本类型，即int,float,double等</li>
-<li>类型变量(TypeVariable)：表示类型参数，可以有上界，比如：T extends Number<a id="more"></a>
-<h2 id="JDK定义"><a href="#JDK定义" class="headerlink" title="JDK定义"></a>JDK定义</h2></li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.reflect;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Type is the common superinterface for all types in the Java</span></span><br><span class="line"><span class="comment"> * programming language. These include raw types, parameterized types,</span></span><br><span class="line"><span class="comment"> * array types, type variables and primitive types.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Type</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns a string describing this type, including information</span></span><br><span class="line"><span class="comment">     * about any type parameters.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@implSpec</span> The default implementation calls &#123;<span class="doctag">@code</span> toString&#125;.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a string describing this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> String <span class="title">getTypeName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="类结构"><a href="#类结构" class="headerlink" title="类结构"></a>类结构</h2><div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/1588062825641.png" class title="Type类结构">
-
-</div>
-
-<h3 id="ParameterizedType"><a href="#ParameterizedType" class="headerlink" title="ParameterizedType"></a>ParameterizedType</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.reflect;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * ParameterizedType represents a parameterized type such as</span></span><br><span class="line"><span class="comment"> * Collection&amp;lt;String&amp;gt;.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 1. 表示一种参数化类型，比如：Collection&lt;String&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;A parameterized type is created the first time it is needed by a</span></span><br><span class="line"><span class="comment"> * reflective method, as specified in this package. When a</span></span><br><span class="line"><span class="comment"> * parameterized type p is created, the generic type declaration that</span></span><br><span class="line"><span class="comment"> * p instantiates is resolved, and all type arguments of p are created</span></span><br><span class="line"><span class="comment"> * recursively. See &#123;<span class="doctag">@link</span> java.lang.reflect.TypeVariable</span></span><br><span class="line"><span class="comment"> * TypeVariable&#125; for details on the creation process for type</span></span><br><span class="line"><span class="comment"> * variables. Repeated creation of a parameterized type has no effect.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 2. 参数化类型在反射方法第一次使用的时候被创建。</span></span><br><span class="line"><span class="comment"> * 3. 当参数化类型p被创建之后，被p实例化的泛型会被解析，并且递归创建p的所有参数化类型</span></span><br><span class="line"><span class="comment"> * 4. 重复创建一个参数化类型不会有影响</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;Instances of classes that implement this interface must implement</span></span><br><span class="line"><span class="comment"> * an equals() method that equates any two instances that share the</span></span><br><span class="line"><span class="comment"> * same generic type declaration and have equal type parameters.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ParameterizedType</span> <span class="keyword">extends</span> <span class="title">Type</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns an array of &#123;<span class="doctag">@code</span> Type&#125; objects representing the actual type</span></span><br><span class="line"><span class="comment">     * arguments to this type.</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * 1. 返回确切的泛型参数, 如Map&lt;String, Integer&gt;返回[String, Integer]</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;Note that in some cases, the returned array be empty. This can occur</span></span><br><span class="line"><span class="comment">     * if this type represents a non-parameterized type nested within</span></span><br><span class="line"><span class="comment">     * a parameterized type.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> an array of &#123;<span class="doctag">@code</span> Type&#125; objects representing the actual type</span></span><br><span class="line"><span class="comment">     *     arguments to this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> TypeNotPresentException if any of the</span></span><br><span class="line"><span class="comment">     *     actual type arguments refers to a non-existent type declaration</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> MalformedParameterizedTypeException if any of the</span></span><br><span class="line"><span class="comment">     *     actual type parameters refer to a parameterized type that cannot</span></span><br><span class="line"><span class="comment">     *     be instantiated for any reason</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Type[] getActualTypeArguments();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns the &#123;<span class="doctag">@code</span> Type&#125; object representing the class or interface</span></span><br><span class="line"><span class="comment">     * that declared this type.</span></span><br><span class="line"><span class="comment">     * 1. 返回当前class或interface声明的类型, 如List&lt;?&gt;返回List</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the &#123;<span class="doctag">@code</span> Type&#125; object representing the class or interface</span></span><br><span class="line"><span class="comment">     *     that declared this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Type <span class="title">getRawType</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns a &#123;<span class="doctag">@code</span> Type&#125; object representing the type that this type</span></span><br><span class="line"><span class="comment">     * is a member of.  For example, if this type is &#123;<span class="doctag">@code</span> O&lt;T&gt;.I&lt;S&gt;&#125;,</span></span><br><span class="line"><span class="comment">     * return a representation of &#123;<span class="doctag">@code</span> O&lt;T&gt;&#125;.</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * 1. 返回所属类型. 如,当前类型为O&lt;T&gt;.I&lt;S&gt;, 则返回O&lt;T&gt;. 顶级类型将返回null </span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;If this type is a top-level type, &#123;<span class="doctag">@code</span> null&#125; is returned.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a &#123;<span class="doctag">@code</span> Type&#125; object representing the type that</span></span><br><span class="line"><span class="comment">     *     this type is a member of. If this type is a top-level type,</span></span><br><span class="line"><span class="comment">     *     &#123;<span class="doctag">@code</span> null&#125; is returned</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> TypeNotPresentException if the owner type</span></span><br><span class="line"><span class="comment">     *     refers to a non-existent type declaration</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> MalformedParameterizedTypeException if the owner type</span></span><br><span class="line"><span class="comment">     *     refers to a parameterized type that cannot be instantiated</span></span><br><span class="line"><span class="comment">     *     for any reason</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Type <span class="title">getOwnerType</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://blog.csdn.net/JustBeauty/article/details/81116144">ParameterizedType详解</a></li>
-<li><a href="https://www.jianshu.com/p/cfa74c980b25">Java中与泛型相关的接口 之 ParameterizedType</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>源码分析</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Type</tag>
-        <tag>反射</tag>
       </tags>
   </entry>
   <entry>
@@ -2734,6 +2697,207 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux命令之iostat</title>
+    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
+<li>-c： 显示CPU使用情况</li>
+<li>-d： 显示磁盘使用情况</li>
+<li>-N： 显示磁盘阵列(LVM) 信息</li>
+<li>-n： 显示NFS 使用情况</li>
+<li>-k： 以 KB 为单位显示</li>
+<li>-m： 以 M 为单位显示</li>
+<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
+<li>-V： 显示版本信息</li>
+<li>-x： 显示详细信息</li>
+<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
+
+</li>
+</ul>
+<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第一行</td>
+<td>最上面指示系统版本、主机名和当前日期</td>
+</tr>
+<tr>
+<td>avg-cpu</td>
+<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
+</tr>
+<tr>
+<td>Device</td>
+<td>各磁盘设备的IO统计信息</td>
+</tr>
+</tbody></table>
+<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%user</td>
+<td>CPU在用户态执行进程的时间百分比。</td>
+</tr>
+<tr>
+<td>%nice</td>
+<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%system</td>
+<td>CPU处在内核态执行进程的时间百分比</td>
+</tr>
+<tr>
+<td>%iowait</td>
+<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%steal</td>
+<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
+</tr>
+<tr>
+<td>%idle</td>
+<td>CPU空闲时间百分比</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
+<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Device</td>
+<td>设备名称</td>
+</tr>
+<tr>
+<td>tps</td>
+<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
+</tr>
+<tr>
+<td>Blk_read/s</td>
+<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
+</tr>
+<tr>
+<td>Blk_wrtn/s</td>
+<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
+</tr>
+<tr>
+<td>Blk_read</td>
+<td>取样时间间隔内读扇区总数量</td>
+</tr>
+<tr>
+<td>Blk_wrtn</td>
+<td>取样时间间隔内写扇区总数量</td>
+</tr>
+</tbody></table>
+<ul>
+<li>iostat 1 5：间隔1秒，总共显示5次</li>
+<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
+<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
+<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
+<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
+<li>iostat -m：以M为单位显示所有信息</li>
+<li>iostat -d sda：显示指定硬盘信息</li>
+<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
+<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
+<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
+<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
+</ul>
+<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rrqm/s</td>
+<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
+</tr>
+<tr>
+<td>wrqm/s</td>
+<td>每秒对该设备的写请求被合并次数</td>
+</tr>
+<tr>
+<td>r/s</td>
+<td>每秒完成的读 I/O 设备次数</td>
+</tr>
+<tr>
+<td>w/s</td>
+<td>每秒完成的写 I/O 设备次数</td>
+</tr>
+<tr>
+<td>rkB/s</td>
+<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
+</tr>
+<tr>
+<td>wkB/s</td>
+<td>每秒写K字节数。是 wsect/s 的一半</td>
+</tr>
+<tr>
+<td>avgrq-sz</td>
+<td>平均每次IO操作的数据量(扇区数为单位)</td>
+</tr>
+<tr>
+<td>avgqu-sz</td>
+<td>平均等待处理的IO请求队列长度</td>
+</tr>
+<tr>
+<td>rsec/s</td>
+<td>每秒读扇区数。即 rsect/s</td>
+</tr>
+<tr>
+<td>wsec/s</td>
+<td>每秒写扇区数。即 wsect/s</td>
+</tr>
+<tr>
+<td>r_await</td>
+<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>w_await</td>
+<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>await</td>
+<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
+</tr>
+<tr>
+<td>svctm</td>
+<td>平均每次IO请求的处理时间(毫秒为单位)</td>
+</tr>
+<tr>
+<td>%util</td>
+<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
+</blockquote>
+<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>iostat</tag>
+        <tag>磁盘分析</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux命令之TOP</title>
     <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/</url>
     <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@incloudos logs]<span class="comment"># top -h</span></span><br><span class="line">  procps-ng version 3.3.10</span><br><span class="line">Usage:</span><br><span class="line">  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]</span><br><span class="line">s – 改变画面更新频率</span><br><span class="line">l – 关闭或开启第一部分第一行 top 信息的表示</span><br><span class="line">t – 关闭或开启第一部分第二行 Tasks 和第三行 Cpus 信息的表示</span><br><span class="line">m – 关闭或开启第一部分第四行 Mem 和 第五行 Swap 信息的表示</span><br><span class="line">N – 以 PID 的大小的顺序排列表示进程列表</span><br><span class="line">P – 以 CPU 占用率大小的顺序排列进程列表</span><br><span class="line">M – 以内存占用率大小的顺序排列进程列表</span><br><span class="line">h – 显示帮助</span><br><span class="line">n – 设置在进程列表所显示进程的数量</span><br><span class="line">q – 退出 top</span><br><span class="line">s – 改变画面更新周期</span><br><span class="line">请在top里面按下E，注意是大写。你会发现内存那一行的最左侧，</span><br><span class="line">也就是Mem前面，会有Kib、MiB、GiB等单位变化，</span><br><span class="line">但是数字后面不会直接写明单位。</span><br></pre></td></tr></table></figure>
@@ -2943,204 +3107,40 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>Linux命令之iostat</title>
-    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
-<li>-c： 显示CPU使用情况</li>
-<li>-d： 显示磁盘使用情况</li>
-<li>-N： 显示磁盘阵列(LVM) 信息</li>
-<li>-n： 显示NFS 使用情况</li>
-<li>-k： 以 KB 为单位显示</li>
-<li>-m： 以 M 为单位显示</li>
-<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
-<li>-V： 显示版本信息</li>
-<li>-x： 显示详细信息</li>
-<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
+    <title>Java系统化学习之Type</title>
+    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>这里的Type指java.lang.reflect.Type, 是Java中所有类型的公共高级接口, 代表了Java中的所有类型. Type体系中类型的包括：数组类型(GenericArrayType)、参数化类型(ParameterizedType)、类型变量(TypeVariable)、通配符类型(WildcardType)、原始类型(Class)、基本类型(Class), 以上这些类型都实现Type接口.  </p>
+<p>Type 表示的全部类型而每个Class对象表示一个具体类型的实例，如String.class仅代表String类型。由此看来Type与 Class 表示类型几乎是相同的（Class实现接口Type），只不过 Type表示的范围比Class要广得多而已。当然Type还有其他子类。</p>
+<ol>
+<li>参数化类型（ParameterizedType）：有原始类型和具体的类型参数，泛型List<String>、Map；</String></li>
+<li>数组类型（GenericArrayType）：不是数组String[] 、byte[]，而是带有泛型的数组，即T[] ；</li>
+<li>通配符类型（WildcardType）： 指的是&lt;?&gt;, &lt;? extends T&gt;等等</li>
+<li>原始类型（Class）： 不仅仅包含我们平常所指的类，还包括枚举、数组、注解等；</li>
+<li>基本类型（Class）, 也就是我们所说的java的基本类型，即int,float,double等</li>
+<li>类型变量(TypeVariable)：表示类型参数，可以有上界，比如：T extends Number<a id="more"></a>
+<h2 id="JDK定义"><a href="#JDK定义" class="headerlink" title="JDK定义"></a>JDK定义</h2></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.reflect;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Type is the common superinterface for all types in the Java</span></span><br><span class="line"><span class="comment"> * programming language. These include raw types, parameterized types,</span></span><br><span class="line"><span class="comment"> * array types, type variables and primitive types.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Type</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns a string describing this type, including information</span></span><br><span class="line"><span class="comment">     * about any type parameters.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@implSpec</span> The default implementation calls &#123;<span class="doctag">@code</span> toString&#125;.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a string describing this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> String <span class="title">getTypeName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="类结构"><a href="#类结构" class="headerlink" title="类结构"></a>类结构</h2><div align="center">
 
-</li>
-</ul>
-<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>第一行</td>
-<td>最上面指示系统版本、主机名和当前日期</td>
-</tr>
-<tr>
-<td>avg-cpu</td>
-<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
-</tr>
-<tr>
-<td>Device</td>
-<td>各磁盘设备的IO统计信息</td>
-</tr>
-</tbody></table>
-<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>%user</td>
-<td>CPU在用户态执行进程的时间百分比。</td>
-</tr>
-<tr>
-<td>%nice</td>
-<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%system</td>
-<td>CPU处在内核态执行进程的时间百分比</td>
-</tr>
-<tr>
-<td>%iowait</td>
-<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%steal</td>
-<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
-</tr>
-<tr>
-<td>%idle</td>
-<td>CPU空闲时间百分比</td>
-</tr>
-</tbody></table>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
-<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Device</td>
-<td>设备名称</td>
-</tr>
-<tr>
-<td>tps</td>
-<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
-</tr>
-<tr>
-<td>Blk_read/s</td>
-<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
-</tr>
-<tr>
-<td>Blk_wrtn/s</td>
-<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
-</tr>
-<tr>
-<td>Blk_read</td>
-<td>取样时间间隔内读扇区总数量</td>
-</tr>
-<tr>
-<td>Blk_wrtn</td>
-<td>取样时间间隔内写扇区总数量</td>
-</tr>
-</tbody></table>
-<ul>
-<li>iostat 1 5：间隔1秒，总共显示5次</li>
-<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
-<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
-<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
-<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
-<li>iostat -m：以M为单位显示所有信息</li>
-<li>iostat -d sda：显示指定硬盘信息</li>
-<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
-<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
-<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
-<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
-</ul>
-<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>rrqm/s</td>
-<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
-</tr>
-<tr>
-<td>wrqm/s</td>
-<td>每秒对该设备的写请求被合并次数</td>
-</tr>
-<tr>
-<td>r/s</td>
-<td>每秒完成的读 I/O 设备次数</td>
-</tr>
-<tr>
-<td>w/s</td>
-<td>每秒完成的写 I/O 设备次数</td>
-</tr>
-<tr>
-<td>rkB/s</td>
-<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
-</tr>
-<tr>
-<td>wkB/s</td>
-<td>每秒写K字节数。是 wsect/s 的一半</td>
-</tr>
-<tr>
-<td>avgrq-sz</td>
-<td>平均每次IO操作的数据量(扇区数为单位)</td>
-</tr>
-<tr>
-<td>avgqu-sz</td>
-<td>平均等待处理的IO请求队列长度</td>
-</tr>
-<tr>
-<td>rsec/s</td>
-<td>每秒读扇区数。即 rsect/s</td>
-</tr>
-<tr>
-<td>wsec/s</td>
-<td>每秒写扇区数。即 wsect/s</td>
-</tr>
-<tr>
-<td>r_await</td>
-<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>w_await</td>
-<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>await</td>
-<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
-</tr>
-<tr>
-<td>svctm</td>
-<td>平均每次IO请求的处理时间(毫秒为单位)</td>
-</tr>
-<tr>
-<td>%util</td>
-<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
-</blockquote>
-<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/1588062825641.png" class title="Type类结构">
+
+</div>
+
+<h3 id="ParameterizedType"><a href="#ParameterizedType" class="headerlink" title="ParameterizedType"></a>ParameterizedType</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.reflect;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * ParameterizedType represents a parameterized type such as</span></span><br><span class="line"><span class="comment"> * Collection&amp;lt;String&amp;gt;.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 1. 表示一种参数化类型，比如：Collection&lt;String&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;A parameterized type is created the first time it is needed by a</span></span><br><span class="line"><span class="comment"> * reflective method, as specified in this package. When a</span></span><br><span class="line"><span class="comment"> * parameterized type p is created, the generic type declaration that</span></span><br><span class="line"><span class="comment"> * p instantiates is resolved, and all type arguments of p are created</span></span><br><span class="line"><span class="comment"> * recursively. See &#123;<span class="doctag">@link</span> java.lang.reflect.TypeVariable</span></span><br><span class="line"><span class="comment"> * TypeVariable&#125; for details on the creation process for type</span></span><br><span class="line"><span class="comment"> * variables. Repeated creation of a parameterized type has no effect.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 2. 参数化类型在反射方法第一次使用的时候被创建。</span></span><br><span class="line"><span class="comment"> * 3. 当参数化类型p被创建之后，被p实例化的泛型会被解析，并且递归创建p的所有参数化类型</span></span><br><span class="line"><span class="comment"> * 4. 重复创建一个参数化类型不会有影响</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;Instances of classes that implement this interface must implement</span></span><br><span class="line"><span class="comment"> * an equals() method that equates any two instances that share the</span></span><br><span class="line"><span class="comment"> * same generic type declaration and have equal type parameters.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ParameterizedType</span> <span class="keyword">extends</span> <span class="title">Type</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns an array of &#123;<span class="doctag">@code</span> Type&#125; objects representing the actual type</span></span><br><span class="line"><span class="comment">     * arguments to this type.</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * 1. 返回确切的泛型参数, 如Map&lt;String, Integer&gt;返回[String, Integer]</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;Note that in some cases, the returned array be empty. This can occur</span></span><br><span class="line"><span class="comment">     * if this type represents a non-parameterized type nested within</span></span><br><span class="line"><span class="comment">     * a parameterized type.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> an array of &#123;<span class="doctag">@code</span> Type&#125; objects representing the actual type</span></span><br><span class="line"><span class="comment">     *     arguments to this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> TypeNotPresentException if any of the</span></span><br><span class="line"><span class="comment">     *     actual type arguments refers to a non-existent type declaration</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> MalformedParameterizedTypeException if any of the</span></span><br><span class="line"><span class="comment">     *     actual type parameters refer to a parameterized type that cannot</span></span><br><span class="line"><span class="comment">     *     be instantiated for any reason</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Type[] getActualTypeArguments();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns the &#123;<span class="doctag">@code</span> Type&#125; object representing the class or interface</span></span><br><span class="line"><span class="comment">     * that declared this type.</span></span><br><span class="line"><span class="comment">     * 1. 返回当前class或interface声明的类型, 如List&lt;?&gt;返回List</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the &#123;<span class="doctag">@code</span> Type&#125; object representing the class or interface</span></span><br><span class="line"><span class="comment">     *     that declared this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Type <span class="title">getRawType</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns a &#123;<span class="doctag">@code</span> Type&#125; object representing the type that this type</span></span><br><span class="line"><span class="comment">     * is a member of.  For example, if this type is &#123;<span class="doctag">@code</span> O&lt;T&gt;.I&lt;S&gt;&#125;,</span></span><br><span class="line"><span class="comment">     * return a representation of &#123;<span class="doctag">@code</span> O&lt;T&gt;&#125;.</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * 1. 返回所属类型. 如,当前类型为O&lt;T&gt;.I&lt;S&gt;, 则返回O&lt;T&gt;. 顶级类型将返回null </span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;If this type is a top-level type, &#123;<span class="doctag">@code</span> null&#125; is returned.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a &#123;<span class="doctag">@code</span> Type&#125; object representing the type that</span></span><br><span class="line"><span class="comment">     *     this type is a member of. If this type is a top-level type,</span></span><br><span class="line"><span class="comment">     *     &#123;<span class="doctag">@code</span> null&#125; is returned</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> TypeNotPresentException if the owner type</span></span><br><span class="line"><span class="comment">     *     refers to a non-existent type declaration</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> MalformedParameterizedTypeException if the owner type</span></span><br><span class="line"><span class="comment">     *     refers to a parameterized type that cannot be instantiated</span></span><br><span class="line"><span class="comment">     *     for any reason</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Type <span class="title">getOwnerType</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/JustBeauty/article/details/81116144">ParameterizedType详解</a></li>
+<li><a href="https://www.jianshu.com/p/cfa74c980b25">Java中与泛型相关的接口 之 ParameterizedType</a></li>
+</ol>
+]]></content>
       <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
+        <category>Java</category>
+        <category>源码分析</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
-        <tag>iostat</tag>
-        <tag>磁盘分析</tag>
+        <tag>Java</tag>
+        <tag>Type</tag>
+        <tag>反射</tag>
       </tags>
   </entry>
   <entry>
@@ -3947,70 +3947,6 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>eclipse使用技巧</title>
-    <url>/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</url>
-    <content><![CDATA[<h2 id="集成javap命令"><a href="#集成javap命令" class="headerlink" title="集成javap命令"></a>集成javap命令</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ol>
-<li>eclipse中点击工具栏: Run &gt; External Tools &gt; External Tools Configuration</li>
-<li>双击”程序”</li>
-<li>修改配置</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039059895.png" class title="执行javap">
-
-</div>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Name: javap(随意)</span><br><span class="line">location: jdk实际路径</span><br><span class="line">Working Directory:$&#123;workspace_loc&#125;\$&#123;project_name&#125; （不要改）</span><br><span class="line">Arguments:-c -verbose  -classpath  $&#123;workspace_loc&#125;/ $&#123;project_name&#125;/bin/$&#123;java_type_name&#125;</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><div align="center">
-
-<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039225454.png" class title="eclipse配置">
-
-</div>
-
-<h3 id="javap的命令说明"><a href="#javap的命令说明" class="headerlink" title="javap的命令说明"></a>javap的命令说明</h3><p>参考《<a href="https://www.sunliaodong.cn/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/">javap详解</a>》</p>
-<h2 id="debug使用技巧"><a href="#debug使用技巧" class="headerlink" title="debug使用技巧"></a>debug使用技巧</h2><h3 id="常用快捷键说明"><a href="#常用快捷键说明" class="headerlink" title="常用快捷键说明"></a>常用快捷键说明</h3><ol>
-<li>Step Into (also F5) 跳入</li>
-<li>Step Over (also F6) 跳过</li>
-<li>Step Return (also F7) 执行完当前method，然后return跳出此method</li>
-<li>step Filter 逐步过滤 一直执行直到遇到未经过滤的位置或断点(设置Filter:window-preferences-java-Debug-step Filtering)</li>
-<li>resume 重新开始执行debug,一直运行直到遇到breakpoint</li>
-<li>hit count 设置执行次数 适合程序中的for循环(设置 breakpoint view-右键hit count)</li>
-<li>inspect 检查 运算。执行一个表达式显示执行值</li>
-<li>watch 实时地监视变量的变化</li>
-<li>我们常说的断点(breakpoints)是指line breakpoints,除了line breakpoints,还有其他的断点类型：field(watchpoint)breakpoint,method breakpoint,exception breakpoint.</li>
-<li>field breakpoint 也叫watchpoint(监视点) 当成员变量被读取或修改时暂挂</li>
-<li>添加method breakpoint 进入/离开此方法时暂挂(Run-method breakpoint)</li>
-<li>添加Exception breakpoint 捕抓到Execption时暂挂(待续…)</li>
-</ol>
-<h3 id="断点属性"><a href="#断点属性" class="headerlink" title="断点属性"></a>断点属性</h3><ol>
-<li>hit count 执行多少次数后暂挂 用于循环</li>
-<li>enable condition 遇到符合你输入条件(为ture\改变时)就暂挂</li>
-<li>suspend thread 多线程时暂挂此线程</li>
-<li>suspend VM 暂挂虚拟机</li>
-<li>variables 视图里的变量可以改变变量值，在variables 视图选择变量点击右键–change value.一次来进行快速调试。</li>
-<li>debug 过程中修改了某些code后–〉save&amp;build–&gt;resume–&gt;重新暂挂于断点</li>
-</ol>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">  MyDate aa = <span class="keyword">new</span> MyDate();</span><br><span class="line">  aa.addDays(day);                      =============》(<span class="number">1</span>)</span><br><span class="line">  System.out.println(<span class="string">&quot;eeeeeeeeeeeeeee&quot;</span>);=============》(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">addDays</span><span class="params">(<span class="keyword">int</span> more_days)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;1&quot;</span>);               =============》(<span class="number">3</span>)</span><br><span class="line">    String result = <span class="string">&quot;&quot;</span>;         =============》(<span class="number">4</span>)</span><br><span class="line">    System.out.println(<span class="string">&quot;2&quot;</span>);               =============》(<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>你在(1)处加断点，运行到此处时如果Step Into (also F5)为跳入，则接着执行到(3)。再执行Step Over (also F6)执行本行，则执行到(4)。最后执行Step Return (also F7)，则跳出addDays方法，跳到(2)</p>
-<h2 id="配置-author"><a href="#配置-author" class="headerlink" title="配置@author"></a>配置@author</h2><ol>
-<li>eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;Code-&gt;New Java files </li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">点击 Edit </span><br><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> 孙辽东</span></span><br><span class="line"><span class="comment">* <span class="doctag">@E</span>-mail:sld880311@126.com</span></span><br><span class="line"><span class="comment">* <span class="doctag">@qq</span>:767768553</span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span> 创建时间：$&#123;date&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment">* 简单说明</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>在建立类文件的时候输入“/**”的时候自动出来的：eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;comments-&gt;typles,点击 Edit ，就可以根据自己需要编写了</li>
-</ol>
-]]></content>
-      <categories>
-        <category>常用工具</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>eclipse</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>git详解</title>
     <url>/2021/02/04/git%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h2 id="提交本地工程到github"><a href="#提交本地工程到github" class="headerlink" title="提交本地工程到github"></a>提交本地工程到github</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;注释&quot;</span></span><br><span class="line">git remote add origin https://github.com/sld880311/parkspaceagent</span><br><span class="line"></span><br><span class="line">git pull origin master</span><br><span class="line"><span class="comment">#如果出现fatal: refusing to merge unrelated histories</span></span><br><span class="line">使用如下命令 git pull origin master --allow-unrelated-histories</span><br><span class="line"></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
@@ -4060,6 +3996,17 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>分布式协议之ZAB</title>
+    <url>/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE%E4%B9%8BZAB/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用hexo+github+next部署个人博客</title>
     <url>/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
     <content><![CDATA[<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="依赖环境"><a href="#依赖环境" class="headerlink" title="依赖环境"></a>依赖环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line"><span class="comment"># 修改原</span></span><br><span class="line">npm config <span class="built_in">set</span> registry http://registry.npm.taobao.org/</span><br><span class="line"><span class="comment"># 改回去</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmjs.org/</span><br></pre></td></tr></table></figure>
@@ -4096,38 +4043,6 @@ SHR：shared memory 共享内存<br>
         <tag>Hexo</tag>
         <tag>github</tag>
         <tag>Next</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>分布式协议之ZAB</title>
-    <url>/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE%E4%B9%8BZAB/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>其他</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>分布式算法之Paxos</title>
-    <url>/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%97%E6%B3%95%E4%B9%8BPaxos/</url>
-    <content><![CDATA[<p>解决的问题是一个分布式系统如何就某个值（决议）<strong>达成一致（共识问题）</strong>。<br>一个典型的场景是，在一个分布式数据库系统中，如果各节点的初始状态一致，每个节点执行相同的操作序列，那么他们最后能得到一个一致的状态。为保证每个节点执行相同的命令序列，需要在每一条指令上执行一个“一致性算法”以保证每个节点看到的指令一致。</p>
-<a id="more"></a>
-
-<h2 id="Paxos中的角色"><a href="#Paxos中的角色" class="headerlink" title="Paxos中的角色"></a>Paxos中的角色</h2><ol>
-<li>Proposer： 只要 Proposer 发的提案被半数以上 Acceptor 接受，Proposer 就认为该提案里的 value 被选定了。 </li>
-<li>Acceptor： 只要 Acceptor 接受了某个提案，Acceptor 就认为该提案里的 value 被选定了。 </li>
-<li>Learner： Acceptor 告诉 Learner 哪个 value 被选定，Learner 就认为那个 value 被选定。 </li>
-</ol>
-<p>Paxos 算法分为两个阶段。具体如下：<br>阶段一（准leader确定 ）：<br>(a) Proposer选择一个提案编号N，然后向半数以上的Acceptor发送编号为N的Prepare请求。 (b) 如果一个 Acceptor 收到一个编号为 N 的 Prepare 请求，且 N 大于该 Acceptor 已经响应过的所有 Prepare 请求的编号，那么它就会将它已经接受过的编号最大的提案（如果有的话）作为响应反馈给 Proposer，同时该 Acceptor 承诺不再接受任何编号小于 N 的提案。<br>阶段二（leader确认）：<br>(a)    如果 Proposer 收到半数以上 Acceptor 对其发出的编号为 N 的 Prepare 请求的响应，那么它就会发送一个针对[N,V]提案的 Accept 请求给半数以上的 Acceptor。注意：V 就是收到的响应中编号最大的提案的 value，如果响应中不包含任何提案，那么 V 就由 Proposer 自己决定。<br>(b)    如果 Acceptor 收到一个针对编号为 N 的提案的 Accept 请求，只要该 Acceptor 没有对编号大于 N 的 Prepare 请求做出过响应，它就接受该提案。 </p>
-]]></content>
-      <categories>
-        <category>分布式</category>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>Paxos</tag>
       </tags>
   </entry>
   <entry>
@@ -4548,6 +4463,91 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>测试</tag>
         <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分布式算法之Paxos</title>
+    <url>/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%97%E6%B3%95%E4%B9%8BPaxos/</url>
+    <content><![CDATA[<p>解决的问题是一个分布式系统如何就某个值（决议）<strong>达成一致（共识问题）</strong>。<br>一个典型的场景是，在一个分布式数据库系统中，如果各节点的初始状态一致，每个节点执行相同的操作序列，那么他们最后能得到一个一致的状态。为保证每个节点执行相同的命令序列，需要在每一条指令上执行一个“一致性算法”以保证每个节点看到的指令一致。</p>
+<a id="more"></a>
+
+<h2 id="Paxos中的角色"><a href="#Paxos中的角色" class="headerlink" title="Paxos中的角色"></a>Paxos中的角色</h2><ol>
+<li>Proposer： 只要 Proposer 发的提案被半数以上 Acceptor 接受，Proposer 就认为该提案里的 value 被选定了。 </li>
+<li>Acceptor： 只要 Acceptor 接受了某个提案，Acceptor 就认为该提案里的 value 被选定了。 </li>
+<li>Learner： Acceptor 告诉 Learner 哪个 value 被选定，Learner 就认为那个 value 被选定。 </li>
+</ol>
+<p>Paxos 算法分为两个阶段。具体如下：<br>阶段一（准leader确定 ）：<br>(a) Proposer选择一个提案编号N，然后向半数以上的Acceptor发送编号为N的Prepare请求。 (b) 如果一个 Acceptor 收到一个编号为 N 的 Prepare 请求，且 N 大于该 Acceptor 已经响应过的所有 Prepare 请求的编号，那么它就会将它已经接受过的编号最大的提案（如果有的话）作为响应反馈给 Proposer，同时该 Acceptor 承诺不再接受任何编号小于 N 的提案。<br>阶段二（leader确认）：<br>(a)    如果 Proposer 收到半数以上 Acceptor 对其发出的编号为 N 的 Prepare 请求的响应，那么它就会发送一个针对[N,V]提案的 Accept 请求给半数以上的 Acceptor。注意：V 就是收到的响应中编号最大的提案的 value，如果响应中不包含任何提案，那么 V 就由 Proposer 自己决定。<br>(b)    如果 Acceptor 收到一个针对编号为 N 的提案的 Accept 请求，只要该 Acceptor 没有对编号大于 N 的 Prepare 请求做出过响应，它就接受该提案。 </p>
+]]></content>
+      <categories>
+        <category>分布式</category>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>Paxos</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>eclipse使用技巧</title>
+    <url>/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</url>
+    <content><![CDATA[<h2 id="集成javap命令"><a href="#集成javap命令" class="headerlink" title="集成javap命令"></a>集成javap命令</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ol>
+<li>eclipse中点击工具栏: Run &gt; External Tools &gt; External Tools Configuration</li>
+<li>双击”程序”</li>
+<li>修改配置</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039059895.png" class title="执行javap">
+
+</div>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Name: javap(随意)</span><br><span class="line">location: jdk实际路径</span><br><span class="line">Working Directory:$&#123;workspace_loc&#125;\$&#123;project_name&#125; （不要改）</span><br><span class="line">Arguments:-c -verbose  -classpath  $&#123;workspace_loc&#125;/ $&#123;project_name&#125;/bin/$&#123;java_type_name&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><div align="center">
+
+<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039225454.png" class title="eclipse配置">
+
+</div>
+
+<h3 id="javap的命令说明"><a href="#javap的命令说明" class="headerlink" title="javap的命令说明"></a>javap的命令说明</h3><p>参考《<a href="https://www.sunliaodong.cn/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/">javap详解</a>》</p>
+<h2 id="debug使用技巧"><a href="#debug使用技巧" class="headerlink" title="debug使用技巧"></a>debug使用技巧</h2><h3 id="常用快捷键说明"><a href="#常用快捷键说明" class="headerlink" title="常用快捷键说明"></a>常用快捷键说明</h3><ol>
+<li>Step Into (also F5) 跳入</li>
+<li>Step Over (also F6) 跳过</li>
+<li>Step Return (also F7) 执行完当前method，然后return跳出此method</li>
+<li>step Filter 逐步过滤 一直执行直到遇到未经过滤的位置或断点(设置Filter:window-preferences-java-Debug-step Filtering)</li>
+<li>resume 重新开始执行debug,一直运行直到遇到breakpoint</li>
+<li>hit count 设置执行次数 适合程序中的for循环(设置 breakpoint view-右键hit count)</li>
+<li>inspect 检查 运算。执行一个表达式显示执行值</li>
+<li>watch 实时地监视变量的变化</li>
+<li>我们常说的断点(breakpoints)是指line breakpoints,除了line breakpoints,还有其他的断点类型：field(watchpoint)breakpoint,method breakpoint,exception breakpoint.</li>
+<li>field breakpoint 也叫watchpoint(监视点) 当成员变量被读取或修改时暂挂</li>
+<li>添加method breakpoint 进入/离开此方法时暂挂(Run-method breakpoint)</li>
+<li>添加Exception breakpoint 捕抓到Execption时暂挂(待续…)</li>
+</ol>
+<h3 id="断点属性"><a href="#断点属性" class="headerlink" title="断点属性"></a>断点属性</h3><ol>
+<li>hit count 执行多少次数后暂挂 用于循环</li>
+<li>enable condition 遇到符合你输入条件(为ture\改变时)就暂挂</li>
+<li>suspend thread 多线程时暂挂此线程</li>
+<li>suspend VM 暂挂虚拟机</li>
+<li>variables 视图里的变量可以改变变量值，在variables 视图选择变量点击右键–change value.一次来进行快速调试。</li>
+<li>debug 过程中修改了某些code后–〉save&amp;build–&gt;resume–&gt;重新暂挂于断点</li>
+</ol>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">  MyDate aa = <span class="keyword">new</span> MyDate();</span><br><span class="line">  aa.addDays(day);                      =============》(<span class="number">1</span>)</span><br><span class="line">  System.out.println(<span class="string">&quot;eeeeeeeeeeeeeee&quot;</span>);=============》(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">addDays</span><span class="params">(<span class="keyword">int</span> more_days)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;1&quot;</span>);               =============》(<span class="number">3</span>)</span><br><span class="line">    String result = <span class="string">&quot;&quot;</span>;         =============》(<span class="number">4</span>)</span><br><span class="line">    System.out.println(<span class="string">&quot;2&quot;</span>);               =============》(<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>你在(1)处加断点，运行到此处时如果Step Into (also F5)为跳入，则接着执行到(3)。再执行Step Over (also F6)执行本行，则执行到(4)。最后执行Step Return (also F7)，则跳出addDays方法，跳到(2)</p>
+<h2 id="配置-author"><a href="#配置-author" class="headerlink" title="配置@author"></a>配置@author</h2><ol>
+<li>eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;Code-&gt;New Java files </li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">点击 Edit </span><br><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> 孙辽东</span></span><br><span class="line"><span class="comment">* <span class="doctag">@E</span>-mail:sld880311@126.com</span></span><br><span class="line"><span class="comment">* <span class="doctag">@qq</span>:767768553</span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span> 创建时间：$&#123;date&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment">* 简单说明</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>在建立类文件的时候输入“/**”的时候自动出来的：eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;comments-&gt;typles,点击 Edit ，就可以根据自己需要编写了</li>
+</ol>
+]]></content>
+      <categories>
+        <category>常用工具</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>eclipse</tag>
       </tags>
   </entry>
   <entry>
@@ -7382,241 +7382,6 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>Java高效编程技巧</title>
-    <url>/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/</url>
-    <content><![CDATA[<h2 id="Java代码规范"><a href="#Java代码规范" class="headerlink" title="Java代码规范"></a>Java代码规范</h2><h3 id="命名规范（阿里规范）"><a href="#命名规范（阿里规范）" class="headerlink" title="命名规范（阿里规范）"></a>命名规范（阿里规范）</h3><ol>
-<li><p>名称只能是有含义的英文，不能出现下划线或美元符号</p>
-</li>
-<li><p>方法名、参数名、成员变量、局部变量统一使用驼峰方式命名，形如lowerCamelCase</p>
-</li>
-<li><p>类名使用UpperCamelCase命名，DO/BO/DTO/VO/AO/PO/UID除外</p>
-</li>
-<li><p>常量或类变量都需要使用大写，并且中间使用下划线分割</p>
-</li>
-<li><p>抽象类必须以Abstract或Base开头，异常类，必须以Exception结果，测试类必须以待测试代码_Test</p>
-</li>
-<li><p>类型与中括号紧挨相连来表示数组,形如<code>int[] arrayDemo</code></p>
-</li>
-<li><p>成员变量不能以is开头</p>
-</li>
-<li><p>包使用小写定义，并且使用单数，中间使用英文句号分割，并且定义必须有意义和唯一性</p>
-</li>
-<li><p>子类与父类之间不要使用相同的成员变量命名</p>
-</li>
-<li><p>完全杜绝不规范的缩写，尽量使用完整的单词</p>
-</li>
-<li><p>在常量与变量命名时，表示类型的名称放在词尾</p>
-</li>
-<li><p>如果模块、接口、类、方法使用了设计模式，在命名时需体现出具体模式</p>
-</li>
-<li><p>接口中不要定义变量，方式不需要增加任何修饰符，都必须有注释信息</p>
-</li>
-<li><p>接口与实现类的命名规范是<strong>Service/**ServiceImpl、</strong>DAO/**DAOImpl</p>
-</li>
-<li><p>枚举类名带上 Enum 后缀，枚举成员名称需要全大写，单词间用下划线隔开</p>
-</li>
-<li><p>各层命名规范：</p>
-<ul>
-<li>Service/DAO 层方法命名规约<ul>
-<li>获取单个对象的方法用 get 做前缀。</li>
-<li>获取多个对象的方法用 list 做前缀，复数形式结尾如：listObjects。</li>
-<li>获取统计值的方法用 count 做前缀。</li>
-<li>插入的方法用 save/insert 做前缀。</li>
-<li>删除的方法用 remove/delete 做前缀。</li>
-<li>修改的方法用 update 做前缀。</li>
-</ul>
-</li>
-<li>领域模型命名规约<ul>
-<li>数据对象：xxxDO，xxx 即为数据表名。</li>
-<li>数据传输对象：xxxDTO，xxx 为业务领域相关的名称。</li>
-<li>展示对象：xxxVO，xxx 一般为网页名称。</li>
-<li>POJO 是 DO/DTO/BO/VO 的统称，禁止命名成 xxxPOJO。<a id="more"></a>
-<h3 id="常量定义"><a href="#常量定义" class="headerlink" title="常量定义"></a>常量定义</h3></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>不允许任何魔法值（即未经预先定义的常量）直接出现在代码中，使用常量替换</p>
-</li>
-<li><p>定义类型为long或Long的属性时，需要用大写L结尾</p>
-</li>
-<li><p>常量定义要分类维护，一般分为：跨应用共享常量、应用内共享常量、子工程内共享常量、包内共享常量、类内共享常量</p>
-</li>
-<li><p>如果变量值仅在一个固定范围内变化用 enum 类型来定义</p>
-</li>
-</ol>
-<h2 id="高效能开发的原则"><a href="#高效能开发的原则" class="headerlink" title="高效能开发的原则"></a>高效能开发的原则</h2><h3 id="优化代码的注意事项"><a href="#优化代码的注意事项" class="headerlink" title="优化代码的注意事项"></a>优化代码的注意事项</h3><ol>
-<li>除非必须优化，否则不要轻易改动</li>
-<li>改动之后要进行仔细的测试</li>
-<li>在各个JVM产品中不存在一劳永逸的成本模型</li>
-</ol>
-<h3 id="Java编码原则"><a href="#Java编码原则" class="headerlink" title="Java编码原则"></a>Java编码原则</h3><ol>
-<li>注重设计、数据结构、算法选择</li>
-<li>不要过分依赖编译器编译期的优化技术，正确理解Java运行期的实际效果</li>
-<li>将对象的创建和使用降到最低：<ul>
-<li>StringBuilder的使用</li>
-<li>for循环中对象的索引使用</li>
-<li>线程或连接的复用</li>
-<li>合理设计对象的大小（在类加载过程会完成内存大小的计算）</li>
-<li>合理设计继承关系（不多于3层）</li>
-<li>构造函数尽可能短小精干</li>
-<li>对象创建使用懒加载思想</li>
-</ul>
-</li>
-<li>降低同步的影响范围<ul>
-<li>是否需要使用同步控制或者线程安全的类</li>
-<li>控制同步范围</li>
-<li>合理使用锁变量，做到线程分离，提高并发度和吞吐量</li>
-<li>减少锁的使用，避免出现死锁</li>
-</ul>
-</li>
-<li>尽量在栈中完成业务处理</li>
-<li>使用static、final、private函数促成inlining</li>
-<li>实例变量初始化合适就好，比如单例模式</li>
-<li>注意集合的使用<ul>
-<li>选择合适的遍历方式</li>
-<li>使用大小的控制</li>
-<li>数据复制的选择</li>
-<li>选择合适的集合类</li>
-</ul>
-</li>
-<li>尽可能重用对象</li>
-<li>增加缓存概念</li>
-</ol>
-<h2 id="集合遍历效率问题"><a href="#集合遍历效率问题" class="headerlink" title="集合遍历效率问题"></a>集合遍历效率问题</h2><h3 id="高效遍历MAP"><a href="#高效遍历MAP" class="headerlink" title="高效遍历MAP"></a>高效遍历MAP</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.Map.Entry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapTest</span> </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * keySet的for循环方式：</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="comment">//只获取key</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySetForGetKey</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    <span class="keyword">for</span> (String key : map.keySet()) &#123;</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;keySetForGetKey运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//获取key和value</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySetForGetKeyAndValue</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    <span class="keyword">for</span> (String key : map.keySet()) &#123;</span><br><span class="line">	        String value = map.get(key);</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;keySetForGetKeyAndValue运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * keySet的iterator迭代器方式：</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">//只获取key</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySetIteratorGetKey</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    Iterator&lt;String&gt; iterator = map.keySet().iterator();</span><br><span class="line">	    <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">	        String key = iterator.next();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;keySetIteratorGetKey运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//获取key和value</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySetIteratorGetKeyAndValue</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    Iterator&lt;String&gt; iterator = map.keySet().iterator();</span><br><span class="line">	    <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">	        String key = iterator.next();</span><br><span class="line">	        String value = map.get(iterator.next());</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;keySetIteratorGetKeyAndValue运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * entrySet的for循环方式：</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="comment">//只获取key</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySetForGetKey</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    <span class="keyword">for</span> (Entry&lt;String, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">	        String key = entry.getKey();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;entrySetForGetKey运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//获取key和value</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySetForGetKeyAndValue</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    <span class="keyword">for</span> (Entry&lt;String, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">	        String key = entry.getKey();</span><br><span class="line">	        String value = entry.getValue();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;entrySetForGetKeyAndValue运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * entrySet的iterator迭代器方式：</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="comment">//只获取key</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySetIteratorGetKey</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    Iterator&lt;Entry&lt;String, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">	    <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">	        String key = iterator.next().getKey();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;entrySetIteratorGetKey运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//获取key和value</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySetIteratorGetKeyAndValue</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    Iterator&lt;Entry&lt;String, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">	    <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">	        String key = iterator.next().getKey();</span><br><span class="line">	        String value = iterator.next().getValue();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;entrySetIteratorGetKeyAndValue运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000000</span>; i++) &#123;</span><br><span class="line">		    map.put(i + <span class="string">&quot;&quot;</span>, i + <span class="string">&quot;AA&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		MapTest.keySetForGetKey(map);</span><br><span class="line">		MapTest.keySetIteratorGetKey(map);</span><br><span class="line">		MapTest.entrySetForGetKey(map);</span><br><span class="line">		MapTest.entrySetIteratorGetKey(map);</span><br><span class="line">		</span><br><span class="line">		MapTest.keySetForGetKeyAndValue(map);</span><br><span class="line">		MapTest.keySetIteratorGetKeyAndValue(map);</span><br><span class="line">		MapTest.entrySetForGetKeyAndValue(map);</span><br><span class="line">		MapTest.entrySetIteratorGetKeyAndValue(map);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行结果：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">keySetForGetKey运行时间<span class="number">96</span></span><br><span class="line">keySetIteratorGetKey运行时间<span class="number">107</span></span><br><span class="line">entrySetForGetKey运行时间<span class="number">112</span></span><br><span class="line">entrySetIteratorGetKey运行时间<span class="number">153</span></span><br><span class="line">keySetForGetKeyAndValue运行时间<span class="number">169</span></span><br><span class="line">keySetIteratorGetKeyAndValue运行时间<span class="number">283</span></span><br><span class="line">entrySetForGetKeyAndValue运行时间<span class="number">109</span></span><br><span class="line">entrySetIteratorGetKeyAndValue运行时间<span class="number">138</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>总结：<br>entrySet的方式整体都是比keySet方式要高一些<br>单纯的获取key来说，两者的差别并不大，但是如果要获取value，还是entrySet的效率会更好，因为keySet需要从map中再次根据key获取value，而entrySet一次都全部获取出来<br>iterator的迭代器方式比foreach的效率高  </p>
-</blockquote>
-<h3 id="实现RandomAccess接口的集合使用for循环而不是foreach来遍历"><a href="#实现RandomAccess接口的集合使用for循环而不是foreach来遍历" class="headerlink" title="实现RandomAccess接口的集合使用for循环而不是foreach来遍历"></a>实现RandomAccess接口的集合使用for循环而不是foreach来遍历</h3><p>这是JDK推荐给用户的。JDK API对于RandomAccess接口的解释是：实现RandomAccess接口用来表明其：色nu支持快速随机访问，此接口的主要目的是允许一般的算法更改其行为，从而将其应用到随机或连续访问列表时能提供良好的性能。实际经验表明，实现RandomAccess接口的类实例，假如是随机访问的，使用普通for循环效率将高于使用foreach循环；反过来，如果是顺序访问的，则使用Iterator会效率更高。可以使用类似如下的代码作判断：</p>
-<div align="center">
-
-<img src="/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/1589105799147.png" class title="参考代码">
-
-</div>
-
-<p>foreach循环的底层实现原理就是迭代器Iterator，参见Java语法糖1：可变长度参数以及foreach循环原理。所以后半句”反过来，如果是顺序访问的，则使用Iterator会效率更高”的意思就是顺序访问的那些类实例，使用foreach循环去遍历。</p>
-<h2 id="线程问题"><a href="#线程问题" class="headerlink" title="线程问题"></a>线程问题</h2><ol>
-<li>尽量使用同步代码块替代同步方法，提高代码执行效率</li>
-<li>尽量使用HashMap、ArrayList、StringBuilder，除非线程安全需要，否则不推荐使用Hashtable、Vector、StringBuffer，后三者由于使用同步机制而导致了性能开销</li>
-</ol>
-<h2 id="资源处理注意事项"><a href="#资源处理注意事项" class="headerlink" title="资源处理注意事项"></a>资源处理注意事项</h2><ol>
-<li>及时关闭资源：使用资源一般都会建立流的连接，比如文件流，数据库连接等，在使用完成之后要及时关闭打开的连接，防止内存泄露。一般在finally中处理。</li>
-<li>关闭多个资源时，需要分开执行，防止由于异常无法关闭所有的资源</li>
-</ol>
-<h2 id="垃圾信息处理"><a href="#垃圾信息处理" class="headerlink" title="垃圾信息处理"></a>垃圾信息处理</h2><ol>
-<li>不要定义、创建不使用的对象，变量；</li>
-<li>不要导入不需要的依赖包</li>
-<li>公用的集合类中不使用的数据一定要及时remove掉</li>
-<li>ThreadLocal中不使用的数据要及时处理掉，防止内存溢出</li>
-<li>及时清除不再需要的会话（会话超时设置），防止出现内存不足或内存磁盘之间交互频繁，当会话不再需要时，应当及时调用HttpSession的invalidate方法清除会话。</li>
-</ol>
-<h2 id="尽量使用局部变量"><a href="#尽量使用局部变量" class="headerlink" title="尽量使用局部变量"></a>尽量使用局部变量</h2><ol>
-<li>方法参数和临时临时变量都在栈中分配，速度快</li>
-<li>类变量、实例变量存储在堆中速度较慢</li>
-<li>栈中的变量随时方法的结束而结束，不需要额外的垃圾回收</li>
-</ol>
-<h2 id="提高效率，减少内存"><a href="#提高效率，减少内存" class="headerlink" title="提高效率，减少内存"></a>提高效率，减少内存</h2><ol>
-<li>使用StringBuilder/StringBuffer替代String</li>
-<li>循环内不要创建对象的引用：减少堆栈中的使用，避免出现栈内存溢出或出现栈越界。</li>
-<li>尽量采用懒加载的策略，即在需要的时候才创建</li>
-<li>尽量避免随意使用静态变量：当某个对象被定义为static的变量所引用，那么gc通常是不会回收这个对象所占有的堆内存的</li>
-<li>尽量在合适的场合使用单例（减轻加载的负担、缩短加载的时间、提高加载的效率）<ul>
-<li>控制资源的使用，通过线程同步来控制资源的并发访问</li>
-<li>控制实例的产生，以达到节约资源的目的</li>
-<li>控制数据的共享，在不建立直接关联的条件下，让多个不相关的进程或线程之间实现通信</li>
-</ul>
-</li>
-<li>使用数据库连接池和线程池：前者可以避免频繁地打开和关闭连接，后者可以避免频繁地创建和销毁线程</li>
-<li>使用带缓冲的输入输出流进行IO操作</li>
-<li>乘法和除法使用移位操作</li>
-<li>减少对变量的重复计算：对方法的调用，即使方法中只有一句语句，也是有消耗的，包括创建栈帧、调用方法时保护现场、调用方法完毕时恢复现场等。集合中大小的重复获取会消耗内存和时间。</li>
-<li>当复制大量数据时，使用System.arraycopy命令</li>
-<li>基于效率和类型检查的考虑，应该尽可能使用array，无法确定数组大小时才使用ArrayList</li>
-<li>程序运行过程中避免使用反射（根据实际情况定）：反射是Java提供给用户一个很强大的功能，功能强大往往意味着效率不高。特别是Method的invoke方法，如果确实有必要，一种建议性的做法是将那些需要通过反射加载的类在项目启动的时候通过反射实例化出一个对象并放入内存—-用户只关心和对端交互的时候获取最快的响应速度，并不关心对端的项目启动花多久时间。</li>
-<li>顺序插入和随机访问比较多的场景使用ArrayList，元素删除和中间插入比较多的场景使用LinkedList这个</li>
-</ol>
-<h2 id="关键字和方法的说明"><a href="#关键字和方法的说明" class="headerlink" title="关键字和方法的说明"></a>关键字和方法的说明</h2><h3 id="equals的正确使用"><a href="#equals的正确使用" class="headerlink" title="equals的正确使用"></a>equals的正确使用</h3><ol>
-<li>重写equals后需要同时完成hashcode方法的重写</li>
-<li>equals中初始代码比对的是对象地址</li>
-<li>字符串比对相等时，字符串常量写在字符串变量前面，比如”abc”.equals(abc)</li>
-</ol>
-<h3 id="final的正确使用"><a href="#final的正确使用" class="headerlink" title="final的正确使用"></a>final的正确使用</h3><ol>
-<li>如果类不能被派生，则必须定义为final（该类中的方法都是final的）</li>
-<li>如果方法不能被重写，则必须定义为final</li>
-<li>常量定义为static final，并且名称使用大写，多个字符使用下划线拼接，比如：USER_NAME</li>
-<li>不要将数组声明为public static final（final只是表示引用不变，但是内容还是可以变）</li>
-</ol>
-<h3 id="方法参数要求"><a href="#方法参数要求" class="headerlink" title="方法参数要求"></a>方法参数要求</h3><p>在Java编程中，要尽量保证面向对象编程，并且达到高内聚，低耦合，实现动态扩展的特性。如果定义参数太多，会有以下缺点：</p>
-<ol>
-<li>违背面向对象编程</li>
-<li>可扩展性低</li>
-<li>方法调用出错概率大</li>
-</ol>
-<p>建议参数保证在3~4个之内，尽量使用有明确意义的对象传参（<strong>减少类似Map对象的使用</strong>）。</p>
-<h3 id="不要对数组使用toString方法"><a href="#不要对数组使用toString方法" class="headerlink" title="不要对数组使用toString方法"></a>不要对数组使用toString方法</h3><ol>
-<li>数组为空会出现空指针</li>
-<li>打印的数据是地址信息，与预期不一致</li>
-<li>对集合toString是可以打印出集合里面的内容的，因为集合的父类AbstractCollections重写了Object的toString方法。</li>
-</ol>
-<h2 id="异常使用注意事项"><a href="#异常使用注意事项" class="headerlink" title="异常使用注意事项"></a>异常使用注意事项</h2><ol>
-<li>慎用异常：异常对性能不利。抛出异常首先要创建一个新的对象，Throwable接口的构造函数调用名为fillInStackTrace的本地同步方法，fillInStackTrace方法检查堆栈，收集调用跟踪信息。只要有异常被抛出，Java虚拟机就必须调整调用堆栈，因为在处理过程中创建了一个新的对象。异常只能用于错误处理，不应该用来控制程序流程。</li>
-<li>不要在循环中使用try…catch…，应该把其放在最外层，除非不得已</li>
-</ol>
-<h2 id="合理使用初始化长度"><a href="#合理使用初始化长度" class="headerlink" title="合理使用初始化长度"></a>合理使用初始化长度</h2><ol>
-<li>集合：ArrayList、LinkedLlist等</li>
-<li>字符串：StringBuilder、StringBuffer等</li>
-<li>Map：HashMap等</li>
-<li>Set：HashSet等</li>
-</ol>
-<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><ol>
-<li>不要对超出范围的基本数据类型做向下强制转型<ul>
-<li>整型默认的数据类型是int，long需要在结尾增加<code>L</code></li>
-<li>浮点型的默认类型是double，所以定义float的时候要写成<code>float f = 3.5f</code></li>
-<li>long+int会自动转型为long</li>
-</ul>
-</li>
-<li>基本类型（包装类）转String：<code>toString &gt; String.valueOf &gt; +</code>，可以通过源码得到原因：<ul>
-<li>String.valueOf方法底层调用了Integer.toString方法，但是会在调用前做空判断</li>
-<li>Integer.toString，直接调用了</li>
-<li>i + “”底层使用了StringBuilder实现，先用append方法拼接，再用toString方法获取字符串</li>
-</ul>
-</li>
-</ol>
-<h2 id="日志规范"><a href="#日志规范" class="headerlink" title="日志规范"></a>日志规范</h2><ol>
-<li>日志级别：OFF、FATAL、ERROR、WARN、INFO、DEBUG、ALL，常用级别<strong>ERROR、WARN、INFO和DEBUG</strong></li>
-<li>ERROR<ul>
-<li>表示不能自己恢复的错误，需要立即关注和解决</li>
-<li>比如：数据库连接错误、网络错误、未知系统错误</li>
-<li>需要接入监控和报警系统 </li>
-</ul>
-</li>
-<li>WARN<ul>
-<li>表示可预知的错误，业务场景类错误</li>
-<li>比如：参数验证、权限认证 </li>
-</ul>
-</li>
-<li>INFO<ul>
-<li>记录系统的基本运行过程和运行状态</li>
-<li>包括：系统状态变化、业务流程的核心处理、关键动作、业务流状态的变化 </li>
-</ul>
-</li>
-<li>DEBUG<ul>
-<li>调试信息 </li>
-</ul>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>软件架构</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>编程技巧</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java系统化学习之集合概述</title>
     <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/</url>
     <content><![CDATA[<p>使用集合需要考虑几个关注点：</p>
@@ -7918,6 +7683,241 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>Java</tag>
         <tag>集合</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java高效编程技巧</title>
+    <url>/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/</url>
+    <content><![CDATA[<h2 id="Java代码规范"><a href="#Java代码规范" class="headerlink" title="Java代码规范"></a>Java代码规范</h2><h3 id="命名规范（阿里规范）"><a href="#命名规范（阿里规范）" class="headerlink" title="命名规范（阿里规范）"></a>命名规范（阿里规范）</h3><ol>
+<li><p>名称只能是有含义的英文，不能出现下划线或美元符号</p>
+</li>
+<li><p>方法名、参数名、成员变量、局部变量统一使用驼峰方式命名，形如lowerCamelCase</p>
+</li>
+<li><p>类名使用UpperCamelCase命名，DO/BO/DTO/VO/AO/PO/UID除外</p>
+</li>
+<li><p>常量或类变量都需要使用大写，并且中间使用下划线分割</p>
+</li>
+<li><p>抽象类必须以Abstract或Base开头，异常类，必须以Exception结果，测试类必须以待测试代码_Test</p>
+</li>
+<li><p>类型与中括号紧挨相连来表示数组,形如<code>int[] arrayDemo</code></p>
+</li>
+<li><p>成员变量不能以is开头</p>
+</li>
+<li><p>包使用小写定义，并且使用单数，中间使用英文句号分割，并且定义必须有意义和唯一性</p>
+</li>
+<li><p>子类与父类之间不要使用相同的成员变量命名</p>
+</li>
+<li><p>完全杜绝不规范的缩写，尽量使用完整的单词</p>
+</li>
+<li><p>在常量与变量命名时，表示类型的名称放在词尾</p>
+</li>
+<li><p>如果模块、接口、类、方法使用了设计模式，在命名时需体现出具体模式</p>
+</li>
+<li><p>接口中不要定义变量，方式不需要增加任何修饰符，都必须有注释信息</p>
+</li>
+<li><p>接口与实现类的命名规范是<strong>Service/**ServiceImpl、</strong>DAO/**DAOImpl</p>
+</li>
+<li><p>枚举类名带上 Enum 后缀，枚举成员名称需要全大写，单词间用下划线隔开</p>
+</li>
+<li><p>各层命名规范：</p>
+<ul>
+<li>Service/DAO 层方法命名规约<ul>
+<li>获取单个对象的方法用 get 做前缀。</li>
+<li>获取多个对象的方法用 list 做前缀，复数形式结尾如：listObjects。</li>
+<li>获取统计值的方法用 count 做前缀。</li>
+<li>插入的方法用 save/insert 做前缀。</li>
+<li>删除的方法用 remove/delete 做前缀。</li>
+<li>修改的方法用 update 做前缀。</li>
+</ul>
+</li>
+<li>领域模型命名规约<ul>
+<li>数据对象：xxxDO，xxx 即为数据表名。</li>
+<li>数据传输对象：xxxDTO，xxx 为业务领域相关的名称。</li>
+<li>展示对象：xxxVO，xxx 一般为网页名称。</li>
+<li>POJO 是 DO/DTO/BO/VO 的统称，禁止命名成 xxxPOJO。<a id="more"></a>
+<h3 id="常量定义"><a href="#常量定义" class="headerlink" title="常量定义"></a>常量定义</h3></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>不允许任何魔法值（即未经预先定义的常量）直接出现在代码中，使用常量替换</p>
+</li>
+<li><p>定义类型为long或Long的属性时，需要用大写L结尾</p>
+</li>
+<li><p>常量定义要分类维护，一般分为：跨应用共享常量、应用内共享常量、子工程内共享常量、包内共享常量、类内共享常量</p>
+</li>
+<li><p>如果变量值仅在一个固定范围内变化用 enum 类型来定义</p>
+</li>
+</ol>
+<h2 id="高效能开发的原则"><a href="#高效能开发的原则" class="headerlink" title="高效能开发的原则"></a>高效能开发的原则</h2><h3 id="优化代码的注意事项"><a href="#优化代码的注意事项" class="headerlink" title="优化代码的注意事项"></a>优化代码的注意事项</h3><ol>
+<li>除非必须优化，否则不要轻易改动</li>
+<li>改动之后要进行仔细的测试</li>
+<li>在各个JVM产品中不存在一劳永逸的成本模型</li>
+</ol>
+<h3 id="Java编码原则"><a href="#Java编码原则" class="headerlink" title="Java编码原则"></a>Java编码原则</h3><ol>
+<li>注重设计、数据结构、算法选择</li>
+<li>不要过分依赖编译器编译期的优化技术，正确理解Java运行期的实际效果</li>
+<li>将对象的创建和使用降到最低：<ul>
+<li>StringBuilder的使用</li>
+<li>for循环中对象的索引使用</li>
+<li>线程或连接的复用</li>
+<li>合理设计对象的大小（在类加载过程会完成内存大小的计算）</li>
+<li>合理设计继承关系（不多于3层）</li>
+<li>构造函数尽可能短小精干</li>
+<li>对象创建使用懒加载思想</li>
+</ul>
+</li>
+<li>降低同步的影响范围<ul>
+<li>是否需要使用同步控制或者线程安全的类</li>
+<li>控制同步范围</li>
+<li>合理使用锁变量，做到线程分离，提高并发度和吞吐量</li>
+<li>减少锁的使用，避免出现死锁</li>
+</ul>
+</li>
+<li>尽量在栈中完成业务处理</li>
+<li>使用static、final、private函数促成inlining</li>
+<li>实例变量初始化合适就好，比如单例模式</li>
+<li>注意集合的使用<ul>
+<li>选择合适的遍历方式</li>
+<li>使用大小的控制</li>
+<li>数据复制的选择</li>
+<li>选择合适的集合类</li>
+</ul>
+</li>
+<li>尽可能重用对象</li>
+<li>增加缓存概念</li>
+</ol>
+<h2 id="集合遍历效率问题"><a href="#集合遍历效率问题" class="headerlink" title="集合遍历效率问题"></a>集合遍历效率问题</h2><h3 id="高效遍历MAP"><a href="#高效遍历MAP" class="headerlink" title="高效遍历MAP"></a>高效遍历MAP</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.Map.Entry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapTest</span> </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * keySet的for循环方式：</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="comment">//只获取key</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySetForGetKey</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    <span class="keyword">for</span> (String key : map.keySet()) &#123;</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;keySetForGetKey运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//获取key和value</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySetForGetKeyAndValue</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    <span class="keyword">for</span> (String key : map.keySet()) &#123;</span><br><span class="line">	        String value = map.get(key);</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;keySetForGetKeyAndValue运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * keySet的iterator迭代器方式：</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">//只获取key</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySetIteratorGetKey</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    Iterator&lt;String&gt; iterator = map.keySet().iterator();</span><br><span class="line">	    <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">	        String key = iterator.next();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;keySetIteratorGetKey运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//获取key和value</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySetIteratorGetKeyAndValue</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    Iterator&lt;String&gt; iterator = map.keySet().iterator();</span><br><span class="line">	    <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">	        String key = iterator.next();</span><br><span class="line">	        String value = map.get(iterator.next());</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;keySetIteratorGetKeyAndValue运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * entrySet的for循环方式：</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="comment">//只获取key</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySetForGetKey</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    <span class="keyword">for</span> (Entry&lt;String, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">	        String key = entry.getKey();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;entrySetForGetKey运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//获取key和value</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySetForGetKeyAndValue</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    <span class="keyword">for</span> (Entry&lt;String, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">	        String key = entry.getKey();</span><br><span class="line">	        String value = entry.getValue();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;entrySetForGetKeyAndValue运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * entrySet的iterator迭代器方式：</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="comment">//只获取key</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySetIteratorGetKey</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    Iterator&lt;Entry&lt;String, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">	    <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">	        String key = iterator.next().getKey();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;entrySetIteratorGetKey运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//获取key和value</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySetIteratorGetKeyAndValue</span><span class="params">(Map&lt;String, String&gt; map)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">	    Iterator&lt;Entry&lt;String, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">	    <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">	        String key = iterator.next().getKey();</span><br><span class="line">	        String value = iterator.next().getValue();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">long</span> endTime = System.currentTimeMillis();</span><br><span class="line">	    System.out.println(<span class="string">&quot;entrySetIteratorGetKeyAndValue运行时间&quot;</span> + (endTime - startTime));</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000000</span>; i++) &#123;</span><br><span class="line">		    map.put(i + <span class="string">&quot;&quot;</span>, i + <span class="string">&quot;AA&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		MapTest.keySetForGetKey(map);</span><br><span class="line">		MapTest.keySetIteratorGetKey(map);</span><br><span class="line">		MapTest.entrySetForGetKey(map);</span><br><span class="line">		MapTest.entrySetIteratorGetKey(map);</span><br><span class="line">		</span><br><span class="line">		MapTest.keySetForGetKeyAndValue(map);</span><br><span class="line">		MapTest.keySetIteratorGetKeyAndValue(map);</span><br><span class="line">		MapTest.entrySetForGetKeyAndValue(map);</span><br><span class="line">		MapTest.entrySetIteratorGetKeyAndValue(map);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">keySetForGetKey运行时间<span class="number">96</span></span><br><span class="line">keySetIteratorGetKey运行时间<span class="number">107</span></span><br><span class="line">entrySetForGetKey运行时间<span class="number">112</span></span><br><span class="line">entrySetIteratorGetKey运行时间<span class="number">153</span></span><br><span class="line">keySetForGetKeyAndValue运行时间<span class="number">169</span></span><br><span class="line">keySetIteratorGetKeyAndValue运行时间<span class="number">283</span></span><br><span class="line">entrySetForGetKeyAndValue运行时间<span class="number">109</span></span><br><span class="line">entrySetIteratorGetKeyAndValue运行时间<span class="number">138</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>总结：<br>entrySet的方式整体都是比keySet方式要高一些<br>单纯的获取key来说，两者的差别并不大，但是如果要获取value，还是entrySet的效率会更好，因为keySet需要从map中再次根据key获取value，而entrySet一次都全部获取出来<br>iterator的迭代器方式比foreach的效率高  </p>
+</blockquote>
+<h3 id="实现RandomAccess接口的集合使用for循环而不是foreach来遍历"><a href="#实现RandomAccess接口的集合使用for循环而不是foreach来遍历" class="headerlink" title="实现RandomAccess接口的集合使用for循环而不是foreach来遍历"></a>实现RandomAccess接口的集合使用for循环而不是foreach来遍历</h3><p>这是JDK推荐给用户的。JDK API对于RandomAccess接口的解释是：实现RandomAccess接口用来表明其：色nu支持快速随机访问，此接口的主要目的是允许一般的算法更改其行为，从而将其应用到随机或连续访问列表时能提供良好的性能。实际经验表明，实现RandomAccess接口的类实例，假如是随机访问的，使用普通for循环效率将高于使用foreach循环；反过来，如果是顺序访问的，则使用Iterator会效率更高。可以使用类似如下的代码作判断：</p>
+<div align="center">
+
+<img src="/2021/02/04/Java%E9%AB%98%E6%95%88%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7/1589105799147.png" class title="参考代码">
+
+</div>
+
+<p>foreach循环的底层实现原理就是迭代器Iterator，参见Java语法糖1：可变长度参数以及foreach循环原理。所以后半句”反过来，如果是顺序访问的，则使用Iterator会效率更高”的意思就是顺序访问的那些类实例，使用foreach循环去遍历。</p>
+<h2 id="线程问题"><a href="#线程问题" class="headerlink" title="线程问题"></a>线程问题</h2><ol>
+<li>尽量使用同步代码块替代同步方法，提高代码执行效率</li>
+<li>尽量使用HashMap、ArrayList、StringBuilder，除非线程安全需要，否则不推荐使用Hashtable、Vector、StringBuffer，后三者由于使用同步机制而导致了性能开销</li>
+</ol>
+<h2 id="资源处理注意事项"><a href="#资源处理注意事项" class="headerlink" title="资源处理注意事项"></a>资源处理注意事项</h2><ol>
+<li>及时关闭资源：使用资源一般都会建立流的连接，比如文件流，数据库连接等，在使用完成之后要及时关闭打开的连接，防止内存泄露。一般在finally中处理。</li>
+<li>关闭多个资源时，需要分开执行，防止由于异常无法关闭所有的资源</li>
+</ol>
+<h2 id="垃圾信息处理"><a href="#垃圾信息处理" class="headerlink" title="垃圾信息处理"></a>垃圾信息处理</h2><ol>
+<li>不要定义、创建不使用的对象，变量；</li>
+<li>不要导入不需要的依赖包</li>
+<li>公用的集合类中不使用的数据一定要及时remove掉</li>
+<li>ThreadLocal中不使用的数据要及时处理掉，防止内存溢出</li>
+<li>及时清除不再需要的会话（会话超时设置），防止出现内存不足或内存磁盘之间交互频繁，当会话不再需要时，应当及时调用HttpSession的invalidate方法清除会话。</li>
+</ol>
+<h2 id="尽量使用局部变量"><a href="#尽量使用局部变量" class="headerlink" title="尽量使用局部变量"></a>尽量使用局部变量</h2><ol>
+<li>方法参数和临时临时变量都在栈中分配，速度快</li>
+<li>类变量、实例变量存储在堆中速度较慢</li>
+<li>栈中的变量随时方法的结束而结束，不需要额外的垃圾回收</li>
+</ol>
+<h2 id="提高效率，减少内存"><a href="#提高效率，减少内存" class="headerlink" title="提高效率，减少内存"></a>提高效率，减少内存</h2><ol>
+<li>使用StringBuilder/StringBuffer替代String</li>
+<li>循环内不要创建对象的引用：减少堆栈中的使用，避免出现栈内存溢出或出现栈越界。</li>
+<li>尽量采用懒加载的策略，即在需要的时候才创建</li>
+<li>尽量避免随意使用静态变量：当某个对象被定义为static的变量所引用，那么gc通常是不会回收这个对象所占有的堆内存的</li>
+<li>尽量在合适的场合使用单例（减轻加载的负担、缩短加载的时间、提高加载的效率）<ul>
+<li>控制资源的使用，通过线程同步来控制资源的并发访问</li>
+<li>控制实例的产生，以达到节约资源的目的</li>
+<li>控制数据的共享，在不建立直接关联的条件下，让多个不相关的进程或线程之间实现通信</li>
+</ul>
+</li>
+<li>使用数据库连接池和线程池：前者可以避免频繁地打开和关闭连接，后者可以避免频繁地创建和销毁线程</li>
+<li>使用带缓冲的输入输出流进行IO操作</li>
+<li>乘法和除法使用移位操作</li>
+<li>减少对变量的重复计算：对方法的调用，即使方法中只有一句语句，也是有消耗的，包括创建栈帧、调用方法时保护现场、调用方法完毕时恢复现场等。集合中大小的重复获取会消耗内存和时间。</li>
+<li>当复制大量数据时，使用System.arraycopy命令</li>
+<li>基于效率和类型检查的考虑，应该尽可能使用array，无法确定数组大小时才使用ArrayList</li>
+<li>程序运行过程中避免使用反射（根据实际情况定）：反射是Java提供给用户一个很强大的功能，功能强大往往意味着效率不高。特别是Method的invoke方法，如果确实有必要，一种建议性的做法是将那些需要通过反射加载的类在项目启动的时候通过反射实例化出一个对象并放入内存—-用户只关心和对端交互的时候获取最快的响应速度，并不关心对端的项目启动花多久时间。</li>
+<li>顺序插入和随机访问比较多的场景使用ArrayList，元素删除和中间插入比较多的场景使用LinkedList这个</li>
+</ol>
+<h2 id="关键字和方法的说明"><a href="#关键字和方法的说明" class="headerlink" title="关键字和方法的说明"></a>关键字和方法的说明</h2><h3 id="equals的正确使用"><a href="#equals的正确使用" class="headerlink" title="equals的正确使用"></a>equals的正确使用</h3><ol>
+<li>重写equals后需要同时完成hashcode方法的重写</li>
+<li>equals中初始代码比对的是对象地址</li>
+<li>字符串比对相等时，字符串常量写在字符串变量前面，比如”abc”.equals(abc)</li>
+</ol>
+<h3 id="final的正确使用"><a href="#final的正确使用" class="headerlink" title="final的正确使用"></a>final的正确使用</h3><ol>
+<li>如果类不能被派生，则必须定义为final（该类中的方法都是final的）</li>
+<li>如果方法不能被重写，则必须定义为final</li>
+<li>常量定义为static final，并且名称使用大写，多个字符使用下划线拼接，比如：USER_NAME</li>
+<li>不要将数组声明为public static final（final只是表示引用不变，但是内容还是可以变）</li>
+</ol>
+<h3 id="方法参数要求"><a href="#方法参数要求" class="headerlink" title="方法参数要求"></a>方法参数要求</h3><p>在Java编程中，要尽量保证面向对象编程，并且达到高内聚，低耦合，实现动态扩展的特性。如果定义参数太多，会有以下缺点：</p>
+<ol>
+<li>违背面向对象编程</li>
+<li>可扩展性低</li>
+<li>方法调用出错概率大</li>
+</ol>
+<p>建议参数保证在3~4个之内，尽量使用有明确意义的对象传参（<strong>减少类似Map对象的使用</strong>）。</p>
+<h3 id="不要对数组使用toString方法"><a href="#不要对数组使用toString方法" class="headerlink" title="不要对数组使用toString方法"></a>不要对数组使用toString方法</h3><ol>
+<li>数组为空会出现空指针</li>
+<li>打印的数据是地址信息，与预期不一致</li>
+<li>对集合toString是可以打印出集合里面的内容的，因为集合的父类AbstractCollections重写了Object的toString方法。</li>
+</ol>
+<h2 id="异常使用注意事项"><a href="#异常使用注意事项" class="headerlink" title="异常使用注意事项"></a>异常使用注意事项</h2><ol>
+<li>慎用异常：异常对性能不利。抛出异常首先要创建一个新的对象，Throwable接口的构造函数调用名为fillInStackTrace的本地同步方法，fillInStackTrace方法检查堆栈，收集调用跟踪信息。只要有异常被抛出，Java虚拟机就必须调整调用堆栈，因为在处理过程中创建了一个新的对象。异常只能用于错误处理，不应该用来控制程序流程。</li>
+<li>不要在循环中使用try…catch…，应该把其放在最外层，除非不得已</li>
+</ol>
+<h2 id="合理使用初始化长度"><a href="#合理使用初始化长度" class="headerlink" title="合理使用初始化长度"></a>合理使用初始化长度</h2><ol>
+<li>集合：ArrayList、LinkedLlist等</li>
+<li>字符串：StringBuilder、StringBuffer等</li>
+<li>Map：HashMap等</li>
+<li>Set：HashSet等</li>
+</ol>
+<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><ol>
+<li>不要对超出范围的基本数据类型做向下强制转型<ul>
+<li>整型默认的数据类型是int，long需要在结尾增加<code>L</code></li>
+<li>浮点型的默认类型是double，所以定义float的时候要写成<code>float f = 3.5f</code></li>
+<li>long+int会自动转型为long</li>
+</ul>
+</li>
+<li>基本类型（包装类）转String：<code>toString &gt; String.valueOf &gt; +</code>，可以通过源码得到原因：<ul>
+<li>String.valueOf方法底层调用了Integer.toString方法，但是会在调用前做空判断</li>
+<li>Integer.toString，直接调用了</li>
+<li>i + “”底层使用了StringBuilder实现，先用append方法拼接，再用toString方法获取字符串</li>
+</ul>
+</li>
+</ol>
+<h2 id="日志规范"><a href="#日志规范" class="headerlink" title="日志规范"></a>日志规范</h2><ol>
+<li>日志级别：OFF、FATAL、ERROR、WARN、INFO、DEBUG、ALL，常用级别<strong>ERROR、WARN、INFO和DEBUG</strong></li>
+<li>ERROR<ul>
+<li>表示不能自己恢复的错误，需要立即关注和解决</li>
+<li>比如：数据库连接错误、网络错误、未知系统错误</li>
+<li>需要接入监控和报警系统 </li>
+</ul>
+</li>
+<li>WARN<ul>
+<li>表示可预知的错误，业务场景类错误</li>
+<li>比如：参数验证、权限认证 </li>
+</ul>
+</li>
+<li>INFO<ul>
+<li>记录系统的基本运行过程和运行状态</li>
+<li>包括：系统状态变化、业务流程的核心处理、关键动作、业务流状态的变化 </li>
+</ul>
+</li>
+<li>DEBUG<ul>
+<li>调试信息 </li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>软件架构</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>编程技巧</tag>
       </tags>
   </entry>
   <entry>
