@@ -335,117 +335,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hibernate系统化学习之对象状态</title>
-    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><style type="text/css">
-.tg  {border-collapse:collapse;border-color:#C44D58;border-spacing:0;}
-.tg td{background-color:#F9CDAD;border-color:#C44D58;border-style:solid;border-width:1px;color:#002b36;
-  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{background-color:#FE4365;border-color:#C44D58;border-style:solid;border-width:1px;color:#fdf6e3;
-  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-</style>
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;状态&nbsp;&nbsp;&nbsp;</th>
-    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;说明&nbsp;&nbsp;&nbsp;</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;临时状态（Transient）&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;刚创建的对象（new）还没有被Session持久化、缓存中不存在这个对象的数据并且数据库中没有这个对象对应的数据为瞬时状态这个时候是没有OID。&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;持久状态（Persistent）&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;对象经过Session持久化操作，缓存中存在这个对象的数据为持久状态并且数据库中存在这个对象对应的数据为持久状态这个时候有OID。&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;游离状态（Detached）&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;已经被持久化，但不处于session的缓存中。&nbsp;&nbsp;&nbsp;当Session关闭，缓存中不存在这个对象数据而数据库中有这个对象的数据并且有OID为游离状态。&nbsp;&nbsp;&nbsp;</td>
-  </tr>
-</tbody>
-</table>
-
-<a id="more"></a>
-
-<h2 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h2><div align="center">
-
-<img src="/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/1588843982557.png" class title="对象状态转换">
-
-</div>
-
-<p>当对象在持久化状态时，它一直位于 Session 的缓存中，对它的任何操作在事务提交时都将同步到数据库，因此，对一个已经持久的对象调用 save() 或 update() 方法是没有意义的。</p>
-<blockquote>
-<p>save()和persist()将会引发SQL的INSERT，delete()会引发SQLDELETE， 而update()或merge()会引发SQLUPDATE。对持久化（persistent）实例的修改在刷新提交的时候会被检测到， 它也会引起SQLUPDATE。saveOrUpdate()或者replicate()会引发SQLINSERT或者UPDATE</p>
-</blockquote>
-<h3 id="相关方法说明"><a href="#相关方法说明" class="headerlink" title="相关方法说明"></a>相关方法说明</h3><ol>
-<li>get、load、find: 方法的使用上较为类似，他们都是将数据库中对应Id的数据映射为Java对象，此时对象变为持久化状态。</li>
-<li>save: 保存，此时Java对象已经与数据库记录建立的关系。将对象从临时状态的变为持久化状态或者将游离状态的数据变为持久状态。</li>
-<li>saveOrUpdate: 保存或者更新，如果没有与数据库记录所对应的oid，则执行保存，如果有，则执行更新。将对象从临时状态的变为持久化状态或者将游离状态的数据变为持久状态。</li>
-<li>delete: 删除对象，将对象从持久化状态或者游离状态变为临时状态。</li>
-<li>close: 关闭session, 先将session清空，然后再关闭。将对象从持久状态变为临时状态。</li>
-<li>clear: 清空session缓存。将对象从持久状态变为临时状态。</li>
-<li>evict: 清除指定的对象。将对象从持久状态变为临时状态.</li>
-</ol>
-<h2 id="实例说明"><a href="#实例说明" class="headerlink" title="实例说明"></a>实例说明</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://www.cnblogs.com/flqcchblog/p/4619022.html">hibernate的各种保存方式的区别 (save,persist,update,saveOrUpdte,merge,flush,lock)</a></li>
-<li><a href="https://blog.csdn.net/pangqiandou/article/details/53386728">Hibernate一级缓存</a></li>
-<li><a href="https://blog.csdn.net/looyo/article/details/6309136">hibernate session的flushMode的区别</a></li>
-<li><a href="https://blog.csdn.net/lzm1340458776/article/details/32729127">Hibernate的Session_flush与隔离级别</a></li>
-<li><a href="https://blog.csdn.net/chuck_kui/article/details/51531089">Hibernate 中的session 的flush、reflush 和clear 方法 ，及数据库的隔离级别</a></li>
-<li><a href="https://blog.csdn.net/oChangWen/article/details/52582958">Hibernate深入理解—-03操作Session缓存方法（flush、refresh、clear，事务隔离级别）</a></li>
-<li><a href="http://blog.csdn.net/fg2006/article/details/6436517">Hibernate中对象的三种状态及相互转化</a></li>
-<li><a href="https://www.cnblogs.com/xiaoluo501395377/p/3380270.html">深入hibernate的三种状态</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>Hibernate</category>
-        <category>开源框架</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>对象状态</tag>
-        <tag>Hibernate</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hibernate系统化学习之常用方法</title>
-    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<h2 id="session-find-load"><a href="#session-find-load" class="headerlink" title="session.find/load"></a>session.find/load</h2><p>hibernate中session.find/load方法都能通过指定实体类名和id从数据库中读取指定的记录，并且返回与之对映的实体对象。但是它们也有很大的区别 ,find()和load()方法在执行检索时的区别：</p>
-<ol>
-<li><p>find()在类检索级别时总是执行立即检索而且如果检索不到相关的对象的话会返回null,load()方法则会抛出一个ObjectNotException</p>
-</li>
-<li><p>load()方法可返回一个实体代理类类型，而find()方法直接返回的是实体类对象。</p>
-</li>
-<li><p>load()方法可以充分利用内部缓存和二级缓存，而find()方法会忽略二级缓存，若内部缓存没有查询到会到数据库中去查询。</p>
-<a id="more"></a>
-<h2 id="Session-get-load"><a href="#Session-get-load" class="headerlink" title="Session.get/load"></a>Session.get/load</h2></li>
-<li><p>如果未能发现符合条件的记录，get方法返回null，而load方法会抛出一个ObejctNotFoundException。</p>
-</li>
-<li><p>Load方法可返回实体的代理类类型，而get方法永远直接返回实体类。</p>
-</li>
-<li><p>Load方法可以充分利用内部缓存和二级缓存中现有数据，而get方法则仅仅在内部缓存中进行数据查找，如没有发现对应数据，将越过二级缓存，直接调用SQL完成数据读取。</p>
-</li>
-</ol>
-<p>Session 的load(), get() , find() 方法都可实现对业务数据的查询，其中load()会因所要查询的对象类的映射文件（比如Customer.hbm.xml文件）中设置的检索策略，而实现立即检索或延迟检索。get()方法和find()方法却不受这种控制，它们总是会执行立即检索。</p>
-<p>那么象load()这样的方法，当其被设置为使用延迟检索时，它会返回什么样的实例呢？当使用延迟检索时返回为这一对象的代理类实例，代理类实例也有一个标志性的OID, 但没有被实例化，其所有属性为默认初始值或为空。提到检索，load() 和get()方法都是用指定了OID的方式检索并返回一个与数据库中记录相对应的实例对象。如Customer customer = (Customer)session.get(Customer.class, new Long(1)) 将会返回一个Customer实例对象customer. 而 find()可以实现批量的检索，其返回类型为List的对象集合。例如：<br>List customerList = session.find( “from Customer as c”);</p>
-<p>Load(): 另一种读取数据的方法,和get的区别是: 1.异常处理: load有异常处理,get没有,它返回null,2.get从数据库读数据,load可能去读缓冲区。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
-      <categories>
-        <category>Java</category>
-        <category>Hibernate</category>
-        <category>开源框架</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Hibernate</tag>
-        <tag>常用方法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hadoop开发环境安装（Hadoop2.7.4）</title>
     <url>/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/</url>
     <content><![CDATA[<h2 id="虚拟机基本配置"><a href="#虚拟机基本配置" class="headerlink" title="虚拟机基本配置"></a>虚拟机基本配置</h2><h3 id="设置机器名（重启后生效）–使用ubuntu"><a href="#设置机器名（重启后生效）–使用ubuntu" class="headerlink" title="设置机器名（重启后生效）–使用ubuntu"></a>设置机器名（重启后生效）–使用ubuntu</h3><div align="center">
@@ -654,6 +543,117 @@
       </categories>
       <tags>
         <tag>Hadoop</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hibernate系统化学习之对象状态</title>
+    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><style type="text/css">
+.tg  {border-collapse:collapse;border-color:#C44D58;border-spacing:0;}
+.tg td{background-color:#F9CDAD;border-color:#C44D58;border-style:solid;border-width:1px;color:#002b36;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#FE4365;border-color:#C44D58;border-style:solid;border-width:1px;color:#fdf6e3;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;状态&nbsp;&nbsp;&nbsp;</th>
+    <th class="tg-0lax">&nbsp;&nbsp;&nbsp;说明&nbsp;&nbsp;&nbsp;</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;临时状态（Transient）&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;刚创建的对象（new）还没有被Session持久化、缓存中不存在这个对象的数据并且数据库中没有这个对象对应的数据为瞬时状态这个时候是没有OID。&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;持久状态（Persistent）&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;对象经过Session持久化操作，缓存中存在这个对象的数据为持久状态并且数据库中存在这个对象对应的数据为持久状态这个时候有OID。&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;游离状态（Detached）&nbsp;&nbsp;&nbsp;</td>
+    <td class="tg-0lax">&nbsp;&nbsp;&nbsp;已经被持久化，但不处于session的缓存中。&nbsp;&nbsp;&nbsp;当Session关闭，缓存中不存在这个对象数据而数据库中有这个对象的数据并且有OID为游离状态。&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+</tbody>
+</table>
+
+<a id="more"></a>
+
+<h2 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h2><div align="center">
+
+<img src="/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81/1588843982557.png" class title="对象状态转换">
+
+</div>
+
+<p>当对象在持久化状态时，它一直位于 Session 的缓存中，对它的任何操作在事务提交时都将同步到数据库，因此，对一个已经持久的对象调用 save() 或 update() 方法是没有意义的。</p>
+<blockquote>
+<p>save()和persist()将会引发SQL的INSERT，delete()会引发SQLDELETE， 而update()或merge()会引发SQLUPDATE。对持久化（persistent）实例的修改在刷新提交的时候会被检测到， 它也会引起SQLUPDATE。saveOrUpdate()或者replicate()会引发SQLINSERT或者UPDATE</p>
+</blockquote>
+<h3 id="相关方法说明"><a href="#相关方法说明" class="headerlink" title="相关方法说明"></a>相关方法说明</h3><ol>
+<li>get、load、find: 方法的使用上较为类似，他们都是将数据库中对应Id的数据映射为Java对象，此时对象变为持久化状态。</li>
+<li>save: 保存，此时Java对象已经与数据库记录建立的关系。将对象从临时状态的变为持久化状态或者将游离状态的数据变为持久状态。</li>
+<li>saveOrUpdate: 保存或者更新，如果没有与数据库记录所对应的oid，则执行保存，如果有，则执行更新。将对象从临时状态的变为持久化状态或者将游离状态的数据变为持久状态。</li>
+<li>delete: 删除对象，将对象从持久化状态或者游离状态变为临时状态。</li>
+<li>close: 关闭session, 先将session清空，然后再关闭。将对象从持久状态变为临时状态。</li>
+<li>clear: 清空session缓存。将对象从持久状态变为临时状态。</li>
+<li>evict: 清除指定的对象。将对象从持久状态变为临时状态.</li>
+</ol>
+<h2 id="实例说明"><a href="#实例说明" class="headerlink" title="实例说明"></a>实例说明</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.cnblogs.com/flqcchblog/p/4619022.html">hibernate的各种保存方式的区别 (save,persist,update,saveOrUpdte,merge,flush,lock)</a></li>
+<li><a href="https://blog.csdn.net/pangqiandou/article/details/53386728">Hibernate一级缓存</a></li>
+<li><a href="https://blog.csdn.net/looyo/article/details/6309136">hibernate session的flushMode的区别</a></li>
+<li><a href="https://blog.csdn.net/lzm1340458776/article/details/32729127">Hibernate的Session_flush与隔离级别</a></li>
+<li><a href="https://blog.csdn.net/chuck_kui/article/details/51531089">Hibernate 中的session 的flush、reflush 和clear 方法 ，及数据库的隔离级别</a></li>
+<li><a href="https://blog.csdn.net/oChangWen/article/details/52582958">Hibernate深入理解—-03操作Session缓存方法（flush、refresh、clear，事务隔离级别）</a></li>
+<li><a href="http://blog.csdn.net/fg2006/article/details/6436517">Hibernate中对象的三种状态及相互转化</a></li>
+<li><a href="https://www.cnblogs.com/xiaoluo501395377/p/3380270.html">深入hibernate的三种状态</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>Hibernate</category>
+        <category>开源框架</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>对象状态</tag>
+        <tag>Hibernate</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hibernate系统化学习之常用方法</title>
+    <url>/2021/02/04/Hibernate%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<h2 id="session-find-load"><a href="#session-find-load" class="headerlink" title="session.find/load"></a>session.find/load</h2><p>hibernate中session.find/load方法都能通过指定实体类名和id从数据库中读取指定的记录，并且返回与之对映的实体对象。但是它们也有很大的区别 ,find()和load()方法在执行检索时的区别：</p>
+<ol>
+<li><p>find()在类检索级别时总是执行立即检索而且如果检索不到相关的对象的话会返回null,load()方法则会抛出一个ObjectNotException</p>
+</li>
+<li><p>load()方法可返回一个实体代理类类型，而find()方法直接返回的是实体类对象。</p>
+</li>
+<li><p>load()方法可以充分利用内部缓存和二级缓存，而find()方法会忽略二级缓存，若内部缓存没有查询到会到数据库中去查询。</p>
+<a id="more"></a>
+<h2 id="Session-get-load"><a href="#Session-get-load" class="headerlink" title="Session.get/load"></a>Session.get/load</h2></li>
+<li><p>如果未能发现符合条件的记录，get方法返回null，而load方法会抛出一个ObejctNotFoundException。</p>
+</li>
+<li><p>Load方法可返回实体的代理类类型，而get方法永远直接返回实体类。</p>
+</li>
+<li><p>Load方法可以充分利用内部缓存和二级缓存中现有数据，而get方法则仅仅在内部缓存中进行数据查找，如没有发现对应数据，将越过二级缓存，直接调用SQL完成数据读取。</p>
+</li>
+</ol>
+<p>Session 的load(), get() , find() 方法都可实现对业务数据的查询，其中load()会因所要查询的对象类的映射文件（比如Customer.hbm.xml文件）中设置的检索策略，而实现立即检索或延迟检索。get()方法和find()方法却不受这种控制，它们总是会执行立即检索。</p>
+<p>那么象load()这样的方法，当其被设置为使用延迟检索时，它会返回什么样的实例呢？当使用延迟检索时返回为这一对象的代理类实例，代理类实例也有一个标志性的OID, 但没有被实例化，其所有属性为默认初始值或为空。提到检索，load() 和get()方法都是用指定了OID的方式检索并返回一个与数据库中记录相对应的实例对象。如Customer customer = (Customer)session.get(Customer.class, new Long(1)) 将会返回一个Customer实例对象customer. 而 find()可以实现批量的检索，其返回类型为List的对象集合。例如：<br>List customerList = session.find( “from Customer as c”);</p>
+<p>Load(): 另一种读取数据的方法,和get的区别是: 1.异常处理: load有异常处理,get没有,它返回null,2.get从数据库读数据,load可能去读缓冲区。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>Hibernate</category>
+        <category>开源框架</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Hibernate</tag>
+        <tag>常用方法</tag>
       </tags>
   </entry>
   <entry>
@@ -965,6 +965,36 @@
       </tags>
   </entry>
   <entry>
+    <title>Java并发编程之ReentrantReadWriteLock</title>
+    <url>/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BReentrantReadWriteLock/</url>
+    <content><![CDATA[<div align="center">
+
+<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BReentrantReadWriteLock/1591534830113.png" class title="类图">
+
+</div>
+<a id="more"></a>
+
+<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a new &#123;<span class="doctag">@code</span> ReentrantReadWriteLock&#125; with</span></span><br><span class="line"><span class="comment">* the given fairness policy.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> fair &#123;<span class="doctag">@code</span> true&#125; if this lock should use a fair ordering policy</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantReadWriteLock</span><span class="params">(<span class="keyword">boolean</span> fair)</span> </span>&#123;</span><br><span class="line">    sync = fair ? <span class="keyword">new</span> FairSync() : <span class="keyword">new</span> NonfairSync();</span><br><span class="line">    readerLock = <span class="keyword">new</span> ReadLock(<span class="keyword">this</span>);</span><br><span class="line">    writerLock = <span class="keyword">new</span> WriteLock(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过ReentrantReadWriteLock的构造函数可知：</p>
+<ol>
+<li>支持公平/非公平模式</li>
+<li>读写锁使用同一把锁（两个视图），及sync = lock.sync;</li>
+</ol>
+<h3 id="锁状态"><a href="#锁状态" class="headerlink" title="锁状态"></a>锁状态</h3><p>读写锁也是用state变量来表示锁状态的。只是state变量在这里的含义和互斥锁完全不同。在内部类Sync中，对state变量进行了重新定义：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Synchronization implementation for ReentrantReadWriteLock.</span></span><br><span class="line"><span class="comment">* Subclassed into fair and nonfair versions.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Sync</span> <span class="keyword">extends</span> <span class="title">AbstractQueuedSynchronizer</span> </span>&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * Read vs write count extraction constants and functions.</span></span><br><span class="line"><span class="comment">    * Lock state is logically divided into two unsigned shorts:</span></span><br><span class="line"><span class="comment">    * 锁状态被拆分成两种无符号状态，高位16和低16</span></span><br><span class="line"><span class="comment">    * The lower one representing the exclusive (writer) lock hold count,</span></span><br><span class="line"><span class="comment">    * and the upper the shared (reader) hold count.</span></span><br><span class="line"><span class="comment">    * 高位16：记录读锁，可以表示n个线程获取锁或一个线程重入n次</span></span><br><span class="line"><span class="comment">    * 低位16：记录写锁，一个线程重入n次（写锁互斥，所以只能一个线程独占）</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SHARED_SHIFT   = <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SHARED_UNIT    = (<span class="number">1</span> &lt;&lt; SHARED_SHIFT);</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_COUNT      = (<span class="number">1</span> &lt;&lt; SHARED_SHIFT) - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> EXCLUSIVE_MASK = (<span class="number">1</span> &lt;&lt; SHARED_SHIFT) - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Returns the number of shared holds represented in count  */</span></span><br><span class="line">    <span class="comment">// 读锁重入次数</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">sharedCount</span><span class="params">(<span class="keyword">int</span> c)</span>    </span>&#123; <span class="keyword">return</span> c &gt;&gt;&gt; SHARED_SHIFT; &#125;</span><br><span class="line">    <span class="comment">/** Returns the number of exclusive holds represented in count  */</span></span><br><span class="line">    <span class="comment">// 写锁重入次数</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">exclusiveCount</span><span class="params">(<span class="keyword">int</span> c)</span> </span>&#123; <span class="keyword">return</span> c &amp; EXCLUSIVE_MASK; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h3>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+        <category>源码分析</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>锁</tag>
+        <tag>ReentrantReadWriteLock</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java并发编程之ScheduledThreadPoolExecutor</title>
     <url>/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BScheduledThreadPoolExecutor/</url>
     <content><![CDATA[<h2 id="任务执行"><a href="#任务执行" class="headerlink" title="任务执行"></a>任务执行</h2><p>当调用ScheduledThreadPoolExecutor的scheduleAtFixedRate()方法或者scheduleWith-FixedDelay()方法时，会向ScheduledThreadPoolExecutor的DelayQueue添加一个实现了RunnableScheduledFuture接口的ScheduledFutureTask。</p>
@@ -1013,36 +1043,6 @@
         <tag>Java</tag>
         <tag>ScheduledThreadPoolExecutor</tag>
         <tag>线程池</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java并发编程之ReentrantReadWriteLock</title>
-    <url>/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BReentrantReadWriteLock/</url>
-    <content><![CDATA[<div align="center">
-
-<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BReentrantReadWriteLock/1591534830113.png" class title="类图">
-
-</div>
-<a id="more"></a>
-
-<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Creates a new &#123;<span class="doctag">@code</span> ReentrantReadWriteLock&#125; with</span></span><br><span class="line"><span class="comment">* the given fairness policy.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> fair &#123;<span class="doctag">@code</span> true&#125; if this lock should use a fair ordering policy</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantReadWriteLock</span><span class="params">(<span class="keyword">boolean</span> fair)</span> </span>&#123;</span><br><span class="line">    sync = fair ? <span class="keyword">new</span> FairSync() : <span class="keyword">new</span> NonfairSync();</span><br><span class="line">    readerLock = <span class="keyword">new</span> ReadLock(<span class="keyword">this</span>);</span><br><span class="line">    writerLock = <span class="keyword">new</span> WriteLock(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过ReentrantReadWriteLock的构造函数可知：</p>
-<ol>
-<li>支持公平/非公平模式</li>
-<li>读写锁使用同一把锁（两个视图），及sync = lock.sync;</li>
-</ol>
-<h3 id="锁状态"><a href="#锁状态" class="headerlink" title="锁状态"></a>锁状态</h3><p>读写锁也是用state变量来表示锁状态的。只是state变量在这里的含义和互斥锁完全不同。在内部类Sync中，对state变量进行了重新定义：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Synchronization implementation for ReentrantReadWriteLock.</span></span><br><span class="line"><span class="comment">* Subclassed into fair and nonfair versions.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Sync</span> <span class="keyword">extends</span> <span class="title">AbstractQueuedSynchronizer</span> </span>&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * Read vs write count extraction constants and functions.</span></span><br><span class="line"><span class="comment">    * Lock state is logically divided into two unsigned shorts:</span></span><br><span class="line"><span class="comment">    * 锁状态被拆分成两种无符号状态，高位16和低16</span></span><br><span class="line"><span class="comment">    * The lower one representing the exclusive (writer) lock hold count,</span></span><br><span class="line"><span class="comment">    * and the upper the shared (reader) hold count.</span></span><br><span class="line"><span class="comment">    * 高位16：记录读锁，可以表示n个线程获取锁或一个线程重入n次</span></span><br><span class="line"><span class="comment">    * 低位16：记录写锁，一个线程重入n次（写锁互斥，所以只能一个线程独占）</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SHARED_SHIFT   = <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SHARED_UNIT    = (<span class="number">1</span> &lt;&lt; SHARED_SHIFT);</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_COUNT      = (<span class="number">1</span> &lt;&lt; SHARED_SHIFT) - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> EXCLUSIVE_MASK = (<span class="number">1</span> &lt;&lt; SHARED_SHIFT) - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Returns the number of shared holds represented in count  */</span></span><br><span class="line">    <span class="comment">// 读锁重入次数</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">sharedCount</span><span class="params">(<span class="keyword">int</span> c)</span>    </span>&#123; <span class="keyword">return</span> c &gt;&gt;&gt; SHARED_SHIFT; &#125;</span><br><span class="line">    <span class="comment">/** Returns the number of exclusive holds represented in count  */</span></span><br><span class="line">    <span class="comment">// 写锁重入次数</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">exclusiveCount</span><span class="params">(<span class="keyword">int</span> c)</span> </span>&#123; <span class="keyword">return</span> c &amp; EXCLUSIVE_MASK; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h3>]]></content>
-      <categories>
-        <category>Java</category>
-        <category>并发编程</category>
-        <category>源码分析</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>锁</tag>
-        <tag>ReentrantReadWriteLock</tag>
       </tags>
   </entry>
   <entry>
@@ -2092,6 +2092,87 @@
       </tags>
   </entry>
   <entry>
+    <title>Java系统化学习之泛型</title>
+    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%9B%E5%9E%8B/</url>
+    <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>泛型在JDK1.5引入，其本质是一种<strong>参数化类型（Parameterized Type），在使用时传入实际类型即可</strong>，即可以将操作的数据类型指定为方法签名中的一种特殊参数,可以作用在类、接口、方法中。泛型是编译期的一种概念，主要是用于编译期类型安全检查（编译之后泛型会被擦除）。</p>
+<h3 id="常用泛型类型常量"><a href="#常用泛型类型常量" class="headerlink" title="常用泛型类型常量"></a>常用泛型类型常量</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">E：元素（Element），多用于java集合框架</span><br><span class="line">K：关键字（Key）</span><br><span class="line">N：数字（Number）</span><br><span class="line">T：类型（Type）</span><br><span class="line">V：值（Value）</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="泛型反例"><a href="#泛型反例" class="headerlink" title="泛型反例"></a>泛型反例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		List list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">		list.add(<span class="string">&quot;abc&quot;</span>);</span><br><span class="line">		list.add(<span class="number">100</span>);</span><br><span class="line">		list.add(<span class="number">10.09</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; list.size(); i++) &#123;</span><br><span class="line">			System.out.println((String)list.get(i));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译期通过，并且运行结果如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">abc</span><br><span class="line">Exception in thread <span class="string">&quot;main&quot;</span> java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String</span><br><span class="line">	at com.sunld.Test1.main(Test1.java:<span class="number">14</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>如何在编译期完成校验？</strong></p>
+<h2 id="泛型接口"><a href="#泛型接口" class="headerlink" title="泛型接口"></a>泛型接口</h2><p>与泛型类的定义类似，参考代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//定义</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Callable</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">V <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现方式1</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyGeneric1</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现方式2</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyGeneric2</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt;</span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="泛型类"><a href="#泛型类" class="headerlink" title="泛型类"></a>泛型类</h2><p>泛型类的声明与非泛型类的类似，在类的名称后面增加类型参数。语法如下：  </p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">className</span>&lt;泛型标识 <span class="keyword">extends</span>|<span class="title">super</span> 上限|下限, ...&gt;</span>&#123;</span><br><span class="line">  <span class="keyword">private</span> 泛型标识 <span class="comment">/*（成员变量类型）*/</span> genericType;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>泛型类的类型参数声明部分也包含一个或多个类型参数，参数间用逗号隔开。如果上限或下限有多个限制，可以使用<code>&amp;</code>处理。一个泛型参数，也被称为一个类型变量，是用于指定一个泛型类型名称的标识符。简单示例：  </p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyGeneric</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> T t;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">getT</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> t;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setT</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.t = t;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="泛型方法"><a href="#泛型方法" class="headerlink" title="泛型方法"></a>泛型方法</h2><p>一种可以接受不同参数类型的方法，并且可以根据入参进行参数返回，尤其是反射处理数据转换比较常用。</p>
+<blockquote>
+<p>注意：方法上是否定义泛型和类上是否定义没有必然的联系</p>
+</blockquote>
+<p>语法参考如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 1. 第一个T表示泛型声明，只有声明之后才能使用</span></span><br><span class="line"><span class="comment">* 2. 第二个T表示返回值</span></span><br><span class="line"><span class="comment">* 3.第三个T限制入参的返回需要与第一个T一致</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">executeGenericMethod</span><span class="params">(Class&lt;T&gt; cls)</span></span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> cls.newInstance();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InstantiationException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="类型擦除"><a href="#类型擦除" class="headerlink" title="类型擦除"></a>类型擦除</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>泛型是编译期的概念，在编译之后的字节码中不包含泛型的信息（为了解决该问题，java在字节码中引入Signature、LocalVariableTypeTable）。使用泛型的时候加上的类型参数，会被编译器在编译的时候去掉。这个过程就称为<strong>类型擦除</strong>。比如：<code>List&lt;Object&gt;</code>和 <code>List&lt;String&gt;</code>等类型，在编译之后都会变成 <code>List</code>。JVM 看到的只是 List，而由泛型附加的类型信息对JVM来说是不可见的。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestGenericType2</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> T t;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> List&lt;String&gt; list;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> temp1 = <span class="number">10</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> temp2 =<span class="number">20</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> temp3=<span class="number">30</span>;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line"><span class="comment">//	public T getT() &#123;</span></span><br><span class="line"><span class="comment">//		return t;</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	public void setT(T t) &#123;</span></span><br><span class="line"><span class="comment">//		this.t = t;</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	public List&lt;String&gt; getList() &#123;</span></span><br><span class="line"><span class="comment">//		return list;</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	public void setList(List&lt;String&gt; list) &#123;</span></span><br><span class="line"><span class="comment">//		this.list = list;</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String,String&gt;();</span><br><span class="line">		map.put(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;valueaa&quot;</span>);</span><br><span class="line">		String value = map.get(<span class="string">&quot;a&quot;</span>);</span><br><span class="line"><span class="comment">//		TestGenericType2&lt;Integer&gt;[] array = new TestGenericType2&lt;Integer&gt;[10];</span></span><br><span class="line"><span class="comment">//		TestGenericType2&lt;Integer&gt;[] array1 = new TestGenericType2[10];</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译后的结果：  </p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">警告: 二进制文件Test/bin/com.sunld.TestGenericType2包含com.sunld.TestGenericType2</span><br><span class="line">Classfile /D:/Workspaces/java/TestJVM/Test/bin/com/sunld/TestGenericType2.class</span><br><span class="line">  Last modified <span class="number">2020</span>-<span class="number">5</span>-<span class="number">14</span>; size <span class="number">1287</span> bytes</span><br><span class="line">  MD5 checksum 7ad53533c7723c97d0ec9bb863b415ca</span><br><span class="line">  Compiled from <span class="string">&quot;TestGenericType2.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">sunld</span>.<span class="title">TestGenericType2</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Object</span>&gt; <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Object</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Class              #2             // com/sunld/TestGenericType2</span><br><span class="line">   #2 = Utf8               com/sunld/TestGenericType2</span><br><span class="line">   #3 = Class              #4             // java/lang/Object</span><br><span class="line">   #4 = Utf8               java/lang/Object</span><br><span class="line">   #5 = Utf8               t</span><br><span class="line">   #6 = Utf8               Ljava/lang/Object;</span><br><span class="line">   #7 = Utf8               Signature</span><br><span class="line">   #8 = Utf8               TT;</span><br><span class="line">   #9 = Utf8               list</span><br><span class="line">  #10 = Utf8               Ljava/util/List;</span><br><span class="line">  #11 = Utf8               Ljava/util/List&lt;Ljava/lang/String;&gt;;</span><br><span class="line">  #12 = Utf8               temp1</span><br><span class="line">  #13 = Utf8               I</span><br><span class="line">  #14 = Utf8               temp2</span><br><span class="line">  #15 = Utf8               ConstantValue</span><br><span class="line">  #16 = Integer            20</span><br><span class="line">  #17 = Utf8               temp3</span><br><span class="line">  #18 = Integer            30</span><br><span class="line">  #19 = Utf8               &lt;clinit&gt;</span><br><span class="line">  #20 = Utf8               ()V</span><br><span class="line">  #21 = Utf8               Code</span><br><span class="line">  #22 = Fieldref           #1.#23         // com/sunld/TestGenericType2.temp1:I</span><br><span class="line">  #23 = NameAndType        #12:#13        // temp1:I</span><br><span class="line">  #24 = Utf8               LineNumberTable</span><br><span class="line">  #25 = Utf8               LocalVariableTable</span><br><span class="line">  #26 = Utf8               &lt;init&gt;</span><br><span class="line">  #27 = Methodref          #3.#28         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #28 = NameAndType        #26:#20        // &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #29 = Fieldref           #1.#30         // com/sunld/TestGenericType2.temp2:I</span><br><span class="line">  #30 = NameAndType        #14:#13        // temp2:I</span><br><span class="line">  #31 = Utf8               this</span><br><span class="line">  #32 = Utf8               Lcom/sunld/TestGenericType2;</span><br><span class="line">  #33 = Utf8               LocalVariableTypeTable</span><br><span class="line">  #34 = Utf8               Lcom/sunld/TestGenericType2&lt;TT;&gt;;</span><br><span class="line">  #35 = Utf8               main</span><br><span class="line">  #36 = Utf8               ([Ljava/lang/String;)V</span><br><span class="line">  #37 = Class              #38            // java/util/HashMap</span><br><span class="line">  #38 = Utf8               java/util/HashMap</span><br><span class="line">  #39 = Methodref          #37.#28        // java/util/HashMap.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #40 = String             #41            // a</span><br><span class="line">  #41 = Utf8               a</span><br><span class="line">  #42 = String             #43            // valueaa</span><br><span class="line">  #43 = Utf8               valueaa</span><br><span class="line">  #44 = InterfaceMethodref #45.#47        // java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #45 = Class              #46            // java/util/Map</span><br><span class="line">  #46 = Utf8               java/util/Map</span><br><span class="line">  #47 = NameAndType        #48:#49        // put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #48 = Utf8               put</span><br><span class="line">  #49 = Utf8               (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #50 = InterfaceMethodref #45.#51        // java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #51 = NameAndType        #52:#53        // get:(Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #52 = Utf8               get</span><br><span class="line">  #53 = Utf8               (Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #54 = Class              #55            // java/lang/String</span><br><span class="line">  #55 = Utf8               java/lang/String</span><br><span class="line">  #56 = Utf8               args</span><br><span class="line">  #57 = Utf8               [Ljava/lang/String;</span><br><span class="line">  #58 = Utf8               map</span><br><span class="line">  #59 = Utf8               Ljava/util/Map;</span><br><span class="line">  #60 = Utf8               value</span><br><span class="line">  #61 = Utf8               Ljava/lang/String;</span><br><span class="line">  #62 = Utf8               Ljava/util/Map&lt;Ljava/lang/String;Ljava/lang/String;&gt;;</span><br><span class="line">  #63 = Utf8               SourceFile</span><br><span class="line">  #64 = Utf8               TestGenericType2.java</span><br><span class="line">  #65 = Utf8               &lt;T:Ljava/lang/Object;&gt;Ljava/lang/Object;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">static</span> &#123;&#125;;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">0</span>, args_size=<span class="number">0</span></span><br><span class="line">         <span class="number">0</span>: bipush        <span class="number">10</span></span><br><span class="line">         2: putstatic     #22                 // Field temp1:I</span><br><span class="line">         <span class="number">5</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">13</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">15</span>: <span class="number">5</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> com.sunld.TestGenericType2();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: invokespecial #27                 // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="number">4</span>: aload_0</span><br><span class="line">         <span class="number">5</span>: bipush        <span class="number">20</span></span><br><span class="line">         7: putfield      #29                 // Field temp2:I</span><br><span class="line">        <span class="number">10</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">7</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">14</span>: <span class="number">4</span></span><br><span class="line">        line <span class="number">7</span>: <span class="number">10</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestGenericType2;</span><br><span class="line">      LocalVariableTypeTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestGenericType2&lt;TT;&gt;;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    descriptor: ([Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">3</span>, locals=<span class="number">3</span>, args_size=<span class="number">1</span></span><br><span class="line">         0: new           #37                 // class java/util/HashMap</span><br><span class="line">         <span class="number">3</span>: dup</span><br><span class="line">         4: invokespecial #39                 // Method java/util/HashMap.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="number">7</span>: astore_1</span><br><span class="line">         <span class="number">8</span>: aload_1</span><br><span class="line">         9: ldc           #40                 // String a</span><br><span class="line">        11: ldc           #42                 // String valueaa</span><br><span class="line">        13: invokeinterface #44,  3           // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">        <span class="number">18</span>: pop</span><br><span class="line">        <span class="number">19</span>: aload_1</span><br><span class="line">        20: ldc           #40                 // String a</span><br><span class="line">        22: invokeinterface #50,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">        27: checkcast     #54                 // class java/lang/String</span><br><span class="line">        <span class="number">30</span>: astore_2</span><br><span class="line">        <span class="number">31</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">45</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">46</span>: <span class="number">8</span></span><br><span class="line">        line <span class="number">47</span>: <span class="number">19</span></span><br><span class="line">        line <span class="number">50</span>: <span class="number">31</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">32</span>     <span class="number">0</span>  args   [Ljava/lang/String;</span><br><span class="line">            <span class="number">8</span>      <span class="number">24</span>     <span class="number">1</span>   map   Ljava/util/Map;</span><br><span class="line">           <span class="number">31</span>       <span class="number">1</span>     <span class="number">2</span> value   Ljava/lang/String;</span><br><span class="line">      LocalVariableTypeTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">8</span>      <span class="number">24</span>     <span class="number">1</span>   map   Ljava/util/Map&lt;Ljava/lang/String;Ljava/lang/String;&gt;;</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">&quot;TestGenericType2.java&quot;</span></span><br><span class="line">Signature: #65                          // &lt;T:Ljava/lang/Object;&gt;Ljava/lang/Object;</span><br></pre></td></tr></table></figure>
+<p>从Signature属性的得出结论，擦除法所谓的擦除，仅仅是对方法的Code属性中的字节码进行擦除，实际上元数据中还是保留了泛型信息，这也是我们在编码时能通过反射手段取得参数化类型的根本依据。</p>
+<h3 id="擦除过程"><a href="#擦除过程" class="headerlink" title="擦除过程"></a>擦除过程</h3><p>首先是找到用来替换类型参数的具体类。这个具体类一般是 Object。如果指定了类型参数的上界的话，则使用这个上界。把代码中的类型参数都替换成具体的类。</p>
+<h3 id="泛型擦除的问题"><a href="#泛型擦除的问题" class="headerlink" title="泛型擦除的问题"></a>泛型擦除的问题</h3><ol>
+<li>用泛型不可以区分方法签名</li>
+<li>泛型类的静态变量是共享</li>
+</ol>
+<h2 id="泛型边界"><a href="#泛型边界" class="headerlink" title="泛型边界"></a>泛型边界</h2><ol>
+<li><? extends T>表示该通配符所代表的类型是 T 类型的子类。</li>
+<li><? super T>表示该通配符所代表的类型是 T 类型的父类。
+
+</li>
+</ol>
+<h3 id="类型通配符"><a href="#类型通配符" class="headerlink" title="类型通配符?"></a>类型通配符?</h3><p>在java中如果使用泛型，例如<code>List&lt;Interger&gt;和List&lt;Number&gt;</code>其实是两种类型(<strong>类型之间转换会出现转换异常</strong>)，之间没有任务关系，如果想要接收不同类型的参数，则需要引入通配符的概念，<code>List&lt;?&gt;</code>（？表示所有泛型中的父类）<strong>泛型内是不存在父子关系，但是利用通配符可以产生类似的效果</strong>。</p>
+<h4 id="具体说明"><a href="#具体说明" class="headerlink" title="具体说明"></a>具体说明</h4><p>假设给定的泛型类型为G,两个具体的泛型参数X、Y，当中Y是X的子类</p>
+<ol>
+<li>G&lt;? extends Y&gt; 是 G&lt;? extends X&gt;的子类型</li>
+<li>G<X> 是 G&lt;? extends X&gt;的子类型</X></li>
+<li>G&lt;?&gt; 与 G&lt;? extends Object&gt;等同</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>适用于多种数据类型执行相同的代码（代码复用）</li>
+<li>泛型中的类型在使用时指定，不需要强制类型转换（类型安全，编译器会检查类型）</li>
+</ol>
+<h3 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h3><ol>
+<li>不能实例化泛型类：<code>T t = new T();</code></li>
+<li>静态变量不能引用泛型变量：<code>private static T t1;</code>；非静态变量可以引用：<code>private T t1;</code></li>
+<li>未声明泛型的方法不能引用泛型变量：<code>public static T getT1()&#123;return t1;&#125;</code>；声明之后可以：<code>public static &lt;T&gt; T executeGenericMethod(Class&lt;T&gt; cls)&#123;return null;&#125;</code></li>
+<li>基本类型无法作为泛型类型：<code>List&lt;int&gt; list = new ArrayList&lt;&gt;();</code></li>
+<li>无法使用instanceof关键字或==判断泛型类的类型：<code>list instanceof List&lt;String&gt;</code> 或者<code>list == List&lt;String&gt;</code></li>
+<li>泛型类的原生类型与所传递的泛型无关，无论传递什么类型，原生类是一样的，即类型擦除之后的class信息相同</li>
+<li>泛型数组可以声明但无法实例化：<code>Test1&lt;Integer&gt;[] array = new Test1&lt;Integer&gt;[10];</code>，去掉泛型即可<code>Test1&lt;Integer&gt;[] array = new Test1[10];</code></li>
+<li>泛型类不能继承Exception或者Throwable</li>
+<li>不能捕获泛型类型限定的异常但可以将泛型限定的异常抛出</li>
+</ol>
+<h3 id="泛型继承规则"><a href="#泛型继承规则" class="headerlink" title="泛型继承规则"></a>泛型继承规则</h3><ol>
+<li>对于泛型参数是继承关系的泛型类之间是没有继承关系的：<code>List&lt;Integer&gt;与List&lt;Number&gt;</code></li>
+<li>泛型类可以继承其它泛型类，例如: <code>public class ArrayList&lt;E&gt; extends AbstractList&lt;E&gt;</code></li>
+<li>泛型类的继承关系在使用中同样会受到泛型类型的影响</li>
+</ol>
+<h2 id="泛型与反射"><a href="#泛型与反射" class="headerlink" title="泛型与反射"></a>泛型与反射</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.ParameterizedType;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Type;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestGenericType1</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> T t;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">getT</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> t;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setT</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.t = t;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TestGenericType1&lt;Integer&gt; a = <span class="keyword">new</span> TestGenericType1&lt;Integer&gt;() &#123;&#125;;</span><br><span class="line">		Type superclass = a.getClass().getGenericSuperclass();</span><br><span class="line">		System.out.println(superclass);</span><br><span class="line">	    <span class="comment">//getActualTypeArguments 返回确切的泛型参数</span></span><br><span class="line">		Type type = ((ParameterizedType)superclass).getActualTypeArguments()[<span class="number">0</span>]; </span><br><span class="line">	    System.out.println(type);<span class="comment">//class java.lang.Integer</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.cnblogs.com/ldh-better/p/7127308.html#_label0">Java 泛型在实际开发中的应用</a></li>
+<li><a href="https://www.jianshu.com/p/986f732ed2f1">Java泛型详解</a></li>
+<li><a href="https://www.cnblogs.com/lwbqqyumidi/p/3837629.html">Java总结篇系列：Java泛型</a></li>
+<li><a href="https://www.cnblogs.com/coprince/p/8603492.html">java 泛型详解-绝对是对泛型方法讲解最详细的，没有之一</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>泛型</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java系统化学习之注解</title>
     <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%A8%E8%A7%A3/</url>
     <content><![CDATA[<p>在jdk1.5中引入了注解的概念，注解是Java提供的一种对类信息（包括：类、属性与方法）进行扩展的一种行为。Annatation(注解)是一个接口，程序可以通过反射来获取指定程序中元素的 Annotation 对象，然后通过该 Annotation 对象来获取注解中的元数据信息。通过使用注解，可以将元数据保存在 Java 源代码中。并拥有如下优势：</p>
@@ -2653,318 +2734,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux命令之iostat</title>
-    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
-<li>-c： 显示CPU使用情况</li>
-<li>-d： 显示磁盘使用情况</li>
-<li>-N： 显示磁盘阵列(LVM) 信息</li>
-<li>-n： 显示NFS 使用情况</li>
-<li>-k： 以 KB 为单位显示</li>
-<li>-m： 以 M 为单位显示</li>
-<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
-<li>-V： 显示版本信息</li>
-<li>-x： 显示详细信息</li>
-<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
-
-</li>
-</ul>
-<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>第一行</td>
-<td>最上面指示系统版本、主机名和当前日期</td>
-</tr>
-<tr>
-<td>avg-cpu</td>
-<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
-</tr>
-<tr>
-<td>Device</td>
-<td>各磁盘设备的IO统计信息</td>
-</tr>
-</tbody></table>
-<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>%user</td>
-<td>CPU在用户态执行进程的时间百分比。</td>
-</tr>
-<tr>
-<td>%nice</td>
-<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%system</td>
-<td>CPU处在内核态执行进程的时间百分比</td>
-</tr>
-<tr>
-<td>%iowait</td>
-<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%steal</td>
-<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
-</tr>
-<tr>
-<td>%idle</td>
-<td>CPU空闲时间百分比</td>
-</tr>
-</tbody></table>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
-<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Device</td>
-<td>设备名称</td>
-</tr>
-<tr>
-<td>tps</td>
-<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
-</tr>
-<tr>
-<td>Blk_read/s</td>
-<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
-</tr>
-<tr>
-<td>Blk_wrtn/s</td>
-<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
-</tr>
-<tr>
-<td>Blk_read</td>
-<td>取样时间间隔内读扇区总数量</td>
-</tr>
-<tr>
-<td>Blk_wrtn</td>
-<td>取样时间间隔内写扇区总数量</td>
-</tr>
-</tbody></table>
-<ul>
-<li>iostat 1 5：间隔1秒，总共显示5次</li>
-<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
-<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
-<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
-<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
-<li>iostat -m：以M为单位显示所有信息</li>
-<li>iostat -d sda：显示指定硬盘信息</li>
-<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
-<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
-<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
-<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
-</ul>
-<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>rrqm/s</td>
-<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
-</tr>
-<tr>
-<td>wrqm/s</td>
-<td>每秒对该设备的写请求被合并次数</td>
-</tr>
-<tr>
-<td>r/s</td>
-<td>每秒完成的读 I/O 设备次数</td>
-</tr>
-<tr>
-<td>w/s</td>
-<td>每秒完成的写 I/O 设备次数</td>
-</tr>
-<tr>
-<td>rkB/s</td>
-<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
-</tr>
-<tr>
-<td>wkB/s</td>
-<td>每秒写K字节数。是 wsect/s 的一半</td>
-</tr>
-<tr>
-<td>avgrq-sz</td>
-<td>平均每次IO操作的数据量(扇区数为单位)</td>
-</tr>
-<tr>
-<td>avgqu-sz</td>
-<td>平均等待处理的IO请求队列长度</td>
-</tr>
-<tr>
-<td>rsec/s</td>
-<td>每秒读扇区数。即 rsect/s</td>
-</tr>
-<tr>
-<td>wsec/s</td>
-<td>每秒写扇区数。即 wsect/s</td>
-</tr>
-<tr>
-<td>r_await</td>
-<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>w_await</td>
-<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>await</td>
-<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
-</tr>
-<tr>
-<td>svctm</td>
-<td>平均每次IO请求的处理时间(毫秒为单位)</td>
-</tr>
-<tr>
-<td>%util</td>
-<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
-</blockquote>
-<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>iostat</tag>
-        <tag>磁盘分析</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java系统化学习之泛型</title>
-    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%B3%9B%E5%9E%8B/</url>
-    <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>泛型在JDK1.5引入，其本质是一种<strong>参数化类型（Parameterized Type），在使用时传入实际类型即可</strong>，即可以将操作的数据类型指定为方法签名中的一种特殊参数,可以作用在类、接口、方法中。泛型是编译期的一种概念，主要是用于编译期类型安全检查（编译之后泛型会被擦除）。</p>
-<h3 id="常用泛型类型常量"><a href="#常用泛型类型常量" class="headerlink" title="常用泛型类型常量"></a>常用泛型类型常量</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">E：元素（Element），多用于java集合框架</span><br><span class="line">K：关键字（Key）</span><br><span class="line">N：数字（Number）</span><br><span class="line">T：类型（Type）</span><br><span class="line">V：值（Value）</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<h3 id="泛型反例"><a href="#泛型反例" class="headerlink" title="泛型反例"></a>泛型反例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		List list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">		list.add(<span class="string">&quot;abc&quot;</span>);</span><br><span class="line">		list.add(<span class="number">100</span>);</span><br><span class="line">		list.add(<span class="number">10.09</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; list.size(); i++) &#123;</span><br><span class="line">			System.out.println((String)list.get(i));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译期通过，并且运行结果如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">abc</span><br><span class="line">Exception in thread <span class="string">&quot;main&quot;</span> java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String</span><br><span class="line">	at com.sunld.Test1.main(Test1.java:<span class="number">14</span>)</span><br></pre></td></tr></table></figure>
-<p><strong>如何在编译期完成校验？</strong></p>
-<h2 id="泛型接口"><a href="#泛型接口" class="headerlink" title="泛型接口"></a>泛型接口</h2><p>与泛型类的定义类似，参考代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//定义</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Callable</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">V <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现方式1</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyGeneric1</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现方式2</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyGeneric2</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt;</span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="泛型类"><a href="#泛型类" class="headerlink" title="泛型类"></a>泛型类</h2><p>泛型类的声明与非泛型类的类似，在类的名称后面增加类型参数。语法如下：  </p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">className</span>&lt;泛型标识 <span class="keyword">extends</span>|<span class="title">super</span> 上限|下限, ...&gt;</span>&#123;</span><br><span class="line">  <span class="keyword">private</span> 泛型标识 <span class="comment">/*（成员变量类型）*/</span> genericType;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>泛型类的类型参数声明部分也包含一个或多个类型参数，参数间用逗号隔开。如果上限或下限有多个限制，可以使用<code>&amp;</code>处理。一个泛型参数，也被称为一个类型变量，是用于指定一个泛型类型名称的标识符。简单示例：  </p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyGeneric</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> T t;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">getT</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> t;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setT</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.t = t;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="泛型方法"><a href="#泛型方法" class="headerlink" title="泛型方法"></a>泛型方法</h2><p>一种可以接受不同参数类型的方法，并且可以根据入参进行参数返回，尤其是反射处理数据转换比较常用。</p>
-<blockquote>
-<p>注意：方法上是否定义泛型和类上是否定义没有必然的联系</p>
-</blockquote>
-<p>语法参考如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 1. 第一个T表示泛型声明，只有声明之后才能使用</span></span><br><span class="line"><span class="comment">* 2. 第二个T表示返回值</span></span><br><span class="line"><span class="comment">* 3.第三个T限制入参的返回需要与第一个T一致</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">executeGenericMethod</span><span class="params">(Class&lt;T&gt; cls)</span></span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> cls.newInstance();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InstantiationException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="类型擦除"><a href="#类型擦除" class="headerlink" title="类型擦除"></a>类型擦除</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>泛型是编译期的概念，在编译之后的字节码中不包含泛型的信息（为了解决该问题，java在字节码中引入Signature、LocalVariableTypeTable）。使用泛型的时候加上的类型参数，会被编译器在编译的时候去掉。这个过程就称为<strong>类型擦除</strong>。比如：<code>List&lt;Object&gt;</code>和 <code>List&lt;String&gt;</code>等类型，在编译之后都会变成 <code>List</code>。JVM 看到的只是 List，而由泛型附加的类型信息对JVM来说是不可见的。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestGenericType2</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> T t;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> List&lt;String&gt; list;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> temp1 = <span class="number">10</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> temp2 =<span class="number">20</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> temp3=<span class="number">30</span>;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line"><span class="comment">//	public T getT() &#123;</span></span><br><span class="line"><span class="comment">//		return t;</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	public void setT(T t) &#123;</span></span><br><span class="line"><span class="comment">//		this.t = t;</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	public List&lt;String&gt; getList() &#123;</span></span><br><span class="line"><span class="comment">//		return list;</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	public void setList(List&lt;String&gt; list) &#123;</span></span><br><span class="line"><span class="comment">//		this.list = list;</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String,String&gt;();</span><br><span class="line">		map.put(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;valueaa&quot;</span>);</span><br><span class="line">		String value = map.get(<span class="string">&quot;a&quot;</span>);</span><br><span class="line"><span class="comment">//		TestGenericType2&lt;Integer&gt;[] array = new TestGenericType2&lt;Integer&gt;[10];</span></span><br><span class="line"><span class="comment">//		TestGenericType2&lt;Integer&gt;[] array1 = new TestGenericType2[10];</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译后的结果：  </p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">警告: 二进制文件Test/bin/com.sunld.TestGenericType2包含com.sunld.TestGenericType2</span><br><span class="line">Classfile /D:/Workspaces/java/TestJVM/Test/bin/com/sunld/TestGenericType2.class</span><br><span class="line">  Last modified <span class="number">2020</span>-<span class="number">5</span>-<span class="number">14</span>; size <span class="number">1287</span> bytes</span><br><span class="line">  MD5 checksum 7ad53533c7723c97d0ec9bb863b415ca</span><br><span class="line">  Compiled from <span class="string">&quot;TestGenericType2.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">sunld</span>.<span class="title">TestGenericType2</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Object</span>&gt; <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Object</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Class              #2             // com/sunld/TestGenericType2</span><br><span class="line">   #2 = Utf8               com/sunld/TestGenericType2</span><br><span class="line">   #3 = Class              #4             // java/lang/Object</span><br><span class="line">   #4 = Utf8               java/lang/Object</span><br><span class="line">   #5 = Utf8               t</span><br><span class="line">   #6 = Utf8               Ljava/lang/Object;</span><br><span class="line">   #7 = Utf8               Signature</span><br><span class="line">   #8 = Utf8               TT;</span><br><span class="line">   #9 = Utf8               list</span><br><span class="line">  #10 = Utf8               Ljava/util/List;</span><br><span class="line">  #11 = Utf8               Ljava/util/List&lt;Ljava/lang/String;&gt;;</span><br><span class="line">  #12 = Utf8               temp1</span><br><span class="line">  #13 = Utf8               I</span><br><span class="line">  #14 = Utf8               temp2</span><br><span class="line">  #15 = Utf8               ConstantValue</span><br><span class="line">  #16 = Integer            20</span><br><span class="line">  #17 = Utf8               temp3</span><br><span class="line">  #18 = Integer            30</span><br><span class="line">  #19 = Utf8               &lt;clinit&gt;</span><br><span class="line">  #20 = Utf8               ()V</span><br><span class="line">  #21 = Utf8               Code</span><br><span class="line">  #22 = Fieldref           #1.#23         // com/sunld/TestGenericType2.temp1:I</span><br><span class="line">  #23 = NameAndType        #12:#13        // temp1:I</span><br><span class="line">  #24 = Utf8               LineNumberTable</span><br><span class="line">  #25 = Utf8               LocalVariableTable</span><br><span class="line">  #26 = Utf8               &lt;init&gt;</span><br><span class="line">  #27 = Methodref          #3.#28         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #28 = NameAndType        #26:#20        // &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #29 = Fieldref           #1.#30         // com/sunld/TestGenericType2.temp2:I</span><br><span class="line">  #30 = NameAndType        #14:#13        // temp2:I</span><br><span class="line">  #31 = Utf8               this</span><br><span class="line">  #32 = Utf8               Lcom/sunld/TestGenericType2;</span><br><span class="line">  #33 = Utf8               LocalVariableTypeTable</span><br><span class="line">  #34 = Utf8               Lcom/sunld/TestGenericType2&lt;TT;&gt;;</span><br><span class="line">  #35 = Utf8               main</span><br><span class="line">  #36 = Utf8               ([Ljava/lang/String;)V</span><br><span class="line">  #37 = Class              #38            // java/util/HashMap</span><br><span class="line">  #38 = Utf8               java/util/HashMap</span><br><span class="line">  #39 = Methodref          #37.#28        // java/util/HashMap.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #40 = String             #41            // a</span><br><span class="line">  #41 = Utf8               a</span><br><span class="line">  #42 = String             #43            // valueaa</span><br><span class="line">  #43 = Utf8               valueaa</span><br><span class="line">  #44 = InterfaceMethodref #45.#47        // java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #45 = Class              #46            // java/util/Map</span><br><span class="line">  #46 = Utf8               java/util/Map</span><br><span class="line">  #47 = NameAndType        #48:#49        // put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #48 = Utf8               put</span><br><span class="line">  #49 = Utf8               (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #50 = InterfaceMethodref #45.#51        // java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #51 = NameAndType        #52:#53        // get:(Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #52 = Utf8               get</span><br><span class="line">  #53 = Utf8               (Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">  #54 = Class              #55            // java/lang/String</span><br><span class="line">  #55 = Utf8               java/lang/String</span><br><span class="line">  #56 = Utf8               args</span><br><span class="line">  #57 = Utf8               [Ljava/lang/String;</span><br><span class="line">  #58 = Utf8               map</span><br><span class="line">  #59 = Utf8               Ljava/util/Map;</span><br><span class="line">  #60 = Utf8               value</span><br><span class="line">  #61 = Utf8               Ljava/lang/String;</span><br><span class="line">  #62 = Utf8               Ljava/util/Map&lt;Ljava/lang/String;Ljava/lang/String;&gt;;</span><br><span class="line">  #63 = Utf8               SourceFile</span><br><span class="line">  #64 = Utf8               TestGenericType2.java</span><br><span class="line">  #65 = Utf8               &lt;T:Ljava/lang/Object;&gt;Ljava/lang/Object;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">static</span> &#123;&#125;;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">0</span>, args_size=<span class="number">0</span></span><br><span class="line">         <span class="number">0</span>: bipush        <span class="number">10</span></span><br><span class="line">         2: putstatic     #22                 // Field temp1:I</span><br><span class="line">         <span class="number">5</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">13</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">15</span>: <span class="number">5</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> com.sunld.TestGenericType2();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: invokespecial #27                 // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="number">4</span>: aload_0</span><br><span class="line">         <span class="number">5</span>: bipush        <span class="number">20</span></span><br><span class="line">         7: putfield      #29                 // Field temp2:I</span><br><span class="line">        <span class="number">10</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">7</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">14</span>: <span class="number">4</span></span><br><span class="line">        line <span class="number">7</span>: <span class="number">10</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestGenericType2;</span><br><span class="line">      LocalVariableTypeTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/TestGenericType2&lt;TT;&gt;;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    descriptor: ([Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">3</span>, locals=<span class="number">3</span>, args_size=<span class="number">1</span></span><br><span class="line">         0: new           #37                 // class java/util/HashMap</span><br><span class="line">         <span class="number">3</span>: dup</span><br><span class="line">         4: invokespecial #39                 // Method java/util/HashMap.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="number">7</span>: astore_1</span><br><span class="line">         <span class="number">8</span>: aload_1</span><br><span class="line">         9: ldc           #40                 // String a</span><br><span class="line">        11: ldc           #42                 // String valueaa</span><br><span class="line">        13: invokeinterface #44,  3           // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">        <span class="number">18</span>: pop</span><br><span class="line">        <span class="number">19</span>: aload_1</span><br><span class="line">        20: ldc           #40                 // String a</span><br><span class="line">        22: invokeinterface #50,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">        27: checkcast     #54                 // class java/lang/String</span><br><span class="line">        <span class="number">30</span>: astore_2</span><br><span class="line">        <span class="number">31</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">45</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">46</span>: <span class="number">8</span></span><br><span class="line">        line <span class="number">47</span>: <span class="number">19</span></span><br><span class="line">        line <span class="number">50</span>: <span class="number">31</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">32</span>     <span class="number">0</span>  args   [Ljava/lang/String;</span><br><span class="line">            <span class="number">8</span>      <span class="number">24</span>     <span class="number">1</span>   map   Ljava/util/Map;</span><br><span class="line">           <span class="number">31</span>       <span class="number">1</span>     <span class="number">2</span> value   Ljava/lang/String;</span><br><span class="line">      LocalVariableTypeTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">8</span>      <span class="number">24</span>     <span class="number">1</span>   map   Ljava/util/Map&lt;Ljava/lang/String;Ljava/lang/String;&gt;;</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">&quot;TestGenericType2.java&quot;</span></span><br><span class="line">Signature: #65                          // &lt;T:Ljava/lang/Object;&gt;Ljava/lang/Object;</span><br></pre></td></tr></table></figure>
-<p>从Signature属性的得出结论，擦除法所谓的擦除，仅仅是对方法的Code属性中的字节码进行擦除，实际上元数据中还是保留了泛型信息，这也是我们在编码时能通过反射手段取得参数化类型的根本依据。</p>
-<h3 id="擦除过程"><a href="#擦除过程" class="headerlink" title="擦除过程"></a>擦除过程</h3><p>首先是找到用来替换类型参数的具体类。这个具体类一般是 Object。如果指定了类型参数的上界的话，则使用这个上界。把代码中的类型参数都替换成具体的类。</p>
-<h3 id="泛型擦除的问题"><a href="#泛型擦除的问题" class="headerlink" title="泛型擦除的问题"></a>泛型擦除的问题</h3><ol>
-<li>用泛型不可以区分方法签名</li>
-<li>泛型类的静态变量是共享</li>
-</ol>
-<h2 id="泛型边界"><a href="#泛型边界" class="headerlink" title="泛型边界"></a>泛型边界</h2><ol>
-<li><? extends T>表示该通配符所代表的类型是 T 类型的子类。</li>
-<li><? super T>表示该通配符所代表的类型是 T 类型的父类。
-
-</li>
-</ol>
-<h3 id="类型通配符"><a href="#类型通配符" class="headerlink" title="类型通配符?"></a>类型通配符?</h3><p>在java中如果使用泛型，例如<code>List&lt;Interger&gt;和List&lt;Number&gt;</code>其实是两种类型(<strong>类型之间转换会出现转换异常</strong>)，之间没有任务关系，如果想要接收不同类型的参数，则需要引入通配符的概念，<code>List&lt;?&gt;</code>（？表示所有泛型中的父类）<strong>泛型内是不存在父子关系，但是利用通配符可以产生类似的效果</strong>。</p>
-<h4 id="具体说明"><a href="#具体说明" class="headerlink" title="具体说明"></a>具体说明</h4><p>假设给定的泛型类型为G,两个具体的泛型参数X、Y，当中Y是X的子类</p>
-<ol>
-<li>G&lt;? extends Y&gt; 是 G&lt;? extends X&gt;的子类型</li>
-<li>G<X> 是 G&lt;? extends X&gt;的子类型</X></li>
-<li>G&lt;?&gt; 与 G&lt;? extends Object&gt;等同</li>
-</ol>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
-<li>适用于多种数据类型执行相同的代码（代码复用）</li>
-<li>泛型中的类型在使用时指定，不需要强制类型转换（类型安全，编译器会检查类型）</li>
-</ol>
-<h3 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h3><ol>
-<li>不能实例化泛型类：<code>T t = new T();</code></li>
-<li>静态变量不能引用泛型变量：<code>private static T t1;</code>；非静态变量可以引用：<code>private T t1;</code></li>
-<li>未声明泛型的方法不能引用泛型变量：<code>public static T getT1()&#123;return t1;&#125;</code>；声明之后可以：<code>public static &lt;T&gt; T executeGenericMethod(Class&lt;T&gt; cls)&#123;return null;&#125;</code></li>
-<li>基本类型无法作为泛型类型：<code>List&lt;int&gt; list = new ArrayList&lt;&gt;();</code></li>
-<li>无法使用instanceof关键字或==判断泛型类的类型：<code>list instanceof List&lt;String&gt;</code> 或者<code>list == List&lt;String&gt;</code></li>
-<li>泛型类的原生类型与所传递的泛型无关，无论传递什么类型，原生类是一样的，即类型擦除之后的class信息相同</li>
-<li>泛型数组可以声明但无法实例化：<code>Test1&lt;Integer&gt;[] array = new Test1&lt;Integer&gt;[10];</code>，去掉泛型即可<code>Test1&lt;Integer&gt;[] array = new Test1[10];</code></li>
-<li>泛型类不能继承Exception或者Throwable</li>
-<li>不能捕获泛型类型限定的异常但可以将泛型限定的异常抛出</li>
-</ol>
-<h3 id="泛型继承规则"><a href="#泛型继承规则" class="headerlink" title="泛型继承规则"></a>泛型继承规则</h3><ol>
-<li>对于泛型参数是继承关系的泛型类之间是没有继承关系的：<code>List&lt;Integer&gt;与List&lt;Number&gt;</code></li>
-<li>泛型类可以继承其它泛型类，例如: <code>public class ArrayList&lt;E&gt; extends AbstractList&lt;E&gt;</code></li>
-<li>泛型类的继承关系在使用中同样会受到泛型类型的影响</li>
-</ol>
-<h2 id="泛型与反射"><a href="#泛型与反射" class="headerlink" title="泛型与反射"></a>泛型与反射</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.ParameterizedType;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Type;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestGenericType1</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> T t;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">getT</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> t;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setT</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.t = t;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TestGenericType1&lt;Integer&gt; a = <span class="keyword">new</span> TestGenericType1&lt;Integer&gt;() &#123;&#125;;</span><br><span class="line">		Type superclass = a.getClass().getGenericSuperclass();</span><br><span class="line">		System.out.println(superclass);</span><br><span class="line">	    <span class="comment">//getActualTypeArguments 返回确切的泛型参数</span></span><br><span class="line">		Type type = ((ParameterizedType)superclass).getActualTypeArguments()[<span class="number">0</span>]; </span><br><span class="line">	    System.out.println(type);<span class="comment">//class java.lang.Integer</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://www.cnblogs.com/ldh-better/p/7127308.html#_label0">Java 泛型在实际开发中的应用</a></li>
-<li><a href="https://www.jianshu.com/p/986f732ed2f1">Java泛型详解</a></li>
-<li><a href="https://www.cnblogs.com/lwbqqyumidi/p/3837629.html">Java总结篇系列：Java泛型</a></li>
-<li><a href="https://www.cnblogs.com/coprince/p/8603492.html">java 泛型详解-绝对是对泛型方法讲解最详细的，没有之一</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>泛型</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MyBatis系统化学习之缓存</title>
-    <url>/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/</url>
-    <content><![CDATA[<p>Mybatis中有一级缓存和二级缓存，默认情况下一级缓存是开启的，而且是不能关闭的。一级缓存是指 SqlSession 级别的缓存，当在同一个 SqlSession 中进行相同的 SQL 语句查询时，第二次以后的查询不会从数据库查询，而是直接从缓存中获取，一级缓存最多缓存 1024 条 SQL。二级缓存是指可以跨 SqlSession 的缓存。是 mapper 级别的缓存，对于 mapper 级别的缓存不同的 sqlsession 是可以共享的。</p>
-<a id="more"></a>
-
-<div align="center">
-
-<img src="/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/1589028256048.png" class title="MyBatis缓存示意图">
-
-</div>
-
-<h2 id="Mybatis-的一级缓存原理（sqlsession-级别）"><a href="#Mybatis-的一级缓存原理（sqlsession-级别）" class="headerlink" title="Mybatis 的一级缓存原理（sqlsession 级别）"></a>Mybatis 的一级缓存原理（sqlsession 级别）</h2><p>第一次发出一个查询 sql，sql 查询结果写入 sqlsession 的一级缓存中，缓存使用的数据结构是一个 map。<br>key：MapperID+offset+limit+Sql+所有的入参<br>value：用户信息<br>同一个 sqlsession 再次发出相同的 sql，就从缓存中取出数据。如果两次中间出现 commit 操作（修改、添加、删除），本 sqlsession 中的一级缓存区域全部清空，下次再去缓存中查询不到所以要从数据库查询，从数据库查询到再写入缓存。 </p>
-<h2 id="二级缓存原理（mapper-基本）"><a href="#二级缓存原理（mapper-基本）" class="headerlink" title="二级缓存原理（mapper 基本）"></a>二级缓存原理（mapper 基本）</h2><p>二级缓存的范围是mapper 级别（mapper同一个命名空间），mapper以命名空间为单位创建缓存数据结构，结构是 map。mybatis 的二级缓存是通过 CacheExecutor 实现的。CacheExecutor 其实是 Executor 的代理对象。所有的查询操作，在 CacheExecutor 中都会先匹配缓存中是否存在，不存在则查询数据库。<br>key：MapperID+offset+limit+Sql+所有的入参<br>具体使用需要配置： </p>
-<ol>
-<li>   Mybatis 全局配置中启用二级缓存配置 </li>
-<li>   在对应的 Mapper.xml 中配置 cache 节点 </li>
-<li>   在对应的 select 查询节点中添加 useCache=true </li>
-</ol>
-]]></content>
-      <categories>
-        <category>开源框架</category>
-        <category>MyBatis</category>
-      </categories>
-      <tags>
-        <tag>缓存</tag>
-        <tag>MyBatis</tag>
-        <tag>ORM</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux命令之TOP</title>
     <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8BTOP/</url>
     <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@incloudos logs]<span class="comment"># top -h</span></span><br><span class="line">  procps-ng version 3.3.10</span><br><span class="line">Usage:</span><br><span class="line">  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]</span><br><span class="line">s – 改变画面更新频率</span><br><span class="line">l – 关闭或开启第一部分第一行 top 信息的表示</span><br><span class="line">t – 关闭或开启第一部分第二行 Tasks 和第三行 Cpus 信息的表示</span><br><span class="line">m – 关闭或开启第一部分第四行 Mem 和 第五行 Swap 信息的表示</span><br><span class="line">N – 以 PID 的大小的顺序排列表示进程列表</span><br><span class="line">P – 以 CPU 占用率大小的顺序排列进程列表</span><br><span class="line">M – 以内存占用率大小的顺序排列进程列表</span><br><span class="line">h – 显示帮助</span><br><span class="line">n – 设置在进程列表所显示进程的数量</span><br><span class="line">q – 退出 top</span><br><span class="line">s – 改变画面更新周期</span><br><span class="line">请在top里面按下E，注意是大写。你会发现内存那一行的最左侧，</span><br><span class="line">也就是Mem前面，会有Kib、MiB、GiB等单位变化，</span><br><span class="line">但是数字后面不会直接写明单位。</span><br></pre></td></tr></table></figure>
@@ -3171,6 +2940,237 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>Linux</tag>
         <tag>TOP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux命令之iostat</title>
+    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
+<li>-c： 显示CPU使用情况</li>
+<li>-d： 显示磁盘使用情况</li>
+<li>-N： 显示磁盘阵列(LVM) 信息</li>
+<li>-n： 显示NFS 使用情况</li>
+<li>-k： 以 KB 为单位显示</li>
+<li>-m： 以 M 为单位显示</li>
+<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
+<li>-V： 显示版本信息</li>
+<li>-x： 显示详细信息</li>
+<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
+
+</li>
+</ul>
+<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第一行</td>
+<td>最上面指示系统版本、主机名和当前日期</td>
+</tr>
+<tr>
+<td>avg-cpu</td>
+<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
+</tr>
+<tr>
+<td>Device</td>
+<td>各磁盘设备的IO统计信息</td>
+</tr>
+</tbody></table>
+<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%user</td>
+<td>CPU在用户态执行进程的时间百分比。</td>
+</tr>
+<tr>
+<td>%nice</td>
+<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%system</td>
+<td>CPU处在内核态执行进程的时间百分比</td>
+</tr>
+<tr>
+<td>%iowait</td>
+<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%steal</td>
+<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
+</tr>
+<tr>
+<td>%idle</td>
+<td>CPU空闲时间百分比</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
+<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Device</td>
+<td>设备名称</td>
+</tr>
+<tr>
+<td>tps</td>
+<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
+</tr>
+<tr>
+<td>Blk_read/s</td>
+<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
+</tr>
+<tr>
+<td>Blk_wrtn/s</td>
+<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
+</tr>
+<tr>
+<td>Blk_read</td>
+<td>取样时间间隔内读扇区总数量</td>
+</tr>
+<tr>
+<td>Blk_wrtn</td>
+<td>取样时间间隔内写扇区总数量</td>
+</tr>
+</tbody></table>
+<ul>
+<li>iostat 1 5：间隔1秒，总共显示5次</li>
+<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
+<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
+<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
+<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
+<li>iostat -m：以M为单位显示所有信息</li>
+<li>iostat -d sda：显示指定硬盘信息</li>
+<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
+<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
+<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
+<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
+</ul>
+<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rrqm/s</td>
+<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
+</tr>
+<tr>
+<td>wrqm/s</td>
+<td>每秒对该设备的写请求被合并次数</td>
+</tr>
+<tr>
+<td>r/s</td>
+<td>每秒完成的读 I/O 设备次数</td>
+</tr>
+<tr>
+<td>w/s</td>
+<td>每秒完成的写 I/O 设备次数</td>
+</tr>
+<tr>
+<td>rkB/s</td>
+<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
+</tr>
+<tr>
+<td>wkB/s</td>
+<td>每秒写K字节数。是 wsect/s 的一半</td>
+</tr>
+<tr>
+<td>avgrq-sz</td>
+<td>平均每次IO操作的数据量(扇区数为单位)</td>
+</tr>
+<tr>
+<td>avgqu-sz</td>
+<td>平均等待处理的IO请求队列长度</td>
+</tr>
+<tr>
+<td>rsec/s</td>
+<td>每秒读扇区数。即 rsect/s</td>
+</tr>
+<tr>
+<td>wsec/s</td>
+<td>每秒写扇区数。即 wsect/s</td>
+</tr>
+<tr>
+<td>r_await</td>
+<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>w_await</td>
+<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>await</td>
+<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
+</tr>
+<tr>
+<td>svctm</td>
+<td>平均每次IO请求的处理时间(毫秒为单位)</td>
+</tr>
+<tr>
+<td>%util</td>
+<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
+</blockquote>
+<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>iostat</tag>
+        <tag>磁盘分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MyBatis系统化学习之缓存</title>
+    <url>/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/</url>
+    <content><![CDATA[<p>Mybatis中有一级缓存和二级缓存，默认情况下一级缓存是开启的，而且是不能关闭的。一级缓存是指 SqlSession 级别的缓存，当在同一个 SqlSession 中进行相同的 SQL 语句查询时，第二次以后的查询不会从数据库查询，而是直接从缓存中获取，一级缓存最多缓存 1024 条 SQL。二级缓存是指可以跨 SqlSession 的缓存。是 mapper 级别的缓存，对于 mapper 级别的缓存不同的 sqlsession 是可以共享的。</p>
+<a id="more"></a>
+
+<div align="center">
+
+<img src="/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/1589028256048.png" class title="MyBatis缓存示意图">
+
+</div>
+
+<h2 id="Mybatis-的一级缓存原理（sqlsession-级别）"><a href="#Mybatis-的一级缓存原理（sqlsession-级别）" class="headerlink" title="Mybatis 的一级缓存原理（sqlsession 级别）"></a>Mybatis 的一级缓存原理（sqlsession 级别）</h2><p>第一次发出一个查询 sql，sql 查询结果写入 sqlsession 的一级缓存中，缓存使用的数据结构是一个 map。<br>key：MapperID+offset+limit+Sql+所有的入参<br>value：用户信息<br>同一个 sqlsession 再次发出相同的 sql，就从缓存中取出数据。如果两次中间出现 commit 操作（修改、添加、删除），本 sqlsession 中的一级缓存区域全部清空，下次再去缓存中查询不到所以要从数据库查询，从数据库查询到再写入缓存。 </p>
+<h2 id="二级缓存原理（mapper-基本）"><a href="#二级缓存原理（mapper-基本）" class="headerlink" title="二级缓存原理（mapper 基本）"></a>二级缓存原理（mapper 基本）</h2><p>二级缓存的范围是mapper 级别（mapper同一个命名空间），mapper以命名空间为单位创建缓存数据结构，结构是 map。mybatis 的二级缓存是通过 CacheExecutor 实现的。CacheExecutor 其实是 Executor 的代理对象。所有的查询操作，在 CacheExecutor 中都会先匹配缓存中是否存在，不存在则查询数据库。<br>key：MapperID+offset+limit+Sql+所有的入参<br>具体使用需要配置： </p>
+<ol>
+<li>   Mybatis 全局配置中启用二级缓存配置 </li>
+<li>   在对应的 Mapper.xml 中配置 cache 节点 </li>
+<li>   在对应的 select 查询节点中添加 useCache=true </li>
+</ol>
+]]></content>
+      <categories>
+        <category>开源框架</category>
+        <category>MyBatis</category>
+      </categories>
+      <tags>
+        <tag>缓存</tag>
+        <tag>MyBatis</tag>
+        <tag>ORM</tag>
       </tags>
   </entry>
   <entry>
@@ -3475,47 +3475,6 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>MySQL之日志-查询日志</title>
-    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</url>
-    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>默认情况下查询日志是关闭的。由于查询日志会记录用户的所有操作，其中还包含增删查改等信息，</p>
-<ol>
-<li>insert查询为了避免数据冲突，如果此前插入过数据，而如果跟主键或唯一键的数据重复那肯定会报错</li>
-<li>update时也会查询因为更新的时候很可能会更新某一块数据</li>
-<li>delete查询，只删除符合条件的数据</li>
-</ol>
-<p>MySQL普通查询日志记录MySQL服务实例所有的操作，如select、update、insert、delete等操作，无论该操作是否成功执行。还有MySQL客户机与MySQL服务端连接及断开的相关信息，无论连接成功还是失败。<br>注意：由于普通查询日志几乎记录了MySQL的所有操作，对于数据访问频繁的数据库服务器而言，如果开启MySQL的普通查询日志将会大幅度的降低数据库的性能，因此建议关闭普通查询日志。只有在特殊时期，如需要追踪某些特殊的查询日志，可以临时打开普通的查询日志。在并发操作大的环境下会产生大量的信息从而导致不必要的磁盘IO，会影响mysql的性能的。如若不是为了调试数据库的目的建议不要开启查询日志。</p>
-<ol>
-<li>log = on|off 是否开启日志功能, 这个设置包含了查询日志和慢查询日志</li>
-<li>general_log = on|off 是否开启查询日志</li>
-<li>general_log_file = /path/to/file 指定查询日志的位置</li>
-<li>log_output = FILE|table 日志输出的位置, 这个指令对慢查询日志也起作用<a id="more"></a>
-
-</li>
-</ol>
-<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span>  variables <span class="keyword">like</span> <span class="string">&#x27;%general_log%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name    <span class="operator">|</span> <span class="keyword">Value</span>                        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> general_log      <span class="operator">|</span> OFF                          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log_file <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>incloudos.log <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>拓展解析：日志的输出位置一般有三种方式：file(文件)，table(表)，none(不保存)；其中前两个输出位置可以同时定义，none表示是开启日志功能但是不记录日志信息。file就是通过general_log_file  等方式定义的，而输出位置定义为表时查看日志的内容方式为：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> use mysql;#所在数据库</span><br><span class="line">Database changed</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> tables;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="operator">|</span> Tables_in_mysql           <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="operator">|</span> columns_priv              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> db                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> engine_cost               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> event                     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> func                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log               <span class="operator">|</span>查询日志表</span><br><span class="line"><span class="operator">|</span> gtid_executed             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_category             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_keyword              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_relation             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_topic                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_index_stats        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_table_stats        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> ndb_binlog_index          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> plugin                    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> proc                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> procs_priv                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> proxies_priv              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> server_cost               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> servers                   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slave_master_info         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slave_relay_log_info      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slave_worker_info         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slow_log                  <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> tables_priv               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone                 <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_leap_second     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_name            <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_transition      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_transition_type <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">user</span>                      <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="number">31</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
-<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
-<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
-<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
-<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
-<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
-<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
-<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>查询日志</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL之日志-扩展</title>
     <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%89%A9%E5%B1%95/</url>
     <content><![CDATA[<h2 id="数据日志文件比对"><a href="#数据日志文件比对" class="headerlink" title="数据日志文件比对"></a>数据日志文件比对</h2><h3 id="ib-logfile与log-bin区别"><a href="#ib-logfile与log-bin区别" class="headerlink" title="ib_logfile与log-bin区别"></a>ib_logfile与log-bin区别</h3><style type="text/css">
@@ -3704,6 +3663,47 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>MySQL之日志-查询日志</title>
+    <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</url>
+    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>默认情况下查询日志是关闭的。由于查询日志会记录用户的所有操作，其中还包含增删查改等信息，</p>
+<ol>
+<li>insert查询为了避免数据冲突，如果此前插入过数据，而如果跟主键或唯一键的数据重复那肯定会报错</li>
+<li>update时也会查询因为更新的时候很可能会更新某一块数据</li>
+<li>delete查询，只删除符合条件的数据</li>
+</ol>
+<p>MySQL普通查询日志记录MySQL服务实例所有的操作，如select、update、insert、delete等操作，无论该操作是否成功执行。还有MySQL客户机与MySQL服务端连接及断开的相关信息，无论连接成功还是失败。<br>注意：由于普通查询日志几乎记录了MySQL的所有操作，对于数据访问频繁的数据库服务器而言，如果开启MySQL的普通查询日志将会大幅度的降低数据库的性能，因此建议关闭普通查询日志。只有在特殊时期，如需要追踪某些特殊的查询日志，可以临时打开普通的查询日志。在并发操作大的环境下会产生大量的信息从而导致不必要的磁盘IO，会影响mysql的性能的。如若不是为了调试数据库的目的建议不要开启查询日志。</p>
+<ol>
+<li>log = on|off 是否开启日志功能, 这个设置包含了查询日志和慢查询日志</li>
+<li>general_log = on|off 是否开启查询日志</li>
+<li>general_log_file = /path/to/file 指定查询日志的位置</li>
+<li>log_output = FILE|table 日志输出的位置, 这个指令对慢查询日志也起作用<a id="more"></a>
+
+</li>
+</ol>
+<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span>  variables <span class="keyword">like</span> <span class="string">&#x27;%general_log%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name    <span class="operator">|</span> <span class="keyword">Value</span>                        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> general_log      <span class="operator">|</span> OFF                          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log_file <span class="operator">|</span> <span class="operator">/</span>var<span class="operator">/</span>lib<span class="operator">/</span>mysql<span class="operator">/</span>incloudos.log <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------+------------------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>拓展解析：日志的输出位置一般有三种方式：file(文件)，table(表)，none(不保存)；其中前两个输出位置可以同时定义，none表示是开启日志功能但是不记录日志信息。file就是通过general_log_file  等方式定义的，而输出位置定义为表时查看日志的内容方式为：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> use mysql;#所在数据库</span><br><span class="line">Database changed</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> tables;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="operator">|</span> Tables_in_mysql           <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="operator">|</span> columns_priv              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> db                        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> engine_cost               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> event                     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> func                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> general_log               <span class="operator">|</span>查询日志表</span><br><span class="line"><span class="operator">|</span> gtid_executed             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_category             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_keyword              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_relation             <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> help_topic                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_index_stats        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> innodb_table_stats        <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> ndb_binlog_index          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> plugin                    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> proc                      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> procs_priv                <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> proxies_priv              <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> server_cost               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> servers                   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slave_master_info         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slave_relay_log_info      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slave_worker_info         <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> slow_log                  <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> tables_priv               <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone                 <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_leap_second     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_name            <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_transition      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> time_zone_transition_type <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">user</span>                      <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------------+</span></span><br><span class="line"><span class="number">31</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/ggxxkkll/article/details/7616739">数据库日志文件– undo log 、redo log、 undo/redo log</a></li>
+<li><a href="https://blog.csdn.net/leonpenn/article/details/72778901">InnoDB事务日志（redo log 和 undo log）详解</a></li>
+<li><a href="https://www.iteye.com/blog/dinglin-907123">MySQL源码学习：ib_logfile、bin-log与主从同步</a></li>
+<li><a href="https://blog.csdn.net/hackerwin7/article/details/39896173">Mysql日志抽取与解析</a></li>
+<li><a href="https://blog.csdn.net/u010440155/article/details/54914353">mysql data文件夹下的ibdata1 文件作用</a></li>
+<li><a href="https://blog.csdn.net/donghaixiaolongwang/article/details/60961603">mysql——innodb事务日志详解</a></li>
+<li><a href="https://blog.csdn.net/mydriverc2/article/details/50629599">inlog，redo log，undo log区别</a></li>
+<li><a href="http://www.itwendao.com/article/detail/450198.html">高性能MySQL学习笔记（3） — InnoDB事务日志（redo log 和 undo log）详解</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>查询日志</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL之日志-错误日志</title>
     <url>/2021/02/05/MySQL%E4%B9%8B%E6%97%A5%E5%BF%97-%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97/</url>
     <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在mysql数据库中，错误日志功能是默认开启的。并且，错误日志无法被禁止。默认情况下，错误日志存储在mysql数据库的数据文件中。错误日志文件通常的名称为hostname.err。其中，hostname表示服务器主机名。<br>错误日志信息可以自己进行配置的，错误日志所记录的信息是可以通过log-error和log-warnings来定义的，其中log-err是定义是否启用错误日志的功能和错误日志的存储位置，log-warnings是定义是否将警告信息也定义至错误日志中。默认情况下错误日志大概记录以下几个方面的信息：服务器启动和关闭过程中的信息（未必是错误信息，如mysql如何启动InnoDB的表空间文件的、如何初始化自己的存储引擎的等等）、服务器运行过程中的错误信息、事件调度器运行一个事件时产生的信息、在从服务器上启动服务器进程时产生的信息。</p>
@@ -3763,6 +3763,76 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>MySQL</tag>
         <tag>错误日志</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之查询性能优化</title>
+    <url>/2021/02/17/MySQL%E4%B9%8B%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</url>
+    <content><![CDATA[<h2 id="查询速度慢的原因"><a href="#查询速度慢的原因" class="headerlink" title="查询速度慢的原因"></a>查询速度慢的原因</h2><ol>
+<li>生命周期太长：从客户端到服务端，然后在服务端进行解析、生成执行计划、执行（包括数据的分组聚合处理等）、并返回结果</li>
+<li>资源消耗：网络资源、CPU资源、锁等待、IO资源</li>
+<li>访问的数据太多，大多数是行数据，也包括列数据<ul>
+<li>是否向数据库请求了不需要的数据<ul>
+<li>查询不需要的数据，比如<code>LIMIT 1000000,10</code></li>
+<li>是否返回了全部列，比如<code>select * from </code></li>
+<li>重复查询相同的数据，可以使用缓存解决</li>
+</ul>
+</li>
+<li>MySQL是否在扫描额外的记录，可以使用<code>explain</code>分析，关注以下三个指标<ul>
+<li>响应时间<ul>
+<li> 服务时间：数据库处理这个查询实际消耗的时间</li>
+<li> 排队时间：等待时间，比如IO操作、锁等待等</li>
+</ul>
+</li>
+<li>扫描的行数<ul>
+<li> 通过<code>explain</code>中的<code>type</code>列获取访问类型（全表扫描、范围扫描、唯一索引查询、常数引用等）</li>
+<li>使用where条件的方式<ul>
+<li> 在索引中使用where过滤数据，存储引擎层完成</li>
+<li> 索引覆盖扫描（Extra中出现Using index），服务层直接在索引中处理，不需要回表</li>
+<li> 冲数据表中返回数据（Extra中出现Using index），服务层完成（先从数据库中获取数据，然后在过滤数据）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回的行数<ul>
+<li>优化技巧（扫描比返回的数据多）<ul>
+<li> 使用索引覆盖扫描</li>
+<li> 修改表结构</li>
+<li> 重新SQL<a id="more"></a>
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="重构查询方式"><a href="#重构查询方式" class="headerlink" title="重构查询方式"></a>重构查询方式</h2><ol>
+<li>一个复杂查询还是多个复杂查询，根据实际情况确认是否拆分</li>
+<li>切分查询，比如定期清理数据</li>
+<li>分解关联查询<ul>
+<li>提高缓存命中和利用率</li>
+<li>减少锁竞争</li>
+<li>应用层做关联，提高性能和扩展性以及利用数据库的拆分</li>
+<li>减少冗余记录查询 </li>
+</ul>
+</li>
+</ol>
+<h2 id="查询执行的原理"><a href="#查询执行的原理" class="headerlink" title="查询执行的原理"></a>查询执行的原理</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《高性能MySQL》</li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+        <category>调优</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>查询性能优化</tag>
       </tags>
   </entry>
   <entry>
@@ -3874,76 +3944,6 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>MySQL</tag>
         <tag>索引</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL之查询性能优化</title>
-    <url>/2021/02/17/MySQL%E4%B9%8B%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</url>
-    <content><![CDATA[<h2 id="查询速度慢的原因"><a href="#查询速度慢的原因" class="headerlink" title="查询速度慢的原因"></a>查询速度慢的原因</h2><ol>
-<li>生命周期太长：从客户端到服务端，然后在服务端进行解析、生成执行计划、执行（包括数据的分组聚合处理等）、并返回结果</li>
-<li>资源消耗：网络资源、CPU资源、锁等待、IO资源</li>
-<li>访问的数据太多，大多数是行数据，也包括列数据<ul>
-<li>是否向数据库请求了不需要的数据<ul>
-<li>查询不需要的数据，比如<code>LIMIT 1000000,10</code></li>
-<li>是否返回了全部列，比如<code>select * from </code></li>
-<li>重复查询相同的数据，可以使用缓存解决</li>
-</ul>
-</li>
-<li>MySQL是否在扫描额外的记录，可以使用<code>explain</code>分析，关注以下三个指标<ul>
-<li>响应时间<ul>
-<li> 服务时间：数据库处理这个查询实际消耗的时间</li>
-<li> 排队时间：等待时间，比如IO操作、锁等待等</li>
-</ul>
-</li>
-<li>扫描的行数<ul>
-<li> 通过<code>explain</code>中的<code>type</code>列获取访问类型（全表扫描、范围扫描、唯一索引查询、常数引用等）</li>
-<li>使用where条件的方式<ul>
-<li> 在索引中使用where过滤数据，存储引擎层完成</li>
-<li> 索引覆盖扫描（Extra中出现Using index），服务层直接在索引中处理，不需要回表</li>
-<li> 冲数据表中返回数据（Extra中出现Using index），服务层完成（先从数据库中获取数据，然后在过滤数据）</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>返回的行数<ul>
-<li>优化技巧（扫描比返回的数据多）<ul>
-<li> 使用索引覆盖扫描</li>
-<li> 修改表结构</li>
-<li> 重新SQL<a id="more"></a>
-
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-<h2 id="重构查询方式"><a href="#重构查询方式" class="headerlink" title="重构查询方式"></a>重构查询方式</h2><ol>
-<li>一个复杂查询还是多个复杂查询，根据实际情况确认是否拆分</li>
-<li>切分查询，比如定期清理数据</li>
-<li>分解关联查询<ul>
-<li>提高缓存命中和利用率</li>
-<li>减少锁竞争</li>
-<li>应用层做关联，提高性能和扩展性以及利用数据库的拆分</li>
-<li>减少冗余记录查询 </li>
-</ul>
-</li>
-</ol>
-<h2 id="查询执行的原理"><a href="#查询执行的原理" class="headerlink" title="查询执行的原理"></a>查询执行的原理</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li>《高性能MySQL》</li>
-</ol>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>MySQL</category>
-        <category>调优</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>查询性能优化</tag>
       </tags>
   </entry>
   <entry>
@@ -7617,6 +7617,310 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>Java系统化学习之集合概述</title>
+    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/</url>
+    <content><![CDATA[<p>使用集合需要考虑几个关注点：</p>
+<ol>
+<li>线程安全性</li>
+<li>是否有序</li>
+<li>是否重复</li>
+<li>关注查询还是关注写入</li>
+<li>equals和hashCode方法的重写需要同步</li>
+<li>使用接口返回集合数据<a id="more"></a>
+
+</li>
+</ol>
+<h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589101774172.png" class title="Java集合知识图谱">
+
+</div>
+
+<h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589870092003.png" class title="Java集合类图">
+
+</div>
+
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="集合和数组的区别"><a href="#集合和数组的区别" class="headerlink" title="集合和数组的区别"></a>集合和数组的区别</h3><ol>
+<li>数组和集合都是Java中的容器</li>
+<li>数组的长度是固定的，集合的长度是可变的</li>
+<li>数组只能存储相同数据类型的数据，这里的数据类型可以是基本数据类型，也可以是引用类型</li>
+<li>集合可以存储不同数据类型的对象的引用(不建议使用这种方式，需要使用泛型控制)，但不能存储基本数据类型</li>
+</ol>
+<h3 id="接口继承关系和实现"><a href="#接口继承关系和实现" class="headerlink" title="接口继承关系和实现"></a>接口继承关系和实现</h3><p>集合类存放于 <code>Java.util</code> 包中，主要有 3 种：set(集）、list(列表包含 Queue）和 map(映射)。</p>
+<ol>
+<li>Collection：Collection 是集合 List、Set、Queue 的最基本的接口。</li>
+<li>Iterator：迭代器，可以通过迭代器遍历集合中的数据</li>
+<li>Map：是映射表的基础接口</li>
+</ol>
+<p>通过类图可知得出以下结论：  </p>
+<ol>
+<li>Java集合的根接口是Collection，它又继承了迭代接口Iterable</li>
+<li>List接口和Set接口继承了Collection接口</li>
+<li>Map接口是独立的接口，并没有继承Collection接口</li>
+<li>List接口常用的实现类有：ArrayList、LinkedList、Vector，有序集合</li>
+<li>Set接口常用的实现类有：HashSet、LinkedHashSet、TreeSet，不重复集合</li>
+<li>Map接口常用的实现类有：HashMap、HashTable、TreeMap</li>
+<li>Queue(队列)接口及其子类，提供了基于队列的集合体系。</li>
+</ol>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">接口</th>
+    <th class="tg-0lax">集合类</th>
+    <th class="tg-0lax">重复性</th>
+    <th class="tg-0lax">有序性</th>
+    <th class="tg-0lax">判断方法</th>
+    <th class="tg-0lax">数据结构</th>
+    <th class="tg-0lax">其他</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax" rowspan="2">Set</td>
+    <td class="tg-0lax">HashSet</td>
+    <td class="tg-0lax">否</td>
+    <td class="tg-0lax">无序</td>
+    <td class="tg-0lax">equals()、hashCode()</td>
+    <td class="tg-0lax">Hash 表</td>
+    <td class="tg-0lax">插入速度快</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">LinkedHashSet</td>
+    <td class="tg-0lax">否</td>
+    <td class="tg-0lax">插入有序</td>
+    <td class="tg-0lax">equals()、hashCode()</td>
+    <td class="tg-0lax">Hash 表和双向链表</td>
+    <td class="tg-0lax"></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">SortedSet、Set</td>
+    <td class="tg-0lax">TreeSet</td>
+    <td class="tg-0lax">否</td>
+    <td class="tg-0lax">有序</td>
+    <td class="tg-0lax">equals()、compareTo()</td>
+    <td class="tg-0lax">&平衡树（Balanced tree）</td>
+    <td class="tg-0lax"></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax" rowspan="3">List</td>
+    <td class="tg-0lax">ArrayList</td>
+    <td class="tg-0lax">是</td>
+    <td class="tg-0lax">插入有序</td>
+    <td class="tg-0lax">equals()</td>
+    <td class="tg-0lax">数组</td>
+    <td class="tg-0lax">
+        动态链表<br>
+        随机查询
+    </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">LinkedList</td>
+    <td class="tg-0lax">是</td>
+    <td class="tg-0lax">插入有序</td>
+    <td class="tg-0lax">equals()</td>
+    <td class="tg-0lax">链表</td>
+    <td class="tg-0lax">
+        用于链表、队列、堆<br>
+        中间写入、删除数据较快
+    </td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">Vector</td>
+    <td class="tg-0lax">是</td>
+    <td class="tg-0lax">插入有序</td>
+    <td class="tg-0lax">equals()</td>
+    <td class="tg-0lax">数组</td>
+    <td class="tg-0lax">线程安全，效率低</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax" rowspan="3">Map</td>
+    <td class="tg-0lax">HashMap</td>
+    <td class="tg-0lax">key唯一</td>
+    <td class="tg-0lax">无序</td>
+    <td class="tg-0lax">equals()、hashCode()</td>
+    <td class="tg-0lax">Hash 表</td>
+    <td class="tg-0lax"></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">LinkedHashMap</td>
+    <td class="tg-0lax">key唯一</td>
+    <td class="tg-0lax">Key插入有序</td>
+    <td class="tg-0lax">equals()、hashCode()</td>
+    <td class="tg-0lax">Hash 表和双向链表</td>
+    <td class="tg-0lax"></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">Hashtable</td>
+    <td class="tg-0lax">key唯一</td>
+    <td class="tg-0lax">无序</td>
+    <td class="tg-0lax">equals()、hashCode()</td>
+    <td class="tg-0lax">Hash 表</td>
+    <td class="tg-0lax"></td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">SortedMap</td>
+    <td class="tg-0lax">TreeMap</td>
+    <td class="tg-0lax">key唯一</td>
+    <td class="tg-0lax">key有序</td>
+    <td class="tg-0lax">equals()、compareTo()</td>
+    <td class="tg-0lax">平衡树（Balanced tree）</td>
+    <td class="tg-0lax"></td>
+  </tr>
+</tbody>
+</table>
+
+<h2 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h2><h3 id="Collection类图"><a href="#Collection类图" class="headerlink" title="Collection类图"></a>Collection类图</h3><div style="width:300px;length:400px;align=center;margin:0 auto;">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589875532865.png" class title="Collection类图">
+
+</div>
+
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589871965983.png" class title="List类图">
+
+</div>
+
+<p>List 是<strong>有序</strong>的 Collection。Java List常用的实现类：ArrayList、Vector 和LinkedList。<br>List集合包括List接口以及List接口的所有实现类。List集合具有以下特点：</p>
+<ol>
+<li>集合中的元素允许重复</li>
+<li>集合中的元素是有顺序的，各元素插入的顺序就是各元素的顺序，可以通过索引获取数据</li>
+<li>集合中的元素可以通过索引来访问或者设置</li>
+<li>提供一个listIterator()方法，返回一个 ListIterator接口，和标准的Iterator接口相比，ListIterator多了一些add()之类的方法，允许添加，删除，设定元素，还能向前或向后遍历</li>
+</ol>
+<h3 id="ArrayList（数组）"><a href="#ArrayList（数组）" class="headerlink" title="ArrayList（数组）"></a>ArrayList（数组）</h3><ol>
+<li>内部通过数组实现</li>
+<li>元素支持快速随机访问</li>
+<li>当从 ArrayList 的中间位置插入或者删除元素时，需要对数组进行复制、移动、代价比较高。因此，它适合随机查找和遍历，不适合插入和删除。</li>
+<li>可以为null</li>
+<li>size，isEmpty，get，set方法运行时间为常数</li>
+<li>add时间复杂度O(n)</li>
+<li>动态扩容，使用ensureCapacity方法来增加ArrayList的容量以提高插入效率</li>
+</ol>
+<h3 id="Vector（数组实现、线程同步）"><a href="#Vector（数组实现、线程同步）" class="headerlink" title="Vector（数组实现、线程同步）"></a>Vector（数组实现、线程同步）</h3><ol>
+<li>内部通过数组实现</li>
+<li>支持同步，效率慢</li>
+<li>如果其他线程在变更链表，使用Iterator将抛出ConcurrentModificationException</li>
+</ol>
+<h3 id="LinkList（链表）"><a href="#LinkList（链表）" class="headerlink" title="LinkList（链表）"></a>LinkList（链表）</h3><ol>
+<li>内部使用链表结构实现</li>
+<li>适合数据的动态插入和删除</li>
+<li>随机访问和遍历速度较慢</li>
+<li>提供额外的get、remove、insert方法作用LinkList的头尾，可以当作堆栈、队列和双向队列使用</li>
+<li>允许为null</li>
+<li>安全化：List list = Collections.synchronizedList(new LinkedList(…));</li>
+</ol>
+<h3 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h3><ol>
+<li>Stack继承自Vector，实现一个后进先出的堆栈</li>
+<li>基本的push和pop方法，还有peek方法得到栈顶的元素</li>
+<li>empty方法测试堆栈是否为空</li>
+<li>search方法检测一个元素在堆栈中的位置</li>
+<li>Stack刚创建后是空栈</li>
+</ol>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><ol>
+<li>数据不重复（通过对象的hashCode值判断，可重复添加但是最终只有一个）</li>
+<li>存储数据无序(存入和取出的顺序不一定相同)</li>
+</ol>
+<blockquote>
+<p>请注意：必须小心操作可变对象（Mutable Object）。如果一个Set中的可变元素改变了自身状态导致Object.equals(Object)=true将导致一些问题</p>
+</blockquote>
+<div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589872549181.png" class title="Set类图">
+
+</div>
+
+<h3 id="HashSet（Hash-表）"><a href="#HashSet（Hash-表）" class="headerlink" title="HashSet（Hash 表）"></a>HashSet（Hash 表）</h3><ol>
+<li>使用Hash表实现，并且存储的是哈希值</li>
+<li>存储的数据顺序无序（不是按照写入顺序定义）</li>
+<li>按照哈希值来存储或读取数据，哈希值是通过hashcode获取</li>
+<li>判断相同：首先判断哈希值，然后执行equals方法，都通过才认为是同一条数据</li>
+<li>哈希碰撞：（哈希值相同，equals不同），可以使用链表进行顺延</li>
+<li>HashSet 通过 hashCode 值来确定元素在内存中的位置。一个 hashCode 位置上可以存放多个元素。</li>
+</ol>
+<h3 id="TreeSet（二叉树）"><a href="#TreeSet（二叉树）" class="headerlink" title="TreeSet（二叉树）"></a>TreeSet（二叉树）</h3><ol>
+<li>TreeSet()是使用二叉树的原理对新 add()的对象按照指定的顺序排序（升序、降序），每增加一个对象都会进行排序，将对象插入的二叉树指定的位置。</li>
+<li>Integer 和 String 对象都可以进行默认的 TreeSet 排序，而自定义类的对象是不可以的，自己定义的类必须实现 Comparable 接口，并且覆写相应的 compareTo()函数，才可以正常使用。</li>
+<li>在覆写 compare()函数时，要返回相应的值才能使 TreeSet 按照一定的规则来排序</li>
+<li>比较此对象与指定对象的顺序。如果该对象小于、等于或大于指定对象，则分别返回负整数、零或正整数。</li>
+</ol>
+<h3 id="LinkHashSet（HashSet-LinkedHashMap）"><a href="#LinkHashSet（HashSet-LinkedHashMap）" class="headerlink" title="LinkHashSet（HashSet+LinkedHashMap）"></a>LinkHashSet（HashSet+LinkedHashMap）</h3><ol>
+<li>通过HashSet+LinkedHashMap实现</li>
+<li>使用LinkedHashMap 来保存所有元素</li>
+</ol>
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589873440529.png" class title="Map类图">
+
+</div>
+
+<p>Map集合包括Map接口以及Map接口的所有实现类。Map集合具有以下特点：</p>
+<ol>
+<li>Map接口并没有继承Collection接口，提供的是key到value的映射</li>
+<li>Map中不能包含相同的key</li>
+</ol>
+<h3 id="Hashmap与hashtable的区别"><a href="#Hashmap与hashtable的区别" class="headerlink" title="Hashmap与hashtable的区别"></a>Hashmap与hashtable的区别</h3><ol>
+<li>HashMap 允许 key 和 value 为 null，Hashtable 不允许。</li>
+<li>HashMap 的默认初始容量为 16，Hashtable 为 11。</li>
+<li>HashMap 的扩容为原来的 2 倍，Hashtable 的扩容为原来的 2 倍加 1。</li>
+<li>HashMap 是非线程安全的，Hashtable是线程安全的。</li>
+<li>HashMap 的 hash 值重新计算过，Hashtable 直接使用 hashCode。</li>
+<li>HashMap 去掉了 Hashtable 中的 contains 方法。</li>
+<li>HashMap 继承自 AbstractMap 类，Hashtable 继承自 Dictionary 类。</li>
+</ol>
+<h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><ol>
+<li>HashMap 的底层是个 Node 数组（Node&lt;K,V&gt;[] table），在数组的具体索引位置，如果存在多个节点，则可能是以链表或红黑树的形式存在。</li>
+<li>增加、删除、查找键值对时，定位到哈希桶数组的位置是很关键的一步，源码中是通过下面3个操作来完成这一步：1）拿到 key 的 hashCode 值；2）将 hashCode 的高位参与运算，重新计算 hash 值；3）将计算出来的 hash 值与 “table.length - 1” 进行 &amp; 运算。</li>
+<li>HashMap 的默认初始容量（capacity）是 16，capacity 必须为 2 的幂次方；默认负载因子（load factor）是 0.75；实际能存放的节点个数（threshold，即触发扩容的阈值）= capacity * load factor。</li>
+<li>HashMap 在触发扩容后，阈值会变为原来的 2 倍，并且会对所有节点进行重 hash 分布，重 hash 分布后节点的新分布位置只可能有两个：“原索引位置” 或 “原索引+oldCap位置”。例如 capacity 为16，索引位置 5 的节点扩容后，只可能分布在新表 “索引位置5” 和 “索引位置21（5+16）”。</li>
+<li>导致 HashMap 扩容后，同一个索引位置的节点重 hash 最多分布在两个位置的根本原因是：1）table的长度始终为 2 的 n 次方；2）索引位置的计算方法为 “(table.length - 1) &amp; hash”。HashMap 扩容是一个比较耗时的操作，定义 HashMap 时尽量给个接近的初始容量值。</li>
+<li>HashMap 有 threshold 属性和 loadFactor 属性，但是没有 capacity 属性。初始化时，如果传了初始化容量值，该值是存在 threshold 变量，并且 Node 数组是在第一次 put 时才会进行初始化，初始化时会将此时的 threshold 值作为新表的 capacity 值，然后用 capacity 和 loadFactor 计算新表的真正 threshold 值。</li>
+<li>当同一个索引位置的节点在增加后达到 9 个时，并且此时数组的长度大于等于 64，则会触发链表节点（Node）转红黑树节点（TreeNode），转成红黑树节点后，其实链表的结构还存在，通过 next 属性维持。链表节点转红黑树节点的具体方法为源码中的 treeifyBin 方法。而如果数组长度小于64，则不会触发链表转红黑树，而是会进行扩容。</li>
+<li>当同一个索引位置的节点在移除后达到 6 个时，并且该索引位置的节点为红黑树节点，会触发红黑树节点转链表节点。红黑树节点转链表节点的具体方法为源码中的 untreeify 方法。</li>
+<li>HashMap 在 JDK 1.8 之后不再有死循环的问题，JDK 1.8 之前存在死循环的根本原因是在扩容后同一索引位置的节点顺序会反掉。</li>
+<li>HashMap 是非线程安全的，在并发场景下使用 ConcurrentHashMap 来代替。</li>
+</ol>
+<p>详细参考：<a href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BHashMap/">JAVA HashMap详解</a></p>
+<h3 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h3><h4 id="Segment-段"><a href="#Segment-段" class="headerlink" title="Segment 段"></a>Segment 段</h4><p>ConcurrentHashMap 和 HashMap 思路是差不多的，但是因为它支持并发操作，所以要复杂一<br>些。整个 ConcurrentHashMap 由一个个 Segment 组成，Segment 代表”部分“或”一段“的意思，所以很多地方都会将其描述为分段锁。注意，行文中，我很多地方用了“槽”来代表一个 segment。 </p>
+<h4 id="线程安全（Segment-继承-ReentrantLock-加锁）"><a href="#线程安全（Segment-继承-ReentrantLock-加锁）" class="headerlink" title="线程安全（Segment 继承 ReentrantLock 加锁）"></a>线程安全（Segment 继承 ReentrantLock 加锁）</h4><p>简单理解就是，ConcurrentHashMap 是一个 Segment 数组，Segment 通过继承<br>ReentrantLock 来进行加锁，所以每次需要加锁的操作锁住的是一个 segment，这样只要保证每个 Segment 是线程安全的，也就实现了全局的线程安全。 </p>
+<div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589102309296.png" class title="Java7 ConcurrentHashMap结构">
+
+</div>
+
+<h4 id="并行度（默认-16）"><a href="#并行度（默认-16）" class="headerlink" title="并行度（默认 16）"></a>并行度（默认 16）</h4><p>concurrencyLevel：并行级别、并发数、Segment 数，怎么翻译不重要，理解它。默认是 16，也就是说 ConcurrentHashMap 有 16 个 Segments，所以理论上，这个时候，最多可以同时支持 16 个线程并发写，只要它们的操作分别分布在不同的 Segment 上。这个值可以在初始化的时候设置为其他值，但是一旦初始化以后，它是不可以扩容的。再具体到每个 Segment 内部，其实每个 Segment 很像之前介绍的 HashMap，不过它要保证线程安全，所以处理起来要麻烦些。 </p>
+<h4 id="Java8-实现-（引入了红黑树）"><a href="#Java8-实现-（引入了红黑树）" class="headerlink" title="Java8 实现 （引入了红黑树）"></a>Java8 实现 （引入了红黑树）</h4><p>Java8 对 ConcurrentHashMap 进行了比较大的改动,Java8 也引入了红黑树。 </p>
+<div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589102332640.png" class title="Java8 ConcurrentHashMap结构">
+
+</div>
+
+<h3 id="HashTable（线程安全）"><a href="#HashTable（线程安全）" class="headerlink" title="HashTable（线程安全）"></a>HashTable（线程安全）</h3><p>Hashtable 是遗留类，很多映射的常用功能与 HashMap 类似，不同的是它承自 Dictionary 类，并且是线程安全的，任一时间只有一个线程能写 Hashtable，并发性不如 ConcurrentHashMap，因为 ConcurrentHashMap 引入了分段锁。Hashtable 不建议在新代码中使用，不需要线程安全的场合可以用 HashMap 替换，需要线程安全的场合可以用 ConcurrentHashMap 替换。</p>
+<h3 id="TreeMap（可排序）"><a href="#TreeMap（可排序）" class="headerlink" title="TreeMap（可排序）"></a>TreeMap（可排序）</h3><p>TreeMap 实现 SortedMap 接口，能够把它保存的记录根据键排序，默认是按键值的升序排序，也可以指定排序的比较器，当用 Iterator 遍历 TreeMap 时，得到的记录是排过序的。如果使用排序的映射，建议使用 TreeMap。<br>在使用 TreeMap 时，key 必须实现 Comparable 接口或者在构造 TreeMap 传入自定义的<br>Comparator，否则会在运行时抛出 java.lang.ClassCastException 类型的异常。<br>参考：<a href="https://www.ibm.com/developerworks/cn/java/j-lo-tree/index.html">https://www.ibm.com/developerworks/cn/java/j-lo-tree/index.html</a> </p>
+<h3 id="LinkHashMap（记录插入顺序）"><a href="#LinkHashMap（记录插入顺序）" class="headerlink" title="LinkHashMap（记录插入顺序）"></a>LinkHashMap（记录插入顺序）</h3><p>LinkedHashMap 是 HashMap 的一个子类，保存了记录的插入顺序，在用 Iterator 遍历 LinkedHashMap 时，先得到的记录肯定是先插入的，也可以在构造时带参数，按照访问次序排序。参考 1：<a href="http://www.importnew.com/28263.html">http://www.importnew.com/28263.html</a><br>参考 2：<a href="http://www.importnew.com/20386.html#comment-648123">http://www.importnew.com/20386.html#comment-648123</a> </p>
+<h2 id="迭代器Iterator"><a href="#迭代器Iterator" class="headerlink" title="迭代器Iterator"></a>迭代器Iterator</h2><p>Iterator是获取集合中元素的过程，实际上帮助获取集合中的元素。<br>迭代器代替了 Java Collections Framework 中的 Enumeration。迭代器与枚举有两点不同：<br>迭代器允许调用方利用定义良好的语义在迭代期间从迭代器所指向的集合移除元素。<br>方法名称得到了改进。<br>Iterator 仅有一个子接口ListIterator，是列表迭代器，允许程序员按任一方向遍历列表、迭代期间修改列表，并获得迭代器在列表中的当前位置。 ListIterator 没有当前元素；它的光标位置 始终位于调用 previous() 所返回的元素和调用 next() 所返回的元素之间。在长度为 n 的列表中，有 n+1 个有效的索引值，从 0 到 n（包含）。</p>
+<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><h3 id="Comparable-接口"><a href="#Comparable-接口" class="headerlink" title="Comparable 接口"></a>Comparable 接口</h3><h3 id="Comparator-接口"><a href="#Comparator-接口" class="headerlink" title="Comparator 接口"></a>Comparator 接口</h3><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>集合</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux命令之netstat/ss</title>
     <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Bnetstat-ss/</url>
     <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>netstat命令用于显示与IP、TCP、UDP和ICMP协议相关的统计数据，一般用于检验本机各端口的网络连接情况。netstat是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。<br>在Linux下，如果连接数比较大，可以使用效率更高的ss来替代netstat。</p>
@@ -8617,310 +8921,6 @@ SHR：shared memory 共享内存<br>
       <tags>
         <tag>MySQL</tag>
         <tag>慢查询日志</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java系统化学习之集合概述</title>
-    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/</url>
-    <content><![CDATA[<p>使用集合需要考虑几个关注点：</p>
-<ol>
-<li>线程安全性</li>
-<li>是否有序</li>
-<li>是否重复</li>
-<li>关注查询还是关注写入</li>
-<li>equals和hashCode方法的重写需要同步</li>
-<li>使用接口返回集合数据<a id="more"></a>
-
-</li>
-</ol>
-<h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589101774172.png" class title="Java集合知识图谱">
-
-</div>
-
-<h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589870092003.png" class title="Java集合类图">
-
-</div>
-
-<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="集合和数组的区别"><a href="#集合和数组的区别" class="headerlink" title="集合和数组的区别"></a>集合和数组的区别</h3><ol>
-<li>数组和集合都是Java中的容器</li>
-<li>数组的长度是固定的，集合的长度是可变的</li>
-<li>数组只能存储相同数据类型的数据，这里的数据类型可以是基本数据类型，也可以是引用类型</li>
-<li>集合可以存储不同数据类型的对象的引用(不建议使用这种方式，需要使用泛型控制)，但不能存储基本数据类型</li>
-</ol>
-<h3 id="接口继承关系和实现"><a href="#接口继承关系和实现" class="headerlink" title="接口继承关系和实现"></a>接口继承关系和实现</h3><p>集合类存放于 <code>Java.util</code> 包中，主要有 3 种：set(集）、list(列表包含 Queue）和 map(映射)。</p>
-<ol>
-<li>Collection：Collection 是集合 List、Set、Queue 的最基本的接口。</li>
-<li>Iterator：迭代器，可以通过迭代器遍历集合中的数据</li>
-<li>Map：是映射表的基础接口</li>
-</ol>
-<p>通过类图可知得出以下结论：  </p>
-<ol>
-<li>Java集合的根接口是Collection，它又继承了迭代接口Iterable</li>
-<li>List接口和Set接口继承了Collection接口</li>
-<li>Map接口是独立的接口，并没有继承Collection接口</li>
-<li>List接口常用的实现类有：ArrayList、LinkedList、Vector，有序集合</li>
-<li>Set接口常用的实现类有：HashSet、LinkedHashSet、TreeSet，不重复集合</li>
-<li>Map接口常用的实现类有：HashMap、HashTable、TreeMap</li>
-<li>Queue(队列)接口及其子类，提供了基于队列的集合体系。</li>
-</ol>
-<style type="text/css">
-.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
-.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
-  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
-  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-</style>
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-0lax">接口</th>
-    <th class="tg-0lax">集合类</th>
-    <th class="tg-0lax">重复性</th>
-    <th class="tg-0lax">有序性</th>
-    <th class="tg-0lax">判断方法</th>
-    <th class="tg-0lax">数据结构</th>
-    <th class="tg-0lax">其他</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-0lax" rowspan="2">Set</td>
-    <td class="tg-0lax">HashSet</td>
-    <td class="tg-0lax">否</td>
-    <td class="tg-0lax">无序</td>
-    <td class="tg-0lax">equals()、hashCode()</td>
-    <td class="tg-0lax">Hash 表</td>
-    <td class="tg-0lax">插入速度快</td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">LinkedHashSet</td>
-    <td class="tg-0lax">否</td>
-    <td class="tg-0lax">插入有序</td>
-    <td class="tg-0lax">equals()、hashCode()</td>
-    <td class="tg-0lax">Hash 表和双向链表</td>
-    <td class="tg-0lax"></td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">SortedSet、Set</td>
-    <td class="tg-0lax">TreeSet</td>
-    <td class="tg-0lax">否</td>
-    <td class="tg-0lax">有序</td>
-    <td class="tg-0lax">equals()、compareTo()</td>
-    <td class="tg-0lax">&平衡树（Balanced tree）</td>
-    <td class="tg-0lax"></td>
-  </tr>
-  <tr>
-    <td class="tg-0lax" rowspan="3">List</td>
-    <td class="tg-0lax">ArrayList</td>
-    <td class="tg-0lax">是</td>
-    <td class="tg-0lax">插入有序</td>
-    <td class="tg-0lax">equals()</td>
-    <td class="tg-0lax">数组</td>
-    <td class="tg-0lax">
-        动态链表<br>
-        随机查询
-    </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">LinkedList</td>
-    <td class="tg-0lax">是</td>
-    <td class="tg-0lax">插入有序</td>
-    <td class="tg-0lax">equals()</td>
-    <td class="tg-0lax">链表</td>
-    <td class="tg-0lax">
-        用于链表、队列、堆<br>
-        中间写入、删除数据较快
-    </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">Vector</td>
-    <td class="tg-0lax">是</td>
-    <td class="tg-0lax">插入有序</td>
-    <td class="tg-0lax">equals()</td>
-    <td class="tg-0lax">数组</td>
-    <td class="tg-0lax">线程安全，效率低</td>
-  </tr>
-  <tr>
-    <td class="tg-0lax" rowspan="3">Map</td>
-    <td class="tg-0lax">HashMap</td>
-    <td class="tg-0lax">key唯一</td>
-    <td class="tg-0lax">无序</td>
-    <td class="tg-0lax">equals()、hashCode()</td>
-    <td class="tg-0lax">Hash 表</td>
-    <td class="tg-0lax"></td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">LinkedHashMap</td>
-    <td class="tg-0lax">key唯一</td>
-    <td class="tg-0lax">Key插入有序</td>
-    <td class="tg-0lax">equals()、hashCode()</td>
-    <td class="tg-0lax">Hash 表和双向链表</td>
-    <td class="tg-0lax"></td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">Hashtable</td>
-    <td class="tg-0lax">key唯一</td>
-    <td class="tg-0lax">无序</td>
-    <td class="tg-0lax">equals()、hashCode()</td>
-    <td class="tg-0lax">Hash 表</td>
-    <td class="tg-0lax"></td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">SortedMap</td>
-    <td class="tg-0lax">TreeMap</td>
-    <td class="tg-0lax">key唯一</td>
-    <td class="tg-0lax">key有序</td>
-    <td class="tg-0lax">equals()、compareTo()</td>
-    <td class="tg-0lax">平衡树（Balanced tree）</td>
-    <td class="tg-0lax"></td>
-  </tr>
-</tbody>
-</table>
-
-<h2 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h2><h3 id="Collection类图"><a href="#Collection类图" class="headerlink" title="Collection类图"></a>Collection类图</h3><div style="width:300px;length:400px;align=center;margin:0 auto;">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589875532865.png" class title="Collection类图">
-
-</div>
-
-<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589871965983.png" class title="List类图">
-
-</div>
-
-<p>List 是<strong>有序</strong>的 Collection。Java List常用的实现类：ArrayList、Vector 和LinkedList。<br>List集合包括List接口以及List接口的所有实现类。List集合具有以下特点：</p>
-<ol>
-<li>集合中的元素允许重复</li>
-<li>集合中的元素是有顺序的，各元素插入的顺序就是各元素的顺序，可以通过索引获取数据</li>
-<li>集合中的元素可以通过索引来访问或者设置</li>
-<li>提供一个listIterator()方法，返回一个 ListIterator接口，和标准的Iterator接口相比，ListIterator多了一些add()之类的方法，允许添加，删除，设定元素，还能向前或向后遍历</li>
-</ol>
-<h3 id="ArrayList（数组）"><a href="#ArrayList（数组）" class="headerlink" title="ArrayList（数组）"></a>ArrayList（数组）</h3><ol>
-<li>内部通过数组实现</li>
-<li>元素支持快速随机访问</li>
-<li>当从 ArrayList 的中间位置插入或者删除元素时，需要对数组进行复制、移动、代价比较高。因此，它适合随机查找和遍历，不适合插入和删除。</li>
-<li>可以为null</li>
-<li>size，isEmpty，get，set方法运行时间为常数</li>
-<li>add时间复杂度O(n)</li>
-<li>动态扩容，使用ensureCapacity方法来增加ArrayList的容量以提高插入效率</li>
-</ol>
-<h3 id="Vector（数组实现、线程同步）"><a href="#Vector（数组实现、线程同步）" class="headerlink" title="Vector（数组实现、线程同步）"></a>Vector（数组实现、线程同步）</h3><ol>
-<li>内部通过数组实现</li>
-<li>支持同步，效率慢</li>
-<li>如果其他线程在变更链表，使用Iterator将抛出ConcurrentModificationException</li>
-</ol>
-<h3 id="LinkList（链表）"><a href="#LinkList（链表）" class="headerlink" title="LinkList（链表）"></a>LinkList（链表）</h3><ol>
-<li>内部使用链表结构实现</li>
-<li>适合数据的动态插入和删除</li>
-<li>随机访问和遍历速度较慢</li>
-<li>提供额外的get、remove、insert方法作用LinkList的头尾，可以当作堆栈、队列和双向队列使用</li>
-<li>允许为null</li>
-<li>安全化：List list = Collections.synchronizedList(new LinkedList(…));</li>
-</ol>
-<h3 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h3><ol>
-<li>Stack继承自Vector，实现一个后进先出的堆栈</li>
-<li>基本的push和pop方法，还有peek方法得到栈顶的元素</li>
-<li>empty方法测试堆栈是否为空</li>
-<li>search方法检测一个元素在堆栈中的位置</li>
-<li>Stack刚创建后是空栈</li>
-</ol>
-<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><ol>
-<li>数据不重复（通过对象的hashCode值判断，可重复添加但是最终只有一个）</li>
-<li>存储数据无序(存入和取出的顺序不一定相同)</li>
-</ol>
-<blockquote>
-<p>请注意：必须小心操作可变对象（Mutable Object）。如果一个Set中的可变元素改变了自身状态导致Object.equals(Object)=true将导致一些问题</p>
-</blockquote>
-<div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589872549181.png" class title="Set类图">
-
-</div>
-
-<h3 id="HashSet（Hash-表）"><a href="#HashSet（Hash-表）" class="headerlink" title="HashSet（Hash 表）"></a>HashSet（Hash 表）</h3><ol>
-<li>使用Hash表实现，并且存储的是哈希值</li>
-<li>存储的数据顺序无序（不是按照写入顺序定义）</li>
-<li>按照哈希值来存储或读取数据，哈希值是通过hashcode获取</li>
-<li>判断相同：首先判断哈希值，然后执行equals方法，都通过才认为是同一条数据</li>
-<li>哈希碰撞：（哈希值相同，equals不同），可以使用链表进行顺延</li>
-<li>HashSet 通过 hashCode 值来确定元素在内存中的位置。一个 hashCode 位置上可以存放多个元素。</li>
-</ol>
-<h3 id="TreeSet（二叉树）"><a href="#TreeSet（二叉树）" class="headerlink" title="TreeSet（二叉树）"></a>TreeSet（二叉树）</h3><ol>
-<li>TreeSet()是使用二叉树的原理对新 add()的对象按照指定的顺序排序（升序、降序），每增加一个对象都会进行排序，将对象插入的二叉树指定的位置。</li>
-<li>Integer 和 String 对象都可以进行默认的 TreeSet 排序，而自定义类的对象是不可以的，自己定义的类必须实现 Comparable 接口，并且覆写相应的 compareTo()函数，才可以正常使用。</li>
-<li>在覆写 compare()函数时，要返回相应的值才能使 TreeSet 按照一定的规则来排序</li>
-<li>比较此对象与指定对象的顺序。如果该对象小于、等于或大于指定对象，则分别返回负整数、零或正整数。</li>
-</ol>
-<h3 id="LinkHashSet（HashSet-LinkedHashMap）"><a href="#LinkHashSet（HashSet-LinkedHashMap）" class="headerlink" title="LinkHashSet（HashSet+LinkedHashMap）"></a>LinkHashSet（HashSet+LinkedHashMap）</h3><ol>
-<li>通过HashSet+LinkedHashMap实现</li>
-<li>使用LinkedHashMap 来保存所有元素</li>
-</ol>
-<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589873440529.png" class title="Map类图">
-
-</div>
-
-<p>Map集合包括Map接口以及Map接口的所有实现类。Map集合具有以下特点：</p>
-<ol>
-<li>Map接口并没有继承Collection接口，提供的是key到value的映射</li>
-<li>Map中不能包含相同的key</li>
-</ol>
-<h3 id="Hashmap与hashtable的区别"><a href="#Hashmap与hashtable的区别" class="headerlink" title="Hashmap与hashtable的区别"></a>Hashmap与hashtable的区别</h3><ol>
-<li>HashMap 允许 key 和 value 为 null，Hashtable 不允许。</li>
-<li>HashMap 的默认初始容量为 16，Hashtable 为 11。</li>
-<li>HashMap 的扩容为原来的 2 倍，Hashtable 的扩容为原来的 2 倍加 1。</li>
-<li>HashMap 是非线程安全的，Hashtable是线程安全的。</li>
-<li>HashMap 的 hash 值重新计算过，Hashtable 直接使用 hashCode。</li>
-<li>HashMap 去掉了 Hashtable 中的 contains 方法。</li>
-<li>HashMap 继承自 AbstractMap 类，Hashtable 继承自 Dictionary 类。</li>
-</ol>
-<h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><ol>
-<li>HashMap 的底层是个 Node 数组（Node&lt;K,V&gt;[] table），在数组的具体索引位置，如果存在多个节点，则可能是以链表或红黑树的形式存在。</li>
-<li>增加、删除、查找键值对时，定位到哈希桶数组的位置是很关键的一步，源码中是通过下面3个操作来完成这一步：1）拿到 key 的 hashCode 值；2）将 hashCode 的高位参与运算，重新计算 hash 值；3）将计算出来的 hash 值与 “table.length - 1” 进行 &amp; 运算。</li>
-<li>HashMap 的默认初始容量（capacity）是 16，capacity 必须为 2 的幂次方；默认负载因子（load factor）是 0.75；实际能存放的节点个数（threshold，即触发扩容的阈值）= capacity * load factor。</li>
-<li>HashMap 在触发扩容后，阈值会变为原来的 2 倍，并且会对所有节点进行重 hash 分布，重 hash 分布后节点的新分布位置只可能有两个：“原索引位置” 或 “原索引+oldCap位置”。例如 capacity 为16，索引位置 5 的节点扩容后，只可能分布在新表 “索引位置5” 和 “索引位置21（5+16）”。</li>
-<li>导致 HashMap 扩容后，同一个索引位置的节点重 hash 最多分布在两个位置的根本原因是：1）table的长度始终为 2 的 n 次方；2）索引位置的计算方法为 “(table.length - 1) &amp; hash”。HashMap 扩容是一个比较耗时的操作，定义 HashMap 时尽量给个接近的初始容量值。</li>
-<li>HashMap 有 threshold 属性和 loadFactor 属性，但是没有 capacity 属性。初始化时，如果传了初始化容量值，该值是存在 threshold 变量，并且 Node 数组是在第一次 put 时才会进行初始化，初始化时会将此时的 threshold 值作为新表的 capacity 值，然后用 capacity 和 loadFactor 计算新表的真正 threshold 值。</li>
-<li>当同一个索引位置的节点在增加后达到 9 个时，并且此时数组的长度大于等于 64，则会触发链表节点（Node）转红黑树节点（TreeNode），转成红黑树节点后，其实链表的结构还存在，通过 next 属性维持。链表节点转红黑树节点的具体方法为源码中的 treeifyBin 方法。而如果数组长度小于64，则不会触发链表转红黑树，而是会进行扩容。</li>
-<li>当同一个索引位置的节点在移除后达到 6 个时，并且该索引位置的节点为红黑树节点，会触发红黑树节点转链表节点。红黑树节点转链表节点的具体方法为源码中的 untreeify 方法。</li>
-<li>HashMap 在 JDK 1.8 之后不再有死循环的问题，JDK 1.8 之前存在死循环的根本原因是在扩容后同一索引位置的节点顺序会反掉。</li>
-<li>HashMap 是非线程安全的，在并发场景下使用 ConcurrentHashMap 来代替。</li>
-</ol>
-<p>详细参考：<a href="https://www.sunliaodong.cn/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BHashMap/">JAVA HashMap详解</a></p>
-<h3 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h3><h4 id="Segment-段"><a href="#Segment-段" class="headerlink" title="Segment 段"></a>Segment 段</h4><p>ConcurrentHashMap 和 HashMap 思路是差不多的，但是因为它支持并发操作，所以要复杂一<br>些。整个 ConcurrentHashMap 由一个个 Segment 组成，Segment 代表”部分“或”一段“的意思，所以很多地方都会将其描述为分段锁。注意，行文中，我很多地方用了“槽”来代表一个 segment。 </p>
-<h4 id="线程安全（Segment-继承-ReentrantLock-加锁）"><a href="#线程安全（Segment-继承-ReentrantLock-加锁）" class="headerlink" title="线程安全（Segment 继承 ReentrantLock 加锁）"></a>线程安全（Segment 继承 ReentrantLock 加锁）</h4><p>简单理解就是，ConcurrentHashMap 是一个 Segment 数组，Segment 通过继承<br>ReentrantLock 来进行加锁，所以每次需要加锁的操作锁住的是一个 segment，这样只要保证每个 Segment 是线程安全的，也就实现了全局的线程安全。 </p>
-<div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589102309296.png" class title="Java7 ConcurrentHashMap结构">
-
-</div>
-
-<h4 id="并行度（默认-16）"><a href="#并行度（默认-16）" class="headerlink" title="并行度（默认 16）"></a>并行度（默认 16）</h4><p>concurrencyLevel：并行级别、并发数、Segment 数，怎么翻译不重要，理解它。默认是 16，也就是说 ConcurrentHashMap 有 16 个 Segments，所以理论上，这个时候，最多可以同时支持 16 个线程并发写，只要它们的操作分别分布在不同的 Segment 上。这个值可以在初始化的时候设置为其他值，但是一旦初始化以后，它是不可以扩容的。再具体到每个 Segment 内部，其实每个 Segment 很像之前介绍的 HashMap，不过它要保证线程安全，所以处理起来要麻烦些。 </p>
-<h4 id="Java8-实现-（引入了红黑树）"><a href="#Java8-实现-（引入了红黑树）" class="headerlink" title="Java8 实现 （引入了红黑树）"></a>Java8 实现 （引入了红黑树）</h4><p>Java8 对 ConcurrentHashMap 进行了比较大的改动,Java8 也引入了红黑树。 </p>
-<div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E9%9B%86%E5%90%88%E6%A6%82%E8%BF%B0/1589102332640.png" class title="Java8 ConcurrentHashMap结构">
-
-</div>
-
-<h3 id="HashTable（线程安全）"><a href="#HashTable（线程安全）" class="headerlink" title="HashTable（线程安全）"></a>HashTable（线程安全）</h3><p>Hashtable 是遗留类，很多映射的常用功能与 HashMap 类似，不同的是它承自 Dictionary 类，并且是线程安全的，任一时间只有一个线程能写 Hashtable，并发性不如 ConcurrentHashMap，因为 ConcurrentHashMap 引入了分段锁。Hashtable 不建议在新代码中使用，不需要线程安全的场合可以用 HashMap 替换，需要线程安全的场合可以用 ConcurrentHashMap 替换。</p>
-<h3 id="TreeMap（可排序）"><a href="#TreeMap（可排序）" class="headerlink" title="TreeMap（可排序）"></a>TreeMap（可排序）</h3><p>TreeMap 实现 SortedMap 接口，能够把它保存的记录根据键排序，默认是按键值的升序排序，也可以指定排序的比较器，当用 Iterator 遍历 TreeMap 时，得到的记录是排过序的。如果使用排序的映射，建议使用 TreeMap。<br>在使用 TreeMap 时，key 必须实现 Comparable 接口或者在构造 TreeMap 传入自定义的<br>Comparator，否则会在运行时抛出 java.lang.ClassCastException 类型的异常。<br>参考：<a href="https://www.ibm.com/developerworks/cn/java/j-lo-tree/index.html">https://www.ibm.com/developerworks/cn/java/j-lo-tree/index.html</a> </p>
-<h3 id="LinkHashMap（记录插入顺序）"><a href="#LinkHashMap（记录插入顺序）" class="headerlink" title="LinkHashMap（记录插入顺序）"></a>LinkHashMap（记录插入顺序）</h3><p>LinkedHashMap 是 HashMap 的一个子类，保存了记录的插入顺序，在用 Iterator 遍历 LinkedHashMap 时，先得到的记录肯定是先插入的，也可以在构造时带参数，按照访问次序排序。参考 1：<a href="http://www.importnew.com/28263.html">http://www.importnew.com/28263.html</a><br>参考 2：<a href="http://www.importnew.com/20386.html#comment-648123">http://www.importnew.com/20386.html#comment-648123</a> </p>
-<h2 id="迭代器Iterator"><a href="#迭代器Iterator" class="headerlink" title="迭代器Iterator"></a>迭代器Iterator</h2><p>Iterator是获取集合中元素的过程，实际上帮助获取集合中的元素。<br>迭代器代替了 Java Collections Framework 中的 Enumeration。迭代器与枚举有两点不同：<br>迭代器允许调用方利用定义良好的语义在迭代期间从迭代器所指向的集合移除元素。<br>方法名称得到了改进。<br>Iterator 仅有一个子接口ListIterator，是列表迭代器，允许程序员按任一方向遍历列表、迭代期间修改列表，并获得迭代器在列表中的当前位置。 ListIterator 没有当前元素；它的光标位置 始终位于调用 previous() 所返回的元素和调用 next() 所返回的元素之间。在长度为 n 的列表中，有 n+1 个有效的索引值，从 0 到 n（包含）。</p>
-<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><h3 id="Comparable-接口"><a href="#Comparable-接口" class="headerlink" title="Comparable 接口"></a>Comparable 接口</h3><h3 id="Comparator-接口"><a href="#Comparator-接口" class="headerlink" title="Comparator 接口"></a>Comparator 接口</h3><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>集合</tag>
       </tags>
   </entry>
   <entry>
