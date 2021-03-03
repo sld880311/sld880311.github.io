@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-03-03T02:17:39.097Z</updated>
+  <updated>2021-03-03T06:22:50.706Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -15,6 +15,147 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>InfluxDB深入学习之自身监控</title>
+    <link href="https://www.sunliaodong.cn/2021/03/03/InfluxDB%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%87%AA%E8%BA%AB%E7%9B%91%E6%8E%A7/"/>
+    <id>https://www.sunliaodong.cn/2021/03/03/InfluxDB%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%87%AA%E8%BA%AB%E7%9B%91%E6%8E%A7/</id>
+    <published>2021-03-03T06:20:37.000Z</published>
+    <updated>2021-03-03T06:22:50.706Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;常用监控脚本&quot;&gt;&lt;a href=&quot;#常用监控脚本&quot; class=&quot;headerlink&quot; title=&quot;常用监控脚本&quot;&gt;&lt;/a&gt;常用监控脚本&lt;/h2&gt;&lt;h3 id=&quot;series&quot;&gt;&lt;a href=&quot;#series&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="InfluxDB" scheme="https://www.sunliaodong.cn/categories/InfluxDB/"/>
+    
+    
+    <category term="InfluxDB" scheme="https://www.sunliaodong.cn/tags/InfluxDB/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>分布式协议之ZAB</title>
+    <link href="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE%E4%B9%8BZAB/"/>
+    <id>https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE%E4%B9%8BZAB/</id>
+    <published>2021-03-03T06:15:12.000Z</published>
+    <updated>2021-03-03T06:15:12.196Z</updated>
+    
+    
+    
+    
+    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>分布式算法之Paxos</title>
+    <link href="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%97%E6%B3%95%E4%B9%8BPaxos/"/>
+    <id>https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%97%E6%B3%95%E4%B9%8BPaxos/</id>
+    <published>2021-03-03T06:14:38.000Z</published>
+    <updated>2021-03-03T07:49:03.521Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;解决的问题是一个分布式系统如何就某个值（决议）&lt;strong&gt;达成一致（共识问题）&lt;/strong&gt;。&lt;br&gt;一个典型的场景是，在一个分布式数据库系统中，如果各节点的初始状态一致，每个节点执行相同的操作序列，那么他们最后能得到一个一致的状态。为保证每个节点执行相同的命令序列，需要在每一条指令上执行一个“一致性算法”以保证每个节点看到的指令一致。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="分布式" scheme="https://www.sunliaodong.cn/categories/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    <category term="算法" scheme="https://www.sunliaodong.cn/categories/%E7%AE%97%E6%B3%95/"/>
+    
+    
+    <category term="Paxos" scheme="https://www.sunliaodong.cn/tags/Paxos/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>分布式算法之Raft</title>
+    <link href="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%97%E6%B3%95%E4%B9%8BRaft/"/>
+    <id>https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%97%E6%B3%95%E4%B9%8BRaft/</id>
+    <published>2021-03-03T06:14:14.000Z</published>
+    <updated>2021-03-03T06:14:14.684Z</updated>
+    
+    
+    
+    
+    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
+    
+    
+    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>分布式理论</title>
+    <link href="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/"/>
+    <id>https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/</id>
+    <published>2021-03-03T06:14:01.000Z</published>
+    <updated>2021-03-03T07:43:26.710Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;!-- TOC --&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA&quot;&gt;分布式理论&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#cap&quot;&gt;CAP&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a</summary>
+        
+      
+    
+    
+    
+    <category term="分布式" scheme="https://www.sunliaodong.cn/categories/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    
+    <category term="cap" scheme="https://www.sunliaodong.cn/tags/cap/"/>
+    
+    <category term="base" scheme="https://www.sunliaodong.cn/tags/base/"/>
+    
+    <category term="acid" scheme="https://www.sunliaodong.cn/tags/acid/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>算法之布隆过滤器</title>
+    <link href="https://www.sunliaodong.cn/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/"/>
+    <id>https://www.sunliaodong.cn/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</id>
+    <published>2021-03-03T06:01:39.000Z</published>
+    <updated>2021-03-03T06:22:01.558Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;如果想判断一个元素是不是在一个集合里，一般想到的是将集合中所有元素保存起来，然后通过比较确定。链表、树、散列表（又叫哈希表，Hash table）等等数据结构都是这种思路，存储位置要么是磁盘，要么是内存。很多时候要么是以时间换空间，要么是以空间换时间。  &lt;/p&gt;
+&lt;p&gt;在响应时间要求比较严格的情况下，如果我们存在内里，那么随着集合中元素的增加，我们需要的存储空间越来越大，以及检索的时间越来越长，导致内存开销太大、时间效率变低。  &lt;/p&gt;
+&lt;p&gt;此时需要考虑解决的问题就是，&lt;strong&gt;在数据量比较大的情况下，既满足时间要求，又满足空间的要求&lt;/strong&gt;。即我们需要一个时间和空间消耗都比较小的数据结构和算法。Bloom Filter就是一种解决方案。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="分布式" scheme="https://www.sunliaodong.cn/categories/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    <category term="算法" scheme="https://www.sunliaodong.cn/categories/%E7%AE%97%E6%B3%95/"/>
+    
+    
+    <category term="算法" scheme="https://www.sunliaodong.cn/tags/%E7%AE%97%E6%B3%95/"/>
+    
+    <category term="布隆过滤器" scheme="https://www.sunliaodong.cn/tags/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/"/>
+    
+  </entry>
   
   <entry>
     <title>JVM垃圾收集器与内存分配策略</title>
@@ -473,10 +614,10 @@
     <link href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/"/>
     <id>https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/</id>
     <published>2021-02-08T00:28:49.000Z</published>
-    <updated>2021-02-25T06:59:47.652Z</updated>
+    <updated>2021-03-03T08:42:34.948Z</updated>
     
     
-    <summary type="html">&lt;ol&gt;
+    <summary type="html">&lt;h2 id=&quot;特点&quot;&gt;&lt;a href=&quot;#特点&quot; class=&quot;headerlink&quot; title=&quot;特点&quot;&gt;&lt;/a&gt;特点&lt;/h2&gt;&lt;ol&gt;
 &lt;li&gt;任意非NULL对象当作锁&lt;/li&gt;
 &lt;li&gt;独占式悲观锁&lt;/li&gt;
 &lt;li&gt;可重入锁&lt;/li&gt;&lt;/ol&gt;</summary>
@@ -518,153 +659,6 @@
     <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
     
     <category term="锁" scheme="https://www.sunliaodong.cn/tags/%E9%94%81/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL之原理分析-Count</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-Count/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-Count/</id>
-    <published>2021-02-07T09:26:55.000Z</published>
-    <updated>2021-02-07T09:47:22.966Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;语法&quot;&gt;&lt;a href=&quot;#语法&quot; class=&quot;headerlink&quot; title=&quot;语法&quot;&gt;&lt;/a&gt;语法&lt;/h2&gt;&lt;p&gt;COUNT(expr) [over_clause]&lt;/p&gt;
-&lt;p&gt;Returns a count of the number of non-NULL values of expr in the rows retrieved by a SELECT statement. The result is a BIGINT value.&lt;/p&gt;
-&lt;p&gt;If there are no matching rows, COUNT() returns 0.&lt;/p&gt;
-&lt;p&gt;This function executes as a window function if over_clause is present. over_clause is as described in Section 12.21.2, “Window Function Concepts and Syntax”.&lt;/p&gt;
-&lt;figure class=&quot;highlight sql&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;mysql&lt;span class=&quot;operator&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;SELECT&lt;/span&gt; student.student_name,&lt;span class=&quot;built_in&quot;&gt;COUNT&lt;/span&gt;(&lt;span class=&quot;operator&quot;&gt;*&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;keyword&quot;&gt;FROM&lt;/span&gt; student,course&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;keyword&quot;&gt;WHERE&lt;/span&gt; student.student_id&lt;span class=&quot;operator&quot;&gt;=&lt;/span&gt;course.student_id&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;keyword&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;BY&lt;/span&gt; student_name;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;COUNT(*) is somewhat different in that it returns a count of the number of rows retrieved, whether or not they contain NULL values.&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="数据库" scheme="https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-    <category term="Count" scheme="https://www.sunliaodong.cn/tags/Count/"/>
-    
-    <category term="语法分析" scheme="https://www.sunliaodong.cn/tags/%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>常见面试题汇总</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/</id>
-    <published>2021-02-07T08:03:04.000Z</published>
-    <updated>2021-02-07T08:03:33.559Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;ol&gt;
-&lt;li&gt;&lt;a</summary>
-        
-      
-    
-    
-    
-    <category term="面试题" scheme="https://www.sunliaodong.cn/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
-    
-    
-    <category term="面试题" scheme="https://www.sunliaodong.cn/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SpringBoot常用配置参考</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/SpringBoot%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/SpringBoot%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83/</id>
-    <published>2021-02-07T08:02:54.000Z</published>
-    <updated>2021-02-07T08:18:30.599Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;通用配置&quot;&gt;&lt;a href=&quot;#通用配置&quot; class=&quot;headerlink&quot; title=&quot;通用配置&quot;&gt;&lt;/a&gt;通用配置&lt;/h2&gt;&lt;figure class=&quot;highlight xml&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;# ===================================================================&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# COMMON SPRING BOOT PROPERTIES&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;#&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# This sample file is provided as a guideline. Do NOT copy it in its&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# entirety to your own application.               ^^^&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# ===================================================================&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# ----------------------------------------&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# CORE PROPERTIES&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# ----------------------------------------&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;# BANNER&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;banner.charset=UTF-8 # Banner file encoding.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;banner.location=classpath:banner.txt # Banner file location.&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
-    
-    
-    
-    <category term="Springboot" scheme="https://www.sunliaodong.cn/categories/Springboot/"/>
-    
-    
-    <category term="Springboot" scheme="https://www.sunliaodong.cn/tags/Springboot/"/>
-    
-    <category term="常用配置" scheme="https://www.sunliaodong.cn/tags/%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Centos7.2离线安装mysql5.7.20</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/Centos7-2%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85mysql5-7-20/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/Centos7-2%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85mysql5-7-20/</id>
-    <published>2021-02-07T08:02:42.000Z</published>
-    <updated>2021-02-18T00:19:33.217Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;安装包下载&quot;&gt;&lt;a href=&quot;#安装包下载&quot; class=&quot;headerlink&quot; title=&quot;安装包下载&quot;&gt;&lt;/a&gt;安装包下载&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://dev.mysql.com/downloads/mysql/&quot;&gt;https://dev.mysql.com/downloads/mysql/&lt;/a&gt;&lt;br&gt;根据系统版本下载&lt;/p&gt;
-&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/07/Centos7-2%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85mysql5-7-20/1589454272587.png&quot; class&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
-    
-    
-    <category term="MySQL" scheme="https://www.sunliaodong.cn/tags/MySQL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hadoop1.X伪分布式安装</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/Hadoop1-X%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%89%E8%A3%85/</id>
-    <published>2021-02-07T07:59:27.000Z</published>
-    <updated>2021-02-07T08:01:54.585Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;安装模式&quot;&gt;&lt;a href=&quot;#安装模式&quot; class=&quot;headerlink&quot; title=&quot;安装模式&quot;&gt;&lt;/a&gt;安装模式&lt;/h2&gt;&lt;h3 id=&quot;单机模式&quot;&gt;&lt;a href=&quot;#单机模式&quot; class=&quot;headerlink&quot; title=&quot;单机模式&quot;&gt;&lt;/a&gt;单机模式&lt;/h3&gt;&lt;p&gt;安装简单，几乎不用作任何配置，但仅限于调试用途；&lt;/p&gt;
-&lt;h3 id=&quot;伪分布模式&quot;&gt;&lt;a href=&quot;#伪分布模式&quot; class=&quot;headerlink&quot; title=&quot;伪分布模式&quot;&gt;&lt;/a&gt;伪分布模式&lt;/h3&gt;&lt;p&gt;在单节点上同时启动NameNode、DataNode、JobTracker、TaskTracker、Secondary Namenode等5个进程，模拟分布式运行的各个节点；&lt;/p&gt;
-&lt;h3 id=&quot;完全分布式模式&quot;&gt;&lt;a href=&quot;#完全分布式模式&quot; class=&quot;headerlink&quot; title=&quot;完全分布式模式&quot;&gt;&lt;/a&gt;完全分布式模式&lt;/h3&gt;&lt;p&gt;正常的Hadoop集群，由多个各司其职的节点构成&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
-    
-    
-    <category term="Hadoop" scheme="https://www.sunliaodong.cn/tags/Hadoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hadoop开发环境安装（Hadoop2.7.4）</title>
-    <link href="https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/"/>
-    <id>https://www.sunliaodong.cn/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/</id>
-    <published>2021-02-07T07:49:37.000Z</published>
-    <updated>2021-02-18T00:19:33.217Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;虚拟机基本配置&quot;&gt;&lt;a href=&quot;#虚拟机基本配置&quot; class=&quot;headerlink&quot; title=&quot;虚拟机基本配置&quot;&gt;&lt;/a&gt;虚拟机基本配置&lt;/h2&gt;&lt;h3 id=&quot;设置机器名（重启后生效）–使用ubuntu&quot;&gt;&lt;a href=&quot;#设置机器名（重启后生效）–使用ubuntu&quot; class=&quot;headerlink&quot; title=&quot;设置机器名（重启后生效）–使用ubuntu&quot;&gt;&lt;/a&gt;设置机器名（重启后生效）–使用ubuntu&lt;/h3&gt;&lt;div align=&quot;center&quot;&gt;
-
-&lt;img src=&quot;/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969553959.png&quot; class&gt;
-
-&lt;img src=&quot;/2021/02/07/Hadoop%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85%EF%BC%88Hadoop2-7-4%EF%BC%89/1589969589813.png&quot; class&gt;
-
-&lt;/div&gt;</summary>
-    
-    
-    
-    <category term="其他" scheme="https://www.sunliaodong.cn/categories/%E5%85%B6%E4%BB%96/"/>
-    
-    
-    <category term="Hadoop" scheme="https://www.sunliaodong.cn/tags/Hadoop/"/>
     
   </entry>
   

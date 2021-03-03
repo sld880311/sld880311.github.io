@@ -126,17 +126,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">144</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">151</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">23</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">26</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">92</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">98</span></a>
 
   </li>
         <li class="menu-item menu-item-schedule">
@@ -204,6 +204,615 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/" class="post-title-link" itemprop="url">Java并发编程之Executors</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-07 11:16:17 / 修改时间：11:18:59" itemprop="dateCreated datePublished" datetime="2021-02-07T11:16:17+08:00">2021-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">Java线程池</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="newCachedThreadPool"><a href="#newCachedThreadPool" class="headerlink" title="newCachedThreadPool"></a>newCachedThreadPool</h2><p>创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。对于执行<strong>很多短期异步任务</strong>的程序而言，这些线程池通常可提高程序性能。调用 execute 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。因此，长时间保持空闲的线程池不会使用任何资源。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutors/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BScheduledThreadPoolExecutor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BScheduledThreadPoolExecutor/" class="post-title-link" itemprop="url">Java并发编程之ScheduledThreadPoolExecutor</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-07 11:09:00 / 修改时间：11:15:33" itemprop="dateCreated datePublished" datetime="2021-02-07T11:09:00+08:00">2021-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">Java线程池</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="任务执行"><a href="#任务执行" class="headerlink" title="任务执行"></a>任务执行</h2><p>当调用ScheduledThreadPoolExecutor的scheduleAtFixedRate()方法或者scheduleWith-FixedDelay()方法时，会向ScheduledThreadPoolExecutor的DelayQueue添加一个实现了RunnableScheduledFuture接口的ScheduledFutureTask。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BScheduledThreadPoolExecutor/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">Java并发编程之线程池总体架构</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-07 11:03:43 / 修改时间：11:07:13" itemprop="dateCreated datePublished" datetime="2021-02-07T11:03:43+08:00">2021-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">Java线程池</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Executor"><a href="#Executor" class="headerlink" title="Executor"></a>Executor</h2><p>为了方便并发执行任务，出现了一种专门用来执行任务的实现，也就是<code>Executor</code>。<br>由此，任务提交者不需要再创建管理线程，使用更方便，也减少了开销。Java 里面线程池的顶级接口是 Executor，但是严格意义上讲 Executor 并不是一个线程池，而只是一个执行线程的工具。真正的线程池接口是 <code>ExecutorService</code>。Executor定义规范。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%A6%82%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%A6%82%E8%BF%B0/" class="post-title-link" itemprop="url">Java并发编程之线程池概述</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-07 11:02:16 / 修改时间：11:03:05" itemprop="dateCreated datePublished" datetime="2021-02-07T11:02:16+08:00">2021-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">Java线程池</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>769</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>使用线程池可以有以下优点：  </p>
+<ol>
+<li>降低资源消耗。通过重复利用已创建的线程降低线程创建和销毁造成的消耗。</li>
+<li>提高响应速度。当任务到达时，任务可以不需要等到线程创建就能立即执行。</li>
+<li>提高线程的可管理性。线程是稀缺资源，如果无限制地创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一分配、调优和监控。</li></ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%A6%82%E8%BF%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadPoolExecutor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadPoolExecutor/" class="post-title-link" itemprop="url">Java并发编程之ThreadPoolExecutor</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-07 10:58:07" itemprop="dateCreated datePublished" datetime="2021-02-07T10:58:07+08:00">2021-02-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-08 08:38:16" itemprop="dateModified" datetime="2021-02-08T08:38:16+08:00">2021-02-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">Java线程池</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>24k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>22 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="构建函数"><a href="#构建函数" class="headerlink" title="构建函数"></a>构建函数</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Creates a new &#123;<span class="doctag">@code</span> ThreadPoolExecutor&#125; with the given initial</span></span><br><span class="line"><span class="comment"> * parameters.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> corePoolSize the number of threads to keep in the pool, even</span></span><br><span class="line"><span class="comment"> *        if they are idle, unless &#123;<span class="doctag">@code</span> allowCoreThreadTimeOut&#125; is set</span></span><br><span class="line"><span class="comment"> *        -- 当提交一个任务到线程池时，线程池会创建一个线程来执行任务，</span></span><br><span class="line"><span class="comment"> *        -- 即使其他空闲的基本线程能够执行新任务也会创建线程，</span></span><br><span class="line"><span class="comment"> *        -- 等到需要执行的任务数大于线程池基本大小时就不再创建。</span></span><br><span class="line"><span class="comment"> *        -- 调用prestartAllCoreThreads()后，线程池会提前创建并启动所有基本线程。</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> maximumPoolSize the maximum number of threads to allow in the</span></span><br><span class="line"><span class="comment"> *        pool</span></span><br><span class="line"><span class="comment"> *        -- 允许创建的最大线程数。如果队列满了，并且已创建的线程数小于最大线程数，</span></span><br><span class="line"><span class="comment"> *        -- 则线程池会再创建新的线程执行任务（无线队列会使该参数失效）。</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> keepAliveTime when the number of threads is greater than</span></span><br><span class="line"><span class="comment"> *        the core, this is the maximum time that excess idle threads</span></span><br><span class="line"><span class="comment"> *        will wait for new tasks before terminating.</span></span><br><span class="line"><span class="comment"> *        -- 线程池的工作线程空闲后，保持存活的时间。</span></span><br><span class="line"><span class="comment"> *        -- 如果任务很多，并且每个任务执行的时间比较短，可以调大时间，提高线程的利用率。</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> unit the time unit for the &#123;<span class="doctag">@code</span> keepAliveTime&#125; argument</span></span><br><span class="line"><span class="comment"> * 		  -- 天（DAYS）、小时（HOURS）、分钟（MINUTES）、毫秒（MILLISECONDS）、</span></span><br><span class="line"><span class="comment"> *        -- 微秒（MICROSECONDS，千分之一毫秒）和纳秒（NANOSECONDS，千分之一微秒）</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> workQueue the queue to use for holding tasks before they are</span></span><br><span class="line"><span class="comment"> *        executed.  This queue will hold only the &#123;<span class="doctag">@code</span> Runnable&#125;</span></span><br><span class="line"><span class="comment"> *        tasks submitted by the &#123;<span class="doctag">@code</span> execute&#125; method.</span></span><br><span class="line"><span class="comment"> *        -- 用于保存等待执行的任务的阻塞队列</span></span><br><span class="line"><span class="comment"> *        -- ❑ ArrayBlockingQueue：基于数组结构的有界阻塞队列，排序规则：FIFO</span></span><br><span class="line"><span class="comment"> *        -- ❑ LinkedBlockingQueue：基于链表结构的阻塞队列，排序规则：FIFO，</span></span><br><span class="line"><span class="comment">                                    吞吐量通常要高于ArrayBlockingQueue。</span></span><br><span class="line"><span class="comment">                                    Executors.newFixedThreadPool()使用了这个队列。</span></span><br><span class="line"><span class="comment"> *        -- ❑ SynchronousQueue：一个不存储元素的阻塞队列（读写交换执行，否则会阻塞。）</span></span><br><span class="line"><span class="comment">                                  吞吐量通常要高于Linked-BlockingQueue，</span></span><br><span class="line"><span class="comment">                                  Executors.newCachedThreadPool使用了这个队列。</span></span><br><span class="line"><span class="comment"> *        -- ❑ PriorityBlockingQueue：一个具有优先级的无限阻塞队列。</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> threadFactory the factory to use when the executor</span></span><br><span class="line"><span class="comment"> *        creates a new thread</span></span><br><span class="line"><span class="comment"> *        -- 设置创建线程的工厂，可以通过线程工厂给每个创建出来的线程设置更有意义的名字。</span></span><br><span class="line"><span class="comment"> *        -- 使用开源框架guava提供的ThreadFactoryBuilder</span></span><br><span class="line"><span class="comment">             可以快速给线程池里的线程设置有意义的名字</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> handler the handler to use when execution is blocked</span></span><br><span class="line"><span class="comment"> *        because the thread bounds and queue capacities are reached</span></span><br><span class="line"><span class="comment"> *        -- 当队列和线程池都满了（饱和状态），那么必须采取一种策略处理提交的新任务。</span></span><br><span class="line"><span class="comment"> *        -- 这个策略默认情况下是AbortPolicy，表示无法处理新任务时抛出异常</span></span><br><span class="line"><span class="comment"> *        -- ❑ AbortPolicy：直接抛出异常。</span></span><br><span class="line"><span class="comment"> *        -- ❑ CallerRunsPolicy：只用调用者所在线程来运行任务。</span></span><br><span class="line"><span class="comment"> *        -- ❑ DiscardOldestPolicy：丢弃队列里最近的一个任务，并执行当前任务。</span></span><br><span class="line"><span class="comment"> *        -- ❑ DiscardPolicy：不处理，丢弃掉。</span></span><br><span class="line"><span class="comment"> *        -- 实现RejectedExecutionHandler接口自定义策略</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IllegalArgumentException if one of the following holds:&lt;br&gt;</span></span><br><span class="line"><span class="comment"> *         &#123;<span class="doctag">@code</span> corePoolSize &lt; 0&#125;&lt;br&gt;</span></span><br><span class="line"><span class="comment"> *         &#123;<span class="doctag">@code</span> keepAliveTime &lt; 0&#125;&lt;br&gt;</span></span><br><span class="line"><span class="comment"> *         &#123;<span class="doctag">@code</span> maximumPoolSize &lt;= 0&#125;&lt;br&gt;</span></span><br><span class="line"><span class="comment"> *         &#123;<span class="doctag">@code</span> maximumPoolSize &lt; corePoolSize&#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> NullPointerException if &#123;<span class="doctag">@code</span> workQueue&#125;</span></span><br><span class="line"><span class="comment"> *         or &#123;<span class="doctag">@code</span> threadFactory&#125; or &#123;<span class="doctag">@code</span> handler&#125; is null</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                          TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">                          BlockingQueue&lt;Runnable&gt; workQueue,</span></span></span><br><span class="line"><span class="function"><span class="params">                          ThreadFactory threadFactory,</span></span></span><br><span class="line"><span class="function"><span class="params">                          RejectedExecutionHandler handler)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (corePoolSize &lt; <span class="number">0</span> ||</span><br><span class="line">        maximumPoolSize &lt;= <span class="number">0</span> ||</span><br><span class="line">        maximumPoolSize &lt; corePoolSize ||</span><br><span class="line">        keepAliveTime &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">    <span class="keyword">if</span> (workQueue == <span class="keyword">null</span> || threadFactory == <span class="keyword">null</span> || handler == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    <span class="keyword">this</span>.acc = System.getSecurityManager() == <span class="keyword">null</span> ?</span><br><span class="line">            <span class="keyword">null</span> :</span><br><span class="line">            AccessController.getContext();</span><br><span class="line">    <span class="keyword">this</span>.corePoolSize = corePoolSize;</span><br><span class="line">    <span class="keyword">this</span>.maximumPoolSize = maximumPoolSize;</span><br><span class="line">    <span class="keyword">this</span>.workQueue = workQueue;</span><br><span class="line">    <span class="keyword">this</span>.keepAliveTime = unit.toNanos(keepAliveTime);</span><br><span class="line">    <span class="keyword">this</span>.threadFactory = threadFactory;</span><br><span class="line">    <span class="keyword">this</span>.handler = handler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadPoolExecutor/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/" class="post-title-link" itemprop="url">Java并发编程之ThreadLocal</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-07 10:24:20 / 修改时间：10:45:21" itemprop="dateCreated datePublished" datetime="2021-02-07T10:24:20+08:00">2021-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="API描述"><a href="#API描述" class="headerlink" title="API描述"></a>API描述</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">* This <span class="class"><span class="keyword">class</span> <span class="title">provides</span> <span class="title">thread</span>-<span class="title">local</span> <span class="title">variables</span>.  <span class="title">These</span> <span class="title">variables</span> <span class="title">differ</span> <span class="title">from</span></span></span><br><span class="line"><span class="class">* <span class="title">their</span> <span class="title">normal</span> <span class="title">counterparts</span> <span class="title">in</span> <span class="title">that</span> <span class="title">each</span> <span class="title">thread</span> <span class="title">that</span> <span class="title">accesses</span> <span class="title">one</span> (<span class="title">via</span> <span class="title">its</span></span></span><br><span class="line"><span class="class">* </span>&#123;<span class="meta">@code</span> get&#125; or &#123;<span class="meta">@code</span> set&#125; method) has its own, independently initialized</span><br><span class="line">* copy of the variable.  &#123;<span class="meta">@code</span> ThreadLocal&#125; instances are typically <span class="keyword">private</span></span><br><span class="line">* <span class="function"><span class="keyword">static</span> fields in classes that wish to associate state with a <span class="title">thread</span> <span class="params">(e.g.,</span></span></span><br><span class="line"><span class="function"><span class="params">* a user ID or Transaction ID)</span>.</span></span><br></pre></td></tr></table></figure>
+<p><code>ThreadLocal</code>提供一种线程本地变量。这种变量是一种副本的概念，在多线程环境下访问（get、set）能够保证各个线程间的变量互相隔离。<code>ThreadLocal</code>通常定义为了<code>private static</code>，用来关联线程和线程上下文（比如userId或事物ID）。<code>ThreadLocal</code> 的作用是提供线程内的局部变量，这种变量在线程的生命周期内起作用，减少同一个线程内多个函数或者组件之间一些公共变量的传递的复杂度。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/07/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BThreadLocal/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -599,596 +1208,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
-    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Theodore Sun">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一蓑烟雨任平生">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/" class="post-title-link" itemprop="url">Java并发编程之调度方式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-02-05 19:32:04 / 修改时间：20:04:17" itemprop="dateCreated datePublished" datetime="2021-02-05T19:32:04+08:00">2021-02-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="抢占式调度"><a href="#抢占式调度" class="headerlink" title="抢占式调度"></a>抢占式调度</h2><p>抢占式调度指的是每条线程执行的时间、线程的切换都由系统控制，系统控制指的是在系统某种运行机制下，可能每条线程都分同样的执行时间片，也可能是某些线程执行的时间片较长，甚至某些线程得不到执行的时间片。在这种机制下，一个线程的堵塞不会导致整个进程堵塞。</p>
-<h2 id="协同式调度"><a href="#协同式调度" class="headerlink" title="协同式调度"></a>协同式调度</h2><p>协同式调度指某一线程执行完后主动通知系统切换到另一线程上执行，这种模式就像接力赛一样，一个人跑完自己的路程就把接力棒交接给下一个人，下个人继续往下跑。线程的执行时间由线程本身控制，线程切换可以预知，不存在多线程同步问题，但它有一个致命弱点：如果一个线程编写有问题，运行到一半就一直堵塞，那么可能导致整个系统崩溃。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
-    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Theodore Sun">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一蓑烟雨任平生">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7/" class="post-title-link" itemprop="url">Java并发编程之线程优先级</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-02-05 19:31:54 / 修改时间：20:02:08" itemprop="dateCreated datePublished" datetime="2021-02-05T19:31:54+08:00">2021-02-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>现代操作系统基本采用时分的形式调度运行的线程，操作系统会分出一个个时间片，线程会分配到若干时间片，当线程的时间片用完了就会发生线程调度，并等待着下次分配。线程分配到的时间片多少也就决定了线程使用处理器资源的多少，而线程优先级就是决定线程需要多或者少分配一些处理器资源的线程属性。优先级高的线程分配时间片的数量要多于优先级低的线程。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
-    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Theodore Sun">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一蓑烟雨任平生">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/" class="post-title-link" itemprop="url">Java并发编程之守护线程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-02-05 19:31:42 / 修改时间：20:01:07" itemprop="dateCreated datePublished" datetime="2021-02-05T19:31:42+08:00">2021-02-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>java中线程的分类：用户线程 (User Thread)、守护线程 (Daemon Thread)。  </p>
-<ol>
-<li><p><strong>守护线程</strong>：在程序运行的时候在后台提供一种通用服务的线程，比如垃圾回收线程就是一个很称职的守护者，并且这种线程并不属于程序中不可或缺的部分。因此，当所有的非守护线程结束时，程序也就终止了，同时会杀死进程中的所有守护线程。反过来说，只要任何非守护线程还在运行，程序就不会终止。  </p>
-</li>
-<li><p><strong>区别</strong>：用户线程和守护线程两者几乎没有区别，唯一的不同之处就在于虚拟机的离开：如果用户线程已经全部退出运行了，只剩下守护线程存在了，虚拟机也就退出了。 因为没有了被守护者，守护线程也就没有工作可做了，也就没有继续运行程序的必要了。</p>
-</li>
-</ol>
-<h2 id="Java中的定义"><a href="#Java中的定义" class="headerlink" title="Java中的定义"></a>Java中的定义</h2><p>通过Thread中的setDaemon方法完成设置。通过源码分析得知：<strong>当线程只剩下守护线程的时候，JVM就会退出.但是如果还有其他的任意一个用户线程还在，JVM就不会退出</strong></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
-    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Theodore Sun">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一蓑烟雨任平生">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">Java并发编程之线程常用方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-02-05 19:31:31 / 修改时间：19:59:54" itemprop="dateCreated datePublished" datetime="2021-02-05T19:31:31+08:00">2021-02-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>7.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div align="center">
-
-<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/1590711795506.png" class title="Runnable类图">
-
-</div>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
-    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Theodore Sun">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一蓑烟雨任平生">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/" class="post-title-link" itemprop="url">Java并发编程之线程中断</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-02-05 19:31:20 / 修改时间：19:55:59" itemprop="dateCreated datePublished" datetime="2021-02-05T19:31:20+08:00">2021-02-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="正常结束-执行完成"><a href="#正常结束-执行完成" class="headerlink" title="正常结束(执行完成)"></a>正常结束(执行完成)</h2><h2 id="使用退出标志退出线程"><a href="#使用退出标志退出线程" class="headerlink" title="使用退出标志退出线程"></a>使用退出标志退出线程</h2><p>一般 run()方法执行完，线程就会正常结束，然而，常常有些线程是<strong>伺服线程</strong>。它们需要长时间的运行，只有在外部某些条件满足的情况下，才能关闭这些线程。使用一个变量来控制循环，例如：最直接的方法就是设一个boolean类型的标志，并通过设置这个标志为true或false 来控制while 循环是否退出，代码示例：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E4%B8%AD%E6%96%AD/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN,en,default">
-    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Theodore Sun">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一蓑烟雨任平生">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/" class="post-title-link" itemprop="url">Java并发编程之线程创建</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-02-05 19:31:12 / 修改时间：20:08:56" itemprop="dateCreated datePublished" datetime="2021-02-05T19:31:12+08:00">2021-02-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>15k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="通过Thread构建"><a href="#通过Thread构建" class="headerlink" title="通过Thread构建"></a>通过Thread构建</h2><p>Thread 类本质上是实现了 Runnable 接口的一个实例，代表一个线程的实例。启动线程的唯一方法就是通过 Thread 类的 start()实例方法。start()方法是一个 native 方法，它将启动一个新线程。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1264,20 +1283,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">144</span>
+        <span class="site-state-item-count">151</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1350,13 +1369,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">825k</span>
+    <span title="站点总字数">837k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">12:30</span>
+    <span title="站点阅读时长">12:41</span>
 </div>
 
         

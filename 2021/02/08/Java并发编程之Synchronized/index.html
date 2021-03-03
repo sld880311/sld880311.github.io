@@ -21,22 +21,22 @@
     var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="任意非NULL对象当作锁 独占式悲观锁 可重入锁">
+  <meta name="description" content="特点 任意非NULL对象当作锁 独占式悲观锁 可重入锁">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java并发编程之Synchronized">
 <meta property="og:url" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/index.html">
 <meta property="og:site_name" content="一蓑烟雨任平生">
-<meta property="og:description" content="任意非NULL对象当作锁 独占式悲观锁 可重入锁">
+<meta property="og:description" content="特点 任意非NULL对象当作锁 独占式悲观锁 可重入锁">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/1589108463996.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/synchronized%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B.png">
 <meta property="article:published_time" content="2021-02-08T00:28:49.000Z">
-<meta property="article:modified_time" content="2021-02-25T06:59:47.652Z">
+<meta property="article:modified_time" content="2021-03-03T08:42:34.948Z">
 <meta property="article:author" content="Theodore Sun">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="锁">
 <meta property="article:tag" content="Synchronized">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/1589108463996.png">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/synchronized%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B.png">
 
 <link rel="canonical" href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/">
 
@@ -133,17 +133,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">144</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">151</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">23</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">26</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">92</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">98</span></a>
 
   </li>
         <li class="menu-item menu-item-schedule">
@@ -246,7 +246,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-25 14:59:47" itemprop="dateModified" datetime="2021-02-25T14:59:47+08:00">2021-02-25</time>
+                <time title="修改时间：2021-03-03 16:42:34" itemprop="dateModified" datetime="2021-03-03T16:42:34+08:00">2021-03-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -279,14 +279,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.7k</span>
+              <span>6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -298,7 +298,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <ol>
+        <h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ol>
 <li>任意非NULL对象当作锁</li>
 <li>独占式悲观锁</li>
 <li>可重入锁<a id="more"></a>
@@ -310,7 +310,7 @@
 <li>代码块语义：编译之后在进入同步代码之前写入<code>monitorenter</code>字节码指令，执行完成写入<code>monitorexit</code>指令（异常退出的时候也会写入该指令） </li>
 <li>方法同步语义：<code>ACC_SYNCHRONIZED</code></li>
 <li>锁对象：使用reference类型指明加锁和加锁的对象（自定义对象、this、当前class）</li>
-<li>锁计数：通过锁的计数器来判断是否释放锁，在执行monitorenter指令时，首先要去尝试获取对象的锁，获取锁或当前拥有锁则计数器+1；执行monitorexit指令时会将锁计数器的值减一；一旦计数器的值为零，锁随即就被释放了</li>
+<li>锁计数：通过锁的<strong>计数器</strong>来判断是否释放锁，在执行monitorenter指令时，首先要去尝试获取对象的锁，获取锁或当前拥有锁则计数器+1；执行monitorexit指令时会将锁计数器的值减一；一旦计数器的值为零，锁随即就被释放了</li>
 <li>如果获取对象锁失败，那当前线程就应当被阻塞等待，直到请求锁定的对象被持有它的线程释放为止</li>
 <li>支持可重入，防止死锁</li>
 <li>独占锁，不能强制已经获取锁的线程释放锁；不能强制正在等待锁的线程中断等待或超时退出</li>
@@ -325,7 +325,7 @@
 <li>Wait Set：调用 wait 方法被阻塞的线程被放置在这里； </li>
 <li>Contention List：竞争队列，所有请求锁的线程首先被放在这个竞争队列中； </li>
 <li>Entry List：Contention List 中那些有资格成为候选资源的线程被移动到 Entry List 中； </li>
-<li>OnDeck：任意时刻，最多只有一个线程正在竞争锁资源，该线程被成为 OnDeck； </li>
+<li>OnDeck：任意时刻，最多只有一个线程正在竞争锁资源，该线程被称为 OnDeck； </li>
 <li>Owner：当前已经获取到所资源的线程被称为 Owner； </li>
 <li>!Owner：当前释放锁的线程。 </li>
 </ol>
@@ -333,28 +333,36 @@
 <h2 id="Synchronized-实现原理"><a href="#Synchronized-实现原理" class="headerlink" title="Synchronized 实现原理"></a>Synchronized 实现原理</h2><p>重量锁的实现依赖于对象中的警示器monitor，本质依赖于操作系统中的Mutex Lock；</p>
 <div align="center">
 
-<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/1589108463996.png" class title="Synchronized 实现">
+<img src="/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/synchronized%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B.png" class title="synchronized锁的使用过程">
 
 </div>
 
 <ol>
-<li>JVM 每次从队列的尾部取出一个数据用于锁竞争候选者（OnDeck），但是并发情况下，ContentionList 会被大量的并发线程进行 CAS 访问，为了降低对尾部元素的竞争，JVM 会将一部分线程移动到 EntryList 中作为候选竞争线程。 </li>
-<li>Owner 线程会在 unlock 时，将 ContentionList 中的部分线程迁移到 EntryList 中，并指定EntryList 中的某个线程为 OnDeck 线程（一般是最先进去的那个线程）。 </li>
-<li>Owner 线程并不直接把锁传递给 OnDeck 线程，而是把锁竞争的权利交给 OnDeck，OnDeck需要重新竞争锁。这样虽然牺牲了一些公平性，但是能极大的提升系统的吞吐量，在JVM 中，也把这种选择行为称之为“竞争切换”。 </li>
-<li>OnDeck 线程获取到锁资源后会变为 Owner 线程，而没有得到锁资源的仍然停留在 EntryList 中。如果Owner线程被wait方法阻塞，则转移到WaitSet队列中，直到某个时刻通过notify 或者 notifyAll 唤醒，会重新进去 EntryList 中。 </li>
-<li>处于 ContentionList、EntryList、WaitSet 中的线程都处于阻塞状态，该阻塞是由操作系统来完成的（Linux 内核下采用 pthread_mutex_lock 内核函数实现的）。 </li>
-<li>Synchronized 是非公平锁。 Synchronized 在线程进入 ContentionList 时，等待的线程会先尝试自旋获取锁，如果获取不到就进入 ContentionList，这明显对于已经进入队列的线程是不公平的，还有一个不公平的事情就是自旋获取锁的线程还可能直接抢占 OnDeck 线程的锁资源。 </li>
-<li>每个对象都有个 monitor 对象，加锁就是在竞争 monitor 对象，代码块加锁是在前后分别加上 monitorenter 和 monitorexit 指令来实现的，方法加锁是通过一个标记位来判断的 </li>
-<li>synchronized 是一个重量级操作，需要调用操作系统相关接口，性能是低效的，有可能给线程加锁消耗的时间比有用操作消耗的时间更多。 </li>
-<li>Java1.6，synchronized进行了很多的优化，有适应自旋、锁消除、锁粗化、轻量级锁及偏向锁等，效率有了本质上的提高。在之后推出的 Java1.7 与 1.8 中，均对该关键字的实现机理做了优化。引入了偏向锁和轻量级锁。都是在对象头中有标记位，不需要经过操作系统加锁。 </li>
-<li>锁可以从偏向锁升级到轻量级锁，再升级到重量级锁。这种升级过程叫做锁膨胀； </li>
-<li>JDK 1.6 中默认是开启偏向锁和轻量级锁，可以通过-XX:-UseBiasedLocking 来禁用偏向锁。</li>
+<li>线程首先会进入ContentionList队列，JVM复制部分线程到EntryList，JVM从EntryList的尾部获取后选择线程（OnDeck）<ul>
+<li>为了解决并发进程引入EntryList队列（候选者竞争队列） </li>
+<li>处于 ContentionList、EntryList、WaitSet 中的线程都处于阻塞状态，该阻塞是由操作系统来完成的(Linux 内核下采用 pthread_mutex_lock 内核函数实现的);</li>
+</ul>
+</li>
+<li>当进入OnDeck中的线程获取锁之后：<ul>
+<li>修改_owner为当前线程</li>
+<li>修改markword（地址+状态10）</li>
+<li>阻塞后续线程到ContentionList</li>
+</ul>
+</li>
+<li>Owner释放锁或则阻塞：<ul>
+<li>释放锁： 执行1（需要重新竞争锁、提高吞吐量，称为“竞争切换”）</li>
+<li>阻塞（wait）：转移到WaitSet，并且释放锁，只有notify 或者 notifyAll 唤醒，会重新进去EntryList中 </li>
+</ul>
+</li>
 </ol>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sunld.thread.lock;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> : sunliaodong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> : V1.0.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span>: TODO</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> : 2020/5/30 19:00</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestSynchronized</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test3</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span>(<span class="keyword">this</span>)&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test4</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span>(TestSynchronized.class)&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="javap分析"><a href="#javap分析" class="headerlink" title="javap分析"></a>javap分析</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;C:\Program Files\Java\jdk1.8.0_152\bin\javap.exe&quot;</span> -v -c com.sunld.thread.lock.TestSynchronized</span><br><span class="line">Classfile /D:/workspace/learning/target/classes/com/sunld/thread/lock/TestSynchronized.class</span><br><span class="line">  Last modified <span class="number">2020</span>-<span class="number">5</span>-<span class="number">30</span>; size <span class="number">834</span> bytes</span><br><span class="line">  MD5 checksum 9806782e622d7e5e193f3d1b5b8cf61e</span><br><span class="line">  Compiled from <span class="string">&quot;TestSynchronized.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">sunld</span>.<span class="title">thread</span>.<span class="title">lock</span>.<span class="title">TestSynchronized</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #3.#25         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">   #2 = Class              #26            // com/sunld/thread/lock/TestSynchronized</span><br><span class="line">   #3 = Class              #27            // java/lang/Object</span><br><span class="line">   #4 = Utf8               &lt;init&gt;</span><br><span class="line">   #5 = Utf8               ()V</span><br><span class="line">   #6 = Utf8               Code</span><br><span class="line">   #7 = Utf8               LineNumberTable</span><br><span class="line">   #8 = Utf8               LocalVariableTable</span><br><span class="line">   #9 = Utf8               this</span><br><span class="line">  #10 = Utf8               Lcom/sunld/thread/lock/TestSynchronized;</span><br><span class="line">  #11 = Utf8               test1</span><br><span class="line">  #12 = Utf8               test2</span><br><span class="line">  #13 = Utf8               test3</span><br><span class="line">  #14 = Utf8               StackMapTable</span><br><span class="line">  #15 = Class              #26            // com/sunld/thread/lock/TestSynchronized</span><br><span class="line">  #16 = Class              #27            // java/lang/Object</span><br><span class="line">  #17 = Class              #28            // java/lang/Throwable</span><br><span class="line">  #18 = Utf8               test4</span><br><span class="line">  #19 = Utf8               main</span><br><span class="line">  #20 = Utf8               ([Ljava/lang/String;)V</span><br><span class="line">  #21 = Utf8               args</span><br><span class="line">  #22 = Utf8               [Ljava/lang/String;</span><br><span class="line">  #23 = Utf8               SourceFile</span><br><span class="line">  #24 = Utf8               TestSynchronized.java</span><br><span class="line">  #25 = NameAndType        #4:#5          // &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #26 = Utf8               com/sunld/thread/lock/TestSynchronized</span><br><span class="line">  #27 = Utf8               java/lang/Object</span><br><span class="line">  #28 = Utf8               java/lang/Throwable</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> com.sunld.thread.lock.TestSynchronized();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">9</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/thread/lock/TestSynchronized;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC, ACC_SYNCHRONIZED</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">0</span>, locals=<span class="number">0</span>, args_size=<span class="number">0</span></span><br><span class="line">         <span class="number">0</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">13</span>: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_SYNCHRONIZED</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">0</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">17</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">1</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/thread/lock/TestSynchronized;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test3</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">3</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: dup</span><br><span class="line">         <span class="number">2</span>: astore_1</span><br><span class="line">         <span class="number">3</span>: monitorenter</span><br><span class="line">         <span class="number">4</span>: aload_1</span><br><span class="line">         <span class="number">5</span>: monitorexit</span><br><span class="line">         <span class="number">6</span>: goto          <span class="number">14</span></span><br><span class="line">         <span class="number">9</span>: astore_2</span><br><span class="line">        <span class="number">10</span>: aload_1</span><br><span class="line">        <span class="number">11</span>: monitorexit</span><br><span class="line">        <span class="number">12</span>: aload_2</span><br><span class="line">        <span class="number">13</span>: athrow</span><br><span class="line">        <span class="number">14</span>: <span class="keyword">return</span></span><br><span class="line">      Exception table:</span><br><span class="line">         from    to  target type</span><br><span class="line">             <span class="number">4</span>     <span class="number">6</span>     <span class="number">9</span>   any</span><br><span class="line">             <span class="number">9</span>    <span class="number">12</span>     <span class="number">9</span>   any</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">20</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">22</span>: <span class="number">4</span></span><br><span class="line">        line <span class="number">23</span>: <span class="number">14</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">15</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/sunld/thread/lock/TestSynchronized;</span><br><span class="line">      StackMapTable: number_of_entries = <span class="number">2</span></span><br><span class="line">        frame_type = <span class="number">255</span> <span class="comment">/* full_frame */</span></span><br><span class="line">          offset_delta = <span class="number">9</span></span><br><span class="line">          locals = [ class com/sunld/thread/lock/TestSynchronized, class java/lang/Object ]</span><br><span class="line">          stack = [ class java/lang/Throwable ]</span><br><span class="line">        frame_type = <span class="number">250</span> <span class="comment">/* chop */</span></span><br><span class="line">          offset_delta = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test4</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">0</span></span><br><span class="line">         0: ldc           #2                  // class com/sunld/thread/lock/TestSynchronized</span><br><span class="line">         <span class="number">2</span>: dup</span><br><span class="line">         <span class="number">3</span>: astore_0</span><br><span class="line">         <span class="number">4</span>: monitorenter</span><br><span class="line">         <span class="number">5</span>: aload_0</span><br><span class="line">         <span class="number">6</span>: monitorexit</span><br><span class="line">         <span class="number">7</span>: goto          <span class="number">15</span></span><br><span class="line">        <span class="number">10</span>: astore_1</span><br><span class="line">        <span class="number">11</span>: aload_0</span><br><span class="line">        <span class="number">12</span>: monitorexit</span><br><span class="line">        <span class="number">13</span>: aload_1</span><br><span class="line">        <span class="number">14</span>: athrow</span><br><span class="line">        <span class="number">15</span>: <span class="keyword">return</span></span><br><span class="line">      Exception table:</span><br><span class="line">         from    to  target type</span><br><span class="line">             <span class="number">5</span>     <span class="number">7</span>    <span class="number">10</span>   any</span><br><span class="line">            <span class="number">10</span>    <span class="number">13</span>    <span class="number">10</span>   any</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">26</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">28</span>: <span class="number">5</span></span><br><span class="line">        line <span class="number">29</span>: <span class="number">15</span></span><br><span class="line">      StackMapTable: number_of_entries = <span class="number">2</span></span><br><span class="line">        frame_type = <span class="number">255</span> <span class="comment">/* full_frame */</span></span><br><span class="line">          offset_delta = <span class="number">10</span></span><br><span class="line">          locals = [ class java/lang/Object ]</span><br><span class="line">          stack = [ class java/lang/Throwable ]</span><br><span class="line">        frame_type = <span class="number">250</span> <span class="comment">/* chop */</span></span><br><span class="line">          offset_delta = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    descriptor: ([Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">0</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">33</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">1</span>     <span class="number">0</span>  args   [Ljava/lang/String;</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">&quot;TestSynchronized.java&quot;</span></span><br></pre></td></tr></table></figure>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zqz_zqz/article/details/70233767">java 中的锁 – 偏向锁、轻量级锁、自旋锁、重量级锁</a></li>
 <li><a href="book/java-thread-lock.md">Java中的锁</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.toutiao.com/i6918719190144647687">一个synchronized跟面试官扯了半个小时</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wuzhenzhao/p/10250801.html">synchronized原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e62fa839aa41">啃碎并发（七）：深入分析Synchronized原理</a></li>
 </ol>
 
     </div>
@@ -467,7 +475,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized-%E8%AF%AD%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">Synchronized 语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized-%E4%BD%9C%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">2.</span> <span class="nav-text">Synchronized 作用范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">Synchronized 核心组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">Synchronized 实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#javap%E5%88%86%E6%9E%90"><span class="nav-number">5.1.</span> <span class="nav-text">javap分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized-%E8%AF%AD%E4%B9%89"><span class="nav-number">2.</span> <span class="nav-text">Synchronized 语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized-%E4%BD%9C%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">3.</span> <span class="nav-text">Synchronized 作用范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">Synchronized 核心组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">5.</span> <span class="nav-text">Synchronized 实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">6.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#javap%E5%88%86%E6%9E%90"><span class="nav-number">6.1.</span> <span class="nav-text">javap分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -483,20 +491,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">144</span>
+        <span class="site-state-item-count">151</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -569,13 +577,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">825k</span>
+    <span title="站点总字数">837k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">12:30</span>
+    <span title="站点阅读时长">12:41</span>
 </div>
 
         

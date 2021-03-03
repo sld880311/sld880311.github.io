@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/avatar.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="分布式理论 CAP Consistency（一致性） Availability（可用性） Partition tolerance（分区容错性） CAP的关系   ACID 两阶段提交协议（2PC） 定义（分布式事务一致性协议：Protocol） 算法思路 实现过程 准备阶段       BASE理论 Basically Available（基本可用） Soft state（软状态） Even">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式理论">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="分布式理论 CAP Consistency（一致性） Availability（可用性） Partition tolerance（分区容错性） CAP的关系   ACID 两阶段提交协议（2PC） 定义（分布式事务一致性协议：Protocol） 算法思路 实现过程 准备阶段       BASE理论 Basically Available（基本可用） Soft state（软状态） Even">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1602761037948.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107881967.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107914787.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107951384.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107976375.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108008772.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108039367.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108064986.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108091135.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108117857.png">
+<meta property="article:published_time" content="2021-03-03T06:14:01.000Z">
+<meta property="article:modified_time" content="2021-03-03T07:43:26.710Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="cap">
+<meta property="article:tag" content="base">
+<meta property="article:tag" content="acid">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1602761037948.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>分布式理论 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">151</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">26</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">98</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式理论
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-03-03 14:14:01 / 修改时间：15:43:26" itemprop="dateCreated datePublished" datetime="2021-03-03T14:14:01+08:00">2021-03-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!-- TOC -->
+
+<ul>
+<li><a href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA">分布式理论</a><ul>
+<li><a href="#cap">CAP</a><ul>
+<li><a href="#consistency%E4%B8%80%E8%87%B4%E6%80%A7">Consistency（一致性）</a></li>
+<li><a href="#availability%E5%8F%AF%E7%94%A8%E6%80%A7">Availability（可用性）</a></li>
+<li><a href="#partition-tolerance%E5%88%86%E5%8C%BA%E5%AE%B9%E9%94%99%E6%80%A7">Partition tolerance（分区容错性）</a></li>
+<li><a href="#cap%E7%9A%84%E5%85%B3%E7%B3%BB">CAP的关系</a></li>
+</ul>
+</li>
+<li><a href="#acid">ACID</a><ul>
+<li><a href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE2pc">两阶段提交协议（2PC）</a><ul>
+<li><a href="#%E5%AE%9A%E4%B9%89%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AEprotocol">定义（分布式事务一致性协议：Protocol）</a></li>
+<li><a href="#%E7%AE%97%E6%B3%95%E6%80%9D%E8%B7%AF">算法思路</a></li>
+<li><a href="#%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B">实现过程</a><ul>
+<li><a href="#%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5">准备阶段</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#base%E7%90%86%E8%AE%BA">BASE理论</a><ul>
+<li><a href="#basically-available%E5%9F%BA%E6%9C%AC%E5%8F%AF%E7%94%A8">Basically Available（基本可用）</a></li>
+<li><a href="#soft-state%E8%BD%AF%E7%8A%B6%E6%80%81">Soft state（软状态）</a></li>
+<li><a href="#eventually-consistent%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7">Eventually consistent（最终一致性）</a><ul>
+<li><a href="#%E5%AE%9E%E7%8E%B0%E4%BE%9D%E6%8D%AE">实现依据</a></li>
+<li><a href="#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F">实现方式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<h1 id="分布式理论"><a href="#分布式理论" class="headerlink" title="分布式理论"></a>分布式理论</h1><h2 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h2><h3 id="Consistency（一致性）"><a href="#Consistency（一致性）" class="headerlink" title="Consistency（一致性）"></a>Consistency（一致性）</h3><ol>
+<li>在分布式系统中的所有数据备份，在同一时刻是否同样的值</li>
+<li>等同于所有节点访问同一份最新的数据副本</li>
+<li>强调数据的正确性，对于客户端而言，每次都能读取到最新写入的数据</li>
+</ol>
+<h3 id="Availability（可用性）"><a href="#Availability（可用性）" class="headerlink" title="Availability（可用性）"></a>Availability（可用性）</h3><ol>
+<li>在集群中一部分节点故障后，集群整体是否还能响应客户端的读写请求。（对数据更新具备高可用性）</li>
+<li>强调服务可用，但是不保证数据正确</li>
+</ol>
+<h3 id="Partition-tolerance（分区容错性）"><a href="#Partition-tolerance（分区容错性）" class="headerlink" title="Partition tolerance（分区容错性）"></a>Partition tolerance（分区容错性）</h3><ol>
+<li>以实际效果而言，分区相当于对通信的时限要求</li>
+<li>系统如果不能在时限内达成数据一致性，就意味着发生了分区的情况，必须就当前操作在 C 和 A 之间做出选择。</li>
+<li>强调的是集群对分区故障的容错能力</li>
+</ol>
+<h3 id="CAP的关系"><a href="#CAP的关系" class="headerlink" title="CAP的关系"></a>CAP的关系</h3><div align="center">
+
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1602761037948.png" alt="1602761037948.png"></p>
+</div>
+
+<ol>
+<li>CA 模型，在分布式系统中不存在。因为舍弃 P，意味着舍弃分布式系统，就比如单机版关系型数据库 MySQL，如果 MySQL 要考虑主备或集群部署时，它必须考虑 P。</li>
+<li>CP 模型，采用 CP 模型的分布式系统，舍弃了可用性，一定会读到最新数据，不会读到旧数据。一旦因为消息丢失、延迟过高发生了网络分区，就影响用户的体验和业务的可用性（比如基于 Raft 的强一致性系统，此时可能无法执行读操作和写操作）。典型的应用是 Etcd，Consul 和 Hbase。</li>
+<li>AP 模型，采用 AP 模型的分布式系统，舍弃了一致性，实现了服务的高可用。用户访问系统的时候，都能得到响应数据，不会出现响应错误，但会读到旧数据。典型应用就比如 Cassandra 和 DynamoDB。</li>
+</ol>
+<h2 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h2><h3 id="两阶段提交协议（2PC）"><a href="#两阶段提交协议（2PC）" class="headerlink" title="两阶段提交协议（2PC）"></a>两阶段提交协议（2PC）</h3><h4 id="定义（分布式事务一致性协议：Protocol）"><a href="#定义（分布式事务一致性协议：Protocol）" class="headerlink" title="定义（分布式事务一致性协议：Protocol）"></a>定义（分布式事务一致性协议：Protocol）</h4><p>在计算机网络以及数据库领域内，为了使基于分布式系统架构下的所有节点在进行事务提交时保持一致性而设计的一种算法(Algorithm)。</p>
+<h4 id="算法思路"><a href="#算法思路" class="headerlink" title="算法思路"></a>算法思路</h4><p>为了保持事务的 ACID 特性，需要引入<strong>协调者</strong>来统一掌控所有节点(参与者)的操作结果并最终指示这些节点是否要把操作结果进行真正的提交(比如将更新后的数据写入磁盘等等)</p>
+<div align="center">
+
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107881967.png" alt="1589107881967.png"></p>
+</div>
+
+<h4 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h4><h5 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h5><p>    协调者向所有参与者发送事务内容，询问是否可以提交事务，并等待答复（发送 Prepare 消息）<br>    各参与者执行事务操作，要么直接返回失败(如权限验证失败)，要么在本地执行事务，写本地的 redo 和 undo 日志，但不提交，到达一种“万事俱备，只欠东风”的状态。<br>    如参与者执行成功，给协调者反馈 yes，否则反馈 no。<br>1.1.2    提交阶段<br>如果协调者收到了参与者的失败消息或者超时，直接给每个参与者发送回滚(Rollback)消息；否则，发送提交(Commit)消息；参与者根据协调者的指令执行提交或者回滚操作，释放所有事务处理过程中使用的锁资源。(注意:必须在最后阶段释放锁资源) ，两种情况处理如下：<br>1.1.2.1    情况1：当所有参与者均反馈 yes，提交事务<br>a) 协调者向所有参与者发出正式提交事务的请求（即 commit 请求）。<br>b) 参与者执行 commit 请求，并释放整个事务期间占用的资源。<br>c) 各参与者向协调者反馈 ack(应答)完成的消息。<br>d) 协调者收到所有参与者反馈的 ack 消息后，即完成事务提交。<br>1.1.2.2    情况2：当有一个参与者反馈 no，回滚事务<br>a) 协调者向所有参与者发出回滚请求（即 rollback 请求）。<br>b) 参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。<br>c) 各参与者向协调者反馈 ack 完成的消息。<br>d) 协调者收到所有参与者反馈的 ack 消息后，即完成事务。<br>1.1.3    缺点 </p>
+<ol>
+<li>性能问题：所有参与者在事务提交阶段处于同步阻塞状态，占用系统资源，容易导致性能瓶颈。</li>
+<li>可靠性问题：如果协调者存在单点故障问题，或出现故障，提供者将一直处于锁定状态。</li>
+<li>数据一致性问题：在阶段 2 中，如果出现协调者和参与者都挂了的情况，有可能导致数据不一致。<br>4）    数据不一致（脑裂问题）：在二阶段提交的阶段二中，当协调者向参与者发送 commit 请求之后，发生了局部网络异常或者在发送 commit 请求过程中协调者发生了故障，导致只有一部分参与者接受到了 commit 请求。于是整个分布式系统便出现了数据部一致性的现象(脑裂现象)。<br>5）    二阶段无法解决的问题（数据状态不确定）：协调者再发出 commit 消息之后宕机，而唯一接收到这条消息的参与者同时也宕机了。那么即使协调者通过选举协议产生了新的协调者，这条事务的状态也是不确定的，没人知道事务是否被已经提交。<br>优点：尽量保证了数据的强一致，适合对数据强一致要求很高的关键领域。（其实也不能100%保证强一致）。<br>缺点：实现复杂，牺牲了可用性，对性能影响较大，不适合高并发高性能场景。</li>
+</ol>
+<p>1.2    三阶段提交协议<br>三 阶 段 提 交 （ Three-phase commit ）， 也 叫 三 阶 段 提 交 协 议 （ Three-phase commit protocol），是二阶段提交（2PC）的改进版本。 三阶段提交是在二阶段提交上的改进版本，3PC最关键要解决的就是协调者和参与者同时挂掉的问题，所以3PC把2PC的准备阶段再次一分为二，这样三阶段提交。</p>
+<div align="center">
+
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107914787.png" alt="1589107914787.png"></p>
+</div>
+
+<p>与两阶段提交不同的是，三阶段提交有两个改动点。<br>1、    引入超时机制。同时在协调者和参与者中都引入超时机制。<br>2、    在第一阶段和第二阶段中插入一个准备阶段。保证了在最后提交阶段之前各参与节点的状态是一致的。也就是说，除了引入超时机制之外，3PC 把 2PC 的准备阶段再次一分为二，这样三阶段提交就有 CanCommit、PreCommit、DoCommit 三个阶段。<br>1.1.1    阶段一CanCommit 阶段<br>a) 协调者向所有参与者发出包含事务内容的 canCommit 请求，询问是否可以提交事务，并等待所有参与者答复。<br>b) 参与者收到 canCommit 请求后，如果认为可以执行事务操作，则反馈 yes 并进入预备状态，否则反馈 no。<br>1.1.2    阶段二PreCommit 阶段<br>协调者根据参与者响应情况，有以下两种可能。<br>1.1.2.1    情况1：所有参与者均反馈 yes，协调者预执行事务<br>a) 协调者向所有参与者发出 preCommit 请求，进入准备阶段。<br>b) 参与者收到 preCommit 请求后，执行事务操作，将 undo 和 redo 信息记入事务日志中（但不提交事务）。<br>c) 各参与者向协调者反馈 ack 响应或 no 响应，并等待最终指令。<br>1.1.2.2    情况2：只要有一个参与者反馈 no，或者等待超时后协调者尚无法收到所有提供者的反馈，即中断事务<br>a) 协调者向所有参与者发出 abort 请求。<br>b) 无论收到协调者发出的 abort 请求，或者在等待协调者请求过程中出现超时，参与者均会中断事务。<br>1.1.3    阶段三doCommit 阶段<br>该阶段进行真正的事务提交，也可以分为以下两种情况。<br>1.1.3.1    情况 1：所有参与者均反馈 ack 响应，执行真正的事务提交<br>a) 如果协调者处于工作状态，则向所有参与者发出 do Commit 请求。<br>b) 参与者收到 do Commit 请求后，会正式执行事务提交，并释放整个事务期间占用的资源。<br>c) 各参与者向协调者反馈 ack 完成的消息。<br>d) 协调者收到所有参与者反馈的 ack 消息后，即完成事务提交。<br>1.1.3.2    情况2：只要有一个参与者反馈 no，或者等待超时后协调组尚无法收到所有提供者的反馈，即回滚事务。<br>a) 如果协调者处于工作状态，向所有参与者发出 rollback 请求。<br>b) 参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。<br>c) 各参与者向协调组反馈 ack 完成的消息。<br>d) 协调组收到所有参与者反馈的 ack 消息后，即完成事务回滚。</p>
+<p>优点：相比二阶段提交，三阶段提交降低了阻塞范围，在等待超时后协调者或参与者会中断事务。避免了协调者单点问题。阶段 3 中协调者出现问题时，参与者会继续提交事务。<br>缺点：数据不一致问题依然存在，当在参与者收到 preCommit 请求后等待 do commite 指令时，此时如果协调者请求中断事务，而协调者无法与参与者正常通信，会导致参与者继续提交事务，造成数据不一致。<br>1.2    柔性事务<br>在电商领域等互联网场景下，传统的事务在数据库性能和处理能力上都暴露出了瓶颈。在分布式领域基于 CAP 理论以及 BASE 理论，有人就提出了 柔性事务 的概念。CAP（一致性、可用性、分区容忍性）理论大家都理解很多次了，这里不再叙述。说一下 BASE 理论，它是在 CAP 理论的基础之上的延伸。包括 基本可用（Basically Available）、柔性状态（Soft State）、最终一致性（Eventual Consistency）。<br>通常所说的柔性事务分为：两阶段型、补偿型、异步确保型、最大努力通知型几种。<br>1.2.1    两阶段型<br>1、    就是分布式事务两阶段提交，对应技术上的 XA、JTA/JTS。这是分布式环境下事务处理的典型模式。<br>1.2.2    补偿型<br>2、    TCC 型事务（Try/Confirm/Cancel）可以归为补偿型。<br>WS-BusinessActivity 提供了一种基于补偿的 long-running 的事务处理模型。服务器 A 发起事务，服务器 B 参与事务，服务器 A 的事务如果执行顺利，那么事务 A 就先行提交，如果事务 B 也执行顺利，则事务 B 也提交，整个事务就算完成。但是如果事务 B 执行失败，事务 B 本身回滚，这时事务 A 已经被提交，所以需要执行一个补偿操作，将已经提交的事务 A 执行的操作作反操作，恢复到未执行前事务 A 的状态。这样的 SAGA 事务模型，是牺牲了一定的隔离性和一致性的，但是提高了 long-running 事务的可用性。 </p>
+<div align="center">
+
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107951384.png" alt="1589107951384.png"></p>
+</div>
+
+<p>1.1.1.1    补偿机制</p>
+<div align="center">
+
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107976375.png" alt="1589107976375.png"></p>
+</div>
+
+
+<p>1.1.1.1    条件<br>需要实现确认和补偿逻辑<br>需要支持幂等<br>1.1.1.2    处理流程<br>a) Try 阶段主要是对业务系统做检测及资源预留。<br>这个阶段主要完成：<br>完成所有业务检查( 一致性 ) 。<br>预留必须业务资源( 准隔离性 ) 。<br>Try 尝试执行业务。<br>b) Confirm 阶段主要是对业务系统做确认提交。<br>Try阶段执行成功并开始执行 Confirm阶段时，默认 Confirm阶段是不会出错的。即：只要Try成功，Confirm一定成功。<br>c) Cancel 阶段主要是在业务执行错误，需要回滚的状态下执行的业务取消，预留资源释放。</p>
+<p>优点：<br>性能提升：具体业务来实现控制资源锁的粒度变小，不会锁定整个资源。<br>数据最终一致性：基于 Confirm 和 Cancel 的幂等性，保证事务最终完成确认或者取消，保证数据的一致性。<br>可靠性：解决了 XA 协议的协调者单点故障问题，由主业务方发起并控制整个业务活动，业务活动管理器也变成多点，引入集群。<br>缺点：TCC 的 Try、Confirm 和 Cancel 操作功能要按具体业务来实现，业务耦合度较高，提高了开发成本。</p>
+<p>1.1.2    异步确保型<br>1、    通过将一系列同步的事务操作变为基于消息执行的异步操作, 避免了分布式事务中的同步阻塞操作的影响。 </p>
+<div align="center">
+
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108008772.png" alt="1589108008772.png"></p>
+</div>
+
+<p>1.1.1    最大努力通知型（多次尝试）<br>1、    这是分布式事务中要求最低的一种, 也可以通过消息中间件实现, 与前面异步确保型操作不同的一点是, 在消息由 MQ Server 投递到消费者之后, 允许在达到最大重试次数之后正常结束事务。</p>
+<p>1.2    本地消息表（消息队列）<br>其核心思想是将分布式事务拆分成本地事务进行处理。<br>方案通过在消费者额外新建事务消息表，消费者处理业务和记录事务消息在本地事务中完成，轮询事务消息表的数据发送事务消息，提供者基于消息中间件消费事务消息表中的事务。</p>
+<div align="center">
+
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108039367.png" alt="1589108039367.png"></p>
+</div>
+
+<p>1.1.1    条件<br>服务消费者需要创建一张消息表，用来记录消息状态。<br>服务消费者和提供者需要支持幂等。<br>需要补偿逻辑。<br>每个节点上起定时线程，检查未处理完成或发出失败的消息，重新发出消息，即重试机制和幂等性机制。<br>1.1.2    处理流程</p>
+<ol>
+<li>服务消费者把业务数据和消息一同提交，发起事务。</li>
+<li>消息经过MQ发送到服务提供方，服务消费者等待处理结果。</li>
+<li>服务提供方接收消息，完成业务逻辑并通知消费者已处理的消息。<br>容错处理情况如下：<br>当步骤1处理出错，事务回滚，相当于什么都没有发生。<br>当步骤2、3处理出错，由于消息保存在消费者表中，可以重新发送到MQ进行重试。<br>如果步骤3处理出错，且是业务上的失败，服务提供者发送消息通知消费者事务失败，且此时变为消费者发起回滚事务进行回滚逻辑。<br>优点：从应用设计开发的角度实现了消息数据的可靠性，消息数据的可靠性不依赖于消息中间件，弱化了对 MQ 中间件特性的依赖。<br>缺点：与具体的业务场景绑定，耦合性强，不可公用。消息数据与业务数据同库，占用业务系统资源。业务系统在使用关系型数据库的情况下，消息服务性能会受到关系型数据库并发性能的局限。</li>
+<li>2    MQ事务消息（最终一致性）<br>支持事务消息的MQ，其支持事务消息的方式采用类似于二阶段提交。<br>基于 MQ 的分布式事务方案其实是对本地消息表的封装，将本地消息表基于 MQ 内部，其他方面的协议基本与本地消息表一致。<div align="center">
+
+</div></li>
+</ol>
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108064986.png" alt="1589108064986.png"></p>
+
+
+<p>1.1.1    条件<br>a) 需要补偿逻辑<br>b) 业务处理逻辑需要幂等<br>1.1.2    处理流程<br>c) 消费者向MQ发送half消息。<br>d) MQ Server将消息持久化后，向发送方ack确认消息发送成功。<br>e) 消费者开始执行事务逻辑。<br>f) 消费者根据本地事务执行结果向MQ Server提交二次确认或者回滚。<br>g) MQ Server收到commit状态则将half消息标记可投递状态。<br>h) 服务提供者收到该消息，执行本地业务逻辑。返回处理结果。<br>优点：<br>消息数据独立存储，降低业务系统与消息系统之间的耦合。<br>吞吐量优于本地消息表方案。<br>缺点：<br>一次消息发送需要两次网络请求(half消息 + commit/rollback)。<br>需要实现消息回查接口。<br>1.2    Sagas事务模型（最终一致性）<br>Saga模式是一种分布式异步事务，一种最终一致性事务，是一种柔性事务，有两种不同的方式来实现saga事务，最流行的两种方式是：<br>1.2.1    事件/编排Choreography：没有中央协调器（没有单点风险）时，每个服务产生并聆听其他服务的事件，并决定是否应采取行动。<br>该实现第一个服务执行一个事务，然后发布一个事件。该事件被一个或多个服务进行监听，这些服务再执行本地事务并发布（或不发布）新的事件，当最后一个服务执行本地事务并且不发布任何事件时，意味着分布式事务结束，或者它发布的事件没有被任何Saga参与者听到都意味着事务结束。</p>
+<div align="center">
+
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108091135.png" alt="1589108091135.png"></p>
+</div>
+
+<p>1.1.1.1    处理流程<br>订单服务保存新订单，将状态设置为pengding挂起状态，并发布名为ORDER_CREATED_EVENT的事件。<br>支付服务监听ORDER_CREATED_EVENT，并公布事件BILLED_ORDER_EVENT。<br>库存服务监听BILLED_ORDER_EVENT，更新库存，并发布ORDER_PREPARED_EVENT。<br>货运服务监听ORDER_PREPARED_EVENT，然后交付产品。最后，它发布ORDER_DELIVERED_EVENT。<br>最后，订单服务侦听ORDER_DELIVERED_EVENT并设置订单的状态为concluded完成。<br>假设库存服务在事务过程中失败了。进行回滚：<br>库存服务产生PRODUCT_OUT_OF_STOCK_EVENT<br>订购服务和支付服务会监听到上面库存服务的这一事件：<br>①支付服务会退款给客户。<br>②订单服务将订单状态设置为失败。<br>优点：事件/编排是实现Saga模式的自然方式; 它很简单，容易理解，不需要太多的努力来构建，所有参与者都是松散耦合的，因为他们彼此之间没有直接的耦合。如果您的事务涉及2至4个步骤，则可能是非常合适的。<br>1.1.2    命令/协调orchestrator：中央协调器负责集中处理事件的决策和业务逻辑排序。<br>saga协调器orchestrator以命令/回复的方式与每项服务进行通信，告诉他们应该执行哪些操作。</p>
+<div align="center">
+
+<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108117857.png" alt="1589108117857.png"></p>
+</div>
+
+<p>订单服务保存pending状态，并要求订单Saga协调器（简称OSO）开始启动订单事务。<br>OSO向收款服务发送执行收款命令，收款服务回复Payment Executed消息。<br>OSO向库存服务发送准备订单命令，库存服务将回复OrderPrepared消息。<br>OSO向货运服务发送订单发货命令，货运服务将回复Order Delivered消息。<br>OSO订单Saga协调器必须事先知道执行“创建订单”事务所需的流程(通过读取BPM业务流程XML配置获得)。如果有任何失败，它还负责通过向每个参与者发送命令来撤销之前的操作来协调分布式的回滚。当你有一个中央协调器协调一切时，回滚要容易得多，因为协调器默认是执行正向流程，回滚时只要执行反向流程即可。<br>优点：<br>避免服务之间的循环依赖关系，因为saga协调器会调用saga参与者，但参与者不会调用协调器。<br>集中分布式事务的编排。<br>只需要执行命令/回复(其实回复消息也是一种事件消息)，降低参与者的复杂性。<br>在添加新步骤时，事务复杂性保持线性，回滚更容易管理。<br>如果在第一笔交易还没有执行完，想改变有第二笔事务的目标对象，则可以轻松地将其暂停在协调器上，直到第一笔交易结束。</p>
+<h2 id="BASE理论"><a href="#BASE理论" class="headerlink" title="BASE理论"></a>BASE理论</h2><p>BASE 理论是 CAP 理论中的 AP 的延伸，是对互联网大规模分布式系统的实践总结，强调可用性。核心思想就是：<strong>我们无法做到强一致，但每个应用都可以根据自身的业务特点，采用适当的方式来使系统达到最终一致性</strong>。</p>
+<h3 id="Basically-Available（基本可用）"><a href="#Basically-Available（基本可用）" class="headerlink" title="Basically Available（基本可用）"></a>Basically Available（基本可用）</h3><p>基本可用四板斧</p>
+<ol>
+<li>流量削峰：分时间段时间分业务场景处理</li>
+<li>延迟响应：队列等待</li>
+<li>体验降级：降低用户体验</li>
+<li>过载保护：排队执行、超时保护</li>
+</ol>
+<h3 id="Soft-state（软状态）"><a href="#Soft-state（软状态）" class="headerlink" title="Soft state（软状态）"></a>Soft state（软状态）</h3><h3 id="Eventually-consistent（最终一致性）"><a href="#Eventually-consistent（最终一致性）" class="headerlink" title="Eventually consistent（最终一致性）"></a>Eventually consistent（最终一致性）</h3><p>系统中所有的数据副本在经过一段时间的同步后，最终能够达到一个一致的状态。</p>
+<h4 id="实现依据"><a href="#实现依据" class="headerlink" title="实现依据"></a>实现依据</h4><ol>
+<li>以最新写入的数据为准，比如 AP 模型的 KV 存储采用的就是这种方式；</li>
+<li>以第一次写入的数据为准，如果你不希望存储的数据被更改，可以以它为准。</li>
+</ol>
+<h4 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h4><ol>
+<li><strong>读时修复</strong>：在读取数据时，检测数据的不一致，进行修复。比如 Cassandra 的 Read Repair 实现，具体来说，在向 Cassandra 系统查询数据的时候，如果检测到不同节点的副本数据不一致，系统就自动修复数据。</li>
+<li><strong>写时修复</strong>：在写入数据，检测数据的不一致时，进行修复。比如 Cassandra 的 Hinted Handoff 实现。具体来说，Cassandra 集群的节点之间远程写数据的时候，如果写失败就将数据缓存下来，然后定时重传，修复数据的不一致性。</li>
+<li><strong>异步修复</strong>：这个是最常用的方式，通过定时对账检测副本数据的一致性，并修复</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/cap/" rel="tag"><i class="fa fa-tag"></i> cap</a>
+              <a href="/tags/base/" rel="tag"><i class="fa fa-tag"></i> base</a>
+              <a href="/tags/acid/" rel="tag"><i class="fa fa-tag"></i> acid</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" rel="prev" title="算法之布隆过滤器">
+      <i class="fa fa-chevron-left"></i> 算法之布隆过滤器
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%97%E6%B3%95%E4%B9%8BRaft/" rel="next" title="分布式算法之Raft">
+      分布式算法之Raft <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=0&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA"><span class="nav-number">1.</span> <span class="nav-text">分布式理论</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CAP"><span class="nav-number">1.1.</span> <span class="nav-text">CAP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Consistency%EF%BC%88%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">Consistency（一致性）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Availability%EF%BC%88%E5%8F%AF%E7%94%A8%E6%80%A7%EF%BC%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">Availability（可用性）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Partition-tolerance%EF%BC%88%E5%88%86%E5%8C%BA%E5%AE%B9%E9%94%99%E6%80%A7%EF%BC%89"><span class="nav-number">1.1.3.</span> <span class="nav-text">Partition tolerance（分区容错性）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CAP%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.4.</span> <span class="nav-text">CAP的关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ACID"><span class="nav-number">1.2.</span> <span class="nav-text">ACID</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE%EF%BC%882PC%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">两阶段提交协议（2PC）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%EF%BC%88%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE%EF%BC%9AProtocol%EF%BC%89"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">定义（分布式事务一致性协议：Protocol）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%80%9D%E8%B7%AF"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">算法思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">实现过程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5"><span class="nav-number">1.2.1.3.1.</span> <span class="nav-text">准备阶段</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BASE%E7%90%86%E8%AE%BA"><span class="nav-number">1.3.</span> <span class="nav-text">BASE理论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Basically-Available%EF%BC%88%E5%9F%BA%E6%9C%AC%E5%8F%AF%E7%94%A8%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">Basically Available（基本可用）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Soft-state%EF%BC%88%E8%BD%AF%E7%8A%B6%E6%80%81%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">Soft state（软状态）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Eventually-consistent%EF%BC%88%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%89"><span class="nav-number">1.3.3.</span> <span class="nav-text">Eventually consistent（最终一致性）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%BE%9D%E6%8D%AE"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">实现依据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">实现方式</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">151</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">837k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">12:41</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '5fdfa45c3414e674e556512296ac36f6',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/avatar.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="背景如果想判断一个元素是不是在一个集合里，一般想到的是将集合中所有元素保存起来，然后通过比较确定。链表、树、散列表（又叫哈希表，Hash table）等等数据结构都是这种思路，存储位置要么是磁盘，要么是内存。很多时候要么是以时间换空间，要么是以空间换时间。   在响应时间要求比较严格的情况下，如果我们存在内里，那么随着集合中元素的增加，我们需要的存储空间越来越大，以及检索的时间越来越长，导致内存开">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法之布隆过滤器">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="背景如果想判断一个元素是不是在一个集合里，一般想到的是将集合中所有元素保存起来，然后通过比较确定。链表、树、散列表（又叫哈希表，Hash table）等等数据结构都是这种思路，存储位置要么是磁盘，要么是内存。很多时候要么是以时间换空间，要么是以空间换时间。   在响应时间要求比较严格的情况下，如果我们存在内里，那么随着集合中元素的增加，我们需要的存储空间越来越大，以及检索的时间越来越长，导致内存开">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/1589094551971.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/1589094591649.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/1589094678057.png">
+<meta property="article:published_time" content="2021-03-03T06:01:39.000Z">
+<meta property="article:modified_time" content="2021-03-03T06:22:01.558Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="布隆过滤器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/1589094551971.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>算法之布隆过滤器 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">151</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">26</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">98</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法之布隆过滤器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-03-03 14:01:39 / 修改时间：14:22:01" itemprop="dateCreated datePublished" datetime="2021-03-03T14:01:39+08:00">2021-03-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>如果想判断一个元素是不是在一个集合里，一般想到的是将集合中所有元素保存起来，然后通过比较确定。链表、树、散列表（又叫哈希表，Hash table）等等数据结构都是这种思路，存储位置要么是磁盘，要么是内存。很多时候要么是以时间换空间，要么是以空间换时间。  </p>
+<p>在响应时间要求比较严格的情况下，如果我们存在内里，那么随着集合中元素的增加，我们需要的存储空间越来越大，以及检索的时间越来越长，导致内存开销太大、时间效率变低。  </p>
+<p>此时需要考虑解决的问题就是，<strong>在数据量比较大的情况下，既满足时间要求，又满足空间的要求</strong>。即我们需要一个时间和空间消耗都比较小的数据结构和算法。Bloom Filter就是一种解决方案。</p>
+<a id="more"></a>
+
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>布隆过滤器（英语：Bloom Filter）是1970年由布隆提出的。它实际上是一个很长的二进制向量和一系列随机映射函数。<strong>布隆过滤器可以用于检索一个元素是否在一个集合中</strong>。它的优点是空间效率和查询时间都远远超过一般的算法，缺点是有一定的误识别率和删除困难。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>布隆过滤器的原理是，当一个元素被加入集合时，通过K个散列函数将这个元素映射成一个位数组中的K个点，把它们置为1。检索时，我们只要看看这些点是不是都是1就（大约）知道集合中有没有它了：如果这些点有任何一个0，则被检元素一定不在；如果都是1，则被检元素很可能在。这就是布隆过滤器的基本思想。  </p>
+<p>Bloom Filter跟单哈希函数Bit-Map不同之处在于：Bloom Filter使用了k个哈希函数，每个字符串跟k个bit对应。从而降低了冲突的概率。</p>
+<div align="center">
+
+<img src="/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/1589094551971.png" class title="1589094551971.png">
+
+</div>
+
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>bloom filter之所以能做到在时间和空间上的效率比较高，是因为牺牲了判断的准确率、删除的便利性</p>
+<ol>
+<li><strong>存在误判</strong>，可能要查到的元素并没有在容器中，但是hash之后得到的k个位置上值都是1。如果bloom filter中存储的是黑名单，那么可以通过建立一个白名单来存储可能会误判的元素。</li>
+<li><strong>删除困难</strong>。一个放入容器的元素映射到bit数组的k个位置上是1，删除的时候不能简单的直接置为0，可能会影响其他元素的判断。可以采用Counting Bloom Filter</li>
+</ol>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>布隆过滤器有许多实现与优化，Guava中就提供了一种Bloom Filter的实现。</p>
+<ol>
+<li>在使用bloom filter时，绕不过的两点是预估数据量n以及期望的误判率fpp，</li>
+<li>在实现bloom filter时，绕不过的两点就是hash函数的选取以及bit数组的大小。</li>
+</ol>
+<p>对于一个确定的场景，我们预估要存的数据量为n，期望的误判率为fpp，然后需要计算我们需要的Bit数组的大小m，以及hash函数的个数k，并选择hash函数</p>
+<h3 id="Bit数组大小选择"><a href="#Bit数组大小选择" class="headerlink" title="Bit数组大小选择"></a>Bit数组大小选择</h3><p>根据预估数据量n以及误判率fpp，bit数组大小的m的计算方式：  </p>
+<div align="center">
+
+<img src="/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/1589094591649.png" class title="bit数组大小计算">
+
+</div>
+
+<h4 id="com-google-common-hash-BloomFilter源码"><a href="#com-google-common-hash-BloomFilter源码" class="headerlink" title="com.google.common.hash.BloomFilter源码"></a>com.google.common.hash.BloomFilter源码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 计算 Bloom Filter的bit位数m</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;See http://en.wikipedia.org/wiki/Bloom_filter#Probability_of_false_positives for the</span></span><br><span class="line"><span class="comment"> * formula.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> n 预期数据量</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> p 误判率 (must be 0 &lt; p &lt; 1)</span></span><br><span class="line"><span class="comment"> */</span> </span><br><span class="line"><span class="meta">@VisibleForTesting</span> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">long</span> <span class="title">optimalNumOfBits</span><span class="params">(<span class="keyword">long</span> n, <span class="keyword">double</span> p)</span> </span>&#123; </span><br><span class="line">  <span class="keyword">if</span> (p == <span class="number">0</span>) &#123; </span><br><span class="line">    p = Double.MIN_VALUE; </span><br><span class="line">  &#125; </span><br><span class="line">  <span class="keyword">return</span> (<span class="keyword">long</span>) (-n * Math.log(p) / (Math.log(<span class="number">2</span>) * Math.log(<span class="number">2</span>))); </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 计算最佳k值，即在Bloom过滤器中插入的每个元素的哈希数</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;See http://en.wikipedia.org/wiki/File:Bloom_filter_fp_probability.svg for the formula.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> n 预期数据量</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> m bloom filter中总的bit位数 (must be positive)</span></span><br><span class="line"><span class="comment"> */</span> </span><br><span class="line"><span class="meta">@VisibleForTesting</span> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">optimalNumOfHashFunctions</span><span class="params">(<span class="keyword">long</span> n, <span class="keyword">long</span> m)</span> </span>&#123; </span><br><span class="line">  <span class="comment">// (m / n) * log(2), but avoid truncation due to division! </span></span><br><span class="line">  <span class="keyword">return</span> Math.max(<span class="number">1</span>, (<span class="keyword">int</span>) Math.round((<span class="keyword">double</span>) m / n * Math.log(<span class="number">2</span>))); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="哈希函数选择"><a href="#哈希函数选择" class="headerlink" title="哈希函数选择"></a>哈希函数选择</h3><p>由预估数据量n以及bit数组长度m，可以得到一个hash函数的个数k：</p>
+<div align="center">
+
+<img src="/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/1589094678057.png" class title="1589094678057.png">
+
+</div>
+
+<p>哈希函数的选择对性能的影响应该是很大的，一个好的哈希函数要能近似等概率的将字符串映射到各个Bit。选择k个不同的哈希函数比较麻烦，一种简单的方法是选择一个哈希函数，然后送入k个不同的参数。<br>哈希函数个数k、位数组大小m、加入的字符串数量n的关系可以参考Bloom Filters - the math，Bloom_filter-wikipedia  </p>
+<p>BloomFilter实现的另一个重点就是怎么利用hash函数把数据映射到bit数组中。Guava的实现是对元素通过MurmurHash3计算hash值，将得到的hash值取高8个字节以及低8个字节进行计算，以得当前元素在bit数组中对应的多个位置。MurmurHash3算法详见:Murmur哈希，于2008年被发明。这个算法hbase,redis,kafka都在使用。</p>
+<p>这个过程的实现在两个地方：</p>
+<ol>
+<li>将数据放入bloom filter中</li>
+<li>判断数据是否已在bloom filter中</li>
+</ol>
+<p>这两个地方的实现大同小异，区别只是，前者是put数据，后者是查数据。<br>这里看一下put的过程，hash策略以MURMUR128_MITZ_64为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function"><span class="keyword">boolean</span> <span class="title">put</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    T object, Funnel&lt;? <span class="keyword">super</span> T&gt; funnel, <span class="keyword">int</span> numHashFunctions, LockFreeBitArray bits)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">long</span> bitSize = bits.bitSize();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//利用MurmurHash3得到数据的hash值对应的字节数组</span></span><br><span class="line">  <span class="keyword">byte</span>[] bytes = Hashing.murmur3_128().hashObject(object, funnel).getBytesInternal();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">//取低8个字节、高8个字节，转成long类型</span></span><br><span class="line">  <span class="keyword">long</span> hash1 = lowerEight(bytes);</span><br><span class="line">  <span class="keyword">long</span> hash2 = upperEight(bytes);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">boolean</span> bitsChanged = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">//这里的combinedHash = hash1 + i * hash2</span></span><br><span class="line">  <span class="keyword">long</span> combinedHash = hash1;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">//根据combinedHash，得到放入的元素在bit数组中的k个位置，将其置1</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numHashFunctions; i++) &#123;</span><br><span class="line">    bitsChanged |= bits.set((combinedHash &amp; Long.MAX_VALUE) % bitSize);</span><br><span class="line">    combinedHash += hash2;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> bitsChanged;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BloomFilterTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> expectedInsertions = <span class="number">10000000</span>;</span><br><span class="line">        <span class="keyword">double</span> fpp = <span class="number">0.00001</span>;</span><br><span class="line">        BloomFilter&lt;CharSequence&gt; bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_8), expectedInsertions, fpp);</span><br><span class="line">        bloomFilter.put(<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">        bloomFilter.put(<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line">        <span class="keyword">boolean</span> containsString = bloomFilter.mightContain(<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">        System.out.println(containsString);</span><br><span class="line">        BloomFilter&lt;Email&gt; emailBloomFilter = BloomFilter</span><br><span class="line">                .create((Funnel&lt;Email&gt;) (from, into) -&gt; into.putString(from.getDomain(), Charsets.UTF_8),</span><br><span class="line">                        expectedInsertions, fpp);</span><br><span class="line">        emailBloomFilter.put(<span class="keyword">new</span> Email(<span class="string">&quot;sage.wang&quot;</span>, <span class="string">&quot;quanr.com&quot;</span>)); </span><br><span class="line">        <span class="keyword">boolean</span> containsEmail = emailBloomFilter.mightContain(<span class="keyword">new</span> Email(<span class="string">&quot;sage.wangaaa&quot;</span>, <span class="string">&quot;quanr.com&quot;</span>));</span><br><span class="line">        System.out.println(containsEmail);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Data</span></span><br><span class="line">    <span class="meta">@Builder</span></span><br><span class="line">    <span class="meta">@ToString</span></span><br><span class="line">    <span class="meta">@AllArgsConstructor</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Email</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> String userName;</span><br><span class="line">        <span class="keyword">private</span> String domain;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>常见的几个应用场景：  </p>
+<ol>
+<li>cerberus在收集监控数据的时候, 有的系统的监控项量会很大, 需要检查一个监控项的名字是否已经被记录到db过了, 如果没有的话就需要写入db.</li>
+<li>爬虫过滤已抓到的url就不再抓，可用bloom filter过滤</li>
+<li>垃圾邮件过滤。如果用哈希表，每存储一亿个 email地址，就需要 1.6GB的内存（用哈希表实现的具体办法是将每一个 email地址对应成一个八字节的信息指纹，然后将这些信息指纹存入哈希表，由于哈希表的存储效率一般只有 50%，因此一个 email地址需要占用十六个字节。一亿个地址大约要 1.6GB，即十六亿字节的内存）。因此存贮几十亿个邮件地址可能需要上百 GB的内存。而Bloom Filter只需要哈希表 1/8到 1/4 的大小就能解决同样的问题。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+              <a href="/tags/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 布隆过滤器</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/18/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" rel="prev" title="JVM垃圾收集器与内存分配策略">
+      <i class="fa fa-chevron-left"></i> JVM垃圾收集器与内存分配策略
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/" rel="next" title="分布式理论">
+      分布式理论 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=0&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Bit%E6%95%B0%E7%BB%84%E5%A4%A7%E5%B0%8F%E9%80%89%E6%8B%A9"><span class="nav-number">5.1.</span> <span class="nav-text">Bit数组大小选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#com-google-common-hash-BloomFilter%E6%BA%90%E7%A0%81"><span class="nav-number">5.1.1.</span> <span class="nav-text">com.google.common.hash.BloomFilter源码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0%E9%80%89%E6%8B%A9"><span class="nav-number">5.2.</span> <span class="nav-text">哈希函数选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-number">7.</span> <span class="nav-text">应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">151</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/03/03/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">837k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">12:41</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : 'aadc8aa11d978e58c1c892315617a673',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
