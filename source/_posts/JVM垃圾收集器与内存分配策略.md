@@ -142,9 +142,7 @@ permanent generation空间不足会引发Full GC,仍然不够会引发PermGen Sp
 -XX:+PrintGCApplicationStoppedTime 打印应用被暂停的时间
 ```
 
-## 垃圾收集器
-
-### 概述
+## 垃圾收集器整体介绍
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
@@ -209,7 +207,7 @@ permanent generation空间不足会引发Full GC,仍然不够会引发PermGen Sp
 </tbody>
 </table>
 
-### 垃圾收集算法
+## 垃圾收集算法
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
@@ -233,24 +231,45 @@ permanent generation空间不足会引发Full GC,仍然不够会引发PermGen Sp
 <tbody>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>标记-清除&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">基础算法（以下算法以此为基础）<br>标记：标记出所有需要回收的对象<br>回收：回收掉所有被标记的对象<br>缺点：<br>效率太低<br>出现大量碎片后，无法分配大的对象   </td>
+    <td class="tg-0lax">
+    基础算法（以下算法以此为基础）<br>
+    标记：标记出所有需要回收的对象<br>
+    回收：回收掉所有被标记的对象<br>
+    缺点：效率太低；出现大量碎片后，无法分配大的对象<br>   
+    ![标记-清除算法](JVM垃圾收集器与内存分配策略/标记-清除算法.png)
+    </td>
   </tr>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>复制&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">它将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。<br>这样使得每次都是对其中的一块进行内存回收，内存分配时也就不用考虑内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可，实现简单，运行高效。只是这种算法的代价是将内存缩小为原来的一半，持续复制长生存期的对象则导致效率降低。   </td>
+    <td class="tg-0lax">
+    内存空间平均分成两块，每次使用其中一块<br>
+    优点：不用考虑内存碎片；实现简单，效率高<br>
+    缺点：浪费内存；长时间存活的对象复制效率低  <br> 
+    ![复制算法](JVM垃圾收集器与内存分配策略/复制算法.png)
+    </td>
   </tr>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>标记-压缩&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">根据老年代的特点，有人提出了另外一种“标记-整理”（Mark-Compact）算法，标记过程仍然与“标记-清除”算法一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存活的对象都向一端移动，然后直接清理掉端边界以外的内存   </td>
+    <td class="tg-0lax">
+    标记过程与“标记-清除”算法一样<br>
+    回收：存活对象移动到另一端，然后直接清理另一端的内存<br>  
+    ![标记-压缩算法](JVM垃圾收集器与内存分配策略/标记-压缩算法.png) 
+    </td>
   </tr>
   <tr>
     <td class="tg-0lax">&nbsp;&nbsp;&nbsp;<br>分代收集&nbsp;&nbsp;&nbsp;</td>
-    <td class="tg-0lax">GC分代的基本假设：<span style="color:red">绝大部分对象的生命周期都非常短暂，存活时间短。</span><br>“分代收集”（Generational Collection）算法，把Java堆分为新生代和老年代，这样就可以根据各个年代的特点采用最适当的收集算法。在新生代中，每次垃圾收集时都发现有大批对象死去，<span style="color:red">只有少量存活，那就选用复制算法</span>，只需要付出少量存活对象的复制成本就可以完成收集。而老年代中因为对象存活率高、没有额外空间对它进行分配担保，就必须使用<span style="color:red">“标记-清理”或“标记-整理”</span>算法来进行回收。   </td>
+    <td class="tg-0lax">
+    假设：<span style="color:red">绝大部分对象的生命周期都非常短暂，存活时间短</span><br>
+    把Java堆分为新生代和老年代，采用同的回收算法<br>
+    新生代：复制算法（大量死去，少量存活）<br>
+    老年代：“标记-压缩-清除”（存活率高，没有额外空间复制）<br>
+    ![分代收集结构](JVM垃圾收集器与内存分配策略/分代收集结构.png) 
+    </td>
   </tr>
 </tbody>
 </table>
 
-### 垃圾收集器
+## 垃圾收集器
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
@@ -345,7 +364,7 @@ G1跟踪各个Region里面的垃圾堆积的价值大小（回收所获得的空
 </tbody>
 </table>
 
-### 收集器组合
+## 收集器组合
 
 <div align=center>
 
