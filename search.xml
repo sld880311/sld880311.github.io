@@ -723,7 +723,50 @@
 <p>或者使用如下sql：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> &quot;database&quot; <span class="keyword">WHERE</span> <span class="type">time</span> <span class="operator">&gt;</span> now() <span class="operator">-</span> <span class="number">5</span>m <span class="keyword">and</span> &quot;database&quot;<span class="operator">=</span><span class="string">&#x27;telegraf&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> <span class="type">time</span> <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
 <h3 id="tag-values"><a href="#tag-values" class="headerlink" title="tag values"></a>tag values</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">influx -database <span class="string">&#x27;telegraf&#x27;</span> -execute <span class="string">&#x27;SHOW TAG VALUES FROM cpu WITH KEY = cpu&#x27;</span> -format <span class="string">&#x27;csv&#x27;</span>|wc -l</span><br></pre></td></tr></table></figure>
-<h3 id="每秒写数据量"><a href="#每秒写数据量" class="headerlink" title="每秒写数据量"></a>每秒写数据量</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">influx -execute <span class="string">&#x27;select derivative(pointReq, 1s) from &quot;write&quot; where time &gt; now() - 5m&#x27;</span> -database <span class="string">&#x27;_internal&#x27;</span> -precision <span class="string">&#x27;rfc3339&#x27;</span></span><br></pre></td></tr></table></figure>]]></content>
+<h3 id="每秒写数据量"><a href="#每秒写数据量" class="headerlink" title="每秒写数据量"></a>每秒写数据量</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">influx -execute <span class="string">&#x27;select derivative(pointReq, 1s) from &quot;write&quot; where time &gt; now() - 5m&#x27;</span> -database <span class="string">&#x27;_internal&#x27;</span> -precision <span class="string">&#x27;rfc3339&#x27;</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="explain"><a href="#explain" class="headerlink" title="explain"></a>explain</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> cpu <span class="keyword">where</span> <span class="type">time</span> <span class="operator">&gt;</span> now() <span class="operator">-</span> <span class="number">1</span>m</span><br><span class="line">QUERY PLAN</span><br><span class="line"><span class="comment">----------</span></span><br><span class="line">EXPRESSION: <span class="operator">&lt;</span>nil<span class="operator">&gt;</span></span><br><span class="line">AUXILIARY FIELDS: cpu::tag, host::tag, usage_active::<span class="type">float</span>, usage_guest::<span class="type">float</span>, usage_guest_nice::<span class="type">float</span>, usage_idle::<span class="type">float</span>, usage_iowait::<span class="type">float</span>, usage_irq::<span class="type">float</span>, usage_nice::<span class="type">float</span>, usage_softirq::<span class="type">float</span>, usage_steal::<span class="type">float</span>, usage_system::<span class="type">float</span>, usage_user::<span class="type">float</span></span><br><span class="line">NUMBER <span class="keyword">OF</span> SHARDS: <span class="number">1</span></span><br><span class="line">NUMBER <span class="keyword">OF</span> SERIES: <span class="number">57</span></span><br><span class="line">CACHED <span class="keyword">VALUES</span>: <span class="number">3135</span></span><br><span class="line">NUMBER <span class="keyword">OF</span> FILES: <span class="number">0</span></span><br><span class="line">NUMBER <span class="keyword">OF</span> BLOCKS: <span class="number">0</span></span><br><span class="line">SIZE <span class="keyword">OF</span> BLOCKS: <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h3 id="explain-analyze"><a href="#explain-analyze" class="headerlink" title="explain analyze"></a>explain analyze</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain analyze <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> cpu <span class="keyword">where</span> <span class="type">time</span> <span class="operator">&gt;</span> now() <span class="operator">-</span> <span class="number">30</span>d</span><br><span class="line">EXPLAIN ANALYZE</span><br><span class="line"><span class="comment">---------------</span></span><br><span class="line">.</span><br><span class="line">└── <span class="keyword">select</span></span><br><span class="line">    ├── execution_time: <span class="number">230.982833</span>ms</span><br><span class="line">    ├── planning_time: <span class="number">8.062578</span>ms</span><br><span class="line">    ├── total_time: <span class="number">239.045411</span>ms</span><br><span class="line">    └── build_cursor</span><br><span class="line">        ├── labels</span><br><span class="line">        │   └── statement: <span class="keyword">SELECT</span> cpu::tag, host::tag, usage_active::<span class="type">float</span>, usage_guest::<span class="type">float</span>, usage_guest_nice::<span class="type">float</span>, usage_idle::<span class="type">float</span>, usage_iowait::<span class="type">float</span>, usage_irq::<span class="type">float</span>, usage_nice::<span class="type">float</span>, usage_softirq::<span class="type">float</span>, usage_steal::<span class="type">float</span>, usage_system::<span class="type">float</span>, usage_user::<span class="type">float</span> <span class="keyword">FROM</span> telegraf.autogen.cpu</span><br><span class="line">        └── iterator_scanner</span><br><span class="line">            ├── labels</span><br><span class="line">            │   └── auxiliary_fields: cpu::tag, host::tag, usage_active::<span class="type">float</span>, usage_guest::<span class="type">float</span>, usage_guest_nice::<span class="type">float</span>, usage_idle::<span class="type">float</span>, usage_iowait::<span class="type">float</span>, usage_irq::<span class="type">float</span>, usage_nice::<span class="type">float</span>, usage_softirq::<span class="type">float</span>, usage_steal::<span class="type">float</span>, usage_system::<span class="type">float</span>, usage_user::<span class="type">float</span></span><br><span class="line">            └── create_iterator</span><br><span class="line">                ├── labels</span><br><span class="line">                │   ├── measurement: cpu</span><br><span class="line">                │   └── shard_id: <span class="number">2</span></span><br><span class="line">                ├── cursors_ref: <span class="number">0</span></span><br><span class="line">                ├── cursors_aux: <span class="number">627</span></span><br><span class="line">                ├── cursors_cond: <span class="number">0</span></span><br><span class="line">                ├── float_blocks_decoded: <span class="number">0</span></span><br><span class="line">                ├── float_blocks_size_bytes: <span class="number">0</span></span><br><span class="line">                ├── integer_blocks_decoded: <span class="number">0</span></span><br><span class="line">                ├── integer_blocks_size_bytes: <span class="number">0</span></span><br><span class="line">                ├── unsigned_blocks_decoded: <span class="number">0</span></span><br><span class="line">                ├── unsigned_blocks_size_bytes: <span class="number">0</span></span><br><span class="line">                ├── string_blocks_decoded: <span class="number">0</span></span><br><span class="line">                ├── string_blocks_size_bytes: <span class="number">0</span></span><br><span class="line">                ├── boolean_blocks_decoded: <span class="number">0</span></span><br><span class="line">                ├── boolean_blocks_size_bytes: <span class="number">0</span></span><br><span class="line">                └── planning_time: <span class="number">7.428681</span>ms</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Note: 由于EXPLAIN ANALYZE忽略查询结果的输出，所以不包括转换为JSON或CSV的成本</p>
+</blockquote>
+<h4 id="execution-time（执行查询耗时）"><a href="#execution-time（执行查询耗时）" class="headerlink" title="execution_time（执行查询耗时）"></a>execution_time（执行查询耗时）</h4><ol>
+<li>reading the time series data</li>
+<li>performing operations as data flows through iterators</li>
+<li>draining processed data from iterators</li>
+<li>不包括：转换为JSON或CSV的耗时</li>
+</ol>
+<h4 id="planning-time（计划查询耗时）"><a href="#planning-time（计划查询耗时）" class="headerlink" title="planning_time（计划查询耗时）"></a>planning_time（计划查询耗时）</h4><p>资源消耗和时间消耗与查询的复杂性相关；比如，series keys会影响查询速度和内存消耗。首先确认时间范围和shards，然后each shard and each measurement, InfluxDB performs the following steps:</p>
+<ol>
+<li>Select matching series keys from the index, filtered by tag predicates in the WHERE clause.</li>
+<li>Group filtered series keys into tag sets based on the GROUP BY dimensions.</li>
+<li>Enumerate each tag set and create a cursor and iterator for each series key.</li>
+<li>Merge iterators and return the merged result to the query executor.</li>
+</ol>
+<h4 id="iterator-type"><a href="#iterator-type" class="headerlink" title="iterator type"></a>iterator type</h4><ol>
+<li><strong>create_iterator：</strong> 本地数据库，──a complex composition of nested iterators combined and merged to produce the final query output.</li>
+<li><strong>remote_iterator：</strong>(InfluxDB Enterprise only)  在远程完成</li>
+</ol>
+<h4 id="cursor-type"><a href="#cursor-type" class="headerlink" title="cursor type"></a>cursor type</h4><p>虽然每种游标类型有相同的数据结构和CPU、IO成本，但每种游标的构造原因不同，并在最终的结果中分开。</p>
+<ol>
+<li><strong>cursor_ref</strong>: 聚合函数的投影游标，比如<code>last()</code> or <code>mean()</code>.</li>
+<li><strong>cursor_aux</strong>: 用于简单表达式计算的辅助游标</li>
+<li><strong>cursor_cond</strong>: 执行where中的fields创建的游标</li>
+</ol>
+<h4 id="block-types"><a href="#block-types" class="headerlink" title="block types"></a>block types</h4><p>EXPLAIN ANALYZE separates storage block types, and reports the total number of blocks decoded and their size (in bytes) on disk. The following block types are supported:</p>
+<ol>
+<li>float | 64-bit IEEE-754 floating-point number</li>
+<li>integer | 64-bit signed integer | | unsigned | 64-bit unsigned integer</li>
+<li>boolean | 1-bit, LSB encoded</li>
+<li>string | UTF-8 string</li>
+</ol>
+<h3 id="show-retention-policies"><a href="#show-retention-policies" class="headerlink" title="show retention policies"></a>show retention policies</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">&gt;</span> <span class="keyword">show</span> retention policies</span><br><span class="line">name    duration shardGroupDuration replicaN <span class="keyword">default</span></span><br><span class="line"><span class="comment">----    -------- ------------------ -------- -------</span></span><br><span class="line">autogen <span class="number">0</span>s       <span class="number">168</span>h0m0s           <span class="number">1</span>        <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="show-shards"><a href="#show-shards" class="headerlink" title="show shards"></a>show shards</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">name: telegraf</span><br><span class="line">id database retention_policy shard_group start_time           end_time             expiry_time          owners</span><br><span class="line"><span class="comment">-- -------- ---------------- ----------- ----------           --------             -----------          ------</span></span><br><span class="line"><span class="number">2</span>  telegraf autogen          <span class="number">2</span>           <span class="number">2021</span><span class="number">-03</span><span class="number">-08</span>T00:<span class="number">00</span>:<span class="number">00</span>Z <span class="number">2021</span><span class="number">-03</span><span class="number">-15</span>T00:<span class="number">00</span>:<span class="number">00</span>Z <span class="number">2021</span><span class="number">-03</span><span class="number">-15</span>T00:<span class="number">00</span>:<span class="number">00</span>Z </span><br><span class="line"></span><br><span class="line">name: _internal</span><br><span class="line">id database  retention_policy shard_group start_time           end_time             expiry_time          owners</span><br><span class="line"><span class="comment">-- --------  ---------------- ----------- ----------           --------             -----------          ------</span></span><br><span class="line"><span class="number">1</span>  _internal monitor          <span class="number">1</span>           <span class="number">2021</span><span class="number">-03</span><span class="number">-10</span>T00:<span class="number">00</span>:<span class="number">00</span>Z <span class="number">2021</span><span class="number">-03</span><span class="number">-11</span>T00:<span class="number">00</span>:<span class="number">00</span>Z <span class="number">2021</span><span class="number">-03</span><span class="number">-18</span>T00:<span class="number">00</span>:<span class="number">00</span>Z</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://docs.influxdata.com/influxdb/v1.7/query_language/spec/#explain">explain</a></li>
+</ol>
+]]></content>
       <categories>
         <category>数据库</category>
         <category>InfluxDB</category>
@@ -1218,22 +1261,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Java并发编程之知识图谱</title>
-    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</url>
-    <content><![CDATA[<div align="center">
-
-<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/1588238047655.png" class title="并发编程知识图谱">
-
-</div>]]></content>
-      <categories>
-        <category>Java</category>
-        <category>并发编程</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java并发编程之应用-设备升级</title>
     <url>/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%BA%94%E7%94%A8-%E8%AE%BE%E5%A4%87%E5%8D%87%E7%BA%A7/</url>
     <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>功能需求：设备策略升级  </p>
@@ -1264,6 +1291,22 @@
       <tags>
         <tag>Java</tag>
         <tag>线程池</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java并发编程之知识图谱</title>
+    <url>/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/</url>
+    <content><![CDATA[<div align="center">
+
+<img src="/2021/02/05/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/1588238047655.png" class title="并发编程知识图谱">
+
+</div>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -1865,6 +1908,43 @@
         <tag>Java</tag>
         <tag>上线文切换</tag>
         <tag>死锁</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java系统化学习之Type</title>
+    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>这里的Type指java.lang.reflect.Type, 是Java中所有类型的公共高级接口, 代表了Java中的所有类型. Type体系中类型的包括：数组类型(GenericArrayType)、参数化类型(ParameterizedType)、类型变量(TypeVariable)、通配符类型(WildcardType)、原始类型(Class)、基本类型(Class), 以上这些类型都实现Type接口.  </p>
+<p>Type 表示的全部类型而每个Class对象表示一个具体类型的实例，如String.class仅代表String类型。由此看来Type与 Class 表示类型几乎是相同的（Class实现接口Type），只不过 Type表示的范围比Class要广得多而已。当然Type还有其他子类。</p>
+<ol>
+<li>参数化类型（ParameterizedType）：有原始类型和具体的类型参数，泛型List<String>、Map；</String></li>
+<li>数组类型（GenericArrayType）：不是数组String[] 、byte[]，而是带有泛型的数组，即T[] ；</li>
+<li>通配符类型（WildcardType）： 指的是&lt;?&gt;, &lt;? extends T&gt;等等</li>
+<li>原始类型（Class）： 不仅仅包含我们平常所指的类，还包括枚举、数组、注解等；</li>
+<li>基本类型（Class）, 也就是我们所说的java的基本类型，即int,float,double等</li>
+<li>类型变量(TypeVariable)：表示类型参数，可以有上界，比如：T extends Number<a id="more"></a>
+<h2 id="JDK定义"><a href="#JDK定义" class="headerlink" title="JDK定义"></a>JDK定义</h2></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.reflect;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Type is the common superinterface for all types in the Java</span></span><br><span class="line"><span class="comment"> * programming language. These include raw types, parameterized types,</span></span><br><span class="line"><span class="comment"> * array types, type variables and primitive types.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Type</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns a string describing this type, including information</span></span><br><span class="line"><span class="comment">     * about any type parameters.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@implSpec</span> The default implementation calls &#123;<span class="doctag">@code</span> toString&#125;.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a string describing this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> String <span class="title">getTypeName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="类结构"><a href="#类结构" class="headerlink" title="类结构"></a>类结构</h2><div align="center">
+
+<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/1588062825641.png" class title="Type类结构">
+
+</div>
+
+<h3 id="ParameterizedType"><a href="#ParameterizedType" class="headerlink" title="ParameterizedType"></a>ParameterizedType</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.reflect;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * ParameterizedType represents a parameterized type such as</span></span><br><span class="line"><span class="comment"> * Collection&amp;lt;String&amp;gt;.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 1. 表示一种参数化类型，比如：Collection&lt;String&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;A parameterized type is created the first time it is needed by a</span></span><br><span class="line"><span class="comment"> * reflective method, as specified in this package. When a</span></span><br><span class="line"><span class="comment"> * parameterized type p is created, the generic type declaration that</span></span><br><span class="line"><span class="comment"> * p instantiates is resolved, and all type arguments of p are created</span></span><br><span class="line"><span class="comment"> * recursively. See &#123;<span class="doctag">@link</span> java.lang.reflect.TypeVariable</span></span><br><span class="line"><span class="comment"> * TypeVariable&#125; for details on the creation process for type</span></span><br><span class="line"><span class="comment"> * variables. Repeated creation of a parameterized type has no effect.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 2. 参数化类型在反射方法第一次使用的时候被创建。</span></span><br><span class="line"><span class="comment"> * 3. 当参数化类型p被创建之后，被p实例化的泛型会被解析，并且递归创建p的所有参数化类型</span></span><br><span class="line"><span class="comment"> * 4. 重复创建一个参数化类型不会有影响</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;Instances of classes that implement this interface must implement</span></span><br><span class="line"><span class="comment"> * an equals() method that equates any two instances that share the</span></span><br><span class="line"><span class="comment"> * same generic type declaration and have equal type parameters.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ParameterizedType</span> <span class="keyword">extends</span> <span class="title">Type</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns an array of &#123;<span class="doctag">@code</span> Type&#125; objects representing the actual type</span></span><br><span class="line"><span class="comment">     * arguments to this type.</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * 1. 返回确切的泛型参数, 如Map&lt;String, Integer&gt;返回[String, Integer]</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;Note that in some cases, the returned array be empty. This can occur</span></span><br><span class="line"><span class="comment">     * if this type represents a non-parameterized type nested within</span></span><br><span class="line"><span class="comment">     * a parameterized type.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> an array of &#123;<span class="doctag">@code</span> Type&#125; objects representing the actual type</span></span><br><span class="line"><span class="comment">     *     arguments to this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> TypeNotPresentException if any of the</span></span><br><span class="line"><span class="comment">     *     actual type arguments refers to a non-existent type declaration</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> MalformedParameterizedTypeException if any of the</span></span><br><span class="line"><span class="comment">     *     actual type parameters refer to a parameterized type that cannot</span></span><br><span class="line"><span class="comment">     *     be instantiated for any reason</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Type[] getActualTypeArguments();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns the &#123;<span class="doctag">@code</span> Type&#125; object representing the class or interface</span></span><br><span class="line"><span class="comment">     * that declared this type.</span></span><br><span class="line"><span class="comment">     * 1. 返回当前class或interface声明的类型, 如List&lt;?&gt;返回List</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the &#123;<span class="doctag">@code</span> Type&#125; object representing the class or interface</span></span><br><span class="line"><span class="comment">     *     that declared this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Type <span class="title">getRawType</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns a &#123;<span class="doctag">@code</span> Type&#125; object representing the type that this type</span></span><br><span class="line"><span class="comment">     * is a member of.  For example, if this type is &#123;<span class="doctag">@code</span> O&lt;T&gt;.I&lt;S&gt;&#125;,</span></span><br><span class="line"><span class="comment">     * return a representation of &#123;<span class="doctag">@code</span> O&lt;T&gt;&#125;.</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * 1. 返回所属类型. 如,当前类型为O&lt;T&gt;.I&lt;S&gt;, 则返回O&lt;T&gt;. 顶级类型将返回null </span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;If this type is a top-level type, &#123;<span class="doctag">@code</span> null&#125; is returned.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a &#123;<span class="doctag">@code</span> Type&#125; object representing the type that</span></span><br><span class="line"><span class="comment">     *     this type is a member of. If this type is a top-level type,</span></span><br><span class="line"><span class="comment">     *     &#123;<span class="doctag">@code</span> null&#125; is returned</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> TypeNotPresentException if the owner type</span></span><br><span class="line"><span class="comment">     *     refers to a non-existent type declaration</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> MalformedParameterizedTypeException if the owner type</span></span><br><span class="line"><span class="comment">     *     refers to a parameterized type that cannot be instantiated</span></span><br><span class="line"><span class="comment">     *     for any reason</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Type <span class="title">getOwnerType</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.csdn.net/JustBeauty/article/details/81116144">ParameterizedType详解</a></li>
+<li><a href="https://www.jianshu.com/p/cfa74c980b25">Java中与泛型相关的接口 之 ParameterizedType</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+        <category>源码分析</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Type</tag>
+        <tag>反射</tag>
       </tags>
   </entry>
   <entry>
@@ -2473,25 +2553,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux /proc/vmstat详解</title>
-    <url>/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>内核中虚拟内存的统计信息，对于性能分析有很大益处</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nr_free_pages 24320</span><br><span class="line">nr_alloc_batch 293</span><br><span class="line">nr_inactive_anon 13215</span><br><span class="line">nr_active_anon 58077</span><br><span class="line">nr_inactive_file 148719</span><br><span class="line">nr_active_file 172552</span><br><span class="line">nr_unevictable 0</span><br><span class="line">nr_mlock 0</span><br><span class="line">nr_anon_pages 19933</span><br><span class="line"><span class="comment"># 映射到文件的页数</span></span><br><span class="line">nr_mapped 8526</span><br><span class="line">nr_file_pages 348571</span><br><span class="line"><span class="comment"># 脏页数</span></span><br><span class="line">nr_dirty 16</span><br><span class="line"><span class="comment"># 会写页数</span></span><br><span class="line">nr_writeback 0</span><br><span class="line">nr_slab_reclaimable 17986</span><br><span class="line">nr_slab_unreclaimable 2986</span><br><span class="line"><span class="comment"># 分配到页面的页数</span></span><br><span class="line">nr_page_table_pages 1396</span><br><span class="line">nr_kernel_stack 123</span><br><span class="line"><span class="comment"># 不稳定页数</span></span><br><span class="line">nr_unstable 0</span><br><span class="line">nr_bounce 0</span><br><span class="line">nr_vmscan_write 0</span><br><span class="line">nr_vmscan_immediate_reclaim 26</span><br><span class="line">nr_writeback_temp 0</span><br><span class="line">nr_isolated_anon 0</span><br><span class="line">nr_isolated_file 0</span><br><span class="line">nr_shmem 27300</span><br><span class="line">nr_dirtied 8354426</span><br><span class="line">nr_written 8097732</span><br><span class="line">numa_hit 1187165492</span><br><span class="line">numa_miss 0</span><br><span class="line">numa_foreign 0</span><br><span class="line">numa_interleave 12459</span><br><span class="line">numa_local 1187165492</span><br><span class="line">numa_other 0</span><br><span class="line">workingset_refault 552268</span><br><span class="line">workingset_activate 81267</span><br><span class="line">workingset_nodereclaim 0</span><br><span class="line">nr_anon_transparent_hugepages 47</span><br><span class="line">nr_free_cma 0</span><br><span class="line">nr_dirty_threshold 94636</span><br><span class="line">nr_dirty_background_threshold 31545</span><br><span class="line"><span class="comment"># 从启动到现在读入的内存页数</span></span><br><span class="line">pgpgin 3168538</span><br><span class="line"><span class="comment"># 从启动到现在换出的内存页数</span></span><br><span class="line">pgpgout 49091671</span><br><span class="line"><span class="comment"># 从启动到现在读入的交换分区页数</span></span><br><span class="line">pswpin 0</span><br><span class="line"><span class="comment"># 从启动到现在换出的交换分区页数</span></span><br><span class="line">pswpout 0</span><br><span class="line"><span class="comment"># 从启动到现在dma存储区分配的页数</span></span><br><span class="line">pgalloc_dma 3730811</span><br><span class="line"><span class="comment"># 从启动到现在dma32存储区分配的页数</span></span><br><span class="line">pgalloc_dma32 1237816587</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区分配的页数</span></span><br><span class="line">pgalloc_normal 0</span><br><span class="line">pgalloc_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在释放的页数</span></span><br><span class="line">pgfree 1241571794</span><br><span class="line"><span class="comment"># 从启动到现在激活的页数</span></span><br><span class="line">pgactivate 2698296</span><br><span class="line"><span class="comment"># 从启动到现在去激活的页数</span></span><br><span class="line">pgdeactivate 747037</span><br><span class="line"><span class="comment"># 从启动到现在二级页面错误数</span></span><br><span class="line">pgfault 4099623847</span><br><span class="line"><span class="comment"># 从启动到现在一级页面错误数</span></span><br><span class="line">pgmajfault 4447</span><br><span class="line">pglazyfreed 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区再填充的页面数</span></span><br><span class="line">pgrefill_dma 2398</span><br><span class="line">pgrefill_dma32 778799</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区填充的页数</span></span><br><span class="line">pgrefill_normal 0</span><br><span class="line">pgrefill_movable 0</span><br><span class="line">pgsteal_kswapd_dma 6587</span><br><span class="line">pgsteal_kswapd_dma32 1977434</span><br><span class="line">pgsteal_kswapd_normal 0</span><br><span class="line">pgsteal_kswapd_movable 0</span><br><span class="line">pgsteal_direct_dma 0</span><br><span class="line">pgsteal_direct_dma32 0</span><br><span class="line">pgsteal_direct_normal 0</span><br><span class="line">pgsteal_direct_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的DMA存储区页面数</span></span><br><span class="line">pgscan_kswapd_dma 6645</span><br><span class="line">pgscan_kswapd_dma32 1992050</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的普通存储区页面数</span></span><br><span class="line">pgscan_kswapd_normal 0</span><br><span class="line">pgscan_kswapd_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_dma 0</span><br><span class="line">pgscan_direct_dma32 0</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_normal 0</span><br><span class="line">pgscan_direct_movable 0</span><br><span class="line">pgscan_direct_throttle 0</span><br><span class="line">zone_reclaim_failed 0</span><br><span class="line"><span class="comment"># kswapd 之外其他线程在回收过程中，因为回收 inode 而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">pginodesteal 0</span><br><span class="line"><span class="comment"># 从启动到现在被扫描的切片数</span></span><br><span class="line">slabs_scanned 1120768</span><br><span class="line"><span class="comment"># 在kswapd回收的过程中，因为回收inode而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">kswapd_inodesteal 105460</span><br><span class="line">kswapd_low_wmark_hit_quickly 47</span><br><span class="line">kswapd_high_wmark_hit_quickly 198</span><br><span class="line"><span class="comment"># 从启动到现在通过kswapd调用来回收的页面数</span></span><br><span class="line">pageoutrun 563</span><br><span class="line"><span class="comment"># 从启动到现在请求直接回收的页面数</span></span><br><span class="line">allocstall 0</span><br><span class="line"><span class="comment"># 从启动到现在轮换的页面数</span></span><br><span class="line">pgrotated 24</span><br><span class="line">drop_pagecache 0</span><br><span class="line">drop_slab 0</span><br><span class="line">numa_pte_updates 0</span><br><span class="line">numa_huge_pte_updates 0</span><br><span class="line">numa_hint_faults 0</span><br><span class="line">numa_hint_faults_local 0</span><br><span class="line">numa_pages_migrated 0</span><br><span class="line">pgmigrate_success 0</span><br><span class="line">pgmigrate_fail 0</span><br><span class="line">compact_migrate_scanned 0</span><br><span class="line">compact_free_scanned 0</span><br><span class="line">compact_isolated 0</span><br><span class="line">compact_stall 0</span><br><span class="line">compact_fail 0</span><br><span class="line">compact_success 0</span><br><span class="line">htlb_buddy_alloc_success 129</span><br><span class="line">htlb_buddy_alloc_fail 0</span><br><span class="line">unevictable_pgs_culled 0</span><br><span class="line">unevictable_pgs_scanned 0</span><br><span class="line">unevictable_pgs_rescued 0</span><br><span class="line">unevictable_pgs_mlocked 0</span><br><span class="line">unevictable_pgs_munlocked 0</span><br><span class="line">unevictable_pgs_cleared 0</span><br><span class="line">unevictable_pgs_stranded 0</span><br><span class="line">thp_fault_alloc 5482</span><br><span class="line">thp_fault_fallback 345</span><br><span class="line">thp_collapse_alloc 606</span><br><span class="line">thp_collapse_alloc_failed 48146</span><br><span class="line">thp_split 180</span><br><span class="line">thp_zero_page_alloc 2</span><br><span class="line">thp_zero_page_alloc_failed 0</span><br><span class="line">balloon_inflate 0</span><br><span class="line">balloon_deflate 0</span><br><span class="line">balloon_migrate 0</span><br><span class="line">swap_ra 0</span><br><span class="line">swap_ra_hit 0</span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://www.kernel.org/doc/Documentation/vm/transhuge.txt">/proc/vmstat帮助手册</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>proc</tag>
-        <tag>vmstat</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux timewait问题分析</title>
     <url>/2021/02/05/Linux-timewait%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h2 id="TCP协议说明"><a href="#TCP协议说明" class="headerlink" title="TCP协议说明"></a>TCP协议说明</h2><p>TCP协议规定，对于已经建立的连接，网络双方要进行四次握手才能成功断开连接，如果缺少了其中某个步骤，将会使连接处于假死状态，连接本身占用的资源不会被释放。网络服务器程序要同时管理大量连接，所以很有必要保证无用连接完全断开，否则大量僵死的连接会浪费许多服务器资源。在众多TCP状态中，最值得注意的状态有两个：<strong>CLOSE_WAIT和TIME_WAIT。</strong></p>
@@ -2562,6 +2623,25 @@
         <tag>Linux</tag>
         <tag>timewait</tag>
         <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux /proc/vmstat详解</title>
+    <url>/2021/02/05/Linux-proc-vmstat%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>内核中虚拟内存的统计信息，对于性能分析有很大益处</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nr_free_pages 24320</span><br><span class="line">nr_alloc_batch 293</span><br><span class="line">nr_inactive_anon 13215</span><br><span class="line">nr_active_anon 58077</span><br><span class="line">nr_inactive_file 148719</span><br><span class="line">nr_active_file 172552</span><br><span class="line">nr_unevictable 0</span><br><span class="line">nr_mlock 0</span><br><span class="line">nr_anon_pages 19933</span><br><span class="line"><span class="comment"># 映射到文件的页数</span></span><br><span class="line">nr_mapped 8526</span><br><span class="line">nr_file_pages 348571</span><br><span class="line"><span class="comment"># 脏页数</span></span><br><span class="line">nr_dirty 16</span><br><span class="line"><span class="comment"># 会写页数</span></span><br><span class="line">nr_writeback 0</span><br><span class="line">nr_slab_reclaimable 17986</span><br><span class="line">nr_slab_unreclaimable 2986</span><br><span class="line"><span class="comment"># 分配到页面的页数</span></span><br><span class="line">nr_page_table_pages 1396</span><br><span class="line">nr_kernel_stack 123</span><br><span class="line"><span class="comment"># 不稳定页数</span></span><br><span class="line">nr_unstable 0</span><br><span class="line">nr_bounce 0</span><br><span class="line">nr_vmscan_write 0</span><br><span class="line">nr_vmscan_immediate_reclaim 26</span><br><span class="line">nr_writeback_temp 0</span><br><span class="line">nr_isolated_anon 0</span><br><span class="line">nr_isolated_file 0</span><br><span class="line">nr_shmem 27300</span><br><span class="line">nr_dirtied 8354426</span><br><span class="line">nr_written 8097732</span><br><span class="line">numa_hit 1187165492</span><br><span class="line">numa_miss 0</span><br><span class="line">numa_foreign 0</span><br><span class="line">numa_interleave 12459</span><br><span class="line">numa_local 1187165492</span><br><span class="line">numa_other 0</span><br><span class="line">workingset_refault 552268</span><br><span class="line">workingset_activate 81267</span><br><span class="line">workingset_nodereclaim 0</span><br><span class="line">nr_anon_transparent_hugepages 47</span><br><span class="line">nr_free_cma 0</span><br><span class="line">nr_dirty_threshold 94636</span><br><span class="line">nr_dirty_background_threshold 31545</span><br><span class="line"><span class="comment"># 从启动到现在读入的内存页数</span></span><br><span class="line">pgpgin 3168538</span><br><span class="line"><span class="comment"># 从启动到现在换出的内存页数</span></span><br><span class="line">pgpgout 49091671</span><br><span class="line"><span class="comment"># 从启动到现在读入的交换分区页数</span></span><br><span class="line">pswpin 0</span><br><span class="line"><span class="comment"># 从启动到现在换出的交换分区页数</span></span><br><span class="line">pswpout 0</span><br><span class="line"><span class="comment"># 从启动到现在dma存储区分配的页数</span></span><br><span class="line">pgalloc_dma 3730811</span><br><span class="line"><span class="comment"># 从启动到现在dma32存储区分配的页数</span></span><br><span class="line">pgalloc_dma32 1237816587</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区分配的页数</span></span><br><span class="line">pgalloc_normal 0</span><br><span class="line">pgalloc_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在释放的页数</span></span><br><span class="line">pgfree 1241571794</span><br><span class="line"><span class="comment"># 从启动到现在激活的页数</span></span><br><span class="line">pgactivate 2698296</span><br><span class="line"><span class="comment"># 从启动到现在去激活的页数</span></span><br><span class="line">pgdeactivate 747037</span><br><span class="line"><span class="comment"># 从启动到现在二级页面错误数</span></span><br><span class="line">pgfault 4099623847</span><br><span class="line"><span class="comment"># 从启动到现在一级页面错误数</span></span><br><span class="line">pgmajfault 4447</span><br><span class="line">pglazyfreed 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区再填充的页面数</span></span><br><span class="line">pgrefill_dma 2398</span><br><span class="line">pgrefill_dma32 778799</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区填充的页数</span></span><br><span class="line">pgrefill_normal 0</span><br><span class="line">pgrefill_movable 0</span><br><span class="line">pgsteal_kswapd_dma 6587</span><br><span class="line">pgsteal_kswapd_dma32 1977434</span><br><span class="line">pgsteal_kswapd_normal 0</span><br><span class="line">pgsteal_kswapd_movable 0</span><br><span class="line">pgsteal_direct_dma 0</span><br><span class="line">pgsteal_direct_dma32 0</span><br><span class="line">pgsteal_direct_normal 0</span><br><span class="line">pgsteal_direct_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的DMA存储区页面数</span></span><br><span class="line">pgscan_kswapd_dma 6645</span><br><span class="line">pgscan_kswapd_dma32 1992050</span><br><span class="line"><span class="comment"># 从启动到现在kswapd后台进程扫描的普通存储区页面数</span></span><br><span class="line">pgscan_kswapd_normal 0</span><br><span class="line">pgscan_kswapd_movable 0</span><br><span class="line"><span class="comment"># 从启动到现在DMA存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_dma 0</span><br><span class="line">pgscan_direct_dma32 0</span><br><span class="line"><span class="comment"># 从启动到现在普通存储区被直接回收的页面数</span></span><br><span class="line">pgscan_direct_normal 0</span><br><span class="line">pgscan_direct_movable 0</span><br><span class="line">pgscan_direct_throttle 0</span><br><span class="line">zone_reclaim_failed 0</span><br><span class="line"><span class="comment"># kswapd 之外其他线程在回收过程中，因为回收 inode 而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">pginodesteal 0</span><br><span class="line"><span class="comment"># 从启动到现在被扫描的切片数</span></span><br><span class="line">slabs_scanned 1120768</span><br><span class="line"><span class="comment"># 在kswapd回收的过程中，因为回收inode而释放的 pagecache page 个数（累计值）</span></span><br><span class="line">kswapd_inodesteal 105460</span><br><span class="line">kswapd_low_wmark_hit_quickly 47</span><br><span class="line">kswapd_high_wmark_hit_quickly 198</span><br><span class="line"><span class="comment"># 从启动到现在通过kswapd调用来回收的页面数</span></span><br><span class="line">pageoutrun 563</span><br><span class="line"><span class="comment"># 从启动到现在请求直接回收的页面数</span></span><br><span class="line">allocstall 0</span><br><span class="line"><span class="comment"># 从启动到现在轮换的页面数</span></span><br><span class="line">pgrotated 24</span><br><span class="line">drop_pagecache 0</span><br><span class="line">drop_slab 0</span><br><span class="line">numa_pte_updates 0</span><br><span class="line">numa_huge_pte_updates 0</span><br><span class="line">numa_hint_faults 0</span><br><span class="line">numa_hint_faults_local 0</span><br><span class="line">numa_pages_migrated 0</span><br><span class="line">pgmigrate_success 0</span><br><span class="line">pgmigrate_fail 0</span><br><span class="line">compact_migrate_scanned 0</span><br><span class="line">compact_free_scanned 0</span><br><span class="line">compact_isolated 0</span><br><span class="line">compact_stall 0</span><br><span class="line">compact_fail 0</span><br><span class="line">compact_success 0</span><br><span class="line">htlb_buddy_alloc_success 129</span><br><span class="line">htlb_buddy_alloc_fail 0</span><br><span class="line">unevictable_pgs_culled 0</span><br><span class="line">unevictable_pgs_scanned 0</span><br><span class="line">unevictable_pgs_rescued 0</span><br><span class="line">unevictable_pgs_mlocked 0</span><br><span class="line">unevictable_pgs_munlocked 0</span><br><span class="line">unevictable_pgs_cleared 0</span><br><span class="line">unevictable_pgs_stranded 0</span><br><span class="line">thp_fault_alloc 5482</span><br><span class="line">thp_fault_fallback 345</span><br><span class="line">thp_collapse_alloc 606</span><br><span class="line">thp_collapse_alloc_failed 48146</span><br><span class="line">thp_split 180</span><br><span class="line">thp_zero_page_alloc 2</span><br><span class="line">thp_zero_page_alloc_failed 0</span><br><span class="line">balloon_inflate 0</span><br><span class="line">balloon_deflate 0</span><br><span class="line">balloon_migrate 0</span><br><span class="line">swap_ra 0</span><br><span class="line">swap_ra_hit 0</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.kernel.org/doc/Documentation/vm/transhuge.txt">/proc/vmstat帮助手册</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>proc</tag>
+        <tag>vmstat</tag>
       </tags>
   </entry>
   <entry>
@@ -2697,204 +2777,33 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux命令之iostat</title>
-    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
-<li>-c： 显示CPU使用情况</li>
-<li>-d： 显示磁盘使用情况</li>
-<li>-N： 显示磁盘阵列(LVM) 信息</li>
-<li>-n： 显示NFS 使用情况</li>
-<li>-k： 以 KB 为单位显示</li>
-<li>-m： 以 M 为单位显示</li>
-<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
-<li>-V： 显示版本信息</li>
-<li>-x： 显示详细信息</li>
-<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
+    <title>MyBatis系统化学习之缓存</title>
+    <url>/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/</url>
+    <content><![CDATA[<p>Mybatis中有一级缓存和二级缓存，默认情况下一级缓存是开启的，而且是不能关闭的。一级缓存是指 SqlSession 级别的缓存，当在同一个 SqlSession 中进行相同的 SQL 语句查询时，第二次以后的查询不会从数据库查询，而是直接从缓存中获取，一级缓存最多缓存 1024 条 SQL。二级缓存是指可以跨 SqlSession 的缓存。是 mapper 级别的缓存，对于 mapper 级别的缓存不同的 sqlsession 是可以共享的。</p>
+<a id="more"></a>
 
-</li>
-</ul>
-<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>第一行</td>
-<td>最上面指示系统版本、主机名和当前日期</td>
-</tr>
-<tr>
-<td>avg-cpu</td>
-<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
-</tr>
-<tr>
-<td>Device</td>
-<td>各磁盘设备的IO统计信息</td>
-</tr>
-</tbody></table>
-<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>%user</td>
-<td>CPU在用户态执行进程的时间百分比。</td>
-</tr>
-<tr>
-<td>%nice</td>
-<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%system</td>
-<td>CPU处在内核态执行进程的时间百分比</td>
-</tr>
-<tr>
-<td>%iowait</td>
-<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
-</tr>
-<tr>
-<td>%steal</td>
-<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
-</tr>
-<tr>
-<td>%idle</td>
-<td>CPU空闲时间百分比</td>
-</tr>
-</tbody></table>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
-<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Device</td>
-<td>设备名称</td>
-</tr>
-<tr>
-<td>tps</td>
-<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
-</tr>
-<tr>
-<td>Blk_read/s</td>
-<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
-</tr>
-<tr>
-<td>Blk_wrtn/s</td>
-<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
-</tr>
-<tr>
-<td>Blk_read</td>
-<td>取样时间间隔内读扇区总数量</td>
-</tr>
-<tr>
-<td>Blk_wrtn</td>
-<td>取样时间间隔内写扇区总数量</td>
-</tr>
-</tbody></table>
-<ul>
-<li>iostat 1 5：间隔1秒，总共显示5次</li>
-<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
-<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
-<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
-<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
-<li>iostat -m：以M为单位显示所有信息</li>
-<li>iostat -d sda：显示指定硬盘信息</li>
-<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
-<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
-<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
-<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
-</ul>
-<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>rrqm/s</td>
-<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
-</tr>
-<tr>
-<td>wrqm/s</td>
-<td>每秒对该设备的写请求被合并次数</td>
-</tr>
-<tr>
-<td>r/s</td>
-<td>每秒完成的读 I/O 设备次数</td>
-</tr>
-<tr>
-<td>w/s</td>
-<td>每秒完成的写 I/O 设备次数</td>
-</tr>
-<tr>
-<td>rkB/s</td>
-<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
-</tr>
-<tr>
-<td>wkB/s</td>
-<td>每秒写K字节数。是 wsect/s 的一半</td>
-</tr>
-<tr>
-<td>avgrq-sz</td>
-<td>平均每次IO操作的数据量(扇区数为单位)</td>
-</tr>
-<tr>
-<td>avgqu-sz</td>
-<td>平均等待处理的IO请求队列长度</td>
-</tr>
-<tr>
-<td>rsec/s</td>
-<td>每秒读扇区数。即 rsect/s</td>
-</tr>
-<tr>
-<td>wsec/s</td>
-<td>每秒写扇区数。即 wsect/s</td>
-</tr>
-<tr>
-<td>r_await</td>
-<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>w_await</td>
-<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
-</tr>
-<tr>
-<td>await</td>
-<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
-</tr>
-<tr>
-<td>svctm</td>
-<td>平均每次IO请求的处理时间(毫秒为单位)</td>
-</tr>
-<tr>
-<td>%util</td>
-<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
-</blockquote>
-<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
+<div align="center">
+
+<img src="/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/1589028256048.png" class title="MyBatis缓存示意图">
+
+</div>
+
+<h2 id="Mybatis-的一级缓存原理（sqlsession-级别）"><a href="#Mybatis-的一级缓存原理（sqlsession-级别）" class="headerlink" title="Mybatis 的一级缓存原理（sqlsession 级别）"></a>Mybatis 的一级缓存原理（sqlsession 级别）</h2><p>第一次发出一个查询 sql，sql 查询结果写入 sqlsession 的一级缓存中，缓存使用的数据结构是一个 map。<br>key：MapperID+offset+limit+Sql+所有的入参<br>value：用户信息<br>同一个 sqlsession 再次发出相同的 sql，就从缓存中取出数据。如果两次中间出现 commit 操作（修改、添加、删除），本 sqlsession 中的一级缓存区域全部清空，下次再去缓存中查询不到所以要从数据库查询，从数据库查询到再写入缓存。 </p>
+<h2 id="二级缓存原理（mapper-基本）"><a href="#二级缓存原理（mapper-基本）" class="headerlink" title="二级缓存原理（mapper 基本）"></a>二级缓存原理（mapper 基本）</h2><p>二级缓存的范围是mapper 级别（mapper同一个命名空间），mapper以命名空间为单位创建缓存数据结构，结构是 map。mybatis 的二级缓存是通过 CacheExecutor 实现的。CacheExecutor 其实是 Executor 的代理对象。所有的查询操作，在 CacheExecutor 中都会先匹配缓存中是否存在，不存在则查询数据库。<br>key：MapperID+offset+limit+Sql+所有的入参<br>具体使用需要配置： </p>
+<ol>
+<li>   Mybatis 全局配置中启用二级缓存配置 </li>
+<li>   在对应的 Mapper.xml 中配置 cache 节点 </li>
+<li>   在对应的 select 查询节点中添加 useCache=true </li>
+</ol>
+]]></content>
       <categories>
-        <category>Linux</category>
-        <category>性能分析</category>
+        <category>开源框架</category>
+        <category>MyBatis</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
-        <tag>iostat</tag>
-        <tag>磁盘分析</tag>
+        <tag>缓存</tag>
+        <tag>MyBatis</tag>
+        <tag>ORM</tag>
       </tags>
   </entry>
   <entry>
@@ -3107,130 +3016,6 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>Java系统化学习之Type</title>
-    <url>/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>这里的Type指java.lang.reflect.Type, 是Java中所有类型的公共高级接口, 代表了Java中的所有类型. Type体系中类型的包括：数组类型(GenericArrayType)、参数化类型(ParameterizedType)、类型变量(TypeVariable)、通配符类型(WildcardType)、原始类型(Class)、基本类型(Class), 以上这些类型都实现Type接口.  </p>
-<p>Type 表示的全部类型而每个Class对象表示一个具体类型的实例，如String.class仅代表String类型。由此看来Type与 Class 表示类型几乎是相同的（Class实现接口Type），只不过 Type表示的范围比Class要广得多而已。当然Type还有其他子类。</p>
-<ol>
-<li>参数化类型（ParameterizedType）：有原始类型和具体的类型参数，泛型List<String>、Map；</String></li>
-<li>数组类型（GenericArrayType）：不是数组String[] 、byte[]，而是带有泛型的数组，即T[] ；</li>
-<li>通配符类型（WildcardType）： 指的是&lt;?&gt;, &lt;? extends T&gt;等等</li>
-<li>原始类型（Class）： 不仅仅包含我们平常所指的类，还包括枚举、数组、注解等；</li>
-<li>基本类型（Class）, 也就是我们所说的java的基本类型，即int,float,double等</li>
-<li>类型变量(TypeVariable)：表示类型参数，可以有上界，比如：T extends Number<a id="more"></a>
-<h2 id="JDK定义"><a href="#JDK定义" class="headerlink" title="JDK定义"></a>JDK定义</h2></li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.reflect;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Type is the common superinterface for all types in the Java</span></span><br><span class="line"><span class="comment"> * programming language. These include raw types, parameterized types,</span></span><br><span class="line"><span class="comment"> * array types, type variables and primitive types.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Type</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns a string describing this type, including information</span></span><br><span class="line"><span class="comment">     * about any type parameters.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@implSpec</span> The default implementation calls &#123;<span class="doctag">@code</span> toString&#125;.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a string describing this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> String <span class="title">getTypeName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="类结构"><a href="#类结构" class="headerlink" title="类结构"></a>类结构</h2><div align="center">
-
-<img src="/2021/02/04/Java%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BType/1588062825641.png" class title="Type类结构">
-
-</div>
-
-<h3 id="ParameterizedType"><a href="#ParameterizedType" class="headerlink" title="ParameterizedType"></a>ParameterizedType</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.reflect;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * ParameterizedType represents a parameterized type such as</span></span><br><span class="line"><span class="comment"> * Collection&amp;lt;String&amp;gt;.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 1. 表示一种参数化类型，比如：Collection&lt;String&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;A parameterized type is created the first time it is needed by a</span></span><br><span class="line"><span class="comment"> * reflective method, as specified in this package. When a</span></span><br><span class="line"><span class="comment"> * parameterized type p is created, the generic type declaration that</span></span><br><span class="line"><span class="comment"> * p instantiates is resolved, and all type arguments of p are created</span></span><br><span class="line"><span class="comment"> * recursively. See &#123;<span class="doctag">@link</span> java.lang.reflect.TypeVariable</span></span><br><span class="line"><span class="comment"> * TypeVariable&#125; for details on the creation process for type</span></span><br><span class="line"><span class="comment"> * variables. Repeated creation of a parameterized type has no effect.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 2. 参数化类型在反射方法第一次使用的时候被创建。</span></span><br><span class="line"><span class="comment"> * 3. 当参数化类型p被创建之后，被p实例化的泛型会被解析，并且递归创建p的所有参数化类型</span></span><br><span class="line"><span class="comment"> * 4. 重复创建一个参数化类型不会有影响</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;Instances of classes that implement this interface must implement</span></span><br><span class="line"><span class="comment"> * an equals() method that equates any two instances that share the</span></span><br><span class="line"><span class="comment"> * same generic type declaration and have equal type parameters.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ParameterizedType</span> <span class="keyword">extends</span> <span class="title">Type</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns an array of &#123;<span class="doctag">@code</span> Type&#125; objects representing the actual type</span></span><br><span class="line"><span class="comment">     * arguments to this type.</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * 1. 返回确切的泛型参数, 如Map&lt;String, Integer&gt;返回[String, Integer]</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;Note that in some cases, the returned array be empty. This can occur</span></span><br><span class="line"><span class="comment">     * if this type represents a non-parameterized type nested within</span></span><br><span class="line"><span class="comment">     * a parameterized type.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> an array of &#123;<span class="doctag">@code</span> Type&#125; objects representing the actual type</span></span><br><span class="line"><span class="comment">     *     arguments to this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> TypeNotPresentException if any of the</span></span><br><span class="line"><span class="comment">     *     actual type arguments refers to a non-existent type declaration</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> MalformedParameterizedTypeException if any of the</span></span><br><span class="line"><span class="comment">     *     actual type parameters refer to a parameterized type that cannot</span></span><br><span class="line"><span class="comment">     *     be instantiated for any reason</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Type[] getActualTypeArguments();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns the &#123;<span class="doctag">@code</span> Type&#125; object representing the class or interface</span></span><br><span class="line"><span class="comment">     * that declared this type.</span></span><br><span class="line"><span class="comment">     * 1. 返回当前class或interface声明的类型, 如List&lt;?&gt;返回List</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the &#123;<span class="doctag">@code</span> Type&#125; object representing the class or interface</span></span><br><span class="line"><span class="comment">     *     that declared this type</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Type <span class="title">getRawType</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns a &#123;<span class="doctag">@code</span> Type&#125; object representing the type that this type</span></span><br><span class="line"><span class="comment">     * is a member of.  For example, if this type is &#123;<span class="doctag">@code</span> O&lt;T&gt;.I&lt;S&gt;&#125;,</span></span><br><span class="line"><span class="comment">     * return a representation of &#123;<span class="doctag">@code</span> O&lt;T&gt;&#125;.</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * 1. 返回所属类型. 如,当前类型为O&lt;T&gt;.I&lt;S&gt;, 则返回O&lt;T&gt;. 顶级类型将返回null </span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;If this type is a top-level type, &#123;<span class="doctag">@code</span> null&#125; is returned.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a &#123;<span class="doctag">@code</span> Type&#125; object representing the type that</span></span><br><span class="line"><span class="comment">     *     this type is a member of. If this type is a top-level type,</span></span><br><span class="line"><span class="comment">     *     &#123;<span class="doctag">@code</span> null&#125; is returned</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> TypeNotPresentException if the owner type</span></span><br><span class="line"><span class="comment">     *     refers to a non-existent type declaration</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> MalformedParameterizedTypeException if the owner type</span></span><br><span class="line"><span class="comment">     *     refers to a parameterized type that cannot be instantiated</span></span><br><span class="line"><span class="comment">     *     for any reason</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.5</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Type <span class="title">getOwnerType</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a href="https://blog.csdn.net/JustBeauty/article/details/81116144">ParameterizedType详解</a></li>
-<li><a href="https://www.jianshu.com/p/cfa74c980b25">Java中与泛型相关的接口 之 ParameterizedType</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>源码分析</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Type</tag>
-        <tag>反射</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MyBatis系统化学习之缓存</title>
-    <url>/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/</url>
-    <content><![CDATA[<p>Mybatis中有一级缓存和二级缓存，默认情况下一级缓存是开启的，而且是不能关闭的。一级缓存是指 SqlSession 级别的缓存，当在同一个 SqlSession 中进行相同的 SQL 语句查询时，第二次以后的查询不会从数据库查询，而是直接从缓存中获取，一级缓存最多缓存 1024 条 SQL。二级缓存是指可以跨 SqlSession 的缓存。是 mapper 级别的缓存，对于 mapper 级别的缓存不同的 sqlsession 是可以共享的。</p>
-<a id="more"></a>
-
-<div align="center">
-
-<img src="/2021/02/05/MyBatis%E7%B3%BB%E7%BB%9F%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8B%E7%BC%93%E5%AD%98/1589028256048.png" class title="MyBatis缓存示意图">
-
-</div>
-
-<h2 id="Mybatis-的一级缓存原理（sqlsession-级别）"><a href="#Mybatis-的一级缓存原理（sqlsession-级别）" class="headerlink" title="Mybatis 的一级缓存原理（sqlsession 级别）"></a>Mybatis 的一级缓存原理（sqlsession 级别）</h2><p>第一次发出一个查询 sql，sql 查询结果写入 sqlsession 的一级缓存中，缓存使用的数据结构是一个 map。<br>key：MapperID+offset+limit+Sql+所有的入参<br>value：用户信息<br>同一个 sqlsession 再次发出相同的 sql，就从缓存中取出数据。如果两次中间出现 commit 操作（修改、添加、删除），本 sqlsession 中的一级缓存区域全部清空，下次再去缓存中查询不到所以要从数据库查询，从数据库查询到再写入缓存。 </p>
-<h2 id="二级缓存原理（mapper-基本）"><a href="#二级缓存原理（mapper-基本）" class="headerlink" title="二级缓存原理（mapper 基本）"></a>二级缓存原理（mapper 基本）</h2><p>二级缓存的范围是mapper 级别（mapper同一个命名空间），mapper以命名空间为单位创建缓存数据结构，结构是 map。mybatis 的二级缓存是通过 CacheExecutor 实现的。CacheExecutor 其实是 Executor 的代理对象。所有的查询操作，在 CacheExecutor 中都会先匹配缓存中是否存在，不存在则查询数据库。<br>key：MapperID+offset+limit+Sql+所有的入参<br>具体使用需要配置： </p>
-<ol>
-<li>   Mybatis 全局配置中启用二级缓存配置 </li>
-<li>   在对应的 Mapper.xml 中配置 cache 节点 </li>
-<li>   在对应的 select 查询节点中添加 useCache=true </li>
-</ol>
-]]></content>
-      <categories>
-        <category>开源框架</category>
-        <category>MyBatis</category>
-      </categories>
-      <tags>
-        <tag>缓存</tag>
-        <tag>MyBatis</tag>
-        <tag>ORM</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL之优化技巧</title>
-    <url>/2021/02/04/MySQL%E4%B9%8B%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7/</url>
-    <content><![CDATA[<h2 id="优化技巧"><a href="#优化技巧" class="headerlink" title="优化技巧"></a>优化技巧</h2><ol>
-<li>配置文件的快速查找<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/libexec/mysqld --verbose --<span class="built_in">help</span>|grep -A 1 <span class="string">&#x27;Default options&#x27;</span></span><br><span class="line">200815 16:01:04 [Note] Plugin <span class="string">&#x27;FEEDBACK&#x27;</span> is disabled.</span><br><span class="line">Default options are <span class="built_in">read</span> from the following files <span class="keyword">in</span> the given order:</span><br><span class="line">/etc/mysql/my.cnf /etc/my.cnf ~/.my.cnf</span><br></pre></td></tr></table></figure></li>
-<li>配置项使用小写，单词之间使用横线或下划线分隔，并且使用统一的规范</li>
-<li>作用域：全局、会话、对象<a id="more"></a>
-
-</li>
-</ol>
-<h2 id="Buffer-Pool设置思路"><a href="#Buffer-Pool设置思路" class="headerlink" title="Buffer Pool设置思路"></a>Buffer Pool设置思路</h2><ol>
-<li>从服务器内存开始，减去系统本身使用内存，减去其他服务使用内存（如果存在）</li>
-<li>减去MySQL本身使用到的内存（比如为每个查询操作分配的一些缓冲）</li>
-<li>减去足够让操作系统缓存InnoDB日志文件的内存，至少是足够缓存最近经常访问的部分；预留至少可以缓存二进制日志最后一部分以便用于主从复制</li>
-<li>减去其他配置的MySQL缓冲和缓存需要的内存（比如MyISAM的Key Cache或Query Cache）</li>
-<li>除以105%，向下取整</li>
-</ol>
-<h2 id="InnoDB缓冲池（InnoDB-Buffer-Pool）"><a href="#InnoDB缓冲池（InnoDB-Buffer-Pool）" class="headerlink" title="InnoDB缓冲池（InnoDB Buffer Pool）"></a>InnoDB缓冲池（InnoDB Buffer Pool）</h2><h3 id="缓存内容"><a href="#缓存内容" class="headerlink" title="缓存内容"></a>缓存内容</h3><ol>
-<li>索引</li>
-<li>行数据</li>
-<li>自适应哈希索引</li>
-<li>Insert Buffer</li>
-<li>锁</li>
-<li>其他内部数据结构</li>
-</ol>
-<h2 id="线程缓存"><a href="#线程缓存" class="headerlink" title="线程缓存"></a>线程缓存</h2><ol>
-<li>保存当前没有与连接关联但是准备为后面新的连接服务的线程。</li>
-<li>使用<strong>thread_cache_size</strong>进行设置。</li>
-<li>线程池中的每个线程或者休眠状态的线程占用内存大小为256KB。</li>
-<li>常用观察参数<ul>
-<li>Threads_cached：线程缓存内的线程的数量。</li>
-<li>Threads_connected：当前打开的连接的数量。</li>
-<li>Threads_created：创建用来处理连接的线程数。如果Threads_created较大，你可能要增加thread_cache_size值。缓存访问率的计算方法Threads_created/Connections。</li>
-<li>Threads_running：激活的（非睡眠状态）线程数</li>
-</ul>
-</li>
-</ol>
-<h2 id="Table-Cache"><a href="#Table-Cache" class="headerlink" title="Table Cache"></a>Table Cache</h2><ol>
-<li>表.frm文件的解析结果</li>
-<li>打开表的缓存：table_open_cache，每个线程独有（表.frm文件的解析结果）</li>
-<li>表定义缓存：table_definition_cache，全局</li>
-<li>参考opened_tables参数进行缓存配置的调整</li>
-</ol>
-<h2 id="IO配置"><a href="#IO配置" class="headerlink" title="IO配置"></a>IO配置</h2><h2 id="并发配置"><a href="#并发配置" class="headerlink" title="并发配置"></a>并发配置</h2><ol>
-<li>innodb_thread_concurrency：CPU数量 * 磁盘数量 * 2</li>
-</ol>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>MySQL</category>
-        <category>调优</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>调优</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL之原理分析-Count</title>
     <url>/2021/02/07/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-Count/</url>
     <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>COUNT(expr) [over_clause]</p>
@@ -3307,6 +3092,63 @@ SHR：shared memory 共享内存<br>
         <tag>MySQL</tag>
         <tag>Count</tag>
         <tag>语法分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL之优化技巧</title>
+    <url>/2021/02/04/MySQL%E4%B9%8B%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7/</url>
+    <content><![CDATA[<h2 id="优化技巧"><a href="#优化技巧" class="headerlink" title="优化技巧"></a>优化技巧</h2><ol>
+<li>配置文件的快速查找<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/libexec/mysqld --verbose --<span class="built_in">help</span>|grep -A 1 <span class="string">&#x27;Default options&#x27;</span></span><br><span class="line">200815 16:01:04 [Note] Plugin <span class="string">&#x27;FEEDBACK&#x27;</span> is disabled.</span><br><span class="line">Default options are <span class="built_in">read</span> from the following files <span class="keyword">in</span> the given order:</span><br><span class="line">/etc/mysql/my.cnf /etc/my.cnf ~/.my.cnf</span><br></pre></td></tr></table></figure></li>
+<li>配置项使用小写，单词之间使用横线或下划线分隔，并且使用统一的规范</li>
+<li>作用域：全局、会话、对象<a id="more"></a>
+
+</li>
+</ol>
+<h2 id="Buffer-Pool设置思路"><a href="#Buffer-Pool设置思路" class="headerlink" title="Buffer Pool设置思路"></a>Buffer Pool设置思路</h2><ol>
+<li>从服务器内存开始，减去系统本身使用内存，减去其他服务使用内存（如果存在）</li>
+<li>减去MySQL本身使用到的内存（比如为每个查询操作分配的一些缓冲）</li>
+<li>减去足够让操作系统缓存InnoDB日志文件的内存，至少是足够缓存最近经常访问的部分；预留至少可以缓存二进制日志最后一部分以便用于主从复制</li>
+<li>减去其他配置的MySQL缓冲和缓存需要的内存（比如MyISAM的Key Cache或Query Cache）</li>
+<li>除以105%，向下取整</li>
+</ol>
+<h2 id="InnoDB缓冲池（InnoDB-Buffer-Pool）"><a href="#InnoDB缓冲池（InnoDB-Buffer-Pool）" class="headerlink" title="InnoDB缓冲池（InnoDB Buffer Pool）"></a>InnoDB缓冲池（InnoDB Buffer Pool）</h2><h3 id="缓存内容"><a href="#缓存内容" class="headerlink" title="缓存内容"></a>缓存内容</h3><ol>
+<li>索引</li>
+<li>行数据</li>
+<li>自适应哈希索引</li>
+<li>Insert Buffer</li>
+<li>锁</li>
+<li>其他内部数据结构</li>
+</ol>
+<h2 id="线程缓存"><a href="#线程缓存" class="headerlink" title="线程缓存"></a>线程缓存</h2><ol>
+<li>保存当前没有与连接关联但是准备为后面新的连接服务的线程。</li>
+<li>使用<strong>thread_cache_size</strong>进行设置。</li>
+<li>线程池中的每个线程或者休眠状态的线程占用内存大小为256KB。</li>
+<li>常用观察参数<ul>
+<li>Threads_cached：线程缓存内的线程的数量。</li>
+<li>Threads_connected：当前打开的连接的数量。</li>
+<li>Threads_created：创建用来处理连接的线程数。如果Threads_created较大，你可能要增加thread_cache_size值。缓存访问率的计算方法Threads_created/Connections。</li>
+<li>Threads_running：激活的（非睡眠状态）线程数</li>
+</ul>
+</li>
+</ol>
+<h2 id="Table-Cache"><a href="#Table-Cache" class="headerlink" title="Table Cache"></a>Table Cache</h2><ol>
+<li>表.frm文件的解析结果</li>
+<li>打开表的缓存：table_open_cache，每个线程独有（表.frm文件的解析结果）</li>
+<li>表定义缓存：table_definition_cache，全局</li>
+<li>参考opened_tables参数进行缓存配置的调整</li>
+</ol>
+<h2 id="IO配置"><a href="#IO配置" class="headerlink" title="IO配置"></a>IO配置</h2><h2 id="并发配置"><a href="#并发配置" class="headerlink" title="并发配置"></a>并发配置</h2><ol>
+<li>innodb_thread_concurrency：CPU数量 * 磁盘数量 * 2</li>
+</ol>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySQL</category>
+        <category>调优</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>调优</tag>
       </tags>
   </entry>
   <entry>
@@ -3393,6 +3235,207 @@ SHR：shared memory 共享内存<br>
         <tag>语法分析</tag>
         <tag>排序</tag>
         <tag>order by</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux命令之iostat</title>
+    <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Biostat/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>iostat 主要用于输出磁盘IO 和 CPU的统计信息。<br>iostat属于sysstat软件包。可以用yum install sysstat 直接安装。</p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Usage: iostat [ options ] [ &lt;interval&gt; [ &lt;count&gt; ] ]</span><br><span class="line">Options are:</span><br><span class="line">[ -c ] [ -d ] [ -h ] [ -k | -m ] [ -N ] [ -t ] [ -V ] [ -x ] [ -y ] [ -z ]</span><br><span class="line">[ -j &#123; ID | LABEL | PATH | UUID | ... &#125; ]</span><br><span class="line">[ [ -T ] -g &lt;group_name&gt; ] [ -p [ &lt;device&gt; [,...] | ALL ] ]</span><br><span class="line">[ &lt;device&gt; [...] | ALL ]</span><br></pre></td></tr></table></figure>
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
+<li>-c： 显示CPU使用情况</li>
+<li>-d： 显示磁盘使用情况</li>
+<li>-N： 显示磁盘阵列(LVM) 信息</li>
+<li>-n： 显示NFS 使用情况</li>
+<li>-k： 以 KB 为单位显示</li>
+<li>-m： 以 M 为单位显示</li>
+<li>-t： 报告每秒向终端读取和写入的字符数和CPU的信息</li>
+<li>-V： 显示版本信息</li>
+<li>-x： 显示详细信息</li>
+<li>-p：[磁盘] 显示磁盘和分区的情况<a id="more"></a>
+
+</li>
+</ul>
+<h2 id="场景说明"><a href="#场景说明" class="headerlink" title="场景说明"></a>场景说明</h2><h3 id="显示所有设备负载情况"><a href="#显示所有设备负载情况" class="headerlink" title="显示所有设备负载情况"></a>显示所有设备负载情况</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.60    0.05    0.46    0.04    0.01   98.85</span><br><span class="line"></span><br><span class="line">Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn</span><br><span class="line">vda               1.33         0.07        11.68     657419  105232080</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第一行</td>
+<td>最上面指示系统版本、主机名和当前日期</td>
+</tr>
+<tr>
+<td>avg-cpu</td>
+<td>总体cpu使用情况统计信息，对于多核cpu，这里为所有cpu的平均值</td>
+</tr>
+<tr>
+<td>Device</td>
+<td>各磁盘设备的IO统计信息</td>
+</tr>
+</tbody></table>
+<h4 id="cpu属性值说明"><a href="#cpu属性值说明" class="headerlink" title="cpu属性值说明"></a>cpu属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%user</td>
+<td>CPU在用户态执行进程的时间百分比。</td>
+</tr>
+<tr>
+<td>%nice</td>
+<td>CPU在用户态模式下，用于nice操作，所占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%system</td>
+<td>CPU处在内核态执行进程的时间百分比</td>
+</tr>
+<tr>
+<td>%iowait</td>
+<td>CPU用于等待I/O操作占用CPU总时间的百分比</td>
+</tr>
+<tr>
+<td>%steal</td>
+<td>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟CPU的百分比</td>
+</tr>
+<tr>
+<td>%idle</td>
+<td>CPU空闲时间百分比</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. 若 %iowait 的值过高，表示硬盘存在I/O瓶颈 </span><br><span class="line">2. 若 %idle 的值高但系统响应慢时，有可能是CPU等待分配内存，此时应加大内存容量 </span><br><span class="line">3. 若 %idle 的值持续低于1，则系统的CPU处理能力相对较低，表明系统中最需要解决的资源是 CPU</span><br></pre></td></tr></table></figure>
+<h4 id="disk属性值说明"><a href="#disk属性值说明" class="headerlink" title="disk属性值说明"></a>disk属性值说明</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Device</td>
+<td>设备名称</td>
+</tr>
+<tr>
+<td>tps</td>
+<td>每秒向磁盘设备请求数据的次数，包括读、写请求，为rtps与wtps的和。出于效率考虑，每一次IO下发后并不是立即处理请求，而是将请求合并(merge)，这里tps指请求合并后的请求计数。</td>
+</tr>
+<tr>
+<td>Blk_read/s</td>
+<td>Indicate the amount of data read from the device expressed in a number of blocks per second. Blocks are equivalent to sectors with kernels 2.4 and later and therefore have a size of 512 bytes. With older kernels, a block is of indeterminate size.</td>
+</tr>
+<tr>
+<td>Blk_wrtn/s</td>
+<td>Indicate the amount of data written to the device expressed in a number of blocks per second.</td>
+</tr>
+<tr>
+<td>Blk_read</td>
+<td>取样时间间隔内读扇区总数量</td>
+</tr>
+<tr>
+<td>Blk_wrtn</td>
+<td>取样时间间隔内写扇区总数量</td>
+</tr>
+</tbody></table>
+<ul>
+<li>iostat 1 5：间隔1秒，总共显示5次</li>
+<li>iostat -d 2：每隔2秒,显示一次设备统计信息.</li>
+<li>iostat -d 2 3：每隔2秒,显示一次设备统计信息.总共输出3次.</li>
+<li>iostat -x sda sdb 2 3：每隔2秒显示一次sda, sdb两个设备的扩展统计信息,共输出3次.</li>
+<li>iostat -p sda 2 3：每隔2秒显示一次sda及上面所有分区的统计信息,共输出3次.</li>
+<li>iostat -m：以M为单位显示所有信息</li>
+<li>iostat -d sda：显示指定硬盘信息</li>
+<li>iostat -t：报告每秒向终端读取和写入的字符数。</li>
+<li>iostat -d -k 1 1：查看TPS和吞吐量信息            </li>
+<li>iostat -d -x -k 1 1：查看设备使用率（%util）、响应时间（await）</li>
+<li>iostat -c 1 2：间隔1秒显示一次，总共显示2次（查看CPU的状态）</li>
+</ul>
+<h4 id="显示详细负载信息"><a href="#显示详细负载信息" class="headerlink" title="显示详细负载信息"></a>显示详细负载信息</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Linux 3.10.0-1062.4.1.el7.x86_64 (instance-gctg007a) 	04/20/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">vda               0.00     1.14    0.00    1.32     0.07    11.68    17.72     0.00    0.87    5.07    0.86   0.47   0.06</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rrqm/s</td>
+<td>每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并</td>
+</tr>
+<tr>
+<td>wrqm/s</td>
+<td>每秒对该设备的写请求被合并次数</td>
+</tr>
+<tr>
+<td>r/s</td>
+<td>每秒完成的读 I/O 设备次数</td>
+</tr>
+<tr>
+<td>w/s</td>
+<td>每秒完成的写 I/O 设备次数</td>
+</tr>
+<tr>
+<td>rkB/s</td>
+<td>每秒读K字节数。是 rsect/s 的一半，因为每扇区大小为512字节</td>
+</tr>
+<tr>
+<td>wkB/s</td>
+<td>每秒写K字节数。是 wsect/s 的一半</td>
+</tr>
+<tr>
+<td>avgrq-sz</td>
+<td>平均每次IO操作的数据量(扇区数为单位)</td>
+</tr>
+<tr>
+<td>avgqu-sz</td>
+<td>平均等待处理的IO请求队列长度</td>
+</tr>
+<tr>
+<td>rsec/s</td>
+<td>每秒读扇区数。即 rsect/s</td>
+</tr>
+<tr>
+<td>wsec/s</td>
+<td>每秒写扇区数。即 wsect/s</td>
+</tr>
+<tr>
+<td>r_await</td>
+<td>每个读操作平均所需的时间，不仅包括硬盘设备读操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>w_await</td>
+<td>每个写操作平均所需的时间，不仅包括硬盘设备写操作的时间，还包括了在kernel队列中等待的时间</td>
+</tr>
+<tr>
+<td>await</td>
+<td>平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)</td>
+</tr>
+<tr>
+<td>svctm</td>
+<td>平均每次IO请求的处理时间(毫秒为单位)</td>
+</tr>
+<tr>
+<td>%util</td>
+<td>采用周期内用于IO操作的时间比率，即IO队列非空的时间比率；一秒中有百分之多少的时间用于 I/O 操作，即被io消耗的cpu百分比</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>备注：如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。如果 svctm 比较接近 await，说明 I/O 几乎没有等待时间；如果 await 远大于 svctm，说明I/O 队列太长，io响应太慢，则需要进行必要优化。如果avgqu-sz比较大，也表示有当量io在等待。</strong></p>
+</blockquote>
+<h4 id="重点关注参数"><a href="#重点关注参数" class="headerlink" title="重点关注参数"></a>重点关注参数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1、iowait% 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。</span><br><span class="line">2、avgqu-sz 表示磁盘IO队列长度，即IO等待个数。</span><br><span class="line">3、await 表示每次IO请求等待时间，包括等待时间和处理时间</span><br><span class="line">4、svctm 表示每次IO请求处理的时间</span><br><span class="line">5、%util 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态。</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>性能分析</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>iostat</tag>
+        <tag>磁盘分析</tag>
       </tags>
   </entry>
   <entry>
@@ -3947,6 +3990,70 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>eclipse使用技巧</title>
+    <url>/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</url>
+    <content><![CDATA[<h2 id="集成javap命令"><a href="#集成javap命令" class="headerlink" title="集成javap命令"></a>集成javap命令</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ol>
+<li>eclipse中点击工具栏: Run &gt; External Tools &gt; External Tools Configuration</li>
+<li>双击”程序”</li>
+<li>修改配置</li>
+</ol>
+<div align="center">
+
+<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039059895.png" class title="执行javap">
+
+</div>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Name: javap(随意)</span><br><span class="line">location: jdk实际路径</span><br><span class="line">Working Directory:$&#123;workspace_loc&#125;\$&#123;project_name&#125; （不要改）</span><br><span class="line">Arguments:-c -verbose  -classpath  $&#123;workspace_loc&#125;/ $&#123;project_name&#125;/bin/$&#123;java_type_name&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><div align="center">
+
+<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039225454.png" class title="eclipse配置">
+
+</div>
+
+<h3 id="javap的命令说明"><a href="#javap的命令说明" class="headerlink" title="javap的命令说明"></a>javap的命令说明</h3><p>参考《<a href="https://www.sunliaodong.cn/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/">javap详解</a>》</p>
+<h2 id="debug使用技巧"><a href="#debug使用技巧" class="headerlink" title="debug使用技巧"></a>debug使用技巧</h2><h3 id="常用快捷键说明"><a href="#常用快捷键说明" class="headerlink" title="常用快捷键说明"></a>常用快捷键说明</h3><ol>
+<li>Step Into (also F5) 跳入</li>
+<li>Step Over (also F6) 跳过</li>
+<li>Step Return (also F7) 执行完当前method，然后return跳出此method</li>
+<li>step Filter 逐步过滤 一直执行直到遇到未经过滤的位置或断点(设置Filter:window-preferences-java-Debug-step Filtering)</li>
+<li>resume 重新开始执行debug,一直运行直到遇到breakpoint</li>
+<li>hit count 设置执行次数 适合程序中的for循环(设置 breakpoint view-右键hit count)</li>
+<li>inspect 检查 运算。执行一个表达式显示执行值</li>
+<li>watch 实时地监视变量的变化</li>
+<li>我们常说的断点(breakpoints)是指line breakpoints,除了line breakpoints,还有其他的断点类型：field(watchpoint)breakpoint,method breakpoint,exception breakpoint.</li>
+<li>field breakpoint 也叫watchpoint(监视点) 当成员变量被读取或修改时暂挂</li>
+<li>添加method breakpoint 进入/离开此方法时暂挂(Run-method breakpoint)</li>
+<li>添加Exception breakpoint 捕抓到Execption时暂挂(待续…)</li>
+</ol>
+<h3 id="断点属性"><a href="#断点属性" class="headerlink" title="断点属性"></a>断点属性</h3><ol>
+<li>hit count 执行多少次数后暂挂 用于循环</li>
+<li>enable condition 遇到符合你输入条件(为ture\改变时)就暂挂</li>
+<li>suspend thread 多线程时暂挂此线程</li>
+<li>suspend VM 暂挂虚拟机</li>
+<li>variables 视图里的变量可以改变变量值，在variables 视图选择变量点击右键–change value.一次来进行快速调试。</li>
+<li>debug 过程中修改了某些code后–〉save&amp;build–&gt;resume–&gt;重新暂挂于断点</li>
+</ol>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">  MyDate aa = <span class="keyword">new</span> MyDate();</span><br><span class="line">  aa.addDays(day);                      =============》(<span class="number">1</span>)</span><br><span class="line">  System.out.println(<span class="string">&quot;eeeeeeeeeeeeeee&quot;</span>);=============》(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">addDays</span><span class="params">(<span class="keyword">int</span> more_days)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;1&quot;</span>);               =============》(<span class="number">3</span>)</span><br><span class="line">    String result = <span class="string">&quot;&quot;</span>;         =============》(<span class="number">4</span>)</span><br><span class="line">    System.out.println(<span class="string">&quot;2&quot;</span>);               =============》(<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>你在(1)处加断点，运行到此处时如果Step Into (also F5)为跳入，则接着执行到(3)。再执行Step Over (also F6)执行本行，则执行到(4)。最后执行Step Return (also F7)，则跳出addDays方法，跳到(2)</p>
+<h2 id="配置-author"><a href="#配置-author" class="headerlink" title="配置@author"></a>配置@author</h2><ol>
+<li>eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;Code-&gt;New Java files </li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">点击 Edit </span><br><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> 孙辽东</span></span><br><span class="line"><span class="comment">* <span class="doctag">@E</span>-mail:sld880311@126.com</span></span><br><span class="line"><span class="comment">* <span class="doctag">@qq</span>:767768553</span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span> 创建时间：$&#123;date&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment">* 简单说明</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>在建立类文件的时候输入“/**”的时候自动出来的：eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;comments-&gt;typles,点击 Edit ，就可以根据自己需要编写了</li>
+</ol>
+]]></content>
+      <categories>
+        <category>常用工具</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>eclipse</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>git详解</title>
     <url>/2021/02/04/git%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h2 id="提交本地工程到github"><a href="#提交本地工程到github" class="headerlink" title="提交本地工程到github"></a>提交本地工程到github</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;注释&quot;</span></span><br><span class="line">git remote add origin https://github.com/sld880311/parkspaceagent</span><br><span class="line"></span><br><span class="line">git pull origin master</span><br><span class="line"><span class="comment">#如果出现fatal: refusing to merge unrelated histories</span></span><br><span class="line">使用如下命令 git pull origin master --allow-unrelated-histories</span><br><span class="line"></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
@@ -3996,17 +4103,6 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>分布式协议之ZAB</title>
-    <url>/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE%E4%B9%8BZAB/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>其他</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用hexo+github+next部署个人博客</title>
     <url>/2021/02/03/%E4%BD%BF%E7%94%A8hexo-github-next%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
     <content><![CDATA[<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="依赖环境"><a href="#依赖环境" class="headerlink" title="依赖环境"></a>依赖环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br><span class="line"><span class="comment"># 修改原</span></span><br><span class="line">npm config <span class="built_in">set</span> registry http://registry.npm.taobao.org/</span><br><span class="line"><span class="comment"># 改回去</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmjs.org/</span><br></pre></td></tr></table></figure>
@@ -4043,6 +4139,38 @@ SHR：shared memory 共享内存<br>
         <tag>Hexo</tag>
         <tag>github</tag>
         <tag>Next</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分布式协议之ZAB</title>
+    <url>/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE%E4%B9%8BZAB/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分布式算法之Paxos</title>
+    <url>/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%97%E6%B3%95%E4%B9%8BPaxos/</url>
+    <content><![CDATA[<p>解决的问题是一个分布式系统如何就某个值（决议）<strong>达成一致（共识问题）</strong>。<br>一个典型的场景是，在一个分布式数据库系统中，如果各节点的初始状态一致，每个节点执行相同的操作序列，那么他们最后能得到一个一致的状态。为保证每个节点执行相同的命令序列，需要在每一条指令上执行一个“一致性算法”以保证每个节点看到的指令一致。</p>
+<a id="more"></a>
+
+<h2 id="Paxos中的角色"><a href="#Paxos中的角色" class="headerlink" title="Paxos中的角色"></a>Paxos中的角色</h2><ol>
+<li>Proposer： 只要 Proposer 发的提案被半数以上 Acceptor 接受，Proposer 就认为该提案里的 value 被选定了。 </li>
+<li>Acceptor： 只要 Acceptor 接受了某个提案，Acceptor 就认为该提案里的 value 被选定了。 </li>
+<li>Learner： Acceptor 告诉 Learner 哪个 value 被选定，Learner 就认为那个 value 被选定。 </li>
+</ol>
+<p>Paxos 算法分为两个阶段。具体如下：<br>阶段一（准leader确定 ）：<br>(a) Proposer选择一个提案编号N，然后向半数以上的Acceptor发送编号为N的Prepare请求。 (b) 如果一个 Acceptor 收到一个编号为 N 的 Prepare 请求，且 N 大于该 Acceptor 已经响应过的所有 Prepare 请求的编号，那么它就会将它已经接受过的编号最大的提案（如果有的话）作为响应反馈给 Proposer，同时该 Acceptor 承诺不再接受任何编号小于 N 的提案。<br>阶段二（leader确认）：<br>(a)    如果 Proposer 收到半数以上 Acceptor 对其发出的编号为 N 的 Prepare 请求的响应，那么它就会发送一个针对[N,V]提案的 Accept 请求给半数以上的 Acceptor。注意：V 就是收到的响应中编号最大的提案的 value，如果响应中不包含任何提案，那么 V 就由 Proposer 自己决定。<br>(b)    如果 Acceptor 收到一个针对编号为 N 的提案的 Accept 请求，只要该 Acceptor 没有对编号大于 N 的 Prepare 请求做出过响应，它就接受该提案。 </p>
+]]></content>
+      <categories>
+        <category>分布式</category>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>Paxos</tag>
       </tags>
   </entry>
   <entry>
@@ -4466,88 +4594,42 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
-    <title>分布式算法之Paxos</title>
-    <url>/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%AE%97%E6%B3%95%E4%B9%8BPaxos/</url>
-    <content><![CDATA[<p>解决的问题是一个分布式系统如何就某个值（决议）<strong>达成一致（共识问题）</strong>。<br>一个典型的场景是，在一个分布式数据库系统中，如果各节点的初始状态一致，每个节点执行相同的操作序列，那么他们最后能得到一个一致的状态。为保证每个节点执行相同的命令序列，需要在每一条指令上执行一个“一致性算法”以保证每个节点看到的指令一致。</p>
+    <title>道德经</title>
+    <url>/2021/03/10/%E9%81%93%E5%BE%B7%E7%BB%8F/</url>
+    <content><![CDATA[<h2 id="第一章-天地之始，万物之母"><a href="#第一章-天地之始，万物之母" class="headerlink" title="第一章 天地之始，万物之母"></a>第一章 天地之始，万物之母</h2><blockquote class="blockquote-center">
+            <i class="fa fa-quote-left"></i>
+            <p>道可道，非常道；<br>名可名，非常名。<br>无，名天地之始；<br>有，名万物之母。<br>故常无，欲以观其妙；<br>常有，欲以观其徼。<br>此两者，同出而异名，同谓之玄。<br>玄之又玄，众妙之门。</p>
+
+            <i class="fa fa-quote-right"></i>
+          </blockquote>
+
 <a id="more"></a>
 
-<h2 id="Paxos中的角色"><a href="#Paxos中的角色" class="headerlink" title="Paxos中的角色"></a>Paxos中的角色</h2><ol>
-<li>Proposer： 只要 Proposer 发的提案被半数以上 Acceptor 接受，Proposer 就认为该提案里的 value 被选定了。 </li>
-<li>Acceptor： 只要 Acceptor 接受了某个提案，Acceptor 就认为该提案里的 value 被选定了。 </li>
-<li>Learner： Acceptor 告诉 Learner 哪个 value 被选定，Learner 就认为那个 value 被选定。 </li>
-</ol>
-<p>Paxos 算法分为两个阶段。具体如下：<br>阶段一（准leader确定 ）：<br>(a) Proposer选择一个提案编号N，然后向半数以上的Acceptor发送编号为N的Prepare请求。 (b) 如果一个 Acceptor 收到一个编号为 N 的 Prepare 请求，且 N 大于该 Acceptor 已经响应过的所有 Prepare 请求的编号，那么它就会将它已经接受过的编号最大的提案（如果有的话）作为响应反馈给 Proposer，同时该 Acceptor 承诺不再接受任何编号小于 N 的提案。<br>阶段二（leader确认）：<br>(a)    如果 Proposer 收到半数以上 Acceptor 对其发出的编号为 N 的 Prepare 请求的响应，那么它就会发送一个针对[N,V]提案的 Accept 请求给半数以上的 Acceptor。注意：V 就是收到的响应中编号最大的提案的 value，如果响应中不包含任何提案，那么 V 就由 Proposer 自己决定。<br>(b)    如果 Acceptor 收到一个针对编号为 N 的提案的 Accept 请求，只要该 Acceptor 没有对编号大于 N 的 Prepare 请求做出过响应，它就接受该提案。 </p>
-]]></content>
+<h2 id="第二章-为而不恃，功成弗居"><a href="#第二章-为而不恃，功成弗居" class="headerlink" title="第二章 为而不恃，功成弗居"></a>第二章 为而不恃，功成弗居</h2><blockquote class="blockquote-center">
+            <i class="fa fa-quote-left"></i>
+            <p>天下皆知美之为美，斯恶矣；<br>皆知善之为善，斯不善矣。<br>故有无相生，难易相成，长短相较，高下相倾，音声相和，前后相随，恒也。<br>是以圣人处无为之事，行不言之教；<br>万物作而弗始，生而弗有，为而弗恃，功成而弗居。<br>夫唯弗居，是以不去。</p>
+
+            <i class="fa fa-quote-right"></i>
+          </blockquote>
+
+<h2 id="第三章-圣人之治，无为而治"><a href="#第三章-圣人之治，无为而治" class="headerlink" title="第三章 圣人之治，无为而治"></a>第三章 圣人之治，无为而治</h2><blockquote class="blockquote-center">
+            <i class="fa fa-quote-left"></i>
+            <p>不尚贤，使民不争。<br>不贵难得之货，使民不为盗。<br>不见可欲，使民心不乱。<br>是以圣人之治，<br>虚其心，实其腹，弱其志，强其骨，<br>常使民无知无欲，<br>使夫智者不敢为也，<br>为无为，则无不治</p>
+
+            <i class="fa fa-quote-right"></i>
+          </blockquote>
+
+<h2 id="第四章-挫锐解纷，和光同尘"><a href="#第四章-挫锐解纷，和光同尘" class="headerlink" title="第四章 挫锐解纷，和光同尘"></a>第四章 挫锐解纷，和光同尘</h2><blockquote class="blockquote-center">
+            <i class="fa fa-quote-left"></i>
+            <p>道冲，而用之或不盈。<br>渊兮，似万物之宗。<br>挫其锐，解其纷，和其光，同其尘。<br>湛兮似或存。<br>吾不知谁之子，象帝之先。</p>
+
+            <i class="fa fa-quote-right"></i>
+          </blockquote>]]></content>
       <categories>
-        <category>分布式</category>
-        <category>算法</category>
+        <category>文学</category>
       </categories>
       <tags>
-        <tag>Paxos</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>eclipse使用技巧</title>
-    <url>/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</url>
-    <content><![CDATA[<h2 id="集成javap命令"><a href="#集成javap命令" class="headerlink" title="集成javap命令"></a>集成javap命令</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ol>
-<li>eclipse中点击工具栏: Run &gt; External Tools &gt; External Tools Configuration</li>
-<li>双击”程序”</li>
-<li>修改配置</li>
-</ol>
-<div align="center">
-
-<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039059895.png" class title="执行javap">
-
-</div>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Name: javap(随意)</span><br><span class="line">location: jdk实际路径</span><br><span class="line">Working Directory:$&#123;workspace_loc&#125;\$&#123;project_name&#125; （不要改）</span><br><span class="line">Arguments:-c -verbose  -classpath  $&#123;workspace_loc&#125;/ $&#123;project_name&#125;/bin/$&#123;java_type_name&#125;</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><div align="center">
-
-<img src="/2021/02/04/eclipse%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/1588039225454.png" class title="eclipse配置">
-
-</div>
-
-<h3 id="javap的命令说明"><a href="#javap的命令说明" class="headerlink" title="javap的命令说明"></a>javap的命令说明</h3><p>参考《<a href="https://www.sunliaodong.cn/2021/02/04/Javap%E8%AF%A6%E8%A7%A3/">javap详解</a>》</p>
-<h2 id="debug使用技巧"><a href="#debug使用技巧" class="headerlink" title="debug使用技巧"></a>debug使用技巧</h2><h3 id="常用快捷键说明"><a href="#常用快捷键说明" class="headerlink" title="常用快捷键说明"></a>常用快捷键说明</h3><ol>
-<li>Step Into (also F5) 跳入</li>
-<li>Step Over (also F6) 跳过</li>
-<li>Step Return (also F7) 执行完当前method，然后return跳出此method</li>
-<li>step Filter 逐步过滤 一直执行直到遇到未经过滤的位置或断点(设置Filter:window-preferences-java-Debug-step Filtering)</li>
-<li>resume 重新开始执行debug,一直运行直到遇到breakpoint</li>
-<li>hit count 设置执行次数 适合程序中的for循环(设置 breakpoint view-右键hit count)</li>
-<li>inspect 检查 运算。执行一个表达式显示执行值</li>
-<li>watch 实时地监视变量的变化</li>
-<li>我们常说的断点(breakpoints)是指line breakpoints,除了line breakpoints,还有其他的断点类型：field(watchpoint)breakpoint,method breakpoint,exception breakpoint.</li>
-<li>field breakpoint 也叫watchpoint(监视点) 当成员变量被读取或修改时暂挂</li>
-<li>添加method breakpoint 进入/离开此方法时暂挂(Run-method breakpoint)</li>
-<li>添加Exception breakpoint 捕抓到Execption时暂挂(待续…)</li>
-</ol>
-<h3 id="断点属性"><a href="#断点属性" class="headerlink" title="断点属性"></a>断点属性</h3><ol>
-<li>hit count 执行多少次数后暂挂 用于循环</li>
-<li>enable condition 遇到符合你输入条件(为ture\改变时)就暂挂</li>
-<li>suspend thread 多线程时暂挂此线程</li>
-<li>suspend VM 暂挂虚拟机</li>
-<li>variables 视图里的变量可以改变变量值，在variables 视图选择变量点击右键–change value.一次来进行快速调试。</li>
-<li>debug 过程中修改了某些code后–〉save&amp;build–&gt;resume–&gt;重新暂挂于断点</li>
-</ol>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">  MyDate aa = <span class="keyword">new</span> MyDate();</span><br><span class="line">  aa.addDays(day);                      =============》(<span class="number">1</span>)</span><br><span class="line">  System.out.println(<span class="string">&quot;eeeeeeeeeeeeeee&quot;</span>);=============》(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">addDays</span><span class="params">(<span class="keyword">int</span> more_days)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;1&quot;</span>);               =============》(<span class="number">3</span>)</span><br><span class="line">    String result = <span class="string">&quot;&quot;</span>;         =============》(<span class="number">4</span>)</span><br><span class="line">    System.out.println(<span class="string">&quot;2&quot;</span>);               =============》(<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>你在(1)处加断点，运行到此处时如果Step Into (also F5)为跳入，则接着执行到(3)。再执行Step Over (also F6)执行本行，则执行到(4)。最后执行Step Return (also F7)，则跳出addDays方法，跳到(2)</p>
-<h2 id="配置-author"><a href="#配置-author" class="headerlink" title="配置@author"></a>配置@author</h2><ol>
-<li>eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;Code-&gt;New Java files </li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">点击 Edit </span><br><span class="line">$&#123;filecomment&#125;</span><br><span class="line">$&#123;package_declaration&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> 孙辽东</span></span><br><span class="line"><span class="comment">* <span class="doctag">@E</span>-mail:sld880311@126.com</span></span><br><span class="line"><span class="comment">* <span class="doctag">@qq</span>:767768553</span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span> 创建时间：$&#123;date&#125; $&#123;time&#125;</span></span><br><span class="line"><span class="comment">* 简单说明</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">$&#123;typecomment&#125;</span><br><span class="line">$&#123;type_declaration&#125;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>在建立类文件的时候输入“/**”的时候自动出来的：eclipse-&gt;window-&gt;preference-&gt;java-&gt;code  styple-&gt;code template-&gt;comments-&gt;typles,点击 Edit ，就可以根据自己需要编写了</li>
-</ol>
-]]></content>
-      <categories>
-        <category>常用工具</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>eclipse</tag>
+        <tag>道德经</tag>
       </tags>
   </entry>
   <entry>
@@ -7921,6 +8003,453 @@ SHR：shared memory 共享内存<br>
       </tags>
   </entry>
   <entry>
+    <title>Linux PageCache详解</title>
+    <url>/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>应用程序要存储或访问数据时，只需读或者写”文件”的一维地址空间即可，而这个地址空间与存储设备上存储块之间的对应关系则由操作系统维护。说白了，文件就是基于内核态Page Cache的一层抽象。</p>
+<a id="more"></a>
+
+<h2 id="相关场景"><a href="#相关场景" class="headerlink" title="相关场景"></a>相关场景</h2><ol>
+<li>服务器的 load 飙高；</li>
+<li>服务器的 I/O 吞吐飙高；</li>
+<li>业务响应时延出现大的毛刺；</li>
+<li>业务平均访问时延明显增加。</li>
+</ol>
+<h2 id="什么是page-cache"><a href="#什么是page-cache" class="headerlink" title="什么是page cache"></a>什么是page cache</h2><div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1597721768372.png" class title="应用程序产生page cache的逻辑示意图">
+
+</div>
+
+<p><strong>page cache是内存管理的内存，属于内核不属于用户。</strong></p>
+<h3 id="查看方式"><a href="#查看方式" class="headerlink" title="查看方式"></a>查看方式</h3><ol>
+<li>/proc/meminfo</li>
+<li>free命令</li>
+<li>vmstat命令</li>
+</ol>
+<h3 id="page-cache指标说明"><a href="#page-cache指标说明" class="headerlink" title="page cache指标说明"></a>page cache指标说明</h3><p>通过/proc/meminfo查看内存信息如下：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">MemTotal:        2046920 kB</span><br><span class="line">MemFree:          375284 kB</span><br><span class="line">MemAvailable:    1013780 kB</span><br><span class="line">Buffers:          142100 kB</span><br><span class="line">Cached:           668196 kB</span><br><span class="line">SwapCached:            0 kB</span><br><span class="line">Active:           959184 kB</span><br><span class="line">Inactive:         279700 kB</span><br><span class="line">Active(anon):     491680 kB</span><br><span class="line">Inactive(anon):    46776 kB</span><br><span class="line">Active(file):     467504 kB</span><br><span class="line">Inactive(file):   232924 kB</span><br><span class="line">Unevictable:           0 kB</span><br><span class="line">Mlocked:               0 kB</span><br><span class="line">SwapTotal:             0 kB</span><br><span class="line">SwapFree:              0 kB</span><br><span class="line">Dirty:                 0 kB</span><br><span class="line">Writeback:             0 kB</span><br><span class="line">AnonPages:        428608 kB</span><br><span class="line">Mapped:            37768 kB</span><br><span class="line">Shmem:            109868 kB</span><br><span class="line">Slab:             138120 kB</span><br><span class="line">SReclaimable:     126188 kB</span><br><span class="line">SUnreclaim:        11932 kB</span><br><span class="line">KernelStack:        2480 kB</span><br><span class="line">PageTables:         4572 kB</span><br><span class="line">NFS_Unstable:          0 kB</span><br><span class="line">Bounce:                0 kB</span><br><span class="line">WritebackTmp:          0 kB</span><br><span class="line">CommitLimit:      891364 kB</span><br><span class="line">Committed_AS:    1419192 kB</span><br><span class="line">VmallocTotal:   34359738367 kB</span><br><span class="line">VmallocUsed:        9136 kB</span><br><span class="line">VmallocChunk:   34359724540 kB</span><br><span class="line">HardwareCorrupted:     0 kB</span><br><span class="line">AnonHugePages:    169984 kB</span><br><span class="line">CmaTotal:              0 kB</span><br><span class="line">CmaFree:               0 kB</span><br><span class="line">HugePages_Total:     129</span><br><span class="line">HugePages_Free:      129</span><br><span class="line">HugePages_Rsvd:        0</span><br><span class="line">HugePages_Surp:        0</span><br><span class="line">Hugepagesize:       2048 kB</span><br><span class="line">DirectMap4k:       53104 kB</span><br><span class="line">DirectMap2M:     2043904 kB</span><br><span class="line">DirectMap1G:           0 kB</span><br></pre></td></tr></table></figure>
+<p>通过计算发现：</p>
+<p><strong>Buffers + Cached + SwapCached = Active(file) + Inactive(file) + Shmem + SwapCached</strong></p>
+<p>在 Page Cache 中，Active(file)+Inactive(file) 是 File-backed page（与文件对应的内存页），平时用的 mmap() 内存映射方式和 buffered I/O 来消耗的内存就属于这部分，这部分在真实的生产环境上也最容易产生问题。</p>
+<h3 id="SwapCached说明-生产环境中不建议开启，防止IO引起性能抖动"><a href="#SwapCached说明-生产环境中不建议开启，防止IO引起性能抖动" class="headerlink" title="SwapCached说明(生产环境中不建议开启，防止IO引起性能抖动)"></a>SwapCached说明(生产环境中不建议开启，防止IO引起性能抖动)</h3><p>SwapCached 是在打开了 <strong>Swap</strong> 分区后，把 Inactive(anon)+Active(anon) 这两项里的匿名页给交换到磁盘（swap out），然后再读入到内存（swap in）后分配的内存。由于读入到内存后原来的 Swap File 还在，所以 SwapCached 也可以认为是 File-backed page，即属于 Page Cache。</p>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1597731780142.png" class title="1597731780142.png">
+
+</div>
+
+<h3 id="Shmem"><a href="#Shmem" class="headerlink" title="Shmem"></a>Shmem</h3><ol>
+<li>Shmem 是指匿名共享映射这种方式分配的内存（free 命令中 shared 这一项）</li>
+<li>进程使用mmap(MAP_ANON|MAP_SHARED)的方式申请内存</li>
+<li>tmpfs： 磁盘的速度是远远低于内存的，有些应用程序为了提升性能，会避免将一些无需持续化存储的数据写入到磁盘，而是把这部分临时数据写入到内存中，然后定期或者在不需要这部分数据时，清理掉这部分内容来释放出内存。在这种需求下，就产生了一种特殊的 Shmem：tmpfs</li>
+<li></li>
+</ol>
+<h3 id="frem命令的说明"><a href="#frem命令的说明" class="headerlink" title="frem命令的说明"></a>frem命令的说明</h3><p><strong>数据来源于/proc/meminfo</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">free -k</span><br><span class="line">              total        used        free      shared  buff/cache   available</span><br><span class="line">Mem:        2046920      732896      377464      109860      936560     1016044</span><br><span class="line">Swap:             0           0           0</span><br></pre></td></tr></table></figure>
+<p>通过源码可知：<strong>buff/cache = Buffers + Cached + SReclaimable</strong></p>
+<p><strong>SReclaimable 是指可以被回收的内核内存，包括 dentry 和 inode。</strong></p>
+<h4 id="缓存的具体含义"><a href="#缓存的具体含义" class="headerlink" title="缓存的具体含义"></a>缓存的具体含义</h4><h5 id="官方定义"><a href="#官方定义" class="headerlink" title="官方定义"></a>官方定义</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Buffers %lu</span><br><span class="line">    Relatively temporary storage <span class="keyword">for</span> raw disk blocks that shouldn<span class="string">&#x27;t get tremendously large (20MB or so).</span></span><br><span class="line"><span class="string">Cached %lu</span></span><br><span class="line"><span class="string">   In-memory cache for files read from the disk (the page cache).  Doesn&#x27;</span>t include SwapCached.</span><br><span class="line">SReclaimable %lu (since Linux 2.6.19)</span><br><span class="line">    Part of Slab, that might be reclaimed, such as caches.</span><br><span class="line">    </span><br><span class="line">SUnreclaim %lu (since Linux 2.6.19)</span><br><span class="line">    Part of Slab, that cannot be reclaimed on memory pressure.</span><br></pre></td></tr></table></figure>
+<h5 id="具体解释"><a href="#具体解释" class="headerlink" title="具体解释"></a>具体解释</h5><ol>
+<li>Buffers 是对原始磁盘块的临时存储，也就是用来<strong>缓存磁盘的数据</strong>，通常不会特别大（20MB 左右）。这样，内核就可以把分散的写集中起来，统一优化磁盘的写入，比如可以把多次小的写合并成单次大的写等等。</li>
+<li>Cached 是从磁盘读取文件的页缓存，也就是用来<strong>缓存从文件读取的数据</strong>。这样，下次访问这些文件数据时，就可以直接从内存中快速获取，而不需要再次访问缓慢的磁盘。</li>
+<li>SReclaimable 是 Slab 的一部分。Slab 包括两部分，其中的可回收部分，用 SReclaimable 记录；而不可回收部分，用 SUnreclaim 记录。</li>
+<li><strong>Buffer 是对磁盘数据的缓存，而 Cache 是文件数据的缓存，它们既会用在读请求中，也会用在写请求中</strong></li>
+</ol>
+<h3 id="PageCache数据结构"><a href="#PageCache数据结构" class="headerlink" title="PageCache数据结构"></a>PageCache数据结构</h3><ol>
+<li>内存管理系统与Page Cache交互，负责维护每项 Page Cache 的分配和回收，同时在使用 memory map 方式访问时负责建立映射；</li>
+<li>VFS 与Page Cache交互，负责 Page Cache 与用户空间的数据交换，即文件读写；</li>
+<li>具体文件系统则一般只与 Buffer Cache 交互，它们负责在外围存储设备和 Buffer Cache 之间交换数据。</li>
+<li>一个Page Cache包含多个Buffer Cache，一个Buffer Cache与一个磁盘块一一对应；假定了 Page 的大小是 4K，则文件的每个4K的数据块最多只能对应一个 Page Cache 项，它通过一个是 radix tree来管理文件块和page cache的映射关系，Radix tree 是一种搜索树，Linux 内核利用这个数据结构来通过文件内偏移快速定位 Cache 项。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598412861987.png" class title="1598412861987.png">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598412872367.png" class title="1598412872367.png">
+
+</div>
+
+<h2 id="为什么使用page-cache"><a href="#为什么使用page-cache" class="headerlink" title="为什么使用page cache"></a>为什么使用page cache</h2><p><strong>减少 I/O，提升应用的 I/O 速度</strong></p>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598412292674.png" class title="Linux 操作系统中文件 Cache 管理与内存管理以及文件系统的关系示意图">
+
+</div>
+
+<ol>
+<li><strong>具体文件系统：</strong>，如 ext2/ext3、jfs、ntfs 等，负责在文件 Cache和存储设备之间交换数据</li>
+<li><strong>虚拟文件系统VFS：</strong> 负责在应用程序和文件 Cache 之间通过 read/write 等接口交换数据</li>
+<li><strong>内存管理系统：</strong> 负责文件 Cache 的分配和回收</li>
+<li><strong>虚拟内存管理系统(VMM)：</strong> 则允许应用程序和文件 Cache 之间通过 memory map的方式交换数据</li>
+<li><strong>在 Linux 系统中，文件 Cache 是内存管理系统、文件系统以及应用程序之间的一个联系枢纽</strong>。</li>
+</ol>
+<h2 id="page-cache的产生"><a href="#page-cache的产生" class="headerlink" title="page cache的产生"></a>page cache的产生</h2><h3 id="产生方式"><a href="#产生方式" class="headerlink" title="产生方式"></a>产生方式</h3><ol>
+<li>Buffered I/O（标准 I/O）如：read/write/sendfile等；</li>
+<li>Memory-Mapped I/O（存储映射 I/O）如：mmap；</li>
+<li>sendfile和mmap都是零拷贝的实现方案。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1597749811737.png" class title="1597749811737.png">
+
+</div>
+
+<h3 id="产生方式的区别"><a href="#产生方式的区别" class="headerlink" title="产生方式的区别"></a>产生方式的区别</h3><ol>
+<li>标准 I/O 是写的 (write(2)) 用户缓冲区 (Userpace Page 对应的内存)，然后再将用户缓冲区里的数据拷贝到内核缓冲区 (Pagecache Page 对应的内存)；如果是读的 (read(2)) 话则是先从内核缓冲区拷贝到用户缓冲区，再从用户缓冲区读数据，也就是 buffer 和文件内容不存在任何映射关系。</li>
+<li>对于存储映射 I/O 而言，则是直接将 Pagecache Page 给映射到用户地址空间，用户直接读写 Pagecache Page 中内容。</li>
+</ol>
+<h3 id="常规文件读写"><a href="#常规文件读写" class="headerlink" title="常规文件读写"></a>常规文件读写</h3><p>FileChannel#read，FileChannel#write，共涉及四次上下文切换（内核态和用户态的切换，包括read调用，read返回，write调用，write返回）和四次数据拷贝。</p>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598421055864.png" class title="1598421055864.png">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598421062853.png" class title="1598421062853.png">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1597750033559.png" class title="1597750033559.png">
+
+</div>
+
+<h4 id="脏页"><a href="#脏页" class="headerlink" title="脏页"></a>脏页</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat /proc/vmstat | egrep <span class="string">&quot;dirty|writeback&quot;</span></span><br><span class="line">nr_dirty 25</span><br><span class="line">nr_writeback 0</span><br><span class="line">nr_writeback_temp 0</span><br><span class="line">nr_dirty_threshold 94000</span><br><span class="line">nr_dirty_background_threshold 31333</span><br></pre></td></tr></table></figure>
+<p>nr_dirty 表示当前系统中积压了多少脏页，nr_writeback 则表示有多少脏页正在回写到磁盘中，他们两个的单位都是 Page(4KB)。</p>
+<h3 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a>mmap</h3><ol>
+<li>文件（page cache）直接映射到用户虚拟地址空间，内核态和用户态共享一片page cache，避免了一次数据拷贝</li>
+<li>建立mmap之后，并不会立马加载数据到内存，只有真正使用数据时，才会引发缺页异常并加载数据到内存</li>
+</ol>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598421396771.png" class title="1598421396771.png">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598421406978.png" class title="1598421406978.png">
+
+</div>
+
+<h4 id="memory-map具体步骤如下"><a href="#memory-map具体步骤如下" class="headerlink" title="memory map具体步骤如下"></a>memory map具体步骤如下</h4><ol>
+<li>应用程序调用mmap（图中1），先到内核中</li>
+<li>后调用do_mmap_pgoff（图中2），该函数从应用程序的地址空间中<strong>分配一段区域作为映射的内存地址</strong>，并使用一个VMA（vm_area_struct）结构代表该区域，</li>
+<li>之后就返回到应用程序（图中3）</li>
+<li>当应用程序访问mmap所返回的地址指针时（图中4），由于虚实映射尚未建立，会触发缺页中断（图中5）。之后系统会调用缺页中断处理函数（图中6），在缺页中断处理函数中，内核通过相应区域的VMA结构判断出该区域属于文件映射，于是调用具体文件系统的接口读入相应的Page Cache项（图中7、8、9），并填写相应的虚实映射表。</li>
+<li>经过这些步骤之后，应用程序就可以正常访问相应的内存区域了。</li>
+</ol>
+<h3 id="sendfile"><a href="#sendfile" class="headerlink" title="sendfile"></a>sendfile</h3><ol>
+<li>使用sendfile的方式避免了用户空间与内核空间的交互，复制次数减少到三次，内核态与用户态切换减少到两次。</li>
+<li>在 Linux 内核 2.4 及后期版本中，针对套接字缓冲区描述符做了相应调整，DMA自带了收集功能，对于用户方面，用法还是一样。内部只把包含数据位置和长度信息的描述符追加到套接字缓冲区，DMA 引擎直接把数据从内核缓冲区传到协议引擎，从而消除了最后一次 CPU参与的拷贝动作。</li>
+</ol>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598433791064.png" class title="1598433791064.png">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598433800506.png" class title="1598433800506.png">
+
+</div>
+
+<h3 id="顺序读写"><a href="#顺序读写" class="headerlink" title="顺序读写"></a>顺序读写</h3><h4 id="文件预读"><a href="#文件预读" class="headerlink" title="文件预读"></a>文件预读</h4><p>文件的预读机制，它是一种将磁盘块预读到page cache的机制,执行步骤如下：</p>
+<ol>
+<li>对于每个文件的<strong>第一个读请求</strong>，系统读入所请求的页面并读入紧随其后的少数几个页面(不少于一个页面，通常是三个页面)，这时的预读称为<strong>同步预读</strong>。</li>
+<li>对于<strong>第二次读请求</strong>，如果所读页面不在Cache中，即不在前次预读的group中，则表明文件访问不是顺序访问，系统继续采用同步预读；如果所读页面在Cache中，则表明前次预读命中，操作系统把预读group扩大一倍，并让底层文件系统读入group中剩下尚不在Cache中的文件数据块，这时的预读称为<strong>异步预读</strong>。</li>
+<li>无论第二次读请求是否命中，系统都要更新当前预读group的大小。</li>
+<li>系统中定义了一个window，它包括前一次预读的group和本次预读的group。任何接下来的读请求都会处于两种情况之一：<ul>
+<li>第一种情况是所请求的页面处于预读window中，这时继续进行异步预读并更新相应的window和group；</li>
+<li>第二种情况是所请求的页面处于预读window之外，这时系统就要进行同步预读并重置相应的window和group。</li>
+</ul>
+</li>
+</ol>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598434976482.png" class title="1598434976482.png">
+
+</div>
+
+<p>图中group指一次读入page cached的集合；window包括前一次预读的group和本次预读的group；浅灰色代表要用户想要查找的page cache，深灰色代表命中的page。</p>
+<h4 id="顺序读写高效的原因"><a href="#顺序读写高效的原因" class="headerlink" title="顺序读写高效的原因"></a>顺序读写高效的原因</h4><div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598435243913.png" class title="1598435243913.png">
+
+</div>
+
+<p>以顺序读为例，当用户发起一个 fileChannel.read(4kb) 之后，实际发生了两件事</p>
+<ol>
+<li>操作系统从磁盘加载了 16kb 进入 PageCache，这被称为预读</li>
+<li>操作通从 PageCache 拷贝 4kb 进入用户内存</li>
+<li>当用户继续访问接下来的 [4kb,16kb] 的磁盘内容时，便是直接从 PageCache 去访问了</li>
+</ol>
+<h2 id="page-cache的消亡"><a href="#page-cache的消亡" class="headerlink" title="page cache的消亡"></a>page cache的消亡</h2><p>page cache的回收主要是针对free 命令中的 buff/cache 中的这些就是“活着”的 Page Cache。回收的过程如下图所示：</p>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1597750451415.png" class title="1597750451415.png">
+
+</div>
+
+<p>回收的方式主要是两种：直接回收和后台回收,具体的回收行为，可以使用以下命令查看：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sar -B 1</span><br><span class="line">Linux 3.10.0-1062.9.1.el7.x86_64 (instance-gctg007a) 	08/18/2020 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">07:34:59 PM  pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff</span><br><span class="line">07:35:00 PM      0.00      0.00     66.00      0.00     58.00      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:01 PM      0.00     25.53   1893.62      0.00    608.51      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:02 PM      0.00      0.00    648.48      0.00    280.81      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:03 PM      0.00      0.00     17.00      0.00     19.00      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:04 PM      0.00      0.00   1096.04      0.00    295.05      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:05 PM      0.00      0.00     17.00      0.00     23.00      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:06 PM      0.00     52.00     17.00      0.00     19.00      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:07 PM      0.00      0.00     17.00      0.00     44.00      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:08 PM      0.00      0.00     18.00      0.00     19.00      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:09 PM      0.00      0.00     18.18      0.00     19.19      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:10 PM      0.00      0.00     17.00      0.00     19.00      0.00      0.00      0.00      0.00</span><br><span class="line">07:35:11 PM      0.00      0.00     17.00      0.00     19.00      0.00      0.00      0.00      0.00</span><br></pre></td></tr></table></figure>
+<ol>
+<li>pgscank/s : kswapd(后台回收线程) 每秒扫描的 page 个数。</li>
+<li>pgscand/s: Application 在内存申请过程中每秒直接扫描的 page 个数。</li>
+<li>pgsteal/s: 扫描的 page 中每秒被回收的个数。</li>
+<li>%vmeff: pgsteal/(pgscank+pgscand), 回收效率，越接近 100 说明系统越安全，越接近 0 说明系统内存压力越大。</li>
+</ol>
+<h3 id="sar-B与-proc-vmstat比对"><a href="#sar-B与-proc-vmstat比对" class="headerlink" title="sar -B与/proc/vmstat比对"></a>sar -B与/proc/vmstat比对</h3><style type="text/css">
+.tg  {border-collapse:collapse;border-color:#aaa;border-spacing:0;}
+.tg td{background-color:#fff;border-color:#aaa;border-style:solid;border-width:1px;color:#333;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#f38630;border-color:#aaa;border-style:solid;border-width:1px;color:#fff;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-amwm{font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-amwm">sar -B</th>
+    <th class="tg-amwm">/proc/vmstat</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">pgscank</td>
+    <td class="tg-0lax">pgscan_kswapd</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">pgscand</td>
+    <td class="tg-0lax">pgscan_direct</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">pgsteal</td>
+    <td class="tg-0lax">pgsteal_kswapd+pgsteal_direct</td>
+  </tr>
+</tbody>
+</table>
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="DMA（Direct-Memory-Access-直接存储器访问）"><a href="#DMA（Direct-Memory-Access-直接存储器访问）" class="headerlink" title="DMA（Direct Memory Access,直接存储器访问）"></a>DMA（Direct Memory Access,直接存储器访问）</h3><ol>
+<li>DMA的出现就是为了解决批量数据的输入/输出问题。DMA是指外部设备不通过CPU而直接与系统内存交换数据的接口技术</li>
+<li>DMA控制器需要具备的功能：<ul>
+<li>能向CPU发出系统保持信号，提出总线接管请求</li>
+<li>当CPU同意接管请求之后，对总线的控制交给DMA</li>
+<li><strong>能对存储器寻址及能修改地址指针，实现对内存的读写</strong></li>
+<li>能决定本次DMA传送的字节数，判断DMA传送是否借宿</li>
+<li>发送DMA结束信号，使CPU恢复正常工作状态</li>
+</ul>
+</li>
+</ol>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598409974379.png" class title="1598409974379.png">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598409984707.png" class title="1598409984707.png">
+
+</div>
+
+<h3 id="堆外内存"><a href="#堆外内存" class="headerlink" title="堆外内存"></a>堆外内存</h3><h4 id="堆内存与堆外内存的关系"><a href="#堆内存与堆外内存的关系" class="headerlink" title="堆内存与堆外内存的关系"></a>堆内存与堆外内存的关系</h4><style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax"></th>
+    <th class="tg-0lax">堆内内存</th>
+    <th class="tg-0lax">堆外内存</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">底层实现</td>
+    <td class="tg-0lax">数组，JVM内存</td>
+    <td class="tg-0lax">unsafe.allocateMemory(size)返回直接内存</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">分配大小限制</td>
+    <td class="tg-0lax">
+    -Xms-Xmx，<br>
+    数组大小，当前JVM free memory大于1.5G时，ByteBuffer.allocate(900M)会报错
+    </td>
+    <td class="tg-0lax">-XX:MaxDirectMemorySize参数从JVM层面限制，同时受到机器虚拟内存的限制</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">垃圾回收</td>
+    <td class="tg-0lax"></td>
+    <td class="tg-0lax">
+    当前DirectByteBuffer不再被使用时，会触发内部cleaner的钩子
+    <br>保险起见，可以考虑手动回收
+    <br>((DirectBuffer)buffer).cleaner().clean()</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">内存复制</td>
+    <td class="tg-0lax">堆内内存---堆外内存---pageCache</td>
+    <td class="tg-0lax">堆外内存--pageCache</td>
+  </tr>
+</tbody>
+</table>
+
+<h4 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h4><ol>
+<li>当需要申请大块的内存时，堆内内存会受到限制，只能分配堆外内存。</li>
+<li>堆外内存适用于生命周期中等或较长的对象。(如果是生命周期较短的对象，在 YGC 的时候就被回收了，就不存在大内存且生命周期较长的对象在 FGC 对应用造成的性能影响)。</li>
+<li>堆内内存刷盘的过程中，还需要复制一份到堆外内存，这部分内容可以在 FileChannel 的实现源码中看到细节<ul>
+<li> 使用 HeapByteBuffer 读写都会经过 DirectByteBuffer，写入数据的流转方式其实是：HeapByteBuffer -&gt; DirectByteBuffer -&gt; PageCache -&gt; Disk，读取数据的流转方式正好相反。</li>
+<li> 使用 HeapByteBuffer 读写会申请一块跟线程绑定的 DirectByteBuffer。这意味着，线程越多，临时 DirectByteBuffer 就越会占用越多的空间。</li>
+</ul>
+</li>
+<li>堆外内存就是把内存对象分配在Java虚拟机堆以外的内存，这些内存直接受操作系统管理（而不是虚拟机），这样做的结果就是能够在一定程度上减少垃圾回收对应用程序造成的影响。</li>
+<li>内存回收流程</li>
+</ol>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598440617394.png" class title="1598440617394.png">
+
+</div>
+
+<h2 id="PageCache内存回收"><a href="#PageCache内存回收" class="headerlink" title="PageCache内存回收"></a>PageCache内存回收</h2><h3 id="回收过程"><a href="#回收过程" class="headerlink" title="回收过程"></a>回收过程</h3><p>在内存紧张的时候会触发内存回收，内存回收会尝试去回收reclaimable（可被回收）的内存。包括<strong>PageCache以及reclaimable kernel memory（比如slab）</strong>。</p>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598493313084.png" class title="1598493313084.png">
+
+</div>
+
+<h3 id="避免PageCache回收出现的性能问题"><a href="#避免PageCache回收出现的性能问题" class="headerlink" title="避免PageCache回收出现的性能问题"></a>避免PageCache回收出现的性能问题</h3><h4 id="memory-cgroup-protection"><a href="#memory-cgroup-protection" class="headerlink" title="memory cgroup protection"></a>memory cgroup protection</h4><div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1598493920439.png" class title="1598493920439.png">
+
+</div>
+
+<ol>
+<li><strong>memory.max</strong>：memory cgroup 内的进程最多能够分配的内存，如果不设置的话，就默认不做内存大小的限制</li>
+<li><strong>memory.high</strong>：当 memory cgroup 内进程的内存使用量超过了该值后就会立即被回收掉，目的是为了<strong>尽快的回收掉不活跃的 Page Cache</strong>。</li>
+<li><strong>memory.low</strong>：用来保护重要数据的，当 memory cgroup 内进程的内存使用量低于了该值后，在内存紧张触发回收后就会先去回收不属于该 memory cgroup 的 Page Cache，等到其他的 Page Cache 都被回收掉后再来回收这些 Page Cache。</li>
+<li><strong>memory.min</strong>：用来保护重要数据的，只不过与 memoy.low 有所不同的是，当 memory cgroup 内进程的内存使用量低于该值后，即使其他不在该 memory cgroup 内的 Page Cache 都被回收完了也不会去回收这些 Page Cache。</li>
+<li><strong>总结：如果你想要保护你的 Page Cache 不被回收，你就可以考虑将你的业务进程放在一个 memory cgroup 中，然后设置 memory.{min,low} 来进行保护；与之相反，如果你想要尽快释放你的 Page Cache，那你可以考虑设置 memory.high 来及时的释放掉不活跃的 Page Cache。</strong></li>
+</ol>
+<h3 id="出现load过高的原因"><a href="#出现load过高的原因" class="headerlink" title="出现load过高的原因"></a>出现load过高的原因</h3><h4 id="直接内存回收引起"><a href="#直接内存回收引起" class="headerlink" title="直接内存回收引起"></a>直接内存回收引起</h4><h5 id="内存回收过程"><a href="#内存回收过程" class="headerlink" title="内存回收过程"></a>内存回收过程</h5><div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1602664770697.png" class title="1602664770697.png">
+
+</div>
+
+<p>后台回收原理：</p>
+<div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1602664859410.png" class title="1602664859410.png">
+
+</div>
+
+<p>通过调整参数vm.min_free_kbytes来提高后台进程回收频率。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat /proc/sys/vm/min_free_kbytes</span><br><span class="line">vi /etc/sysctl.conf vm.min_free_kbytes=524288 </span><br><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+<p>通过调整内存水位，在一定程度上保障了应用的内存申请，但是同时也带来了一定的内存浪费，因为系统始终要保障有这么多的 free 内存，这就压缩了 Page Cache 的空间。调整的效果你可以通过 /proc/zoneinfo 来观察</p>
+<h4 id="系统中脏页积压过多"><a href="#系统中脏页积压过多" class="headerlink" title="系统中脏页积压过多"></a>系统中脏页积压过多</h4><h5 id="内存申请过程"><a href="#内存申请过程" class="headerlink" title="内存申请过程"></a>内存申请过程</h5><div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1602665372291.png" class title="1602665372291.png">
+
+</div>
+
+<h5 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h5><p>设置配置：/proc/vmstat</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vm.dirty_background_bytes = 0</span><br><span class="line">vm.dirty_background_ratio = 10</span><br><span class="line">vm.dirty_bytes = 0</span><br><span class="line">vm.dirty_expire_centisecs = 3000</span><br><span class="line">vm.dirty_ratio = 20</span><br></pre></td></tr></table></figure>
+<h4 id="系统numa策略配置不当"><a href="#系统numa策略配置不当" class="headerlink" title="系统numa策略配置不当"></a>系统numa策略配置不当</h4><h2 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h2><h3 id="OOM-KILL逻辑"><a href="#OOM-KILL逻辑" class="headerlink" title="OOM KILL逻辑"></a>OOM KILL逻辑</h3><div align="center">
+
+<img src="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/1602661306900.png" class title="1602661306900.png">
+
+</div>
+
+<p>可以调整oom_score_adj来防止进程被杀掉（不建议配置）</p>
+<h3 id="如何观察内核内存泄漏"><a href="#如何观察内核内存泄漏" class="headerlink" title="如何观察内核内存泄漏"></a>如何观察内核内存泄漏</h3><ol>
+<li>如果 /proc/meminfo 中内核内存（比如 VmallocUsed 和 SUnreclaim）太大，那很有可能发生了内核内存泄漏</li>
+<li>周期性地观察 VmallocUsed 和 SUnreclaim 的变化，如果它们持续增长而不下降，也可能是发生了内核内存泄漏</li>
+<li>通过 /proc/vmallocinfo 来看到该模块的内存使用情况</li>
+<li>kmemleak 内核内存分析工具</li>
+</ol>
+<h3 id="排查思路"><a href="#排查思路" class="headerlink" title="排查思路"></a>排查思路</h3><style type="text/css">
+.tg  {border-collapse:collapse;border-color:#aaa;border-spacing:0;}
+.tg td{background-color:#fff;border-color:#aaa;border-style:solid;border-width:1px;color:#333;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#f38630;border-color:#aaa;border-style:solid;border-width:1px;color:#fff;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-1wig{font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-7ivu{background-color:#fffc9e;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">/proc/meminfo</th>
+    <th class="tg-1wig">含义以及排查思路</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-7ivu">Active(anon)</td>
+    <td class="tg-0lax">在active anon lru的page，与下一项相互转换</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Inactive(anon)</td>
+    <td class="tg-0lax">在inactive anonlru的page，可以交换到swap分区，（active anno也是）但是不能回收<br>程序使用malloc()或mmap()匿名方式申请并且写后的内存。如果过大，排除思路：<br>1.使用top找出内存消耗最大的进程<br>2.使用pmap分析该进程<br>3.如果没有任何进程内存开销大，则重点排除tmpfs</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Unevictable</td>
+    <td class="tg-0lax">在系统内存紧张时不能被回收，主要组成：<br>1.ram disk或ramfs消耗的内存<br>2.以SHM_LOCK方式申请的Shmem<br>3.使用mlock()序列函数来管理的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Mlocked</td>
+    <td class="tg-0lax">属于Unevictable的一种，重点排除mlock()方式包含的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">AnonPages</td>
+    <td class="tg-0lax">AnonPages！=Active（anon）+Inactive（anon）<br>因为shmem（包括tmpfs）虽然属于active（anon）或Inactive（anon），但是他们有自己的内存文件，所以不属于AnonPages<br>active anon和Inactive anon表示不可回收但是可以被交换到swap分区的内存<br>AnonPages没有对应文件的内存<br>排除malloc()方式申请的内存或mmap（PROT_WRITE,MAP_ANON|MAP_PRIVATE）方式申请的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Mapped</td>
+    <td class="tg-0lax">使用mmap（2）申请，没有被unmap的内存；unmap包含主动调用unmap（2）以及内核内存回收时的unmap<br>排查mmap（）申请的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Shmem</td>
+    <td class="tg-0lax">共享内存，特别注意tmpfs，排查思路<br>1. 使用top找出shr最大的进程<br>2.使用pmap分析该进程<br>3.如果没有任何进程消耗shr内存，则重点排查tmpfs</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Slab</td>
+    <td class="tg-0lax">分为可被回收（SReclaimable）和不可以被回收（SUnreclaim），其中不可被回收的slab如果发生泄漏，<br>比如kmalloc申请的内存没有释放，排查思路<br>1.使用slaptop分析slab最大的数据<br>2.排查驱动程序以kmalloc(）方式申请的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">VmallocUsed</td>
+    <td class="tg-0lax">通过vmalloc分配的内核内存，可以使用/proc/vmallocinfo，来判断哪些驱动程序以vmalloc方式申请的内存较多<br>可以尝试卸载驱动，释放内存</td>
+  </tr>
+</tbody>
+</table>
+
+<ol>
+<li>应用程序可以通过 malloc() 和 free() 在用户态申请和释放内存，与之对应，可以通过 kmalloc()/kfree() 以及 vmalloc()/vfree() 在内核态申请和释放内存</li>
+<li>vmalloc 申请的内存会体现在 VmallocUsed 这一项中，即已使用的 Vmalloc 区大小；而 kmalloc 申请的内存则是体现在 Slab 这一项中，它又分为两部分，其中 SReclaimable 是指在内存紧张的时候可以被回收的内存，而 SUnreclaim 则是不可以被回收只能主动释放的内存。</li>
+</ol>
+<h2 id="其他-1"><a href="#其他-1" class="headerlink" title="其他"></a>其他</h2><h3 id="清理缓存buffer-cache"><a href="#清理缓存buffer-cache" class="headerlink" title="清理缓存buffer/cache"></a>清理缓存buffer/cache</h3><h4 id="运行sync将dirty的内容写回硬盘"><a href="#运行sync将dirty的内容写回硬盘" class="headerlink" title="运行sync将dirty的内容写回硬盘"></a>运行sync将dirty的内容写回硬盘</h4><h4 id="通过修改proc系统的drop-caches清理free的cache"><a href="#通过修改proc系统的drop-caches清理free的cache" class="headerlink" title="通过修改proc系统的drop_caches清理free的cache"></a>通过修改proc系统的drop_caches清理free的cache</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 3 &gt; /proc/sys/vm/drop_caches</span><br><span class="line">说明</span><br><span class="line"><span class="built_in">echo</span> 1 &gt; /proc/sys/vm/drop_caches:表示清除pagecache。 </span><br><span class="line"><span class="built_in">echo</span> 2 &gt; /proc/sys/vm/drop_caches:表示清除回收slab分配器中的对象（包括目录项缓存和inode缓存）。slab分配器是内核中管理内存的一种机制，其中很多缓存数据实现都是用的pagecache。 </span><br><span class="line"><span class="built_in">echo</span> 3 &gt; /proc/sys/vm/drop_caches:表示清除pagecache和slab分配器中的缓存对象。</span><br></pre></td></tr></table></figure>
+<p>可以通过<code>/proc/vmstat</code>文件判断是否执行过drop_caches：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@instance-gctg007a ~]<span class="comment"># cat /proc/vmstat | grep drop</span></span><br><span class="line">drop_pagecache 0</span><br><span class="line">drop_slab 0</span><br></pre></td></tr></table></figure>
+<h4 id="可以调用crond定时任务：每10分钟执行一次"><a href="#可以调用crond定时任务：每10分钟执行一次" class="headerlink" title="可以调用crond定时任务：每10分钟执行一次"></a>可以调用crond定时任务：每10分钟执行一次</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">*/10 * * * * sync;<span class="built_in">echo</span> 3 &gt; /proc/sys/vm/drop_caches;  </span><br></pre></td></tr></table></figure>
+<h3 id="重要配置参数"><a href="#重要配置参数" class="headerlink" title="重要配置参数"></a>重要配置参数</h3><h4 id="proc-sys-vm-dirty-ratio（同步刷盘）"><a href="#proc-sys-vm-dirty-ratio（同步刷盘）" class="headerlink" title="/proc/sys/vm/dirty_ratio（同步刷盘）"></a>/proc/sys/vm/dirty_ratio（同步刷盘）</h4><p>这个参数控制文件系统的文件系统写缓冲区的大小，单位是百分比，表示系统内存的百分比，<strong>表示当写缓冲使用到系统内存多少的时候，开始向磁盘写出数据</strong>。增大之会使用更多系统内存用于磁盘写缓冲，也可以极大提高系统的写性能。但是，当你需要持续、恒定的写入场合时，应该降低其数值，一般启动上缺省是 10。设1加速程序速度</p>
+<h4 id="proc-sys-vm-dirty-background-ratio（异步刷盘）"><a href="#proc-sys-vm-dirty-background-ratio（异步刷盘）" class="headerlink" title="/proc/sys/vm/dirty_background_ratio（异步刷盘）"></a>/proc/sys/vm/dirty_background_ratio（异步刷盘）</h4><p>这个参数控制文件系统的pdflush进程，在何时刷新磁盘。单位是百分比，<strong>表示系统内存的百分比，意思是当写缓冲使用到系统内存多少的时 候，pdflush开始向磁盘写出数据</strong>。增大之会使用更多系统内存用于磁盘写缓冲，也可以极大提高系统的写性能。但是，当你需要持续、恒定的写入场合时， 应该降低其数值，一般启动上缺省是 5</p>
+<h4 id="proc-sys-vm-dirty-writeback-centisecs"><a href="#proc-sys-vm-dirty-writeback-centisecs" class="headerlink" title="/proc/sys/vm/dirty_writeback_centisecs"></a>/proc/sys/vm/dirty_writeback_centisecs</h4><p>这个参数控制内核的脏数据刷新进程pdflush的运行间隔。单位是 1/100 秒。缺省数值是500，也就是 5 秒。如果你的系统是持续地写入动作，那么实际上还是降低这个数值比较好，这样可以把尖峰的写操作削平成多次写操</p>
+<h4 id="proc-sys-vm-dirty-expire-centisecs"><a href="#proc-sys-vm-dirty-expire-centisecs" class="headerlink" title="/proc/sys/vm/dirty_expire_centisecs"></a>/proc/sys/vm/dirty_expire_centisecs</h4><p>这个参数声明Linux内核写缓冲区里面的数据多“旧”了之后，pdflush进程就开始考虑写到磁盘中去。单位是 1/100秒。缺省是 30000，也就是 30 秒的数据就算旧了，将会刷新磁盘。对于特别重载的写操作来说，这个值适当缩小也是好的，但也不能缩小太多，因为缩小太多也会导致IO提高太快。建议设置为 1500，也就是15秒算旧。 </p>
+<h4 id="proc-sys-vm-drop-caches"><a href="#proc-sys-vm-drop-caches" class="headerlink" title="/proc/sys/vm/drop_caches"></a>/proc/sys/vm/drop_caches</h4><p>释放已经使用的cache</p>
+<h4 id="proc-sys-vm-page-cluster"><a href="#proc-sys-vm-page-cluster" class="headerlink" title="/proc/sys/vm/page_cluster"></a>/proc/sys/vm/page_cluster</h4><p>该文件表示在写一次到swap区的时候写入的页面数量，0表示1页，1表示2页，2表示4页。</p>
+<h4 id="proc-sys-vm-swapiness"><a href="#proc-sys-vm-swapiness" class="headerlink" title="/proc/sys/vm/swapiness"></a>/proc/sys/vm/swapiness</h4><p>该文件表示系统进行交换行为的程度，数值（0-100）越高，越可能发生磁盘交换。</p>
+<h4 id="proc-sys-vm-vfs-cache-pressure"><a href="#proc-sys-vm-vfs-cache-pressure" class="headerlink" title="/proc/sys/vm/vfs_cache_pressure"></a>/proc/sys/vm/vfs_cache_pressure</h4><p>该文件表示内核回收用于directory和inode cache内存的倾向</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.kernel.org/doc/Documentation/filesystems/proc.rst">proc帮助手册</a></li>
+<li><a href="linux-performance-analysis-tools.md">常用性能分析工具</a></li>
+<li><a href="https://blog.csdn.net/a1240466196/article/details/106456200">NIO进阶篇：Page Cache、零拷贝、顺序读写、堆外内存</a></li>
+<li><a href="https://www.imooc.com/article/301624">面试官：RocketMQ 如何基于mmap+page cache实现磁盘文件的高性能读写？</a></li>
+<li><a href="http://blog.sina.com.cn/s/blog_448574810101k1va.html">文件系统缓存dirty_ratio与dirty_background_ratio两个参数区别</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/42364591">PageCache系列之五 统一缓存之PageCache</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>文件系统</tag>
+        <tag>PageCache</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux命令之netstat/ss</title>
     <url>/2021/02/05/Linux%E5%91%BD%E4%BB%A4%E4%B9%8Bnetstat-ss/</url>
     <content><![CDATA[<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>netstat命令用于显示与IP、TCP、UDP和ICMP协议相关的统计数据，一般用于检验本机各端口的网络连接情况。netstat是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。<br>在Linux下，如果连接数比较大，可以使用效率更高的ss来替代netstat。</p>
@@ -9502,46 +10031,9 @@ SHR：shared memory 共享内存<br>
   <entry>
     <title>分布式理论</title>
     <url>/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/</url>
-    <content><![CDATA[<!-- TOC -->
-
-<ul>
-<li><a href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA">分布式理论</a><ul>
-<li><a href="#cap">CAP</a><ul>
-<li><a href="#consistency%E4%B8%80%E8%87%B4%E6%80%A7">Consistency（一致性）</a></li>
-<li><a href="#availability%E5%8F%AF%E7%94%A8%E6%80%A7">Availability（可用性）</a></li>
-<li><a href="#partition-tolerance%E5%88%86%E5%8C%BA%E5%AE%B9%E9%94%99%E6%80%A7">Partition tolerance（分区容错性）</a></li>
-<li><a href="#cap%E7%9A%84%E5%85%B3%E7%B3%BB">CAP的关系</a></li>
-</ul>
-</li>
-<li><a href="#acid">ACID</a><ul>
-<li><a href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE2pc">两阶段提交协议（2PC）</a><ul>
-<li><a href="#%E5%AE%9A%E4%B9%89%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AEprotocol">定义（分布式事务一致性协议：Protocol）</a></li>
-<li><a href="#%E7%AE%97%E6%B3%95%E6%80%9D%E8%B7%AF">算法思路</a></li>
-<li><a href="#%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B">实现过程</a><ul>
-<li><a href="#%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5">准备阶段</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#base%E7%90%86%E8%AE%BA">BASE理论</a><ul>
-<li><a href="#basically-available%E5%9F%BA%E6%9C%AC%E5%8F%AF%E7%94%A8">Basically Available（基本可用）</a></li>
-<li><a href="#soft-state%E8%BD%AF%E7%8A%B6%E6%80%81">Soft state（软状态）</a></li>
-<li><a href="#eventually-consistent%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7">Eventually consistent（最终一致性）</a><ul>
-<li><a href="#%E5%AE%9E%E7%8E%B0%E4%BE%9D%E6%8D%AE">实现依据</a></li>
-<li><a href="#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F">实现方式</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<!-- /TOC -->
-<h1 id="分布式理论"><a href="#分布式理论" class="headerlink" title="分布式理论"></a>分布式理论</h1><h2 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h2><h3 id="Consistency（一致性）"><a href="#Consistency（一致性）" class="headerlink" title="Consistency（一致性）"></a>Consistency（一致性）</h3><ol>
+    <content><![CDATA[<h2 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h2><h3 id="Consistency（一致性）"><a href="#Consistency（一致性）" class="headerlink" title="Consistency（一致性）"></a>Consistency（一致性）</h3><ol>
 <li>在分布式系统中的所有数据备份，在同一时刻是否同样的值</li>
-<li>等同于所有节点访问同一份最新的数据副本</li>
+<li>所有节点访问同一份最新的数据副本</li>
 <li>强调数据的正确性，对于客户端而言，每次都能读取到最新写入的数据</li>
 </ol>
 <h3 id="Availability（可用性）"><a href="#Availability（可用性）" class="headerlink" title="Availability（可用性）"></a>Availability（可用性）</h3><ol>
@@ -9549,66 +10041,151 @@ SHR：shared memory 共享内存<br>
 <li>强调服务可用，但是不保证数据正确</li>
 </ol>
 <h3 id="Partition-tolerance（分区容错性）"><a href="#Partition-tolerance（分区容错性）" class="headerlink" title="Partition tolerance（分区容错性）"></a>Partition tolerance（分区容错性）</h3><ol>
-<li>以实际效果而言，分区相当于对通信的时限要求</li>
+<li>以实际效果而言，分区相当于对<strong>通信</strong>的时限要求</li>
 <li>系统如果不能在时限内达成数据一致性，就意味着发生了分区的情况，必须就当前操作在 C 和 A 之间做出选择。</li>
 <li>强调的是集群对分区故障的容错能力</li>
 </ol>
+<h3 id="可用性和分区容错性的区别"><a href="#可用性和分区容错性的区别" class="headerlink" title="可用性和分区容错性的区别"></a>可用性和分区容错性的区别</h3><ol>
+<li>可用性：节点出现故障时，系统可用</li>
+<li>分区容错性：网络出现问题时，系统可用</li>
+</ol>
+<a id="more"></a>
+
 <h3 id="CAP的关系"><a href="#CAP的关系" class="headerlink" title="CAP的关系"></a>CAP的关系</h3><div align="center">
 
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1602761037948.png" alt="1602761037948.png"></p>
+<img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/1602761037948.png" class title="CAP的关系">
+
 </div>
 
 <ol>
-<li>CA 模型，在分布式系统中不存在。因为舍弃 P，意味着舍弃分布式系统，就比如单机版关系型数据库 MySQL，如果 MySQL 要考虑主备或集群部署时，它必须考虑 P。</li>
-<li>CP 模型，采用 CP 模型的分布式系统，舍弃了可用性，一定会读到最新数据，不会读到旧数据。一旦因为消息丢失、延迟过高发生了网络分区，就影响用户的体验和业务的可用性（比如基于 Raft 的强一致性系统，此时可能无法执行读操作和写操作）。典型的应用是 Etcd，Consul 和 Hbase。</li>
-<li>AP 模型，采用 AP 模型的分布式系统，舍弃了一致性，实现了服务的高可用。用户访问系统的时候，都能得到响应数据，不会出现响应错误，但会读到旧数据。典型应用就比如 Cassandra 和 DynamoDB。</li>
+<li><strong>CA 模型</strong>，不存在；舍弃P则舍弃分布式系统，如：在单机版MySQL中，如果要考虑主备或集群部署时，它必须考虑 P</li>
+<li><strong>CP 模型</strong>，舍弃可用性，一定会读取最新的数据。一旦因为消息丢失、延迟过高发生了网络分区，就影响用户的体验和业务的可用性</li>
+<li><strong>AP 模型</strong>，舍弃一致性，实现了服务的高可用。用户访问系统的时候，都能得到响应数据，不会出现响应错误，但会读到旧数据</li>
 </ol>
-<h2 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h2><h3 id="两阶段提交协议（2PC）"><a href="#两阶段提交协议（2PC）" class="headerlink" title="两阶段提交协议（2PC）"></a>两阶段提交协议（2PC）</h3><h4 id="定义（分布式事务一致性协议：Protocol）"><a href="#定义（分布式事务一致性协议：Protocol）" class="headerlink" title="定义（分布式事务一致性协议：Protocol）"></a>定义（分布式事务一致性协议：Protocol）</h4><p>在计算机网络以及数据库领域内，为了使基于分布式系统架构下的所有节点在进行事务提交时保持一致性而设计的一种算法(Algorithm)。</p>
-<h4 id="算法思路"><a href="#算法思路" class="headerlink" title="算法思路"></a>算法思路</h4><p>为了保持事务的 ACID 特性，需要引入<strong>协调者</strong>来统一掌控所有节点(参与者)的操作结果并最终指示这些节点是否要把操作结果进行真正的提交(比如将更新后的数据写入磁盘等等)</p>
-<div align="center">
-
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107881967.png" alt="1589107881967.png"></p>
-</div>
-
-<h4 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h4><h5 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h5><p>    协调者向所有参与者发送事务内容，询问是否可以提交事务，并等待答复（发送 Prepare 消息）<br>    各参与者执行事务操作，要么直接返回失败(如权限验证失败)，要么在本地执行事务，写本地的 redo 和 undo 日志，但不提交，到达一种“万事俱备，只欠东风”的状态。<br>    如参与者执行成功，给协调者反馈 yes，否则反馈 no。<br>1.1.2    提交阶段<br>如果协调者收到了参与者的失败消息或者超时，直接给每个参与者发送回滚(Rollback)消息；否则，发送提交(Commit)消息；参与者根据协调者的指令执行提交或者回滚操作，释放所有事务处理过程中使用的锁资源。(注意:必须在最后阶段释放锁资源) ，两种情况处理如下：<br>1.1.2.1    情况1：当所有参与者均反馈 yes，提交事务<br>a) 协调者向所有参与者发出正式提交事务的请求（即 commit 请求）。<br>b) 参与者执行 commit 请求，并释放整个事务期间占用的资源。<br>c) 各参与者向协调者反馈 ack(应答)完成的消息。<br>d) 协调者收到所有参与者反馈的 ack 消息后，即完成事务提交。<br>1.1.2.2    情况2：当有一个参与者反馈 no，回滚事务<br>a) 协调者向所有参与者发出回滚请求（即 rollback 请求）。<br>b) 参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。<br>c) 各参与者向协调者反馈 ack 完成的消息。<br>d) 协调者收到所有参与者反馈的 ack 消息后，即完成事务。<br>1.1.3    缺点 </p>
+<h3 id="选择"><a href="#选择" class="headerlink" title="选择"></a>选择</h3><p>如果网络故障经常出现一般选择AP原则，如果对一致性要求比较高则选择CP；</p>
 <ol>
-<li>性能问题：所有参与者在事务提交阶段处于同步阻塞状态，占用系统资源，容易导致性能瓶颈。</li>
-<li>可靠性问题：如果协调者存在单点故障问题，或出现故障，提供者将一直处于锁定状态。</li>
-<li>数据一致性问题：在阶段 2 中，如果出现协调者和参与者都挂了的情况，有可能导致数据不一致。<br>4）    数据不一致（脑裂问题）：在二阶段提交的阶段二中，当协调者向参与者发送 commit 请求之后，发生了局部网络异常或者在发送 commit 请求过程中协调者发生了故障，导致只有一部分参与者接受到了 commit 请求。于是整个分布式系统便出现了数据部一致性的现象(脑裂现象)。<br>5）    二阶段无法解决的问题（数据状态不确定）：协调者再发出 commit 消息之后宕机，而唯一接收到这条消息的参与者同时也宕机了。那么即使协调者通过选举协议产生了新的协调者，这条事务的状态也是不确定的，没人知道事务是否被已经提交。<br>优点：尽量保证了数据的强一致，适合对数据强一致要求很高的关键领域。（其实也不能100%保证强一致）。<br>缺点：实现复杂，牺牲了可用性，对性能影响较大，不适合高并发高性能场景。</li>
+<li>AP：redis、rocketmq、分布式事务-最大努力尝试、Eureka、Cassandra、DynamoDB。</li>
+<li>CP：分布式事务-2pc、基于Raft的强一致性系统（Etcd，Consul 和 Hbase）</li>
 </ol>
-<p>1.2    三阶段提交协议<br>三 阶 段 提 交 （ Three-phase commit ）， 也 叫 三 阶 段 提 交 协 议 （ Three-phase commit protocol），是二阶段提交（2PC）的改进版本。 三阶段提交是在二阶段提交上的改进版本，3PC最关键要解决的就是协调者和参与者同时挂掉的问题，所以3PC把2PC的准备阶段再次一分为二，这样三阶段提交。</p>
+<h2 id="ACID（追求一致性）"><a href="#ACID（追求一致性）" class="headerlink" title="ACID（追求一致性）"></a>ACID（追求一致性）</h2><h3 id="两阶段提交协议（2PC）"><a href="#两阶段提交协议（2PC）" class="headerlink" title="两阶段提交协议（2PC）"></a>两阶段提交协议（2PC）</h3><h4 id="定义（分布式事务一致性协议：Protocol）"><a href="#定义（分布式事务一致性协议：Protocol）" class="headerlink" title="定义（分布式事务一致性协议：Protocol）"></a>定义（分布式事务一致性协议：Protocol）</h4><p>分布式系统下，一种通过两阶段协商来保障事务一致性的算法</p>
+<h4 id="算法思路"><a href="#算法思路" class="headerlink" title="算法思路"></a>算法思路</h4><p>为了保持事务的 ACID 特性，需要引入<strong>协调者</strong>来统一掌控所有节点(<strong>参与者</strong>)的操作结果并最终指示这些节点是否要把操作结果进行真正的提交(比如将更新后的数据写入磁盘等等)</p>
 <div align="center">
 
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107914787.png" alt="1589107914787.png"></p>
+<img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/1589107881967.png" class title="两阶段提交算法">
+
 </div>
 
-<p>与两阶段提交不同的是，三阶段提交有两个改动点。<br>1、    引入超时机制。同时在协调者和参与者中都引入超时机制。<br>2、    在第一阶段和第二阶段中插入一个准备阶段。保证了在最后提交阶段之前各参与节点的状态是一致的。也就是说，除了引入超时机制之外，3PC 把 2PC 的准备阶段再次一分为二，这样三阶段提交就有 CanCommit、PreCommit、DoCommit 三个阶段。<br>1.1.1    阶段一CanCommit 阶段<br>a) 协调者向所有参与者发出包含事务内容的 canCommit 请求，询问是否可以提交事务，并等待所有参与者答复。<br>b) 参与者收到 canCommit 请求后，如果认为可以执行事务操作，则反馈 yes 并进入预备状态，否则反馈 no。<br>1.1.2    阶段二PreCommit 阶段<br>协调者根据参与者响应情况，有以下两种可能。<br>1.1.2.1    情况1：所有参与者均反馈 yes，协调者预执行事务<br>a) 协调者向所有参与者发出 preCommit 请求，进入准备阶段。<br>b) 参与者收到 preCommit 请求后，执行事务操作，将 undo 和 redo 信息记入事务日志中（但不提交事务）。<br>c) 各参与者向协调者反馈 ack 响应或 no 响应，并等待最终指令。<br>1.1.2.2    情况2：只要有一个参与者反馈 no，或者等待超时后协调者尚无法收到所有提供者的反馈，即中断事务<br>a) 协调者向所有参与者发出 abort 请求。<br>b) 无论收到协调者发出的 abort 请求，或者在等待协调者请求过程中出现超时，参与者均会中断事务。<br>1.1.3    阶段三doCommit 阶段<br>该阶段进行真正的事务提交，也可以分为以下两种情况。<br>1.1.3.1    情况 1：所有参与者均反馈 ack 响应，执行真正的事务提交<br>a) 如果协调者处于工作状态，则向所有参与者发出 do Commit 请求。<br>b) 参与者收到 do Commit 请求后，会正式执行事务提交，并释放整个事务期间占用的资源。<br>c) 各参与者向协调者反馈 ack 完成的消息。<br>d) 协调者收到所有参与者反馈的 ack 消息后，即完成事务提交。<br>1.1.3.2    情况2：只要有一个参与者反馈 no，或者等待超时后协调组尚无法收到所有提供者的反馈，即回滚事务。<br>a) 如果协调者处于工作状态，向所有参与者发出 rollback 请求。<br>b) 参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。<br>c) 各参与者向协调组反馈 ack 完成的消息。<br>d) 协调组收到所有参与者反馈的 ack 消息后，即完成事务回滚。</p>
-<p>优点：相比二阶段提交，三阶段提交降低了阻塞范围，在等待超时后协调者或参与者会中断事务。避免了协调者单点问题。阶段 3 中协调者出现问题时，参与者会继续提交事务。<br>缺点：数据不一致问题依然存在，当在参与者收到 preCommit 请求后等待 do commite 指令时，此时如果协调者请求中断事务，而协调者无法与参与者正常通信，会导致参与者继续提交事务，造成数据不一致。<br>1.2    柔性事务<br>在电商领域等互联网场景下，传统的事务在数据库性能和处理能力上都暴露出了瓶颈。在分布式领域基于 CAP 理论以及 BASE 理论，有人就提出了 柔性事务 的概念。CAP（一致性、可用性、分区容忍性）理论大家都理解很多次了，这里不再叙述。说一下 BASE 理论，它是在 CAP 理论的基础之上的延伸。包括 基本可用（Basically Available）、柔性状态（Soft State）、最终一致性（Eventual Consistency）。<br>通常所说的柔性事务分为：两阶段型、补偿型、异步确保型、最大努力通知型几种。<br>1.2.1    两阶段型<br>1、    就是分布式事务两阶段提交，对应技术上的 XA、JTA/JTS。这是分布式环境下事务处理的典型模式。<br>1.2.2    补偿型<br>2、    TCC 型事务（Try/Confirm/Cancel）可以归为补偿型。<br>WS-BusinessActivity 提供了一种基于补偿的 long-running 的事务处理模型。服务器 A 发起事务，服务器 B 参与事务，服务器 A 的事务如果执行顺利，那么事务 A 就先行提交，如果事务 B 也执行顺利，则事务 B 也提交，整个事务就算完成。但是如果事务 B 执行失败，事务 B 本身回滚，这时事务 A 已经被提交，所以需要执行一个补偿操作，将已经提交的事务 A 执行的操作作反操作，恢复到未执行前事务 A 的状态。这样的 SAGA 事务模型，是牺牲了一定的隔离性和一致性的，但是提高了 long-running 事务的可用性。 </p>
+<h5 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h5><p><strong>在一个参与者投票要求提交事务之前，它必须保证能够执行提交协议中它自己那一部分，即使参与者出现故障或者中途被替换掉</strong></p>
+<ol>
+<li>协调者向所有参与者发送事务内容，询问是否可以提交事务，并等待答复（发送Prepare消息）</li>
+<li>各参与者执行事务操作，要么直接返回失败(如权限验证失败)，要么在本地执行事务，<strong>写本地的redo和undo日志，但不提交</strong></li>
+<li>参与者执行成功返回yes，否则no</li>
+</ol>
+<h5 id="提交阶段"><a href="#提交阶段" class="headerlink" title="提交阶段"></a>提交阶段</h5><p><strong>事务的每个参与者执行最终统一的决定，提交事务或者放弃事务</strong></p>
+<h6 id="提交阶段（提交）"><a href="#提交阶段（提交）" class="headerlink" title="提交阶段（提交）"></a>提交阶段（提交）</h6><ol>
+<li>协调者向所有参与者发出正式提交事务的请求（即 commit 请求）</li>
+<li>参与者执行 commit 请求，并释放整个事务期间占用的资源</li>
+<li>各参与者向协调者反馈 ack(应答)完成的消息</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务提交</li>
+</ol>
+<h6 id="提交阶段（回滚）"><a href="#提交阶段（回滚）" class="headerlink" title="提交阶段（回滚）"></a>提交阶段（回滚）</h6><ol>
+<li>协调者向所有参与者发出回滚请求（即 rollback 请求）。</li>
+<li>参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack 完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务。</li>
+</ol>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ol>
+<li><strong>性能问题</strong>：所有参与者在事务提交阶段处于同步阻塞状态，占用系统资源，容易导致性能瓶颈。</li>
+<li><strong>可靠性问题</strong>：协调者单点故障，参与者将一直处于锁定状态</li>
+<li><strong>数据一致性问题</strong>：在阶段 2 中，如果出现协调者和参与者都挂了的情况，有可能导致数据不一致。</li>
+<li><strong>脑裂问题</strong>：在二阶段提交的阶段二中，当协调者向参与者发送 commit 请求之后，发生了局部网络异常或者在发送 commit 请求过程中协调者发生了故障，导致只有一部分参与者接受到了 commit 请求。于是整个分布式系统便出现了数据部一致性的现象(脑裂现象)。 </li>
+<li><strong>二阶段无法解决的问题（数据状态不确定）</strong>：协调者再发出 commit 消息之后宕机，而唯一接收到这条消息的参与者同时也宕机了。那么即使协调者通过选举协议产生了新的协调者，这条事务的状态也是不确定的，没人知道事务是否被已经提交。</li>
+<li>实现复杂，牺牲了可用性，对性能影响较大，不适合高并发高性能场景。</li>
+</ol>
+<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>尽量保证了数据的强一致，适合对数据强一致要求很高的关键领域。（其实也不能100%保证强一致）。</p>
+<h3 id="三阶段提交协议"><a href="#三阶段提交协议" class="headerlink" title="三阶段提交协议"></a>三阶段提交协议</h3><p>二阶段提交（2PC）的改进版本，3PC最关键要解决的就是<strong>协调者和参与者同时挂掉的问题</strong>，所以3PC把2PC的准备阶段再次一分为二，这样三阶段提交</p>
 <div align="center">
 
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107951384.png" alt="1589107951384.png"></p>
+<img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/1589107914787.png" class title="三阶段提交">
+
 </div>
 
-<p>1.1.1.1    补偿机制</p>
+<h4 id="改进点（对比2PC）"><a href="#改进点（对比2PC）" class="headerlink" title="改进点（对比2PC）"></a>改进点（对比2PC）</h4><ol>
+<li>同时在协调者和参与者中都引入<strong>超时机制</strong></li>
+<li>在第一阶段和第二阶段中插入一个准备阶段；保证了在最后提交阶段之前各参与节点的状态是一致的。3PC把2PC的准备阶段再次一分为二，这样三阶段提交就有 <strong>CanCommit、PreCommit、DoCommit</strong> 三个阶段。 </li>
+</ol>
+<h4 id="阶段一CanCommit-阶段"><a href="#阶段一CanCommit-阶段" class="headerlink" title="阶段一CanCommit 阶段"></a>阶段一CanCommit 阶段</h4><ol>
+<li>协调者向所有参与者发出包含事务内容的 <strong>canCommit</strong> 请求，询问是否可以提交事务，并等待所有参与者答复。</li>
+<li>参与者收到 canCommit 请求后，如果认为可以执行事务操作，则反馈 yes 并进入<strong>预备状态</strong>，否则反馈 no。</li>
+</ol>
+<h4 id="阶段二PreCommit-阶段"><a href="#阶段二PreCommit-阶段" class="headerlink" title="阶段二PreCommit 阶段"></a>阶段二PreCommit 阶段</h4><h5 id="yes，协调者预执行事务"><a href="#yes，协调者预执行事务" class="headerlink" title="yes，协调者预执行事务"></a>yes，协调者预执行事务</h5><ol>
+<li>协调者向所有参与者发出 <strong>preCommit</strong> 请求，进入准备阶段。</li>
+<li>参与者收到 preCommit 请求后，执行事务操作，将 undo 和 redo 信息记入事务日志中（但不提交事务）。</li>
+<li>各参与者向协调者反馈 ack 响应或 no 响应，并等待最终指令。</li>
+</ol>
+<h5 id="存在no或超时"><a href="#存在no或超时" class="headerlink" title="存在no或超时"></a>存在no或超时</h5><ol>
+<li>协调者向所有参与者发出 abort 请求。</li>
+<li>无论收到协调者发出的 abort 请求，或者在等待协调者请求过程中出现超时，参与者均会中断事务。</li>
+</ol>
+<h4 id="阶段三doCommit-阶段"><a href="#阶段三doCommit-阶段" class="headerlink" title="阶段三doCommit 阶段"></a>阶段三doCommit 阶段</h4><h5 id="ack-响应，执行真正的事务提交"><a href="#ack-响应，执行真正的事务提交" class="headerlink" title="ack 响应，执行真正的事务提交"></a>ack 响应，执行真正的事务提交</h5><ol>
+<li>如果协调者处于工作状态，则向所有参与者发出 <strong>do Commit</strong> 请求。</li>
+<li>参与者收到 do Commit 请求后，会正式执行事务提交，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack 完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务提交</li>
+</ol>
+<h5 id="存在no或超时-1"><a href="#存在no或超时-1" class="headerlink" title="存在no或超时"></a>存在no或超时</h5><ol>
+<li>如果协调者处于工作状态，向所有参与者发出 rollback 请求。</li>
+<li>参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调组反馈 ack 完成的消息。</li>
+<li>协调组收到所有参与者反馈的 ack 消息后，即完成事务回滚。</li>
+</ol>
+<h4 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h4><p>相比二阶段提交，三阶段提交降低了阻塞范围，在等待超时后协调者或参与者会中断事务。避免了协调者单点问题。阶段3中协调者出现问题时，参与者会继续提交事务。</p>
+<h4 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h4><p>数据不一致问题依然存在，当在参与者收到 preCommit 请求后等待 do commite 指令时，此时如果协调者请求中断事务，而协调者无法与参与者正常通信，会导致参与者继续提交事务，造成数据不一致。</p>
+<h3 id="TCC-型事务（Try-Confirm-Cancel）"><a href="#TCC-型事务（Try-Confirm-Cancel）" class="headerlink" title="TCC 型事务（Try/Confirm/Cancel）"></a>TCC 型事务（Try/Confirm/Cancel）</h3><ol>
+<li>针对每个操作都要注册一个与其对应的确认操作和补偿操作（也就是撤销操作）</li>
+<li>业务层面的协议（TCC操作在业务层实现），一种编程模型</li>
+<li>为了实现一致性，确认操作和补偿操作必须是等幂的</li>
+</ol>
 <div align="center">
 
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589107976375.png" alt="1589107976375.png"></p>
+<img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/1589107951384.png" class title="TCC型事务">
+
 </div>
 
-
-<p>1.1.1.1    条件<br>需要实现确认和补偿逻辑<br>需要支持幂等<br>1.1.1.2    处理流程<br>a) Try 阶段主要是对业务系统做检测及资源预留。<br>这个阶段主要完成：<br>完成所有业务检查( 一致性 ) 。<br>预留必须业务资源( 准隔离性 ) 。<br>Try 尝试执行业务。<br>b) Confirm 阶段主要是对业务系统做确认提交。<br>Try阶段执行成功并开始执行 Confirm阶段时，默认 Confirm阶段是不会出错的。即：只要Try成功，Confirm一定成功。<br>c) Cancel 阶段主要是在业务执行错误，需要回滚的状态下执行的业务取消，预留资源释放。</p>
-<p>优点：<br>性能提升：具体业务来实现控制资源锁的粒度变小，不会锁定整个资源。<br>数据最终一致性：基于 Confirm 和 Cancel 的幂等性，保证事务最终完成确认或者取消，保证数据的一致性。<br>可靠性：解决了 XA 协议的协调者单点故障问题，由主业务方发起并控制整个业务活动，业务活动管理器也变成多点，引入集群。<br>缺点：TCC 的 Try、Confirm 和 Cancel 操作功能要按具体业务来实现，业务耦合度较高，提高了开发成本。</p>
+<p>WS-BusinessActivity 提供了一种基于补偿的 long-running 的事务处理模型。服务器 A 发起事务，服务器 B 参与事务，服务器 A 的事务如果执行顺利，那么事务 A 就先行提交，如果事务 B 也执行顺利，则事务 B 也提交，整个事务就算完成。但是如果事务 B 执行失败，事务 B 本身回滚，这时事务 A 已经被提交，所以需要执行一个补偿操作，将已经提交的事务 A 执行的操作作反操作，恢复到未执行前事务 A 的状态。这样的 SAGA 事务模型，是牺牲了一定的隔离性和一致性的，但是提高了 long-running 事务的可用性。 </p>
+<h4 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h4><ol>
+<li>需要实现确认和补偿逻辑</li>
+<li>需要支持幂等</li>
+</ol>
+<h4 id="处理流程"><a href="#处理流程" class="headerlink" title="处理流程"></a>处理流程</h4><ol>
+<li>Try 阶段主要是对业务系统做检测及资源预留：<ul>
+<li>完成所有业务检查( 一致性 )</li>
+<li>预留必须业务资源( 准隔离性 )</li>
+<li>Try 尝试执行业务。</li>
+</ul>
+</li>
+<li>Confirm 阶段主要是对业务系统做确认提交，默认Confirm阶段是不会出错的。即：只要Try成功，Confirm一定成功。</li>
+<li>Cancel 阶段主要是在业务执行错误，需要回滚的状态下执行的业务取消，预留资源释放。</li>
+</ol>
+<h4 id="优点-2"><a href="#优点-2" class="headerlink" title="优点"></a>优点</h4><ol>
+<li><strong>性能提升</strong>：具体业务来实现控制资源锁的粒度变小，不会锁定整个资源。</li>
+<li><strong>数据最终一致性</strong>：基于 Confirm 和 Cancel 的幂等性，保证事务最终完成确认或者取消，保证数据的一致性。</li>
+<li><strong>可靠性</strong>：解决了 XA 协议的协调者单点故障问题，由主业务方发起并控制整个业务活动，业务活动管理器也变成多点，引入集群。</li>
+</ol>
+<h4 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h4><p>TCC 的 Try、Confirm 和 Cancel 操作功能要按具体业务来实现，业务耦合度较高，提高了开发成本。</p>
 <p>1.1.2    异步确保型<br>1、    通过将一系列同步的事务操作变为基于消息执行的异步操作, 避免了分布式事务中的同步阻塞操作的影响。 </p>
 <div align="center">
 
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108008772.png" alt="1589108008772.png"></p>
+
+
 </div>
 
 <p>1.1.1    最大努力通知型（多次尝试）<br>1、    这是分布式事务中要求最低的一种, 也可以通过消息中间件实现, 与前面异步确保型操作不同的一点是, 在消息由 MQ Server 投递到消费者之后, 允许在达到最大重试次数之后正常结束事务。</p>
 <p>1.2    本地消息表（消息队列）<br>其核心思想是将分布式事务拆分成本地事务进行处理。<br>方案通过在消费者额外新建事务消息表，消费者处理业务和记录事务消息在本地事务中完成，轮询事务消息表的数据发送事务消息，提供者基于消息中间件消费事务消息表中的事务。</p>
 <div align="center">
 
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108039367.png" alt="1589108039367.png"></p>
+
+
 </div>
 
 <p>1.1.1    条件<br>服务消费者需要创建一张消息表，用来记录消息状态。<br>服务消费者和提供者需要支持幂等。<br>需要补偿逻辑。<br>每个节点上起定时线程，检查未处理完成或发出失败的消息，重新发出消息，即重试机制和幂等性机制。<br>1.1.2    处理流程</p>
@@ -9620,23 +10197,26 @@ SHR：shared memory 共享内存<br>
 
 </div></li>
 </ol>
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108064986.png" alt="1589108064986.png"></p>
+
+
 
 
 <p>1.1.1    条件<br>a) 需要补偿逻辑<br>b) 业务处理逻辑需要幂等<br>1.1.2    处理流程<br>c) 消费者向MQ发送half消息。<br>d) MQ Server将消息持久化后，向发送方ack确认消息发送成功。<br>e) 消费者开始执行事务逻辑。<br>f) 消费者根据本地事务执行结果向MQ Server提交二次确认或者回滚。<br>g) MQ Server收到commit状态则将half消息标记可投递状态。<br>h) 服务提供者收到该消息，执行本地业务逻辑。返回处理结果。<br>优点：<br>消息数据独立存储，降低业务系统与消息系统之间的耦合。<br>吞吐量优于本地消息表方案。<br>缺点：<br>一次消息发送需要两次网络请求(half消息 + commit/rollback)。<br>需要实现消息回查接口。<br>1.2    Sagas事务模型（最终一致性）<br>Saga模式是一种分布式异步事务，一种最终一致性事务，是一种柔性事务，有两种不同的方式来实现saga事务，最流行的两种方式是：<br>1.2.1    事件/编排Choreography：没有中央协调器（没有单点风险）时，每个服务产生并聆听其他服务的事件，并决定是否应采取行动。<br>该实现第一个服务执行一个事务，然后发布一个事件。该事件被一个或多个服务进行监听，这些服务再执行本地事务并发布（或不发布）新的事件，当最后一个服务执行本地事务并且不发布任何事件时，意味着分布式事务结束，或者它发布的事件没有被任何Saga参与者听到都意味着事务结束。</p>
 <div align="center">
 
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108091135.png" alt="1589108091135.png"></p>
+
+
 </div>
 
 <p>1.1.1.1    处理流程<br>订单服务保存新订单，将状态设置为pengding挂起状态，并发布名为ORDER_CREATED_EVENT的事件。<br>支付服务监听ORDER_CREATED_EVENT，并公布事件BILLED_ORDER_EVENT。<br>库存服务监听BILLED_ORDER_EVENT，更新库存，并发布ORDER_PREPARED_EVENT。<br>货运服务监听ORDER_PREPARED_EVENT，然后交付产品。最后，它发布ORDER_DELIVERED_EVENT。<br>最后，订单服务侦听ORDER_DELIVERED_EVENT并设置订单的状态为concluded完成。<br>假设库存服务在事务过程中失败了。进行回滚：<br>库存服务产生PRODUCT_OUT_OF_STOCK_EVENT<br>订购服务和支付服务会监听到上面库存服务的这一事件：<br>①支付服务会退款给客户。<br>②订单服务将订单状态设置为失败。<br>优点：事件/编排是实现Saga模式的自然方式; 它很简单，容易理解，不需要太多的努力来构建，所有参与者都是松散耦合的，因为他们彼此之间没有直接的耦合。如果您的事务涉及2至4个步骤，则可能是非常合适的。<br>1.1.2    命令/协调orchestrator：中央协调器负责集中处理事件的决策和业务逻辑排序。<br>saga协调器orchestrator以命令/回复的方式与每项服务进行通信，告诉他们应该执行哪些操作。</p>
 <div align="center">
 
-<p><img src="/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/..%5Cimages%5C1589108117857.png" alt="1589108117857.png"></p>
+
+
 </div>
 
 <p>订单服务保存pending状态，并要求订单Saga协调器（简称OSO）开始启动订单事务。<br>OSO向收款服务发送执行收款命令，收款服务回复Payment Executed消息。<br>OSO向库存服务发送准备订单命令，库存服务将回复OrderPrepared消息。<br>OSO向货运服务发送订单发货命令，货运服务将回复Order Delivered消息。<br>OSO订单Saga协调器必须事先知道执行“创建订单”事务所需的流程(通过读取BPM业务流程XML配置获得)。如果有任何失败，它还负责通过向每个参与者发送命令来撤销之前的操作来协调分布式的回滚。当你有一个中央协调器协调一切时，回滚要容易得多，因为协调器默认是执行正向流程，回滚时只要执行反向流程即可。<br>优点：<br>避免服务之间的循环依赖关系，因为saga协调器会调用saga参与者，但参与者不会调用协调器。<br>集中分布式事务的编排。<br>只需要执行命令/回复(其实回复消息也是一种事件消息)，降低参与者的复杂性。<br>在添加新步骤时，事务复杂性保持线性，回滚更容易管理。<br>如果在第一笔交易还没有执行完，想改变有第二笔事务的目标对象，则可以轻松地将其暂停在协调器上，直到第一笔交易结束。</p>
-<h2 id="BASE理论"><a href="#BASE理论" class="headerlink" title="BASE理论"></a>BASE理论</h2><p>BASE 理论是 CAP 理论中的 AP 的延伸，是对互联网大规模分布式系统的实践总结，强调可用性。核心思想就是：<strong>我们无法做到强一致，但每个应用都可以根据自身的业务特点，采用适当的方式来使系统达到最终一致性</strong>。</p>
+<h2 id="BASE理论（追求可用性）"><a href="#BASE理论（追求可用性）" class="headerlink" title="BASE理论（追求可用性）"></a>BASE理论（追求可用性）</h2><p>BASE 理论是 CAP 理论中的 AP 的延伸，是对互联网大规模分布式系统的实践总结，强调可用性。核心思想就是：<strong>我们无法做到强一致，但每个应用都可以根据自身的业务特点，采用适当的方式来使系统达到最终一致性</strong>。</p>
 <h3 id="Basically-Available（基本可用）"><a href="#Basically-Available（基本可用）" class="headerlink" title="Basically Available（基本可用）"></a>Basically Available（基本可用）</h3><p>基本可用四板斧</p>
 <ol>
 <li>流量削峰：分时间段时间分业务场景处理</li>
@@ -9653,6 +10233,9 @@ SHR：shared memory 共享内存<br>
 <li><strong>读时修复</strong>：在读取数据时，检测数据的不一致，进行修复。比如 Cassandra 的 Read Repair 实现，具体来说，在向 Cassandra 系统查询数据的时候，如果检测到不同节点的副本数据不一致，系统就自动修复数据。</li>
 <li><strong>写时修复</strong>：在写入数据，检测数据的不一致时，进行修复。比如 Cassandra 的 Hinted Handoff 实现。具体来说，Cassandra 集群的节点之间远程写数据的时候，如果写失败就将数据缓存下来，然后定时重传，修复数据的不一致性。</li>
 <li><strong>异步修复</strong>：这个是最常用的方式，通过定时对账检测副本数据的一致性，并修复</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.toutiao.com/i6716373012393755148">大厂二面：CAP原则为什么只能满足其中两项？而不能同时满足</a></li>
 </ol>
 ]]></content>
       <categories>

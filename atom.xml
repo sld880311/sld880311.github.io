@@ -6,7 +6,7 @@
   <link href="https://www.sunliaodong.cn/atom.xml" rel="self"/>
   
   <link href="https://www.sunliaodong.cn/"/>
-  <updated>2021-03-03T06:22:50.706Z</updated>
+  <updated>2021-03-12T03:25:55.905Z</updated>
   <id>https://www.sunliaodong.cn/</id>
   
   <author>
@@ -17,20 +17,66 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Linux PageCache详解</title>
+    <link href="https://www.sunliaodong.cn/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/"/>
+    <id>https://www.sunliaodong.cn/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/</id>
+    <published>2021-03-11T02:01:42.000Z</published>
+    <updated>2021-03-12T03:25:55.905Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;应用程序要存储或访问数据时，只需读或者写”文件”的一维地址空间即可，而这个地址空间与存储设备上存储块之间的对应关系则由操作系统维护。说白了，文件就是基于内核态Page Cache的一层抽象。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/categories/Linux/"/>
+    
+    
+    <category term="Linux" scheme="https://www.sunliaodong.cn/tags/Linux/"/>
+    
+    <category term="文件系统" scheme="https://www.sunliaodong.cn/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"/>
+    
+    <category term="PageCache" scheme="https://www.sunliaodong.cn/tags/PageCache/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>道德经</title>
+    <link href="https://www.sunliaodong.cn/2021/03/10/%E9%81%93%E5%BE%B7%E7%BB%8F/"/>
+    <id>https://www.sunliaodong.cn/2021/03/10/%E9%81%93%E5%BE%B7%E7%BB%8F/</id>
+    <published>2021-03-10T00:38:21.000Z</published>
+    <updated>2021-03-12T00:29:12.469Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;第一章-天地之始，万物之母&quot;&gt;&lt;a href=&quot;#第一章-天地之始，万物之母&quot; class=&quot;headerlink&quot; title=&quot;第一章 天地之始，万物之母&quot;&gt;&lt;/a&gt;第一章 天地之始，万物之母&lt;/h2&gt;&lt;blockquote class=&quot;blockquote-center&quot;&gt;
+            &lt;i class=&quot;fa fa-quote-left&quot;&gt;&lt;/i&gt;
+            &lt;p&gt;道可道，非常道；&lt;br&gt;名可名，非常名。&lt;br&gt;无，名天地之始；&lt;br&gt;有，名万物之母。&lt;br&gt;故常无，欲以观其妙；&lt;br&gt;常有，欲以观其徼。&lt;br&gt;此两者，同出而异名，同谓之玄。&lt;br&gt;玄之又玄，众妙之门。&lt;/p&gt;
+
+            &lt;i class=&quot;fa fa-quote-right&quot;&gt;&lt;/i&gt;
+          &lt;/blockquote&gt;</summary>
+    
+    
+    
+    <category term="文学" scheme="https://www.sunliaodong.cn/categories/%E6%96%87%E5%AD%A6/"/>
+    
+    
+    <category term="道德经" scheme="https://www.sunliaodong.cn/tags/%E9%81%93%E5%BE%B7%E7%BB%8F/"/>
+    
+  </entry>
+  
+  <entry>
     <title>InfluxDB深入学习之自身监控</title>
     <link href="https://www.sunliaodong.cn/2021/03/03/InfluxDB%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%87%AA%E8%BA%AB%E7%9B%91%E6%8E%A7/"/>
     <id>https://www.sunliaodong.cn/2021/03/03/InfluxDB%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%87%AA%E8%BA%AB%E7%9B%91%E6%8E%A7/</id>
     <published>2021-03-03T06:20:37.000Z</published>
-    <updated>2021-03-03T06:22:50.706Z</updated>
+    <updated>2021-03-12T02:41:07.707Z</updated>
     
     
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;常用监控脚本&quot;&gt;&lt;a href=&quot;#常用监控脚本&quot; class=&quot;headerlink&quot; title=&quot;常用监控脚本&quot;&gt;&lt;/a&gt;常用监控脚本&lt;/h2&gt;&lt;h3 id=&quot;series&quot;&gt;&lt;a href=&quot;#series&quot; class=&quot;headerlink&quot;</summary>
-        
-      
+    <summary type="html">&lt;h2 id=&quot;常用监控脚本&quot;&gt;&lt;a href=&quot;#常用监控脚本&quot; class=&quot;headerlink&quot; title=&quot;常用监控脚本&quot;&gt;&lt;/a&gt;常用监控脚本&lt;/h2&gt;&lt;h3 id=&quot;series&quot;&gt;&lt;a href=&quot;#series&quot; class=&quot;headerlink&quot; title=&quot;series&quot;&gt;&lt;/a&gt;series&lt;/h3&gt;&lt;p&gt;Series会被索引且存在内存中，如果量太大会对资源造成过多损耗，且查询效率也得不到保障。 &lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;influx -database &lt;span class=&quot;string&quot;&gt;&amp;#x27;telegraf&amp;#x27;&lt;/span&gt; -execute &lt;span class=&quot;string&quot;&gt;&amp;#x27;show series&amp;#x27;&lt;/span&gt; -format &lt;span class=&quot;string&quot;&gt;&amp;#x27;csv&amp;#x27;&lt;/span&gt;|wc -l&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;或者使用如下sql：&lt;/p&gt;
+&lt;figure class=&quot;highlight sql&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;operator&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;FROM&lt;/span&gt; &amp;quot;database&amp;quot; &lt;span class=&quot;keyword&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;type&quot;&gt;time&lt;/span&gt; &lt;span class=&quot;operator&quot;&gt;&amp;gt;&lt;/span&gt; now() &lt;span class=&quot;operator&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;m &lt;span class=&quot;keyword&quot;&gt;and&lt;/span&gt; &amp;quot;database&amp;quot;&lt;span class=&quot;operator&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;string&quot;&gt;&amp;#x27;telegraf&amp;#x27;&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;order&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;by&lt;/span&gt; &lt;span class=&quot;type&quot;&gt;time&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;desc&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;tag-values&quot;&gt;&lt;a href=&quot;#tag-values&quot; class=&quot;headerlink&quot; title=&quot;tag values&quot;&gt;&lt;/a&gt;tag values&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;influx -database &lt;span class=&quot;string&quot;&gt;&amp;#x27;telegraf&amp;#x27;&lt;/span&gt; -execute &lt;span class=&quot;string&quot;&gt;&amp;#x27;SHOW TAG VALUES FROM cpu WITH KEY = cpu&amp;#x27;&lt;/span&gt; -format &lt;span class=&quot;string&quot;&gt;&amp;#x27;csv&amp;#x27;&lt;/span&gt;|wc -l&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;每秒写数据量&quot;&gt;&lt;a href=&quot;#每秒写数据量&quot; class=&quot;headerlink&quot; title=&quot;每秒写数据量&quot;&gt;&lt;/a&gt;每秒写数据量&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;influx -execute &lt;span class=&quot;string&quot;&gt;&amp;#x27;select derivative(pointReq, 1s) from &amp;quot;write&amp;quot; where time &amp;gt; now() - 5m&amp;#x27;&lt;/span&gt; -database &lt;span class=&quot;string&quot;&gt;&amp;#x27;_internal&amp;#x27;&lt;/span&gt; -precision &lt;span class=&quot;string&quot;&gt;&amp;#x27;rfc3339&amp;#x27;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
     
     
     
@@ -103,21 +149,27 @@
     <link href="https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/"/>
     <id>https://www.sunliaodong.cn/2021/03/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/</id>
     <published>2021-03-03T06:14:01.000Z</published>
-    <updated>2021-03-03T07:43:26.710Z</updated>
+    <updated>2021-03-09T02:19:31.763Z</updated>
     
     
-      
-      
-        
-        
-    <summary type="html">&lt;!-- TOC --&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;#%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA&quot;&gt;分布式理论&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;#cap&quot;&gt;CAP&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a</summary>
-        
-      
+    <summary type="html">&lt;h2 id=&quot;CAP&quot;&gt;&lt;a href=&quot;#CAP&quot; class=&quot;headerlink&quot; title=&quot;CAP&quot;&gt;&lt;/a&gt;CAP&lt;/h2&gt;&lt;h3 id=&quot;Consistency（一致性）&quot;&gt;&lt;a href=&quot;#Consistency（一致性）&quot; class=&quot;headerlink&quot; title=&quot;Consistency（一致性）&quot;&gt;&lt;/a&gt;Consistency（一致性）&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;在分布式系统中的所有数据备份，在同一时刻是否同样的值&lt;/li&gt;
+&lt;li&gt;所有节点访问同一份最新的数据副本&lt;/li&gt;
+&lt;li&gt;强调数据的正确性，对于客户端而言，每次都能读取到最新写入的数据&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Availability（可用性）&quot;&gt;&lt;a href=&quot;#Availability（可用性）&quot; class=&quot;headerlink&quot; title=&quot;Availability（可用性）&quot;&gt;&lt;/a&gt;Availability（可用性）&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;在集群中一部分节点故障后，集群整体是否还能响应客户端的读写请求。（对数据更新具备高可用性）&lt;/li&gt;
+&lt;li&gt;强调服务可用，但是不保证数据正确&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;Partition-tolerance（分区容错性）&quot;&gt;&lt;a href=&quot;#Partition-tolerance（分区容错性）&quot; class=&quot;headerlink&quot; title=&quot;Partition tolerance（分区容错性）&quot;&gt;&lt;/a&gt;Partition tolerance（分区容错性）&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;以实际效果而言，分区相当于对&lt;strong&gt;通信&lt;/strong&gt;的时限要求&lt;/li&gt;
+&lt;li&gt;系统如果不能在时限内达成数据一致性，就意味着发生了分区的情况，必须就当前操作在 C 和 A 之间做出选择。&lt;/li&gt;
+&lt;li&gt;强调的是集群对分区故障的容错能力&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;可用性和分区容错性的区别&quot;&gt;&lt;a href=&quot;#可用性和分区容错性的区别&quot; class=&quot;headerlink&quot; title=&quot;可用性和分区容错性的区别&quot;&gt;&lt;/a&gt;可用性和分区容错性的区别&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;可用性：节点出现故障时，系统可用&lt;/li&gt;
+&lt;li&gt;分区容错性：网络出现问题时，系统可用&lt;/li&gt;
+&lt;/ol&gt;</summary>
     
     
     
@@ -606,59 +658,6 @@
     <category term="锁" scheme="https://www.sunliaodong.cn/tags/%E9%94%81/"/>
     
     <category term="ReentrantLock" scheme="https://www.sunliaodong.cn/tags/ReentrantLock/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之Synchronized</title>
-    <link href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/"/>
-    <id>https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BSynchronized/</id>
-    <published>2021-02-08T00:28:49.000Z</published>
-    <updated>2021-03-03T08:42:34.948Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;特点&quot;&gt;&lt;a href=&quot;#特点&quot; class=&quot;headerlink&quot; title=&quot;特点&quot;&gt;&lt;/a&gt;特点&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;任意非NULL对象当作锁&lt;/li&gt;
-&lt;li&gt;独占式悲观锁&lt;/li&gt;
-&lt;li&gt;可重入锁&lt;/li&gt;&lt;/ol&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    <category term="源码分析" scheme="https://www.sunliaodong.cn/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="锁" scheme="https://www.sunliaodong.cn/tags/%E9%94%81/"/>
-    
-    <category term="Synchronized" scheme="https://www.sunliaodong.cn/tags/Synchronized/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Java并发编程之锁</title>
-    <link href="https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/"/>
-    <id>https://www.sunliaodong.cn/2021/02/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%94%81/</id>
-    <published>2021-02-08T00:24:05.000Z</published>
-    <updated>2021-02-24T12:03:07.530Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;在多线程同时访问同一个资源时，如果需要考虑对共享资源的竞争问题以及数据的正确性，这需要引入锁的概念，这就是所谓的线程安全。最常见的场景就是i–操作。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/categories/Java/"/>
-    
-    <category term="并发编程" scheme="https://www.sunliaodong.cn/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
-    
-    
-    <category term="Java" scheme="https://www.sunliaodong.cn/tags/Java/"/>
-    
-    <category term="锁" scheme="https://www.sunliaodong.cn/tags/%E9%94%81/"/>
     
   </entry>
   
