@@ -28,12 +28,14 @@
 <meta property="og:site_name" content="一蓑烟雨任平生">
 <meta property="og:description" content="查询速度慢的原因 生命周期太长：从客户端到服务端，然后在服务端进行解析、生成执行计划、执行（包括数据的分组聚合处理等）、并返回结果 资源消耗：网络资源、CPU资源、锁等待、IO资源 访问的数据太多，大多数是行数据，也包括列数据 是否向数据库请求了不需要的数据 查询不需要的数据，比如LIMIT 1000000,10 是否返回了全部列，比如select * from  重复查询相同的数据，可以使用缓存">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/02/17/MySQL%E4%B9%8B%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E6%9F%A5%E8%AF%A2SQL%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png">
 <meta property="article:published_time" content="2021-02-17T03:05:51.000Z">
-<meta property="article:modified_time" content="2021-02-18T00:19:33.296Z">
+<meta property="article:modified_time" content="2021-03-19T09:37:55.522Z">
 <meta property="article:author" content="Theodore Sun">
 <meta property="article:tag" content="MySQL">
 <meta property="article:tag" content="查询性能优化">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/02/17/MySQL%E4%B9%8B%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E6%9F%A5%E8%AF%A2SQL%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png">
 
 <link rel="canonical" href="https://www.sunliaodong.cn/2021/02/17/MySQL%E4%B9%8B%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">
 
@@ -243,7 +245,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-18 08:19:33" itemprop="dateModified" datetime="2021-02-18T08:19:33+08:00">2021-02-18</time>
+                <time title="修改时间：2021-03-19 17:37:55" itemprop="dateModified" datetime="2021-03-19T17:37:55+08:00">2021-03-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -276,14 +278,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>617</span>
+              <span>3.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -348,8 +350,106 @@
 </ul>
 </li>
 </ol>
-<h2 id="查询执行的原理"><a href="#查询执行的原理" class="headerlink" title="查询执行的原理"></a>查询执行的原理</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<h2 id="查询执行的原理"><a href="#查询执行的原理" class="headerlink" title="查询执行的原理"></a>查询执行的原理</h2><h3 id="执行步骤"><a href="#执行步骤" class="headerlink" title="执行步骤"></a>执行步骤</h3><div align="center">
+
+<img src="/2021/02/17/MySQL%E4%B9%8B%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E6%9F%A5%E8%AF%A2SQL%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png" class title="查询SQL执行流程">
+
+</div>
+
+<h3 id="客户端-服务端通信协议"><a href="#客户端-服务端通信协议" class="headerlink" title="客户端/服务端通信协议"></a>客户端/服务端通信协议</h3><ol>
+<li>半双工通信协议：客户端和服务端收发数据不能同时发生，并且一端开始之后另一端必须接收完整消息才能响应</li>
+<li>使用<code>max_allowed_packet</code>控制一次查询的数据包大小（查询语句很长时）</li>
+<li>由于客户端必须接收完整的服务端数据才能让服务器停止发送，当服务端返回数据较多时，通常使用limit进行限制</li>
+</ol>
+<h3 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h3><ol>
+<li>校验用户名和密码</li>
+<li>校验当前用户拥有的权限</li>
+</ol>
+<h3 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h3><ol>
+<li>数据结构类似于hashtable，key：sql，value：数据集</li>
+<li>适用于静态表（不变化的表），只要是表经常变化则缓存会失效，严重影响性能（8.0中以去掉）</li>
+<li>查询中包含任何用户自定义函数、存储函数、用户变量、临时表、MySQL库中的系统表，<strong>查询结果都不会被缓存</strong></li>
+<li>失效：表结构变化和表数据变化</li>
+<li>可以通过SQL_CACHE和SQL_NO_CACHE来控制某个查询语句是否需要进行缓存</li>
+<li><strong>尽量不要开启查询缓存</strong></li>
+</ol>
+<h3 id="查询优化处理"><a href="#查询优化处理" class="headerlink" title="查询优化处理"></a>查询优化处理</h3><h4 id="语法解析和预处理"><a href="#语法解析和预处理" class="headerlink" title="语法解析和预处理"></a>语法解析和预处理</h4><ol>
+<li>生成一个解析树</li>
+<li>解析器：根据语法进行验证和解析。比如错误的关键字、关键字的顺序、引号是否匹配</li>
+<li>预处理：进一步验证解析树，比如表和列表是否存在，比如别名是否冲突歧义</li>
+<li>最终生成合法的解析树</li>
+</ol>
+<h4 id="查询优化器"><a href="#查询优化器" class="headerlink" title="查询优化器"></a>查询优化器</h4><p>选择成本最优的执行计划，可以通过查询当前会话的last_query_cost进行判断。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [information_schema]<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;Last_query_cost&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------+----------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name   <span class="operator">|</span> <span class="keyword">Value</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------+----------+</span></span><br><span class="line"><span class="operator">|</span> Last_query_cost <span class="operator">|</span> <span class="number">2.399000</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-----------------+----------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.001</span> sec)</span><br></pre></td></tr></table></figure>
+<p>value：表示做**个数据页的随机查找，统计信息（由存储引擎实现）包括：每张表或者索引的页面个数、索引的基数、索引和数据行的长度、索引的分布情况等等</p>
+<h5 id="导致执行计划不准确的原因"><a href="#导致执行计划不准确的原因" class="headerlink" title="导致执行计划不准确的原因"></a>导致执行计划不准确的原因</h5><ol>
+<li>统计信息不准确</li>
+<li>不会考虑不受其控制的操作成本（用户自定义函数、存储过程）</li>
+<li>MySQL认为的最优跟我们想的不一样</li>
+<li>不考虑并发查询</li>
+<li>并不是任何时候都是基于成本的控制，比如全文索引</li>
+<li>执行计划中的成本估算不等同于实际执行的成本</li>
+</ol>
+<h5 id="优化方式"><a href="#优化方式" class="headerlink" title="优化方式"></a>优化方式</h5><ol>
+<li>静态优化：直接对解析树进行优化，比如简单的代数运算，常用优化等，并且优化后一直生效</li>
+<li>动态优化：需要依赖上下文，每次都需要重新评估</li>
+</ol>
+<h5 id="支持的优化类型"><a href="#支持的优化类型" class="headerlink" title="支持的优化类型"></a>支持的优化类型</h5><ol>
+<li>重新定义关联表的顺序</li>
+<li>将外连接转换为内连接</li>
+<li>使用等价变化规则，比如(a &lt; b and b = c) and a = 5,优化为：b &gt; 5 and b = c and a = 5</li>
+<li>优化count、max、min等函数：找某列的最小值，如果该列有索引，只需要查找B+Tree索引最左端</li>
+<li>预估并转换常数表达式</li>
+<li>覆盖索引扫描</li>
+<li>子查询优化：转换成多个查询</li>
+<li>提前终止查询（比如：使用Limit时，查找到满足数量的结果集后会立即终止查询），适用于distinct、not exists、left join</li>
+<li>等值传播</li>
+<li>in的使用，不完全等同于or，通过二分查找的方式完成，如果太多会影响查询性能</li>
+</ol>
+<h4 id="MySQL中的关联查询"><a href="#MySQL中的关联查询" class="headerlink" title="MySQL中的关联查询"></a>MySQL中的关联查询</h4><ol>
+<li>在MySQL中任意查询都是一次关联查询</li>
+<li>任何关联查询都是嵌套查询<ul>
+<li>在一个表中循环获取单条数据</li>
+<li>在另一个表中匹配数据，直到所有表匹配完成</li>
+<li>根据各个表匹配的行，返回查询中的各个列 </li>
+</ul>
+</li>
+</ol>
+<h4 id="执行计划"><a href="#执行计划" class="headerlink" title="执行计划"></a>执行计划</h4><p>MySQL生成一颗指令树（左深度优先树），然后通过存储引擎来完成针对这个树的查找，可以通过explain extend，再执行show warning就可以查看重构出的查询。</p>
+<h4 id="关联查询优化器"><a href="#关联查询优化器" class="headerlink" title="关联查询优化器"></a>关联查询优化器</h4><h4 id="排序优化"><a href="#排序优化" class="headerlink" title="排序优化"></a>排序优化</h4><p><strong>参考<a href="https://www.sunliaodong.cn/2021/02/14/MySQL%E4%B9%8B%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-%E6%8E%92%E5%BA%8F/" target="_blank">排序优化</a></strong></p>
+<h3 id="查询执行引擎"><a href="#查询执行引擎" class="headerlink" title="查询执行引擎"></a>查询执行引擎</h3><ol>
+<li>通过调用存储引擎实现的接口来完成，这些接口被称为handler API</li>
+<li>查询过程中的每一张表由一个handler实例表示（在查询优化节点完成创建）</li>
+<li>包括表的所有列名、索引统计信息等</li>
+<li>并不是所有的操作都是由handler完成，比如表锁（如果是所有存储引擎的共性则有服务层完成（时间、日期函数、视图、触发器等），否则由具体的存储引擎完成）</li>
+</ol>
+<h3 id="返回结果给客户端"><a href="#返回结果给客户端" class="headerlink" title="返回结果给客户端"></a>返回结果给客户端</h3><ol>
+<li>即时查询结果为空，也会返回数据，比如影响行数</li>
+<li>返回结果根据实际情况是否缓存</li>
+<li>数据返回客户端是一个增量、逐步的过程</li>
+<li>每一行数据满足通信协议的数据包发送，再通过TCP协议进行传输，在传输过程中，可能对MySQL的数据包进行缓存然后批量发送</li>
+</ol>
+<h2 id="查询优化器的局限性"><a href="#查询优化器的局限性" class="headerlink" title="查询优化器的局限性"></a>查询优化器的局限性</h2><h3 id="关联子查询"><a href="#关联子查询" class="headerlink" title="关联子查询"></a>关联子查询</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--原始SQL</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course t </span><br><span class="line"><span class="keyword">where</span> t.course_id <span class="keyword">in</span> (</span><br><span class="line">   <span class="keyword">select</span> course_id <span class="keyword">from</span> course_teacher ct <span class="keyword">where</span> ct.teacher_id <span class="operator">=</span> <span class="number">1</span>);</span><br><span class="line"><span class="comment">--MySQL针对in优化后SQL(可使用 explain extended查看执行效率，通过show warnings;查询优化后SQL)</span></span><br><span class="line"><span class="comment">--不同版本优化效果不同</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course t </span><br><span class="line"><span class="keyword">where</span> <span class="keyword">exists</span> (</span><br><span class="line">   <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course_teacher ct </span><br><span class="line">   <span class="keyword">where</span> ct.teacher_id <span class="operator">=</span> <span class="number">1</span> </span><br><span class="line">   <span class="keyword">and</span> t.course_id <span class="operator">=</span> ct.course_id);</span><br></pre></td></tr></table></figure>
+<ol>
+<li>如果子项比较少，可以使用<code>group_concat()</code>优化</li>
+<li>可以使用内联或exists优化，但是效果不一定理想（大部分比较优）</li>
+<li>一旦使用了DISTINCT和GROUP BY，那么在查询的执行过程中，通常会产生历史表</li>
+</ol>
+<h3 id="UNION的限制"><a href="#UNION的限制" class="headerlink" title="UNION的限制"></a>UNION的限制</h3><ol>
+<li>MySQL无法将限制条件从外层下推到内层，所以根据实际需求在每个子项中增加限制条件</li>
+<li>UNION的原理是把数据放到临时表中，然后取出需要的数据，但是顺序不一定，所以可以根据实际需要增加排序操作</li>
+</ol>
+<h3 id="索引合并优化"><a href="#索引合并优化" class="headerlink" title="索引合并优化"></a>索引合并优化</h3><p>MySQL能够访问单个表的多个索引以合并和交叉过滤的方式来定位需要查找的行。</p>
+<h3 id="等值传递"><a href="#等值传递" class="headerlink" title="等值传递"></a>等值传递</h3><p>比如前面说的in，会有传递的优化；但是如果关联表比较大会影响性能，但是这种情况很少出现。</p>
+<h3 id="并发执行：不支持"><a href="#并发执行：不支持" class="headerlink" title="并发执行：不支持"></a>并发执行：不支持</h3><h3 id="哈希关联"><a href="#哈希关联" class="headerlink" title="哈希关联"></a>哈希关联</h3><ol>
+<li>MySQL本身没有实现正在意义的哈希关联（都是嵌套查询），可以通过哈希索引实现；memory 存储引擎使用哈希索引</li>
+<li>mariadb已经支持哈希关联</li>
+</ol>
+<h3 id="松散索引扫描"><a href="#松散索引扫描" class="headerlink" title="松散索引扫描"></a>松散索引扫描</h3><h3 id="最大值、最小值优化"><a href="#最大值、最小值优化" class="headerlink" title="最大值、最小值优化"></a>最大值、最小值优化</h3><h3 id="同一个表上查询和更新"><a href="#同一个表上查询和更新" class="headerlink" title="同一个表上查询和更新"></a>同一个表上查询和更新</h3><h2 id="具体查询优化"><a href="#具体查询优化" class="headerlink" title="具体查询优化"></a>具体查询优化</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
 <li>《高性能MySQL》</li>
+<li><a target="_blank" rel="noopener" href="https://www.toutiao.com/i6925236642320073229">面试官：select语句和update语句分别是怎么执行的？</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1103154">万字总结：学习MySQL优化原理，这一篇就够了！</a></li>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/innodb-storage-engine.html">The InnoDB Storage Engine</a></li>
 </ol>
 
     </div>
@@ -461,7 +561,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.</span> <span class="nav-text">查询速度慢的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">重构查询方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%89%A7%E8%A1%8C%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">查询执行的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.</span> <span class="nav-text">查询速度慢的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">重构查询方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%89%A7%E8%A1%8C%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">查询执行的原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.1.</span> <span class="nav-text">执行步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.2.</span> <span class="nav-text">客户端&#x2F;服务端通信协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%99%A8"><span class="nav-number">3.3.</span> <span class="nav-text">连接器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%BC%93%E5%AD%98"><span class="nav-number">3.4.</span> <span class="nav-text">查询缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86"><span class="nav-number">3.5.</span> <span class="nav-text">查询优化处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95%E8%A7%A3%E6%9E%90%E5%92%8C%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">3.5.1.</span> <span class="nav-text">语法解析和预处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">3.5.2.</span> <span class="nav-text">查询优化器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%BC%E8%87%B4%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92%E4%B8%8D%E5%87%86%E7%A1%AE%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">3.5.2.1.</span> <span class="nav-text">导致执行计划不准确的原因</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="nav-number">3.5.2.2.</span> <span class="nav-text">优化方式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84%E4%BC%98%E5%8C%96%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.5.2.3.</span> <span class="nav-text">支持的优化类型</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MySQL%E4%B8%AD%E7%9A%84%E5%85%B3%E8%81%94%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.5.3.</span> <span class="nav-text">MySQL中的关联查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-number">3.5.4.</span> <span class="nav-text">执行计划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">3.5.5.</span> <span class="nav-text">关联查询优化器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E4%BC%98%E5%8C%96"><span class="nav-number">3.5.6.</span> <span class="nav-text">排序优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E"><span class="nav-number">3.6.</span> <span class="nav-text">查询执行引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E7%BB%93%E6%9E%9C%E7%BB%99%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">3.7.</span> <span class="nav-text">返回结果给客户端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96%E5%99%A8%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">查询优化器的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="nav-number">4.1.</span> <span class="nav-text">关联子查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UNION%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">4.2.</span> <span class="nav-text">UNION的限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%90%88%E5%B9%B6%E4%BC%98%E5%8C%96"><span class="nav-number">4.3.</span> <span class="nav-text">索引合并优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%89%E5%80%BC%E4%BC%A0%E9%80%92"><span class="nav-number">4.4.</span> <span class="nav-text">等值传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C%EF%BC%9A%E4%B8%8D%E6%94%AF%E6%8C%81"><span class="nav-number">4.5.</span> <span class="nav-text">并发执行：不支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E5%85%B3%E8%81%94"><span class="nav-number">4.6.</span> <span class="nav-text">哈希关联</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%BE%E6%95%A3%E7%B4%A2%E5%BC%95%E6%89%AB%E6%8F%8F"><span class="nav-number">4.7.</span> <span class="nav-text">松散索引扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%80%BC%E3%80%81%E6%9C%80%E5%B0%8F%E5%80%BC%E4%BC%98%E5%8C%96"><span class="nav-number">4.8.</span> <span class="nav-text">最大值、最小值优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E4%B8%AA%E8%A1%A8%E4%B8%8A%E6%9F%A5%E8%AF%A2%E5%92%8C%E6%9B%B4%E6%96%B0"><span class="nav-number">4.9.</span> <span class="nav-text">同一个表上查询和更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96"><span class="nav-number">5.</span> <span class="nav-text">具体查询优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -563,13 +663,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">854k</span>
+    <span title="站点总字数">856k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">12:56</span>
+    <span title="站点阅读时长">12:59</span>
 </div>
 
         
