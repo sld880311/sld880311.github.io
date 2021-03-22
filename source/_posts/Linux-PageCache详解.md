@@ -331,13 +331,39 @@ Linux 3.10.0-1062.9.1.el7.x86_64 (instance-gctg007a) 	08/18/2020 	_x86_64_	(1 CP
 3. pgsteal/s: 扫描的 page 中每秒被回收的个数。
 4. %vmeff: pgsteal/(pgscank+pgscand), 回收效率，越接近 100 说明系统越安全，越接近 0 说明系统内存压力越大。
 
-具体数据来源于/proc/vmstat。
+### sar -B与/proc/vmstat比对
 
-<div align=center>
-
-![1597750689812.png](Linux-PageCache详解/1597750689812.png)
-
-</div>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#aaa;border-spacing:0;}
+.tg td{background-color:#fff;border-color:#aaa;border-style:solid;border-width:1px;color:#333;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#f38630;border-color:#aaa;border-style:solid;border-width:1px;color:#fff;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-amwm{font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-amwm">sar -B</th>
+    <th class="tg-amwm">/proc/vmstat</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0lax">pgscank</td>
+    <td class="tg-0lax">pgscan_kswapd</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">pgscand</td>
+    <td class="tg-0lax">pgscan_direct</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">pgsteal</td>
+    <td class="tg-0lax">pgsteal_kswapd+pgsteal_direct</td>
+  </tr>
+</tbody>
+</table>
 
 ## 其他
 
@@ -527,11 +553,62 @@ vm.dirty_ratio = 20
 
 ### 排查思路
 
-<div align=center>
-
-![1602663224947.png](Linux-PageCache详解/1602663224947.png)
-
-</div>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#aaa;border-spacing:0;}
+.tg td{background-color:#fff;border-color:#aaa;border-style:solid;border-width:1px;color:#333;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#f38630;border-color:#aaa;border-style:solid;border-width:1px;color:#fff;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-1wig{font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-7ivu{background-color:#fffc9e;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0lax">/proc/meminfo</th>
+    <th class="tg-1wig">含义以及排查思路</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-7ivu">Active(anon)</td>
+    <td class="tg-0lax">在active anon lru的page，与下一项相互转换</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Inactive(anon)</td>
+    <td class="tg-0lax">在inactive anonlru的page，可以交换到swap分区，（active anno也是）但是不能回收<br>程序使用malloc()或mmap()匿名方式申请并且写后的内存。如果过大，排除思路：<br>1.使用top找出内存消耗最大的进程<br>2.使用pmap分析该进程<br>3.如果没有任何进程内存开销大，则重点排除tmpfs</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Unevictable</td>
+    <td class="tg-0lax">在系统内存紧张时不能被回收，主要组成：<br>1.ram disk或ramfs消耗的内存<br>2.以SHM_LOCK方式申请的Shmem<br>3.使用mlock()序列函数来管理的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Mlocked</td>
+    <td class="tg-0lax">属于Unevictable的一种，重点排除mlock()方式包含的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">AnonPages</td>
+    <td class="tg-0lax">AnonPages！=Active（anon）+Inactive（anon）<br>因为shmem（包括tmpfs）虽然属于active（anon）或Inactive（anon），但是他们有自己的内存文件，所以不属于AnonPages<br>active anon和Inactive anon表示不可回收但是可以被交换到swap分区的内存<br>AnonPages没有对应文件的内存<br>排除malloc()方式申请的内存或mmap（PROT_WRITE,MAP_ANON|MAP_PRIVATE）方式申请的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Mapped</td>
+    <td class="tg-0lax">使用mmap（2）申请，没有被unmap的内存；unmap包含主动调用unmap（2）以及内核内存回收时的unmap<br>排查mmap（）申请的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Shmem</td>
+    <td class="tg-0lax">共享内存，特别注意tmpfs，排查思路<br>1. 使用top找出shr最大的进程<br>2.使用pmap分析该进程<br>3.如果没有任何进程消耗shr内存，则重点排查tmpfs</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">Slab</td>
+    <td class="tg-0lax">分为可被回收（SReclaimable）和不可以被回收（SUnreclaim），其中不可被回收的slab如果发生泄漏，<br>比如kmalloc申请的内存没有释放，排查思路<br>1.使用slaptop分析slab最大的数据<br>2.排查驱动程序以kmalloc(）方式申请的内存</td>
+  </tr>
+  <tr>
+    <td class="tg-7ivu">VmallocUsed</td>
+    <td class="tg-0lax">通过vmalloc分配的内核内存，可以使用/proc/vmallocinfo，来判断哪些驱动程序以vmalloc方式申请的内存较多<br>可以尝试卸载驱动，释放内存</td>
+  </tr>
+</tbody>
+</table>
 
 1. 应用程序可以通过 malloc() 和 free() 在用户态申请和释放内存，与之对应，可以通过 kmalloc()/kfree() 以及 vmalloc()/vfree() 在内核态申请和释放内存
 2. vmalloc 申请的内存会体现在 VmallocUsed 这一项中，即已使用的 Vmalloc 区大小；而 kmalloc 申请的内存则是体现在 Slab 这一项中，它又分为两部分，其中 SReclaimable 是指在内存紧张的时候可以被回收的内存，而 SUnreclaim 则是不可以被回收只能主动释放的内存。
