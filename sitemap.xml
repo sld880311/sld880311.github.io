@@ -788,6 +788,13 @@
   </url>
   
   <url>
+    <loc>https://www.sunliaodong.cn/tags/InfluxDB/</loc>
+    <lastmod>2021-03-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.sunliaodong.cn/tags/JDK/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
@@ -796,13 +803,6 @@
   
   <url>
     <loc>https://www.sunliaodong.cn/tags/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</loc>
-    <lastmod>2021-03-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunliaodong.cn/tags/InfluxDB/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -865,13 +865,6 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/tags/ReentrantReadWriteLock/</loc>
-    <lastmod>2021-03-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.sunliaodong.cn/tags/ScheduledThreadPoolExecutor/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
@@ -880,6 +873,13 @@
   
   <url>
     <loc>https://www.sunliaodong.cn/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/</loc>
+    <lastmod>2021-03-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.sunliaodong.cn/tags/ReentrantReadWriteLock/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1012,14 +1012,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/tags/%E6%B3%A8%E8%A7%A3/</loc>
+    <loc>https://www.sunliaodong.cn/tags/%E6%B3%9B%E5%9E%8B/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/tags/%E6%B3%9B%E5%9E%8B/</loc>
+    <loc>https://www.sunliaodong.cn/tags/%E6%B3%A8%E8%A7%A3/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1243,6 +1243,13 @@
   </url>
   
   <url>
+    <loc>https://www.sunliaodong.cn/tags/Paxos/</loc>
+    <lastmod>2021-03-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.sunliaodong.cn/tags/Hexo/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
@@ -1258,13 +1265,6 @@
   
   <url>
     <loc>https://www.sunliaodong.cn/tags/Next/</loc>
-    <lastmod>2021-03-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.sunliaodong.cn/tags/Paxos/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1565,14 +1565,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/tags/%E9%9B%86%E5%90%88/</loc>
+    <loc>https://www.sunliaodong.cn/tags/%E5%BC%82%E5%B8%B8/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/tags/%E5%BC%82%E5%B8%B8/</loc>
+    <loc>https://www.sunliaodong.cn/tags/%E9%9B%86%E5%90%88/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1826,14 +1826,14 @@
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/</loc>
+    <loc>https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.sunliaodong.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
+    <loc>https://www.sunliaodong.cn/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/</loc>
     <lastmod>2021-03-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
