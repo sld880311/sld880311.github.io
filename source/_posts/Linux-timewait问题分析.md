@@ -32,13 +32,124 @@ TCP协议规定，对于已经建立的连接，网络双方要进行四次握�
 
 ### 常用配置参数
 
-<div align=center>
-
-![tcp常用配置](Linux-timewait问题分析/1602667762547.png)
-
-![tcp优化点](Linux-timewait问题分析/1606352049779.png)
-
-</div>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#bbb;border-spacing:0;}
+.tg td{background-color:#E0FFEB;border-color:#bbb;border-style:solid;border-width:1px;color:#594F4F;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{background-color:#9DE0AD;border-color:#bbb;border-style:solid;border-width:1px;color:#493F3F;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-amwm{font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-sjuo{background-color:#C2FFD6;text-align:left;vertical-align:top}
+.tg .tg-0lax{text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-amwm">配置项</th>
+    <th class="tg-amwm">参考值</th>
+    <th class="tg-amwm">作用</th>
+    <th class="tg-amwm">优化</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-sjuo">net.ipv4.tcp_max_tw_buckets</td>
+    <td class="tg-sjuo">1048576</td>
+    <td class="tg-sjuo">处于time_wait状态连接的数量</td>
+    <td class="tg-sjuo">增加</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">net.netfilter.nf_conntrack_max</td>
+    <td class="tg-0lax">1048576</td>
+    <td class="tg-0lax">链路跟踪表大小</td>
+    <td class="tg-0lax">增加</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">net.ipv4.tcp_fin_timeout</td>
+    <td class="tg-sjuo">15</td>
+    <td class="tg-sjuo">time_wait状态的超时时间</td>
+    <td class="tg-sjuo">减少</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">net.netfilter.nfs_conntrack_tcp_timeout_time_wait</td>
+    <td class="tg-0lax">30</td>
+    <td class="tg-0lax">连接跟踪表中处于time_wait状态连接的超时时间</td>
+    <td class="tg-0lax">减少</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">net.ipv4.tcp_tw_reuse</td>
+    <td class="tg-sjuo">1</td>
+    <td class="tg-sjuo">time_wait状态占用的端口是否可以用到新建的连接中</td>
+    <td class="tg-sjuo">是</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">net.ipv4.tcp_tw_recycle</td>
+    <td class="tg-sjuo">0</td>
+    <td class="tg-sjuo">必须为0，否则会容易引起其他问题</td>
+    <td class="tg-sjuo">否</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">net.ipv4.ip_local_port_range</td>
+    <td class="tg-0lax">10000 65000</td>
+    <td class="tg-0lax">本地端口号的范围</td>
+    <td class="tg-0lax">增加</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">fs.nr_open（系统）<br>systemd配置文件中LimitNOFILE（应用程序）</td>
+    <td class="tg-sjuo">1048576</td>
+    <td class="tg-sjuo">系统和应用程序的最大文件描述符数量</td>
+    <td class="tg-sjuo">增加</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">net.ipv4.tcp_max_syn_backlog</td>
+    <td class="tg-0lax">16384</td>
+    <td class="tg-0lax">半连接的最大数量</td>
+    <td class="tg-0lax">增加</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">net.ipv4.tcp_syncookies</td>
+    <td class="tg-sjuo">1</td>
+    <td class="tg-sjuo">开启syn cookies，防止syn flood攻击</td>
+    <td class="tg-sjuo">开启</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">net.ipv4.tcp_syn_retries</td>
+    <td class="tg-sjuo">2</td>
+    <td class="tg-sjuo">内核尝试发送syn连接请求后放弃新建的连接</td>
+    <td class="tg-sjuo">减少</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">net.ipv4.tcp_synack_retries</td>
+    <td class="tg-sjuo">2</td>
+    <td class="tg-sjuo">降低服务器SYN+ACK报文重试次数（默认是5次），尽快释放等待资源。</td>
+    <td class="tg-sjuo">减少</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">net.ipv4.tcp_keepalive_intvl</td>
+    <td class="tg-0lax">30</td>
+    <td class="tg-0lax">发送keepalive探测包的间隔时间</td>
+    <td class="tg-0lax">减少</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo">net.ipv4_tcp_keepalive_probes</td>
+    <td class="tg-sjuo">3</td>
+    <td class="tg-sjuo">keepalive探测失败后通知应用程序前的重试次数</td>
+    <td class="tg-sjuo">减少</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">net.ipv4.tcp_keepalive_time</td>
+    <td class="tg-0lax">600</td>
+    <td class="tg-0lax">最后一次数据包到keepalive探测包的间隔时间</td>
+    <td class="tg-0lax">减少</td>
+  </tr>
+  <tr>
+    <td class="tg-sjuo"></td>
+    <td class="tg-sjuo"></td>
+    <td class="tg-sjuo"></td>
+    <td class="tg-sjuo"></td>
+  </tr>
+</tbody>
+</table>
 
 ## 状态说明
 
