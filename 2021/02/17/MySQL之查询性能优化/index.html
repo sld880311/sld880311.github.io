@@ -30,7 +30,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.sunliaodong.cn/2021/02/17/MySQL%E4%B9%8B%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/%E6%9F%A5%E8%AF%A2SQL%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png">
 <meta property="article:published_time" content="2021-02-17T03:05:51.000Z">
-<meta property="article:modified_time" content="2021-03-19T09:37:55.522Z">
+<meta property="article:modified_time" content="2021-03-26T06:15:48.576Z">
 <meta property="article:author" content="Theodore Sun">
 <meta property="article:tag" content="MySQL">
 <meta property="article:tag" content="查询性能优化">
@@ -132,7 +132,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">154</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">155</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -142,7 +142,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">100</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">101</span></a>
 
   </li>
         <li class="menu-item menu-item-schedule">
@@ -245,7 +245,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-19 17:37:55" itemprop="dateModified" datetime="2021-03-19T17:37:55+08:00">2021-03-19</time>
+                <time title="修改时间：2021-03-26 14:15:48" itemprop="dateModified" datetime="2021-03-26T14:15:48+08:00">2021-03-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -278,7 +278,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -445,7 +445,13 @@
 <li>MySQL本身没有实现正在意义的哈希关联（都是嵌套查询），可以通过哈希索引实现；memory 存储引擎使用哈希索引</li>
 <li>mariadb已经支持哈希关联</li>
 </ol>
-<h3 id="松散索引扫描"><a href="#松散索引扫描" class="headerlink" title="松散索引扫描"></a>松散索引扫描</h3><h3 id="最大值、最小值优化"><a href="#最大值、最小值优化" class="headerlink" title="最大值、最小值优化"></a>最大值、最小值优化</h3><h3 id="同一个表上查询和更新"><a href="#同一个表上查询和更新" class="headerlink" title="同一个表上查询和更新"></a>同一个表上查询和更新</h3><h2 id="具体查询优化"><a href="#具体查询优化" class="headerlink" title="具体查询优化"></a>具体查询优化</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<h3 id="松散索引扫描"><a href="#松散索引扫描" class="headerlink" title="松散索引扫描"></a>松散索引扫描</h3><ol>
+<li>MySQL历史版本中不支持松散索引检索，即无法按照不连续的方式扫描一个索引</li>
+<li>特别注意组合索引在查询条件中的限制<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--索引：(a,b)</span></span><br><span class="line"><span class="keyword">select</span> ... <span class="keyword">from</span> table1 <span class="keyword">where</span> b <span class="keyword">between</span> <span class="number">10</span> <span class="keyword">and</span> <span class="number">20</span>;</span><br></pre></td></tr></table></figure></li>
+<li>5.0之后在特殊场景中会使用松散扫描，比如：在一个分组查询中需要找到分组的最大值和最小值（Using index for group-by）</li>
+<li>5.6之后通过“索引条件下推”的方式解决</li>
+</ol>
+<h3 id="最大值、最小值优化"><a href="#最大值、最小值优化" class="headerlink" title="最大值、最小值优化"></a>最大值、最小值优化</h3><h3 id="同一个表上查询和更新"><a href="#同一个表上查询和更新" class="headerlink" title="同一个表上查询和更新"></a>同一个表上查询和更新</h3><h2 id="具体查询优化"><a href="#具体查询优化" class="headerlink" title="具体查询优化"></a>具体查询优化</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
 <li>《高性能MySQL》</li>
 <li><a target="_blank" rel="noopener" href="https://www.toutiao.com/i6925236642320073229">面试官：select语句和update语句分别是怎么执行的？</a></li>
 <li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1103154">万字总结：学习MySQL优化原理，这一篇就够了！</a></li>
@@ -577,7 +583,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-count">101</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -590,7 +596,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">154</span>
+        <span class="site-state-item-count">155</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -612,6 +618,9 @@
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
           <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://linux.51yip.com/" title="http:&#x2F;&#x2F;linux.51yip.com" rel="noopener" target="_blank">Linux命令</a>
         </li>
     </ul>
   </div>
@@ -663,13 +672,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">856k</span>
+    <span title="站点总字数">866k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">12:59</span>
+    <span title="站点阅读时长">13:07</span>
 </div>
 
         

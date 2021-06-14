@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png">
+  <link rel="mask-icon" href="/images/avatar.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.sunliaodong.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="事务（TRANSACTION）作为单个逻辑工作单元执行的一系列操作，这些操作作为一个整体一起向系统提交，要么都执行、要么都不执行 。事务是一个不可分割的工作逻辑单元 ，事务必须具备以下四个属性，简称 ACID 属性：   原子性（Atomicity） ：事务是一个完整的操作。事务的各步操作是不可分的（原子的）；要么都执行，要么都不执行。  一致性（Consistency） ：当事务完成时，数据必须">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL之事务与锁">
+<meta property="og:url" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/index.html">
+<meta property="og:site_name" content="一蓑烟雨任平生">
+<meta property="og:description" content="事务（TRANSACTION）作为单个逻辑工作单元执行的一系列操作，这些操作作为一个整体一起向系统提交，要么都执行、要么都不执行 。事务是一个不可分割的工作逻辑单元 ，事务必须具备以下四个属性，简称 ACID 属性：   原子性（Atomicity） ：事务是一个完整的操作。事务的各步操作是不可分的（原子的）；要么都执行，要么都不执行。  一致性（Consistency） ：当事务完成时，数据必须">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106794166.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106831889.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106853976.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106890949.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106924372.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106945501.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106962255.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106991007.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107012020.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107034266.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107055616.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107070919.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107092507.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107111743.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107127357.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107152152.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107174764.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107195328.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107210910.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107232806.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107257099.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107277534.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107294170.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107316877.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107336315.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107363279.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107377317.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107413235.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107435699.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107455736.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107485576.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107517990.png">
+<meta property="og:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107524388.png">
+<meta property="article:published_time" content="2021-03-23T06:23:05.000Z">
+<meta property="article:modified_time" content="2021-03-23T06:32:06.220Z">
+<meta property="article:author" content="Theodore Sun">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="锁">
+<meta property="article:tag" content="事务">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106794166.png">
+
+<link rel="canonical" href="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL之事务与锁 | 一蓑烟雨任平生</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一蓑烟雨任平生" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一蓑烟雨任平生</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人成长日记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">155</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">27</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">101</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sunliaodong.cn/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Theodore Sun">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一蓑烟雨任平生">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL之事务与锁
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-03-23 14:23:05 / 修改时间：14:32:06" itemprop="dateCreated datePublished" datetime="2021-03-23T14:23:05+08:00">2021-03-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="事务（TRANSACTION）"><a href="#事务（TRANSACTION）" class="headerlink" title="事务（TRANSACTION）"></a>事务（TRANSACTION）</h2><p>作为单个逻辑工作单元执行的一系列操作，这些操作作为一个整体一起向系统提交，要么都执行、要么都不执行 。事务是一个不可分割的工作逻辑单元 ，事务必须具备以下四个属性，简称 ACID 属性： </p>
+<ol>
+<li>原子性（Atomicity） ：事务是一个完整的操作。事务的各步操作是不可分的（原子的）；要么都执行，要么都不执行。 </li>
+<li>一致性（Consistency） ：当事务完成时，数据必须处于一致状态。 </li>
+<li>隔离性（Isolation） ：对数据进行修改的所有并发事务是彼此隔离的，这表明事务必须是独立的，它不应以任何方式依赖于或影响其他事务。 </li>
+<li>永久性（Durability） ：事务完成后，它对数据库的修改被永久保持，事务日志能够保持事务的永久性。</li>
+</ol>
+<a id="more"></a>
+
+
+<h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><h2 id="autocommit-Commit-and-Rollback"><a href="#autocommit-Commit-and-Rollback" class="headerlink" title="autocommit, Commit, and Rollback"></a>autocommit, Commit, and Rollback</h2><h2 id="Consistent-Nonlocking-Reads"><a href="#Consistent-Nonlocking-Reads" class="headerlink" title="Consistent Nonlocking Reads"></a>Consistent Nonlocking Reads</h2><h2 id="Locking-Reads"><a href="#Locking-Reads" class="headerlink" title="Locking Reads"></a>Locking Reads</h2><h3 id="可重复读"><a href="#可重复读" class="headerlink" title="可重复读"></a>可重复读</h3><h3 id="幻读"><a href="#幻读" class="headerlink" title="幻读"></a>幻读</h3><h4 id="行级锁的说明"><a href="#行级锁的说明" class="headerlink" title="行级锁的说明"></a>行级锁的说明</h4><h4 id="幻读产生的条件"><a href="#幻读产生的条件" class="headerlink" title="幻读产生的条件"></a>幻读产生的条件</h4><ol>
+<li>数据：针对新写入的行，而不是修改的行</li>
+<li>隔离级别：可重复读</li>
+<li>读写方式：当前读非快照读</li>
+</ol>
+<h4 id="间隙锁说明"><a href="#间隙锁说明" class="headerlink" title="间隙锁说明"></a>间隙锁说明</h4><ol>
+<li>gap lock 和next-key lock 在可重复读隔离级别下生效</li>
+<li>加锁的基本单位是（next-key lock）,他是<strong>前开后闭</strong>原则，gap lock 是开区间</li>
+<li>插叙过程中访问的对象会增加锁</li>
+<li>锁是加载扫描过的索引上的<ul>
+<li>索引上的等值查询–给唯一索引加锁的时候，next-key lock升级为行锁</li>
+<li>索引上的等值查询–向右遍历时最后一个值不满足查询需求时，next-key lock 退化为间隙锁</li>
+<li>唯一索引上的范围查询会访问到不满足条件的第一个值为止</li>
+<li>有索引字段，被索引覆盖的时候锁只在索引上</li>
+<li>无索引字段，会锁住整张表</li>
+</ul>
+</li>
+<li>limit 语句加锁格则：limit 语句查找的时候不会有向后遍历的操作，数据 1,5,5,10加锁范围是（1,5]就结束了，不会产生（5,10）的gap lock</li>
+<li>范围锁不遵循锁优化规则</li>
+<li>select 是一致性读，gap lock next-key lock是为了当前读的幻读</li>
+<li>记录不存在的时候查询也会产生间隙锁，例如 1,4,7,9，对4 update 开始是（1,4]，（4,7），插入3 就变成了 （1,3]，（3,4]，（4,7）</li>
+<li>读已提交的锁的特点：读已提交的时候会锁住行，当语句提交的时候就释放“不满足条件的行”，不是在事务提交的时候才释放锁的</li>
+<li>用锁来防止幻读的原因：<ul>
+<li> 因为MVCC的原则是InnoDB <strong>值查找创建版本早于当前事务id或者等于事务版本号的，</strong> 这样确保事务读取的行，要在事务开始之前已经存在，要么是当前事务插入的删除版本号未指定或者大于当前事务版本号，<strong>即查询的事务开启之后确保读取的行未删除</strong>—-不是在此事务版本号之前删除的</li>
+</ul>
+</li>
+</ol>
+<h5 id="怎么查看表的锁定情况"><a href="#怎么查看表的锁定情况" class="headerlink" title="怎么查看表的锁定情况"></a>怎么查看表的锁定情况</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> information_schema.innodb_locks;</span><br></pre></td></tr></table></figure>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106794166.png" alt="1589106794166.png"></p>
+</div>
+
+<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><h5 id="准备数据"><a href="#准备数据" class="headerlink" title="准备数据"></a>准备数据</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `t` (</span><br><span class="line">	`id` <span class="type">INT</span> ( <span class="number">11</span> ) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">	`c` <span class="type">INT</span> ( <span class="number">11</span> ) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">	`d` <span class="type">INT</span> ( <span class="number">11</span> ) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">	<span class="keyword">PRIMARY</span> <span class="keyword">KEY</span> ( `id` ),</span><br><span class="line">KEY `c` ( `c` ) </span><br><span class="line">) ENGINE <span class="operator">=</span> INNODB;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t <span class="keyword">values</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>),(<span class="number">5</span>,<span class="number">5</span>,<span class="number">5</span>),</span><br><span class="line">(<span class="number">10</span>,<span class="number">10</span>,<span class="number">10</span>),(<span class="number">15</span>,<span class="number">15</span>,<span class="number">15</span>),(<span class="number">20</span>,<span class="number">20</span>,<span class="number">20</span>),(<span class="number">25</span>,<span class="number">25</span>,<span class="number">25</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="等值查询间隙锁（唯一类索引）"><a href="#等值查询间隙锁（唯一类索引）" class="headerlink" title="等值查询间隙锁（唯一类索引）"></a>等值查询间隙锁（唯一类索引）</h5><ol>
+<li>加锁单位是next-key lock</li>
+<li>等值查询，向右遍历到最后一个不满足的索引的时候会退化为间隙锁</li>
+</ol>
+<p>表中数据</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106831889.png" alt="1589106831889.png"></p>
+</div>
+
+<p>执行步骤</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106853976.png" alt="1589106853976.png"></p>
+</div>
+
+<p>由于表中没有id=7的记录：<br>    原则1，加锁单位是next-key lock，sessionA加锁范围就是（5,10]；<br>    同时根据优化2，这是一个等值查询（id=7），而id=10不满足查询条件，next-key lock退化成间隙锁，因此加锁范围是（5,10）</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106890949.png" alt="1589106890949.png"></p>
+</div>
+
+<h5 id="非唯一索引等值查询（普通索引）"><a href="#非唯一索引等值查询（普通索引）" class="headerlink" title="非唯一索引等值查询（普通索引）"></a>非唯一索引等值查询（普通索引）</h5><p>表内数据</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106924372.png" alt="1589106924372.png"></p>
+</div>
+
+<p>执行流程</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106945501.png" alt="1589106945501.png"></p>
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106962255.png" alt="1589106962255.png"></p>
+</div>
+
+
+
+<p>    原则1，加锁单位是next-key lock，因此会给（0,5]加上next-lock lock。<br>    要注意c是普通索引，因此仅访问c=5这一条记录是不能马上停下来的，需要向右遍历，查到c=10才放弃，根据原则2，访问到的都要加锁，因此要给（5,10]加next-key lock<br>    同时这个符合优化2：等值查询，向右遍历，最后一个不满足c=5这个等值条件，因此退化成间隙锁（5,10）<br>    根据原则2，访问到的对象才会加锁，这个查询使用索引覆盖，并不需要访问主键，所以主键上没有加任何锁，这就是为什么sessionB的update语句可以执行成功<br>    但是session C要插入一个（7,7,7）的记录就会被sessionA的间隙锁（5,10）锁住</p>
+<p>需要注意<br>在这个例子中，lock in share mode 只锁覆盖索引，但是如果是 for update 就不一样了。 执行 for update 时，系统会认为你接下来要更新数据，因此会顺便给主键索引上满足条件的行加上行锁<br>这个例子说明，锁是加在索引上的；同时，它给我们的指导是，如果你要用 lock in share mode 来给行加读锁避免数据被更新的话，就必须得绕过覆盖索引的优化，在查询字段中加入索引中不存在的字段。比如，将 session A 的查询语句改成 select d from t where c=5 lock in share mode。（sessionB会阻塞）</p>
+<h5 id="主键索引范围查询"><a href="#主键索引范围查询" class="headerlink" title="主键索引范围查询"></a>主键索引范围查询</h5><p>mysql&gt; select * from t where id=10 for update;<br>mysql&gt; select * from t where id&gt;=10 and id&lt;11 for update;<br>表内数据</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589106991007.png" alt="1589106991007.png"></p>
+</div>
+
+<p>加锁过程</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107012020.png" alt="1589107012020.png"></p>
+</div>
+
+<p>    开始执行的时候，要找到第一个id=10的这行，因此next-key lock 是（5,10]。根据优化1，主键id上的等值条件，退化成行锁，只加了id=10这一行的行锁<br>    范围查找就往后继续找，找到id=15的这行停下来，因此需要加next-key lock（10,15]（等值查询才会退化成间隙锁）<br>    所以sessionA这时候锁的范围就是行锁id=10,和next-key lock（10,15] ,这样再看sessionB和session C<br>    这里注意一点，sessionA定位查找id=10的行进行的时候，是当做等值查询来判断的，向后扫描代15的时候，用的是范围判断。<br>1.1.1.1.1.1    非唯一索引范围锁<br>表内数据</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107034266.png" alt="1589107034266.png"></p>
+</div>
+
+<p>执行过程</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107055616.png" alt="1589107055616.png"></p>
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107070919.png" alt="1589107070919.png"></p>
+</div>
+
+
+
+<p>    索引c&gt;=10 所以加上了next-key lock（5,10]，向后扫描加上了next-key lock（10,15]<br>    此时session B 和session C被blocked了</p>
+<h5 id="唯一索引范围bug"><a href="#唯一索引范围bug" class="headerlink" title="唯一索引范围bug"></a>唯一索引范围bug</h5><p>表内数据</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107092507.png" alt="1589107092507.png"></p>
+</div>
+
+<p>执行步骤</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107111743.png" alt="1589107111743.png"></p>
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107127357.png" alt="1589107127357.png"></p>
+</div>
+
+
+<p>    session A 是一个范围查询，按照规则1，应该索引id上只加（10,15]这个next-key lock，并且因为id是唯一键，所以循环到15这一行就应该停止。<br>    但实际上InnoDB 会往前扫描到第一个不满足条件的行为止，也就是 id=20。而且由于这是个范围扫描，因此索引 id 上的 (15,20] 这个 next-key lock 也会被锁上。<br>    所以你看到了，session B 要更新 id=20 这一行，是会被锁住的。同样地，session C 要插入 id=16 的一行，也会被锁住。<br>    照理说，这里锁住 id=20 这一行的行为，其实是没有必要的。因为扫描到 id=15，就可以确定不用往后再找了。但实现上还是这么做了。</p>
+<h5 id="非唯一索引上存在“等值”的例子"><a href="#非唯一索引上存在“等值”的例子" class="headerlink" title="非唯一索引上存在“等值”的例子"></a>非唯一索引上存在“等值”的例子</h5><p>插入一条数据<br>mysql&gt; insert into t values(30,10,30);<br>表内数据</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107152152.png" alt="1589107152152.png"></p>
+</div>
+
+<p>新插入的这一行c=10，也就说表里有两个c=10的行</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107174764.png" alt="1589107174764.png"></p>
+</div>
+
+
+<p>可以看到，虽然有两个 c=10，但是它们的主键值 id 是不同的（分别是 10 和 30），因此这两个 c=10 的记录之间，也是有间隙的。<br>执行过程<br>delete 语句加锁的逻辑，其实跟 select … for update 是类似的，也就是两个“原则”、两个“优化”和一个“bug”。</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107195328.png" alt="1589107195328.png"></p>
+</div>
+
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107210910.png" alt="1589107210910.png"></p>
+</div>
+
+<p>    删除和for update是一样的，产生了（5,10]的next-key lock和（10,15]的next转为（10,15）的间隙锁<br>主键被锁情况</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107232806.png" alt="1589107232806.png"></p>
+</div>
+
+
+
+<p>    可以看到 delete 和for update是一样的，c中有（5,10] （10,15）主键中锁的对应的是10 和30 的行锁</p>
+<h5 id="limit-语句加锁"><a href="#limit-语句加锁" class="headerlink" title="limit 语句加锁"></a>limit 语句加锁</h5><p>表内数据</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107257099.png" alt="1589107257099.png"></p>
+</div>
+
+<p>执行流程</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107277534.png" alt="1589107277534.png"></p>
+</div>
+
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107294170.png" alt="1589107294170.png"></p>
+</div>
+
+
+<p>这个例子里，session A 的 delete 语句加了 limit 2。你知道表 t 里 c=10 的记录其实只有两条，因此加不加 limit 2，删除的效果都是一样的，但是加锁的效果却不同。<br>可以看到，session B 的 insert 语句执行通过了，跟案例六的结果不同。这是因为，案例七里的 delete 语句明确加了 limit 2 的限制，因此在遍历到 (c=10, id=30) 这一行之后，满足条件的语句已经有两条，循环就结束了。<br>因此，索引 c 上的加锁范围就变成了从（c=5,id=5) 到（c=10,id=30) 这个前开后闭区间，如下图所示：</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107316877.png" alt="1589107316877.png"></p>
+</div>
+
+
+<p>可以看到，(c=10,id=30）之后的这个间隙并没有在加锁范围里，因此 insert 语句插入 c=12 是可以执行成功的。<br>这个例子对我们实践的指导意义就是，在删除数据的时候尽量加 limit。这样不仅可以控制删除数据的条数，让操作更安全，还可以减小加锁的范围。</p>
+<h5 id="一个死锁的案例"><a href="#一个死锁的案例" class="headerlink" title="一个死锁的案例"></a>一个死锁的案例</h5><p>前面的例子中，我们在分析的时候，是按照 next-key lock 的逻辑来分析的，因为这样分析比较方便。最后我们再看一个案例，目的是说明：next-key lock 实际上是间隙锁和行锁加起来的结果。<br>执行流程</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107336315.png" alt="1589107336315.png"></p>
+</div>
+
+
+<p>    sessionA 启动事务后执行查询语句加lock in share mode,在索引c上加了next-key lock（5,10]和间隙锁（10,15）<br>    sessionB的update语句也要在索引c上加next-key lock(5,10],进入锁等待<br>    然后sessionA要插入（8,8,8）这一行，被sessionB的间隙锁锁住。由于出现了死锁，InnoDB让sessionB回滚。<br>sessionB的next-key lock 不是还没申请成功吗？<br>其实是这样的，session B 的“加 next-key lock(5,10] ”操作，实际上分成了两步，先是加 (5,10) 的间隙锁，加锁成功；然后加 c=10 的行锁，这时候才被锁住的。<br>也就是说，我们在分析加锁规则的时候可以用 next-key lock 来分析。但是要知道，具体执行的时候，是要分成间隙锁和行锁两段来执行的。</p>
+<h5 id="不存在记录的加锁"><a href="#不存在记录的加锁" class="headerlink" title="不存在记录的加锁"></a>不存在记录的加锁</h5><p>建表&amp;数据</p>
+<p>CREATE TABLE <code>test</code> (<br> <code>id</code> int(1) NOT NULL AUTO_INCREMENT,<br> <code>name</code> varchar(8) DEFAULT NULL,<br> PRIMARY KEY (<code>id</code>)<br>) ENGINE=InnoDB DEFAULT CHARSET=utf8;</p>
+<p>INSERT INTO <code>test</code> VALUES (‘1’, ‘小罗’);<br>INSERT INTO <code>test</code> VALUES (‘5’, ‘小黄’);<br>INSERT INTO <code>test</code> VALUES (‘7’, ‘小明’);<br>INSERT INTO <code>test</code> VALUES (‘11’, ‘小红’);<br>执行流程</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107363279.png" alt="1589107363279.png"></p>
+</div>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107377317.png" alt="1589107377317.png"></p>
+</div>
+
+
+<p>    对于不存在的记录查询的时候，会加锁，会产生记录锁和间隙锁，上图中的行锁是id=3 和gap （1，3),(3,3),(3,5],所以1,5不锁，2 ，4 锁定<br>    说明锁是动态的，当查询记录不存在的时候，会行锁和gap lock</p>
+<h5 id="读提交锁的特点"><a href="#读提交锁的特点" class="headerlink" title="读提交锁的特点"></a>读提交锁的特点</h5><p>读提交隔离级别下还有一个优化，即：<strong>语句执行过程中加上的行锁，在语句执行完成后，就要把“不满足条件的行”上的行锁直接释放了，不需要等到事务提交。也就是说，读提交隔离级别下，锁的范围更小，锁的时间更短，</strong>这也是不少业务都默认使用读提交隔离级别的原因。</p>
+<h5 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h5><p>建表语句和数据</p>
+<p>CREATE TABLE <code>t</code> (<br>  <code>id</code> int(11) NOT NULL,<br>  <code>c</code> int(11) DEFAULT NULL,<br>  <code>d</code> int(11) DEFAULT NULL,<br>  PRIMARY KEY (<code>id</code>),<br>  KEY <code>c</code> (<code>c</code>)<br>) ENGINE=InnoDB;</p>
+<p>insert into t values(0,0,0),(5,5,5),<br>(10,10,10),(15,15,15),(20,20,20),(25,25,25);</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107413235.png" alt="1589107413235.png"></p>
+</div>
+
+
+
+
+<p>    由于是order by desc，第一个索引的是索引c上“最右边的”c=20的行，所以会加上间隙锁（20,25）和next-key lock（15,20]<br>    在索引c向左遍历，要扫描到c=10才停止下来，所以next-key lock会追加到[5,10]，这正是阻塞sessionB 的 insert 的语句的原因。<br>    在扫描过程中，c=20 、c=15、c=10 这三行都存在值（不存在的时候加next-key lock），由于是select * ，所以会在主键加上这三个行锁<br>因此：<br>session A 的select语句锁的范围就是：<br>索引c上的（5,25）<br>主键索引上id=10 id=15 id=20 三个行锁</p>
+<h5 id="有趣的例子"><a href="#有趣的例子" class="headerlink" title="有趣的例子"></a>有趣的例子</h5><p>*表内数据</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107435699.png" alt="1589107435699.png"></p>
+</div>
+
+<p>执行流程</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107455736.png" alt="1589107455736.png"></p>
+</div>
+
+<p>分析过程</p>
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107485576.png" alt="1589107485576.png"></p>
+</div>
+
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107517990.png" alt="1589107517990.png"></p>
+</div>
+
+<div align="center">
+
+<p><img src="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/..%5Cimages%5C1589107524388.png" alt="1589107524388.png"></p>
+</div>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/innodb-locking-transaction-model.html">InnoDB Locking and Transaction Model</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Theodore Sun 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Theodore Sun 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag"></i> MySQL</a>
+              <a href="/tags/%E9%94%81/" rel="tag"><i class="fa fa-tag"></i> 锁</a>
+              <a href="/tags/%E4%BA%8B%E5%8A%A1/" rel="tag"><i class="fa fa-tag"></i> 事务</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/11/Linux-PageCache%E8%AF%A6%E8%A7%A3/" rel="prev" title="Linux PageCache详解">
+      <i class="fa fa-chevron-left"></i> Linux PageCache详解
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <!--网易云插件-->
+      <iframe frameborder="no" border="0" marginwidth="0" 
+          marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=569213220&auto=0&height=66">
+      </iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%EF%BC%88TRANSACTION%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">事务（TRANSACTION）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">隔离级别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#autocommit-Commit-and-Rollback"><span class="nav-number">3.</span> <span class="nav-text">autocommit, Commit, and Rollback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Consistent-Nonlocking-Reads"><span class="nav-number">4.</span> <span class="nav-text">Consistent Nonlocking Reads</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Locking-Reads"><span class="nav-number">5.</span> <span class="nav-text">Locking Reads</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB"><span class="nav-number">5.1.</span> <span class="nav-text">可重复读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BB%E8%AF%BB"><span class="nav-number">5.2.</span> <span class="nav-text">幻读</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81%E7%9A%84%E8%AF%B4%E6%98%8E"><span class="nav-number">5.2.1.</span> <span class="nav-text">行级锁的说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%BB%E8%AF%BB%E4%BA%A7%E7%94%9F%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="nav-number">5.2.2.</span> <span class="nav-text">幻读产生的条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%B4%E9%9A%99%E9%94%81%E8%AF%B4%E6%98%8E"><span class="nav-number">5.2.3.</span> <span class="nav-text">间隙锁说明</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E6%9F%A5%E7%9C%8B%E8%A1%A8%E7%9A%84%E9%94%81%E5%AE%9A%E6%83%85%E5%86%B5"><span class="nav-number">5.2.3.1.</span> <span class="nav-text">怎么查看表的锁定情况</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">5.2.4.</span> <span class="nav-text">验证</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E6%95%B0%E6%8D%AE"><span class="nav-number">5.2.4.1.</span> <span class="nav-text">准备数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2%E9%97%B4%E9%9A%99%E9%94%81%EF%BC%88%E5%94%AF%E4%B8%80%E7%B1%BB%E7%B4%A2%E5%BC%95%EF%BC%89"><span class="nav-number">5.2.4.2.</span> <span class="nav-text">等值查询间隙锁（唯一类索引）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%9E%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2%EF%BC%88%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%EF%BC%89"><span class="nav-number">5.2.4.3.</span> <span class="nav-text">非唯一索引等值查询（普通索引）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2"><span class="nav-number">5.2.4.4.</span> <span class="nav-text">主键索引范围查询</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95%E8%8C%83%E5%9B%B4bug"><span class="nav-number">5.2.4.5.</span> <span class="nav-text">唯一索引范围bug</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%9E%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95%E4%B8%8A%E5%AD%98%E5%9C%A8%E2%80%9C%E7%AD%89%E5%80%BC%E2%80%9D%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-number">5.2.4.6.</span> <span class="nav-text">非唯一索引上存在“等值”的例子</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#limit-%E8%AF%AD%E5%8F%A5%E5%8A%A0%E9%94%81"><span class="nav-number">5.2.4.7.</span> <span class="nav-text">limit 语句加锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%AD%BB%E9%94%81%E7%9A%84%E6%A1%88%E4%BE%8B"><span class="nav-number">5.2.4.8.</span> <span class="nav-text">一个死锁的案例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8D%E5%AD%98%E5%9C%A8%E8%AE%B0%E5%BD%95%E7%9A%84%E5%8A%A0%E9%94%81"><span class="nav-number">5.2.4.9.</span> <span class="nav-text">不存在记录的加锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%BB%E6%8F%90%E4%BA%A4%E9%94%81%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">5.2.4.10.</span> <span class="nav-text">读提交锁的特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="nav-number">5.2.4.11.</span> <span class="nav-text">思考题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-number">5.2.4.12.</span> <span class="nav-text">有趣的例子</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Theodore Sun"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Theodore Sun</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">155</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sld880311" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sld880311" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.csdn.net/" title="https:&#x2F;&#x2F;www.csdn.net" rel="noopener" target="_blank">CSDN</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://linux.51yip.com/" title="http:&#x2F;&#x2F;linux.51yip.com" rel="noopener" target="_blank">Linux命令</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="">
+      
+        <option value="zh-CN" data-href="/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2021/03/23/MySQL%E4%B9%8B%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%94%81/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Theodore Sun</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">866k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">13:07</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1c5d7704f735e90e9f0a',
+      clientSecret: 'b4d961f25b2fd71d6744910fdc43f332b259c401',
+      repo        : 'sld880311.github.io',
+      owner       : 'sld880311',
+      admin       : ['sld880311'],
+      id          : '35e8edfdb2e9501b7e3e910745b6f7ae',
+        language: 'zh-CN',
+      distractionFreeMode: false
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
