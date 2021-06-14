@@ -10,7 +10,10 @@ categories:
   - [性能分析]
 date: 2021-02-05 15:47:58
 ---
-## 语法
+
+## netstat
+
+### 语法
 
 netstat命令用于显示与IP、TCP、UDP和ICMP协议相关的统计数据，一般用于检验本机各端口的网络连接情况。netstat是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。
 在Linux下，如果连接数比较大，可以使用效率更高的ss来替代netstat。
@@ -55,7 +58,7 @@ usage: netstat [-vWeenNcCF] [<Af>] -r         netstat {-V|--version|-h|--help}
 ```
 <!--more-->
 
-## 输出结果
+### 输出结果
 
 ```bash
 [root@instance-gctg007a ~]# netstat
@@ -80,15 +83,15 @@ unix  14     [ ]         DGRAM                    7407     /dev/log
 unix  3      [ ]         STREAM     CONNECTED     243842   /run/systemd/journal/stdout
 ```
 
-### 有源TCP连接
+#### 有源TCP连接
 
 Active Internet connections，称为有源TCP连接，其中"Recv-Q"和"Send-Q"指的是接收队列和发送队列。这些数字一般都应该是0。如果不是则表示软件包正在队列中堆积。这种情况只能在非常少的情况见到。
 
-### 有源Unix域套接口
+#### 有源Unix域套接口
 
 Active UNIX domain sockets，称为有源Unix域套接口(和网络套接字一样，但是只能用于本机通信，性能可以提高一倍)。
 
-#### 参数说明
+##### 参数说明
 
 - Proto显示连接使用的协议
 - RefCnt表示连接到本套接口上的进程号
@@ -96,7 +99,7 @@ Active UNIX domain sockets，称为有源Unix域套接口(和网络套接字一�
 - State显示套接口当前的状态
 - Path表示连接到套接口的其它进程使用的路径名
 
-### 状态说明
+#### 状态说明
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;border-color:#bbb;}
@@ -178,9 +181,15 @@ Active UNIX domain sockets，称为有源Unix域套接口(和网络套接字一�
   </tr>
 </table>
 
-## 常用命令
+<div align=center>
 
-### 显示网卡列表
+![状态转换说明](Linux命令之netstat-ss/状态转换说明.png)
+
+</div>
+
+### 常用命令
+
+#### 显示网卡列表
 
 ```bash
 [root@instance-gctg007a ~]# netstat -i
@@ -191,7 +200,7 @@ eth0             1500 24097762      0      0 0      24283960      0      0      
 lo              65536  5213562      0      0 0       5213562      0      0      0 LRU
 ```
 
-### 显示组播信息
+#### 显示组播信息
 
 ```bash
 [root@instance-gctg007a ~]# netstat -g
@@ -211,7 +220,7 @@ docker0         1      ff02::1
 docker0         1      ff01::1
 ```
 
-### 显示网络统计
+#### 显示网络统计
 
 ```bash
 [root@instance-gctg007a ~]# netstat -s | more 4
@@ -224,7 +233,7 @@ Ip:
     29191565 requests sent out
 ```
 
-### 常用组合
+#### 常用组合
 
 ```bash
 [root@instance-gctg007a ~]# netstat -lntup
@@ -247,7 +256,7 @@ udp6       0      0 ::1:323                 :::*                                
 udp6       0      0 :::827                  :::*                                13372/rpcbind
 ```
 
-### 显示关于以太网的统计数据
+#### 显示关于以太网的统计数据
 
 用于显示关于以太网的统计数据。它列出的项目包括传送的数据报的总字节数、错误数、删除数、数据报的数量和广播的数量。这些统计数据既有发送的数据报数量，也有接收的数据报数量。这个选项可以用来统计一些基本的网络流量）
 
@@ -275,7 +284,7 @@ unix  15     [ ]         DGRAM                    7407     /dev/log
 unix  3      [ ]         STREAM     CONNECTED     243842   /run/systemd/journal/stdout
 ```
 
-### 显示路由信息
+#### 显示路由信息
 
 ```bash
 [root@instance-gctg007a ~]# netstat -r
@@ -287,7 +296,7 @@ default         gateway         0.0.0.0         UG        0 0          0 eth0
 192.168.16.0    0.0.0.0         255.255.240.0   U         0 0          0 eth0
 ```
 
-### 统计机器中网络连接各个状态个数
+#### 统计机器中网络连接各个状态个数
 
 ```bash
 [root@instance-gctg007a ~]# netstat -an | awk '/^tcp/ {++S[$NF]}  END {for (a in S) print a,S[a]} '
@@ -297,7 +306,7 @@ ESTABLISHED 5
 TIME_WAIT 2
 ```
 
-### 查看连接某服务端口最多的的IP地址
+#### 查看连接某服务端口最多的的IP地址
 
 ```bash
 [root@instance-gctg007a ~]# netstat -ant|grep "127.*"|awk '{print $5}'|awk -F: '{print $1}'|sort -nr|uniq -c
@@ -305,7 +314,7 @@ TIME_WAIT 2
       1 0.0.0.0
 ```
 
-### 找出程序运行的端口
+#### 找出程序运行的端口
 
 ```bash
 [root@instance-gctg007a ~]# netstat -ap | grep ssh
@@ -322,7 +331,7 @@ unix  2      [ ]         DGRAM                    41306028 14074/sshd: root@pt
 unix  3      [ ]         STREAM     CONNECTED     20226    2099/sshd 
 ```
 
-### 在 netstat 输出中显示 TCP连接信息
+#### 在 netstat 输出中显示 TCP连接信息
 
 ```bash
 [root@instance-gctg007a ~]# netstat -pt
@@ -337,15 +346,87 @@ tcp6       0      0 localhost:781           localhost:44944         TIME_WAIT   
 tcp6       0      0 localhost:781           localhost:44948         TIME_WAIT   -  
 ```
 
-## 其他
+## ss
 
-### ss
+### 语法
 
-ss命令可以用来获取socket统计信息，它可以显示和netstat类似的内容。
+ss命令可以用来获取socket统计信息，它可以显示和netstat类似的内容,ss可以提供以下信息：
+1. 所有的TCP sockets
+2. 所有的UDP sockets
+3. 所有ssh/ftp/ttp/https持久连接
+4. 所有连接到Xserver的本地进程
+5. 使用state（例如：connected, synchronized, SYN-RECV, SYN-SENT,TIME-WAIT）、地址、端口过滤
+6. 所有的state FIN-WAIT-1 tcpsocket连接以及更多
+
 ss的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比netstat更快速更高效。原因如下：
-
 1. 当服务器的socket连接数量变得非常大时，无论是使用netstat命令还是直接cat /proc/net/tcp，执行速度都会很慢。当服务器维持的连接达到上万个的时候，使用netstat等于浪费 生命，而用ss才是节省时间。
 2. 而ss快的秘诀在于它利用到了TCP协议栈中tcp_diag。tcp_diag是一个用于分析统计的模块，可以获得Linux内核中第一手的信息，这就确保了ss的快捷高效。当然，如果你的系统中没有tcp_diag，ss也可以正常运行，只是效率会变得稍慢（但仍然比 netstat要快）。
+
+```
+Usage: ss [ OPTIONS ]
+       ss [ OPTIONS ] [ FILTER ]
+   -h, --help          this message
+   -V, --version       output version information
+   -n, --numeric       don't resolve service names
+   -r, --resolve       resolve host names
+   -a, --all           display all sockets
+   -l, --listening     display listening sockets
+   -o, --options       show timer information
+   -e, --extended      show detailed socket information
+   -m, --memory        show socket memory usage
+   -p, --processes     show process using socket
+   -i, --info          show internal TCP information
+   -s, --summary       show socket usage summary
+   -b, --bpf           show bpf filter socket information
+   -E, --events        continually display sockets as they are destroyed
+   -Z, --context       display process SELinux security contexts
+   -z, --contexts      display process and socket SELinux security contexts
+   -N, --net           switch to the specified network namespace name
+
+   -4, --ipv4          display only IP version 4 sockets
+   -6, --ipv6          display only IP version 6 sockets
+   -0, --packet        display PACKET sockets
+   -t, --tcp           display only TCP sockets
+   -S, --sctp          display only SCTP sockets
+   -u, --udp           display only UDP sockets
+   -d, --dccp          display only DCCP sockets
+   -w, --raw           display only RAW sockets
+   -x, --unix          display only Unix domain sockets
+       --vsock         display only vsock sockets
+   -f, --family=FAMILY display sockets of type FAMILY
+       FAMILY := {inet|inet6|link|unix|netlink|vsock|help}
+
+   -K, --kill          forcibly close sockets, display what was closed
+   -H, --no-header     Suppress header line
+
+   -A, --query=QUERY, --socket=QUERY
+       QUERY := {all|inet|tcp|udp|raw|unix|unix_dgram|unix_stream|unix_seqpacket|packet|netlink|vsock_stream|vsock_dgram}[,QUERY]
+
+   -D, --diag=FILE     Dump raw information about TCP sockets to FILE
+   -F, --filter=FILE   read filter information from FILE
+       FILTER := [ state STATE-FILTER ] [ EXPRESSION ]
+       STATE-FILTER := {all|connected|synchronized|bucket|big|TCP-STATES}
+         TCP-STATES := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|closed|close-wait|last-ack|listen|closing}
+          connected := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
+       synchronized := {established|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
+             bucket := {syn-recv|time-wait}
+                big := {established|syn-sent|fin-wait-{1,2}|closed|close-wait|last-ack|listen|closing}
+```
+
+### 常用命令
+
+```bash
+ss -l    显示本地打开的所有端口
+ss -pl   显示每个进程具体打开的socket
+ss -t -a 显示所有tcp socket
+ss -u -a 显示所有的UDP Socekt
+ss -o state established '( dport = :smtp or sport = :smtp )' 显示所有已建立的SMTP连接
+ss -o state established '( dport = :http or sport = :http )' 显示所有已建立的HTTP连接
+ss -x src /tmp/.X11-unix/* 找出所有连接X服务器的进程
+ss -s 列出当前socket详细信息:
+```
+
+## 其他
 
 ## 参考
 
@@ -354,3 +435,4 @@ ss的优势在于它能够显示更多更详细的有关TCP和连接状态的信
 3. [解决TIME_WAIT过多造成的问题](https://www.cnblogs.com/dadonggg/p/8778318.html)
 4. [一文掌握 Linux 性能分析之网络篇](https://www.cnblogs.com/bakari/p/10515977.html)
 5. [Linux系统排查4——网络篇](https://www.cnblogs.com/Security-Darren/p/4700387.html)
+6. [Linux网络状态工具ss命令使用详解](http://www.ttlsa.com/linux-command/ss-replace-netstat/)
